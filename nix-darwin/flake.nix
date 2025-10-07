@@ -36,6 +36,10 @@
       system.stateVersion = 4;
       nixpkgs.hostPlatform = "aarch64-darwin";
       #security.pam.enableSudoTouchIdAuth = true;
+      
+      # ВАЖНО: Исправить GID mismatch
+      ids.gids.nixbld = 350;
+
 
       users.users.kamradsmeshnyavy.home = "/Users/kamradsmeshnyavy";
       #home-manager.backupFileExtension = "backup";
