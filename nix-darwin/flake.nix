@@ -26,7 +26,9 @@
           pkgs.carapace
         ];
 
-      services.nix-daemon.enable = true;
+      #services.nix-daemon.enable = true; # old nix
+      nix.enable = true;
+
       nix.settings.experimental-features = "nix-command flakes";
       #system settings
       programs.zsh.enable = true;  # default shell on catalina
@@ -37,8 +39,10 @@
 
       users.users.kamradsmeshnyavy.home = "/Users/kamradsmeshnyavy";
       #home-manager.backupFileExtension = "backup";
-      nix.configureBuildUsers = true;
-      nix.useDaemon = true;
+
+      system.primaryUser = "kamradsmeshnyavy";
+      #nix.configureBuildUsers = true; # old nix
+      #nix.useDaemon = true; # old nix
 
       system.defaults = {
         dock.autohide = true;
