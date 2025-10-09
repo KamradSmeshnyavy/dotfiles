@@ -35,7 +35,7 @@
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 4;
       nixpkgs.hostPlatform = "aarch64-darwin";
-      #security.pam.enableSudoTouchIdAuth = true;
+      security.pam.services.sudo_local.touchIdAuth = true; 
       
       # ВАЖНО: Исправить GID mismatch
       ids.gids.nixbld = 350;

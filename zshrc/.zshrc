@@ -155,6 +155,8 @@ alias mat='osascript -e "tell application \"System Events\" to key code 126 usin
 # Nix!
 export NIX_CONF_DIR=$HOME/.config/nix
 export PATH=/run/current-system/sw/bin:$PATH
+export PATH=$HOME/.nix-profile/bin:$PATH
+
 
 function ranger {
 	local IFS=$'\t\n'
