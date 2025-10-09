@@ -1,5 +1,5 @@
 return {
-  "echasnovski/mini.surround",
+  "mini.surround",
   opts = {
     mappings = {
       add = "<leader>sa",

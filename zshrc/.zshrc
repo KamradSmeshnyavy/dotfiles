@@ -31,13 +31,28 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
-export EDITOR=/opt/homebrew/bin/nvim
+export EDITOR=/run/current-system/sw/bin/nvim
 
 
 alias la=tree
 alias cat=bat
 # fast update brew
 alias buu='brew update && brew upgrade'
+
+#7zz
+# Распаковать любой архив
+alias unzipall='7zz x'
+
+# Показать что в архиве
+alias peek='7zz l'
+
+# Создать быстрый архив
+alias quickzip='7zz a archive.7z'
+
+# Распаковать в папку с именем архива
+function extract() {
+  7zz x "$1" -o"${1%.*}"
+}
 
 # rmt -- rm with trash
 
@@ -157,6 +172,7 @@ export NIX_CONF_DIR=$HOME/.config/nix
 export PATH=/run/current-system/sw/bin:$PATH
 export PATH=$HOME/.nix-profile/bin:$PATH
 
+alias nixuu='cd /Users/kamradsmeshnyavy/dotfiles/nix-darwin && nix flake update && sudo darwin-rebuild switch --flake .# && cd -'
 
 function ranger {
 	local IFS=$'\t\n'

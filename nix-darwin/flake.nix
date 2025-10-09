@@ -17,22 +17,35 @@
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       environment.systemPackages =
-        [ 
-          pkgs.vim
-          pkgs.direnv
-          pkgs.sshs
-          pkgs.glow
-          pkgs.nushell
-          pkgs.carapace
-          pkgs.neovim
+      [  
+        pkgs.vim
+        pkgs.direnv
+        pkgs.sshs
+        pkgs.glow
+        pkgs.nushell
+        pkgs.carapace
+        pkgs.neovim
         
-         # LSP серверы и утилиты
-        pkgs.nodejs_20              # для Copilot и многих LSP
-        pkgs.gopls                  # Go LSP
-        pkgs.yaml-language-server   # yamlls
-        pkgs.nodePackages.dockerfile-language-server-nodejs  # dockerls
-        pkgs.nodePackages.vscode-langservers-extracted  # содержит jsonls, html, css
-        ];
+        # LSP серверы
+        pkgs.nodejs_20
+        pkgs.gopls
+        pkgs.yaml-language-server
+        pkgs.nodePackages.dockerfile-language-server-nodejs
+        pkgs.nodePackages.vscode-langservers-extracted
+        
+        # Инструменты для Neovim
+        pkgs.tree-sitter          # для treesitter-cli
+        pkgs.ghostscript          # для snacks (gs)
+        pkgs.tectonic             # для LaTeX в snacks
+        pkgs.nodePackages.mermaid-cli  # для mmdc в snacks
+        pkgs.fd                   # современная версия fd
+        pkgs.luarocks
+        # Полезные утилиты
+        pkgs.ripgrep
+        pkgs.fzf
+        pkgs.bat
+        pkgs.lazygit
+      ];
 
       #services.nix-daemon.enable = true; # old nix
       nix.enable = true;
