@@ -24,6 +24,14 @@
           pkgs.glow
           pkgs.nushell
           pkgs.carapace
+          pkgs.neovim
+        
+         # LSP серверы и утилиты
+        pkgs.nodejs_20              # для Copilot и многих LSP
+        pkgs.gopls                  # Go LSP
+        pkgs.yaml-language-server   # yamlls
+        pkgs.nodePackages.dockerfile-language-server-nodejs  # dockerls
+        pkgs.nodePackages.vscode-langservers-extracted  # содержит jsonls, html, css
         ];
 
       #services.nix-daemon.enable = true; # old nix
