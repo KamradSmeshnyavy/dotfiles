@@ -17,6 +17,8 @@ bindkey '^L' vi-forward-word
 bindkey '^k' up-line-or-search
 bindkey '^j' down-line-or-search
 
+export export FUNCNEST=700
+
 # starship or powerlevel10k
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
@@ -240,4 +242,4 @@ fi
 # zsh-syntax-highlighting
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 #update fzf
-#source <(fzf --zsh)
+source <(fzf --zsh)
