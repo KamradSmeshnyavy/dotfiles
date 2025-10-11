@@ -1,0 +1,21 @@
+{
+  "name": "tokyonight-moon",
+  "displayName": "Tokyonight Moon",
+  "description": "Tokyonight Moon theme for VS Code",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Tokyonight Moon",
+        "uiTheme": "vs-dark",
+        "path": "./themes/tokyonight-moon.json"
+      }
+    ]
+  }
+}
