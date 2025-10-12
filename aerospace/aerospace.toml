@@ -227,15 +227,15 @@ alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
-alt-shift-enter = 'mode apps'
+#alt-shift-enter = 'mode apps'
 
-alt-t = 'exec-and-forget open -a /Applications/Telegram.app'
-alt-a = 'exec-and-forget open -a /Applications/Arc.app'
-alt-o = 'exec-and-forget open -a /Applications/Obsidian.app'
-alt-g = 'exec-and-forget open -a /Applications/Ghostty.app'
-alt-s = 'exec-and-forget open -a /Applications/Safari.app'
-alt-q = 'exec-and-forget open -a /System/Applications/QuickTime Player.app'
-alt-w = 'exec-and-forget open -a /Applications/WezTerm.app'
+#alt-t = 'exec-and-forget open -a /Applications/Telegram.app'
+#alt-a = 'exec-and-forget open -a /Applications/Arc.app'
+#alt-o = 'exec-and-forget open -a /Applications/Obsidian.app'
+#alt-g = 'exec-and-forget open -a /Applications/Ghostty.app'
+#alt-s = 'exec-and-forget open -a /Applications/Safari.app'
+#alt-q = 'exec-and-forget open -a /System/Applications/QuickTime Player.app'
+#alt-w = 'exec-and-forget open -a /Applications/WezTerm.app'
 
 
 # 'service' binding mode declaration.
@@ -247,7 +247,7 @@ f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling
 backspace = ['close-all-windows-but-current', 'mode main']
 
 [mode.apps.binding]
-alt-w = ['exec-and-forget open -a /Applications/WezTerm.app', 'mode main']
+#alt-w = ['exec-and-forget open -a /Applications/WezTerm.app', 'mode main']
 
 # [workspace-to-monitor-force-assignment]
 #     1 = '^dell$'
