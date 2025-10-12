@@ -221,14 +221,14 @@ export PATH=$PATH:~/.spoofdpi/bin
 # Created by `pipx` on 2025-09-13 12:59:56
 export PATH="$PATH:/Users/kamradsmeshnyavy/.local/bin"
 
-# FPATH for alacritty(design kamrad) 
+# FPATH for alacritty(design kamrad)
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 fi
-# tmux 
-#if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-#    tmux attach -t work-flow || tmux new -s work-flow
-#fi
+#tmux
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach -t work-flow || tmux new -s work-flow
+fi
 
 # Автозапуск Zellij
 #if command -v zellij >/dev/null 2>&1; then
