@@ -67,6 +67,7 @@ alias rmd='rmt --td' #GUI
 alias sshx='export DISPLAY=:0.0 && open /Applications/Utilities/XQuartz.app && ssh -X'
 
 # yazi
+export YAZI_CONFIG_HOME=/Users/kamradsmeshnyavy/.config/yazi
 function yy() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
@@ -116,7 +117,7 @@ alias v="/run/current-system/sw/bin/nvim"
 # Nmap
 alias nm="nmap -sC -sV -oN nmap"
 
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/omer/.vimpkg/bin:${GOPATH}/bin:/Users/omerxx/.cargo/bin
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:${GOPATH}/bin:/Users/kamradsmeshnyavy/.cargo/bin
 
 alias cl='clear'
 
@@ -143,7 +144,8 @@ alias http="xh"
 # VI Mode!!!
 bindkey jj vi-cmd-mode
 
-# Eza
+# eza
+export EZA_CONFIG_DIR=~/.config/eza
 alias l="eza -l --icons --git -a"
 alias lt="eza --tree --level=2 --long --icons --git"
 alias ltree="eza --tree --level=2  --icons --git"
@@ -243,3 +245,5 @@ fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 #update fzf
 source <(fzf --zsh)
+export EZA_CONFIG_DIR="/новый/путь/к/директории"
+export EZA_CONFIG_DIR="~/.config/eza"
