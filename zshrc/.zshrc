@@ -18,6 +18,8 @@ bindkey '^k' up-line-or-search
 bindkey '^j' down-line-or-search
 
 export export FUNCNEST=700
+export TERM=xterm-256color
+
 
 # starship or powerlevel10k
 eval "$(starship init zsh)"
@@ -44,13 +46,10 @@ alias buu='brew update && brew upgrade'
 #7zz
 # Распаковать любой архив
 alias unzipall='7zz x'
-
 # Показать что в архиве
 alias peek='7zz l'
-
 # Создать быстрый архив
 alias quickzip='7zz a archive.7z'
-
 # Распаковать в папку с именем архива
 function extract() {
   7zz x "$1" -o"${1%.*}"
@@ -67,7 +66,7 @@ alias rmd='rmt --td' #GUI
 alias sshx='export DISPLAY=:0.0 && open /Applications/Utilities/XQuartz.app && ssh -X'
 
 # yazi
-export YAZI_CONFIG_HOME=/Users/kamradsmeshnyavy/.config/yazi
+export YAZI_CONFIG_HOME='/Users/kamradsmeshnyavy/.config/yazi'
 function yy() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
@@ -227,10 +226,10 @@ export PATH="$PATH:/Users/kamradsmeshnyavy/.local/bin"
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 fi
-#tmux
-#if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-#    tmux attach -t work-flow || tmux new -s work-flow
-#fi
+# Tmux
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach -t work-flow || tmux new -s work-flow
+fi
 
 # Автозапуск Zellij
 #if command -v zellij >/dev/null 2>&1; then
@@ -245,5 +244,6 @@ fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 #update fzf
 source <(fzf --zsh)
-export EZA_CONFIG_DIR="/новый/путь/к/директории"
 export EZA_CONFIG_DIR="~/.config/eza"
+export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
