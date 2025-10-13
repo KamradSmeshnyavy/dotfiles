@@ -17,7 +17,7 @@
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       environment.systemPackages =
-      [  
+      [
         pkgs.vim
         pkgs.direnv
         pkgs.sshs
@@ -25,14 +25,14 @@
         pkgs.nushell
         pkgs.carapace
         pkgs.neovim
-        
+
         # LSP серверы
         pkgs.nodejs_20
         pkgs.gopls
         pkgs.yaml-language-server
         pkgs.nodePackages.dockerfile-language-server-nodejs
         pkgs.nodePackages.vscode-langservers-extracted
-        
+
         # Инструменты для Neovim
         pkgs.tree-sitter          # для treesitter-cli
         pkgs.ghostscript          # для snacks (gs)
@@ -56,8 +56,8 @@
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 4;
       nixpkgs.hostPlatform = "aarch64-darwin";
-      security.pam.services.sudo_local.touchIdAuth = true; 
-      
+      security.pam.services.sudo_local.touchIdAuth = true;
+
       # ВАЖНО: Исправить GID mismatch
       ids.gids.nixbld = 350;
 
@@ -93,7 +93,7 @@
   {
     darwinConfigurations."MacBook-Pro-Denis" = nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
-      modules = [ 
+      modules = [
 	  configuration
 #        home-manager.darwinModules.home-manager {
 #          home-manager.useGlobalPkgs = true;
