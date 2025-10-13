@@ -1,4 +1,4 @@
-theme = catppuccin-mocha.conf
+theme = tokyonight-moon
 font-size = 19
 font-family = "JetBrainsMono NFM Bold"
 background-blur-radius = 20
