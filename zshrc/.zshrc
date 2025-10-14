@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH='$HOME/.oh-my-zsh'
+export SHELL=/bin/zsh
 # Reevaluate the prompt string each time it's displaying a prompt
 setopt prompt_subst
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -9,7 +10,9 @@ compinit
 source <(kubectl completion zsh)
 complete -C '/usr/local/bin/aws_completer' aws
 
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+#eval "$(brew shellenv)"
+
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^w' autosuggest-execute
 bindkey '^e' autosuggest-accept
 bindkey '^u' autosuggest-toggle
@@ -243,8 +246,23 @@ fi
 
 # zsh-syntax-highlighting
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_STYLES[command]='fg=#82aaff'                 # blue
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#ffcc00'                   # yellow
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#c3e88d'                 # green
+ZSH_HIGHLIGHT_STYLES[function]='fg=#ffffcc'                # light yellow
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ff757f,bold'      # red
+ZSH_HIGHLIGHT_STYLES[separator]='fg=#828bb8'               # fg_dark
+ZSH_HIGHLIGHT_STYLES[argument]='fg=#c8d3f5'                # fg
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=#ff966c'                # orange
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#fca7ea'  # purple
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#86e1fc'  # cyan
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=#65bcff' # blue1
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
+
+
 #update fzf
 source <(fzf --zsh)
 export EZA_CONFIG_DIR="~/.config/eza"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
+

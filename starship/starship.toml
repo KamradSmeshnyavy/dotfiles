@@ -1,29 +1,131 @@
 add_newline = false
-# A minimal left prompt
 format = """$directory$character"""
 palette = "tokyonight"
-# move the rest of the prompt to the right
 right_format = """$all"""
 command_timeout = 1000
 
+# Цвета модулей в стиле TokyoNight
+[directory]
+style = "bold blue"
+read_only = " "
+read_only_style = "red"
+truncate_to_repo = false
+truncation_length = 3
+format = "[$path]($style)[$read_only]($read_only_style) "
+
 [character]
-vicmd_symbol = "[N] >>>"
-success_symbol = '[➜](bold green)'
+success_symbol = "[➜](bold sky)"
+error_symbol = "[✗](bold red)"
+vicmd_symbol = "[⟨N⟩>>>](bold pink)"
+
+[git_branch]
+style = "bold sky"
+format = '[$symbol$branch(:$remote_branch)]($style) '
+
+[git_status]
+style = "peach"
+format = '([ $all_status$ahead_behind]($style) )'
+conflicted = " "
+ahead = "×${count}"
+behind = "×${count}"
+diverged = "${ahead_count} ${behind_count}"
+untracked = "×${count}"
+stashed = "×${count}"
+modified = "×${count}"
+staged = "×${count}"
+renamed = "×${count}"
+deleted = "×${count}"
+
+[git_metrics]
+disabled = false
+format = '[ +$added -$deleted ](teal)'
+
+[cmd_duration]
+min_time = 500
+style = "teal"
+format = "[⏱ $duration]($style) "
+
+[status]
+disabled = false
+style = "red"
+symbol = "✗"
+format = "[$symbol $status]($style) "
+
+[jobs]
+style = "peach"
+symbol = " "
+number_threshold = 1
+format = "[$symbol$number]($style) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "subtext1"
+format = "[$time]($style) "
+
+[username]
+show_always = false
+style_user = "green"
+style_root = "red"
+format = "[$user]($style) "
+
+[hostname]
+ssh_only = true
+style = "yellow"
+format = "[@$hostname]($style) "
+
+[sudo]
+style = "maroon"
+symbol = " "
+format = "[$symbol]($style) "
+disabled = false
+
+[aws]
+style = "bold blue"
+symbol = " "
+format = '[$symbol(profile: "$profile" )(\(region: $region\) )]($style) '
+
+[docker_context]
+disabled = true
+
+[nodejs]
+format = "[ $version]($style) "
+style = "green"
+
+[python]
+format = "[ $version$virtualenv]($style) "
+style = "yellow"
+
+[rust]
+format = "[ $version]($style) "
+style = "peach"
+
+[golang]
+format = "[ $version]($style) "
+style = "cyan"
+
+[package]
+style = "mauve"
+format = "[📦 $version]($style) "
+
+[battery]
+disabled = false
+full_symbol = " "
+charging_symbol = " "
+discharging_symbol = " "
+format = "[$symbol$percentage]($style) "
+[[battery.display]]
+threshold = 20
+style = "red"
+[[battery.display]]
+threshold = 50
+style = "yellow"
+[[battery.display]]
+threshold = 100
+style = "green"
 
 [directory.substitutions]
 '~/tests/starship-custom' = 'work-project'
-
-[git_branch]
-format =  '[$symbol$branch(:$remote_branch)]($style)'
-
-[aws]
-format = '[$symbol(profile: "$profile" )(\(region: $region\) )]($style)'
-disabled = false
-style = 'bold blue'
-symbol = " "
-
-[golang]
-format = '[ ](bold cyan)'
 
 [kubernetes]
 symbol = '☸ '
@@ -33,9 +135,6 @@ format = '[$symbol$context( \($namespace\))]($style) '
 contexts = [
   { context_pattern = "arn:aws:eks:us-west-2:577926974532:cluster/zd-pvc-omer", style = "green", context_alias = "kamradsmeshnyavy", symbol = " " },
 ]
-
-[docker_context]
-disabled = true
 
 [palettes.tokyonight]
 rosewater = "#f7768e"

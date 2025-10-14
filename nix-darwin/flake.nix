@@ -45,6 +45,15 @@
         pkgs.fzf
         pkgs.bat
         pkgs.lazygit
+        #pkgs.kubectl
+        #pkgs.kubelogin
+        #pkgs.starship
+        #pkgs.zsh-autosuggestions
+        #pkgs.zsh-syntax-highlighting
+
+
+
+
       ];
 
       #services.nix-daemon.enable = true; # old nix
