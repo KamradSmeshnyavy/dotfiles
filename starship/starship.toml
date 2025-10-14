@@ -1,7 +1,7 @@
 add_newline = false
 # A minimal left prompt
 format = """$directory$character"""
-palette = "catppuccin_mocha"
+palette = "tokyonight"
 # move the rest of the prompt to the right
 right_format = """$all"""
 command_timeout = 1000
@@ -31,36 +31,36 @@ disabled = true
 detect_files = ['Dockerfile']
 format = '[$symbol$context( \($namespace\))]($style) '
 contexts = [
-  { context_pattern = "arn:aws:eks:us-west-2:577926974532:cluster/zd-pvc-omer", style = "green", context_alias = "omerxx", symbol = " " },
+  { context_pattern = "arn:aws:eks:us-west-2:577926974532:cluster/zd-pvc-omer", style = "green", context_alias = "kamradsmeshnyavy", symbol = " " },
 ]
 
 [docker_context]
 disabled = true
 
-[palettes.catppuccin_mocha]
-rosewater = "#f5e0dc"
-flamingo = "#f2cdcd"
-pink = "#f5c2e7"
-mauve = "#cba6f7"
-red = "#f38ba8"
-maroon = "#eba0ac"
-peach = "#fab387"
-yellow = "#f9e2af"
-green = "#a6e3a1"
-teal = "#94e2d5"
-sky = "#89dceb"
-sapphire = "#74c7ec"
-blue = "#89b4fa"
-lavender = "#b4befe"
-text = "#cdd6f4"
-subtext1 = "#bac2de"
-subtext0 = "#a6adc8"
-overlay2 = "#9399b2"
-overlay1 = "#7f849c"
-overlay0 = "#6c7086"
-surface2 = "#585b70"
-surface1 = "#45475a"
-surface0 = "#313244"
-base = "#1e1e2e"
-mantle = "#181825"
-crust = "#11111b"
+[palettes.tokyonight]
+rosewater = "#f7768e"
+flamingo  = "#ff9e64"
+pink      = "#bb9af7"
+mauve     = "#9d7cd8"
+red       = "#f7768e"
+maroon    = "#db4b4b"
+peach     = "#ff9e64"
+yellow    = "#e0af68"
+green     = "#9ece6a"
+teal      = "#73daca"
+sky       = "#7dcfff"
+sapphire  = "#2ac3de"
+blue      = "#7aa2f7"
+lavender  = "#c0caf5"
+text      = "#c0caf5"
+subtext1  = "#a9b1d6"
+subtext0  = "#9aa5ce"
+overlay2  = "#737aa2"
+overlay1  = "#565f89"
+overlay0  = "#414868"
+surface2  = "#3b4261"
+surface1  = "#292e42"
+surface0  = "#24283b"
+base      = "#1f2335"
+mantle    = "#1a1b26"
+crust     = "#15161e"

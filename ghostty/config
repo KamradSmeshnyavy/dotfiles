@@ -1,10 +1,14 @@
 theme = tokyonight-moon
-font-size = 19
-font-family = "JetBrainsMono NFM Bold"
-background-blur-radius = 20
+title = " "
+font-size = 16
+#was 19
+font-family = "JetBrainsMono"
+background-blur-radius = 30
+#was 20
 mouse-hide-while-typing = true
 window-decoration = true
 # keybind = global:cmd+/=toggle_quick_terminal
 macos-option-as-alt = true
+window-show-tab-bar = never
 # background-opacity = 0.7
 # background-blur-radius = 20
