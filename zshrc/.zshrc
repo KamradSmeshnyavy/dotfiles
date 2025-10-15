@@ -122,6 +122,8 @@ alias nm="nmap -sC -sV -oN nmap"
 
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:${GOPATH}/bin:/Users/kamradsmeshnyavy/.cargo/bin
 
+
+
 alias cl='clear'
 
 # K8S
