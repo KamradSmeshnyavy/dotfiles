@@ -31,7 +31,7 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 #echo source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 
-
+# TODO: AWK
 # list of interesting commands
 # kill port --https://github.com/jkfran/killport --command killport
 # create QR with amzqr --https://github.com/x-hw/amazing-qr --command amzqr
@@ -232,9 +232,10 @@ export PATH="$PATH:/Users/kamradsmeshnyavy/.local/bin"
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 fi
+
 # Tmux
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-    tmux attach -t work-flow || tmux new -s work-flow
+   tmux attach -t work-flow || tmux new -s work-flow
 fi
 
 # Автозапуск Zellij
