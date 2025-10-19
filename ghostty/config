@@ -13,4 +13,4 @@ keybind = alt+right=unbind
 macos-option-as-alt = true
 window-show-tab-bar = never
 background-opacity = 1.0
-background-blur-radius = 30
+#background-blur-radius = 30
