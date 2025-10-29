@@ -13,15 +13,22 @@ lalt - j    : yabai -m window --focus south || yabai -m display --focus south
 lalt - k    : yabai -m window --focus north || yabai -m display --focus north
 lalt - l    : yabai -m window --focus east  || yabai -m display --focus east
 
+# cycle all windows on space backwards by coordinate
+alt - tab : yabai -m window --focus "$(yabai -m query --windows --space | jq -re "[sort_by(.id, .frame) | reverse | .[] | select(.role == \"AXWindow\" and .subrole == \"AXStandardWindow\") | .id] | nth(index($(yabai -m query --windows --window | jq -re ".id")) - 1)")"
+
+# cycle all windows on space backwards by coordinate
+shift + alt - tab : yabai -m window --focus "$(yabai -m query --windows --space | jq -re "[sort_by(.id, .frame) | .[] | select(.role == \"AXWindow\" and .subrole == \"AXStandardWindow\") | .id] | nth(index($(yabai -m query --windows --window | jq -re ".id")) - 1)")"
+
 # Extended Window Navigation: lalt - {;, '}
 lalt - 0x29 : yabai -m window --focus first
 lalt - 0x27 : yabai -m window --focus  last
 
 # Float / Unfloat window: lalt - space
-lalt - space : yabai -m window --toggle float
+lalt - space : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
 
 # Make window zoom to fullscreen: shift + lalt - f
-shift + lalt - f : yabai -m window --toggle zoom-fullscreen
+shift + lalt - f : yabai -m window --toggle zoom-fullscreen || yabai -m window --layer above
 
 # Make window zoom to parent node: lalt - f
 lalt - f : yabai -m window --toggle zoom-parent
@@ -98,3 +105,9 @@ lalt - v : yabai -m window --insert south; skhd -k "cmd - n"
 
 # Toggle sketchybar
 shift + lalt - space : sketchybar --bar hidden=toggle
+
+# hide all float windows in current space
+lalt + shift - 0x21 : /Users/kamradsmeshnyavy/dotfiles/yabai/scripts/hide-all-float.sh
+
+# TODO:grid resize
+# ctrl + lalt - 0x21 : /Users/kamradsmeshnyavy/dotfiles/yabai/scripts/grid-resize.sh
