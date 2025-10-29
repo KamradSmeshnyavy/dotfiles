@@ -96,6 +96,7 @@ alias ga='git add -p'
 alias gcoall='git checkout -- .'
 alias gr='git remote'
 alias gre='git reset'
+alias lzg='lazygit'
 
 # Docker
 alias dco="docker compose"
