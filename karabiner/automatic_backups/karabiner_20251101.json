@@ -148,10 +148,6 @@
                             "to": [{ "key_code": "right_shift" }]
                         }
                     ]
-                },
-                {
-                    "identifiers": { "is_keyboard": true },
-                    "ignore": true
                 }
             ],
             "name": "Default profile",
@@ -164,7 +160,7 @@
             ],
             "virtual_hid_keyboard": {
                 "country_code": 0,
-                "keyboard_type_v2": "ansi"
+                "keyboard_type_v2": "iso"
             }
         }
     ]
