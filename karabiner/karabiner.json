@@ -5,6 +5,7 @@
                 "rules": [
                     {
                         "description": "Change right_command+hjkl to arrow keys",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
@@ -54,6 +55,7 @@
                     },
                     {
                         "description": "Left ctrl + hjkl to arrow keys Vim",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
@@ -148,10 +150,6 @@
                             "to": [{ "key_code": "right_shift" }]
                         }
                     ]
-                },
-                {
-                    "identifiers": { "is_keyboard": true },
-                    "ignore": true
                 }
             ],
             "name": "Default profile",
