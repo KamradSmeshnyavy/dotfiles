@@ -143,14 +143,14 @@ local function moveMouseByFraction(xFrac, yFrac)
 end
 -- Directional movements
 local directions = {
-  {mod = {}, key = "h", frac = 1/80, dx = -1, dy = 0},
-  {mod = {}, key = "l", frac = 1/80, dx = 1, dy = 0},
-  {mod = {}, key = "j", frac = 1/80, dx = 0, dy = 1},
-  {mod = {}, key = "k", frac = 1/80, dx = 0, dy = -1},
-  {mod = {"shift"}, key = "h", frac = 1/8, dx = -1, dy = 0},
-  {mod = {"shift"}, key = "l", frac = 1/8, dx = 1, dy = 0},
-  {mod = {"shift"}, key = "j", frac = 1/8, dx = 0, dy = 1},
-  {mod = {"shift"}, key = "k", frac = 1/8, dx = 0, dy = -1},
+  {mod = {}, key = "h", frac = 1/8, dx = -1, dy = 0},
+  {mod = {}, key = "l", frac = 1/8, dx = 1, dy = 0},
+  {mod = {}, key = "j", frac = 1/8, dx = 0, dy = 1},
+  {mod = {}, key = "k", frac = 1/8, dx = 0, dy = -1},
+  {mod = {"shift"}, key = "h", frac = 1/2, dx = -1, dy = 0},
+  {mod = {"shift"}, key = "l", frac = 1/2, dx = 1, dy = 0},
+  {mod = {"shift"}, key = "j", frac = 1/2, dx = 0, dy = 1},
+  {mod = {"shift"}, key = "k", frac = 1/2, dx = 0, dy = -1},
 }
 for _, dir in ipairs(directions) do
   local xFrac, yFrac = dir.dx * dir.frac, dir.dy * dir.frac
@@ -416,10 +416,10 @@ modal:bind({"shift"}, "c", function()
     mode = "normal"
     hideVisualIndicator()
   end
-
+ 
   local vscodeBundleID = "com.microsoft.VSCode"
   local vscodeAppNames = {"Visual Studio Code", "Code"}  -- Support standard VSCode and possible alternatives like Insiders
-
+ 
   local function clickEditorArea(win)
     if win then
       win:raise()
@@ -429,13 +429,13 @@ modal:bind({"shift"}, "c", function()
       timer.doAfter(0.2, function() eventtap.leftClick(mouse.absolutePosition()) end)
     end
   end
-
+ 
   local runningApp = nil
   for _, name in ipairs(vscodeAppNames) do
     runningApp = app.get(name)
     if runningApp then break end
   end
-
+ 
   if runningApp then
     runningApp:unhide()
     local win = runningApp:mainWindow()
@@ -515,7 +515,8 @@ end)
 gResetTap:start()
 -- Browser shortcut (specific to Arc)
 modal:bind({}, "o", function()
-  local arcAppName = "Zen"
+  local arcBundleID = "company.thebrowser.Browser"
+  local arcAppName = "Arc"
 
   local function clickCenter(win)
     if win then
@@ -575,61 +576,52 @@ modal:bind({"ctrl"}, "c", function() modal:exit() end)
 -- Reload config
 hs.hotkey.bind({"alt"}, "r", function()
   hs.reload()
-  hs.alert("Reloaded!")
+  hs.alert("Reloaded")
 end)
-
-hs.alert.show("Reloaded")
-
--- -- Option-tap: cycle screens
--- local optionPressed, optionOtherKey = false, false
--- local function centerMouseOn(scr)
---   if not scr then return end
---   if dragging then
---     local win = window.focusedWindow()
---     if win then win:moveToScreen(scr) end
---   end
---   local f = scr:frame()
---   setMousePosition({ x = f.x + f.w / 2, y = f.y + f.h / 2 })
--- end
--- optionFlagsWatcher = eventtap.new({ eventtap.event.types.flagsChanged }, function(e)
---   local f = e:getFlags()
---   if f.alt and not optionPressed then
---     optionPressed = true
---     optionOtherKey = false
---   elseif not f.alt and optionPressed then
---     optionPressed = false
---     if not optionOtherKey then
---       local currentScr = mouse.getCurrentScreen()
---       local allScr = hs.screen.allScreens()
---       table.sort(allScr, function(a,b) return a:frame().x < b:frame().x end)
---       local currentIndex = 1
---       for i, s in ipairs(allScr) do
---         if s:id() == currentScr:id() then currentIndex = i; break end
---       end
---       local nextIndex = (currentIndex % #allScr) + 1
---       centerMouseOn(allScr[nextIndex])
---     end
---   end
--- end)
--- optionFlagsWatcher:start()
--- optionKeyWatcher = eventtap.new({ eventtap.event.types.keyDown }, function(e)
---   if optionPressed then optionOtherKey = true end
---   return false
--- end)
--- optionKeyWatcher:start()
+-- Option-tap: cycle screens
+local optionPressed, optionOtherKey = false, false
+local function centerMouseOn(scr)
+  if not scr then return end
+  if dragging then
+    local win = window.focusedWindow()
+    if win then win:moveToScreen(scr) end
+  end
+  local f = scr:frame()
+  setMousePosition({ x = f.x + f.w / 2, y = f.y + f.h / 2 })
+end
+optionFlagsWatcher = eventtap.new({ eventtap.event.types.flagsChanged }, function(e)
+  local f = e:getFlags()
+  if f.alt and not optionPressed then
+    optionPressed = true
+    optionOtherKey = false
+  elseif not f.alt and optionPressed then
+    optionPressed = false
+    if not optionOtherKey then
+      local currentScr = mouse.getCurrentScreen()
+      local allScr = hs.screen.allScreens()
+      table.sort(allScr, function(a,b) return a:frame().x < b:frame().x end)
+      local currentIndex = 1
+      for i, s in ipairs(allScr) do
+        if s:id() == currentScr:id() then currentIndex = i; break end
+      end
+      local nextIndex = (currentIndex % #allScr) + 1
+      centerMouseOn(allScr[nextIndex])
+    end
+  end
+end)
+optionFlagsWatcher:start()
+optionKeyWatcher = eventtap.new({ eventtap.event.types.keyDown }, function(e)
+  if optionPressed then optionOtherKey = true end
+  return false
+end)
+optionKeyWatcher:start()
 -- Control-tap: click bottom-right of VSCode's screen (Copilot area), or bottom-middle if VSCode not found
--- Control-tap: click bottom-right of VSCode's screen (Copilot area), or bottom-middle if VSCode not found
--- The following block was disabling normal Ctrl behavior by moving/clicking the mouse when Ctrl is tapped.
--- It is commented out to prevent Ctrl from moving the cursor to the bottom-right.
--- If you want to restore this behavior later, uncomment the block below.
-
---[[
 local ctrlPressed, ctrlOtherKey = false, false
 local function clickNextScreenBottomRight()
   local currentScr = mouse.getCurrentScreen()
   local targetScr = nil
   local isVSCodeActive = false
-
+ 
   -- Try to find VSCode and check if it's actually visible/active
   local vscodeApp = app.find("Visual Studio Code") or app.find("Code")
   if vscodeApp then
@@ -639,7 +631,7 @@ local function clickNextScreenBottomRight()
       isVSCodeActive = true
     end
   end
-
+ 
   -- If no active VSCode found, use next screen
   if not targetScr then
     local allScr = hs.screen.allScreens()
@@ -655,12 +647,12 @@ local function clickNextScreenBottomRight()
       targetScr = currentScr
     end
   end
-
+ 
   if dragging then
     local win = window.focusedWindow()
     if win then win:moveToScreen(targetScr) end
   end
-
+ 
   local f = targetScr:frame()
   local pos
   if isVSCodeActive then
@@ -670,7 +662,7 @@ local function clickNextScreenBottomRight()
     -- VSCode not active/visible: click bottom-middle
     pos = { x = f.x + f.w / 2, y = f.y + f.h - 100 }
   end
-
+ 
   setMousePosition(pos)
   if not dragging then eventtap.leftClick(pos) end
 end
@@ -690,6 +682,5 @@ ctrlKeyWatcher = eventtap.new({ eventtap.event.types.keyDown }, function(e)
   return false
 end)
 ctrlKeyWatcher:start()
---]]
 -- End of configuration.
 -- Credit: Artur Grochau – github.com/arturgrochau
