@@ -38,6 +38,10 @@ export TERM=xterm-256color
 
 source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 
+# # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
 # TODO: AWK
 # list of interesting commands
 # kill port --https://github.com/jkfran/killport --command killport
@@ -277,5 +281,4 @@ export EZA_CONFIG_DIR="~/.config/eza"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
