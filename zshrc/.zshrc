@@ -282,3 +282,5 @@ export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 
 
+
+export PATH=$PATH:/Users/kamradsmeshnyavy/.spicetify
