@@ -37,9 +37,9 @@ local icons = {
       router = "􁓤",
     },
     media = {
-      back = "􀊊",
-      forward = "􀊌",
-      play_pause = "􀊈",
+        back = "􀊄",       -- или другая иконка назад
+        forward = "􀊆",    -- или другая иконка вперед
+        play_pause = "􀊃", -- или другая иконка play/pause
     },
   },
 
@@ -80,9 +80,9 @@ local icons = {
       router = "Missing Icon"
     },
     media = {
-      back = "",
-      forward = "",
-      play_pause = "",
+    back = "",
+    forward = "",
+    play_pause = "",
     },
   },
 }

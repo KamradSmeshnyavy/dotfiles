@@ -24,26 +24,24 @@ local keyboard = sbar.add("item", "widgets.keyboard", {
     padding_left = 0,
     padding_right = settings.paddings,
   },
-  update_freq = 2,
+  update_freq = 1,
   background = {
-    color = colors.bg1,
-    border_color = colors.black,
-    border_width = 1,
-    height = 26,
+      color = colors.bg1,
+      height = 26,
   },
-  padding_left = 1,
+  padding_left = 0,
   padding_right = 1,
 })
 
--- Добавляем скобку для двойной границы
-sbar.add("bracket", "widgets.keyboard.bracket", { keyboard.name }, {
-  background = {
-    color = colors.transparent,
-    height = 28,
-    border_color = colors.grey,
-    border_width = 2,
-  }
-})
+-- -- Добавляем скобку для двойной границы
+-- sbar.add("bracket", "widgets.keyboard.bracket", { keyboard.name }, {
+--   background = {
+--     color = colors.transparent,
+--     height = 28,
+--     border_color = colors.grey,
+--     border_width = 2,
+--   }
+-- })
 
 -- Добавляем отступ
 sbar.add("item", "widgets.keyboard.padding", {
