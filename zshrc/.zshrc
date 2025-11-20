@@ -1,9 +1,9 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # Path to your oh-my-zsh installation.
 export ZSH='$HOME/.oh-my-zsh'
@@ -28,7 +28,8 @@ bindkey '^k' up-line-or-search
 bindkey '^j' down-line-or-search
 
 export export FUNCNEST=700
-export TERM=xterm-256color
+# export TERM=screen-256color
+# export TERM=xterm-256color
 
 
 # Starship or Powerlevel10k
@@ -37,9 +38,9 @@ export TERM=xterm-256color
 # export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
-
-# # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
 
 
 # TODO: AWK
@@ -50,9 +51,9 @@ source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
-export EDITOR=/run/current-system/sw/bin/nvim
+export EDITOR=/opt/homebrew/bin/nvim
 
-
+alias ping=gping
 alias la=tree
 alias cat=bat
 # fast update brew
@@ -83,12 +84,11 @@ alias sshx='export DISPLAY=:0.0 && open /Applications/Utilities/XQuartz.app && s
 # yazi
 export YAZI_CONFIG_HOME='/Users/kamradsmeshnyavy/.config/yazi'
 function yy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
 }
 
 # Git

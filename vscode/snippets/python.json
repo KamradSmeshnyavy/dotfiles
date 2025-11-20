@@ -1,0 +1,19 @@
+{
+   "Google-style Method Docstring": {
+        "prefix": "docstring",
+        "body": [
+            "\"\"\"${1:Short method description.}",
+            "",
+            "Args:",
+            "    ${2:param_name} (${3:type}): ${4:Parameter description.}",
+            "",
+            "Returns:",
+            "    ${5:type}: ${6:Return value description.}",
+            "",
+            "Note:",
+            "    ${7:Additional notes or important details.}",
+            "\"\"\"${0}"
+        ],
+        "description": "Generate a Google-style method docstring"
+    }
+}

@@ -189,7 +189,10 @@ keymap = [
 	{ on = [
 		":",
 	], run = "shell nu --block --confirm", desc = "Run a shell command (block the UI until the command finishes)" },
-	{ on = [
+		{ on = [
+		"'",
+	], run = "shell --block --interactive", desc = "Run a shell command with zsh (block the UI until the command finishes)" },
+  { on = [
 		".",
 	], run = "hidden toggle", desc = "Toggle the visibility of hidden files" },
 	{ on = [

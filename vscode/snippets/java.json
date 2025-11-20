@@ -1,0 +1,25 @@
+{
+	"psvm": {
+		"prefix": "main",
+		"body": [
+			"public static void main(String[] args) {",
+			"",
+			"}"
+		],
+		"description": "public static void main(String[] args)"
+	},
+	"sysout": {
+		"prefix": "sout",
+		"body": [
+			"System.out.println($1);"
+		],
+		"description": "System.out.println"
+	},
+	"Update Count in Map": {
+		"prefix": "mapcount",
+		"body": [
+			"${1:map}.merge(${2:key}, 1, Integer::sum);"
+		],
+		"description": "Update count in Map using merge"
+	}
+}

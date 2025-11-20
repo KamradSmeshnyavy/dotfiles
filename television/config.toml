@@ -1,0 +1,119 @@
+# ----------------------------------------------------------------------------
+tick_rate = 50
+default_channel = "files"
+
+# Set to 0 to disable history functionality entirely
+history_size = 200
+
+# Whether to use global history (default: false)
+# When true: history navigation shows entries from all channels
+# When false: history navigation is scoped to the current channel
+global_history = false
+
+[ui]
+# Whether to use nerd font icons in the UI
+# This option requires a font patched with Nerd Font in order to properly
+# display glyphs (see https://www.nerdfonts.com/ for more information)
+use_nerd_font_icons = false
+# How much space to allocate for the UI (in percentage of the screen)
+# ┌───────────────────────────────────────┐
+# │                                       │
+# │            Terminal screen            │
+# │    ┌─────────────────────────────┐    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │       Television UI         │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    │                             │    │
+# │    └─────────────────────────────┘    │
+# │                                       │
+# │                                       │
+# └───────────────────────────────────────┘
+ui_scale = 100
+
+# Where to place the input bar in the UI (top or bottom)
+input_bar_position = "top"
+# What orientation should tv be (landscape or portrait)
+orientation = "landscape"
+theme = "catppuccin"
+
+preview_size = 50
+
+[ui.features]
+preview_panel = { enabled = true, visible = true }
+help_panel = { enabled = true, visible = false }
+status_bar = { enabled = true, visible = true }
+remote_control = { enabled = true, visible = false }
+
+# Feature-specific configurations
+# Each feature can have its own configuration section
+[ui.status_bar]
+separator_open = ""
+separator_close = ""
+
+[ui.preview_panel]
+# Preview panel size (percentage of screen width/height)
+size = 50
+#header = "{}"
+#footer = ""
+scrollbar = true
+
+[ui.remote_control]
+# Whether to show channel descriptions in remote control mode
+show_channel_descriptions = true
+# Whether to sort channels alphabetically
+sort_alphabetically = true
+
+# Shell integration
+fallback_channel = "files"
+
+[shell_integration.channel_triggers]
+# Add your channel triggers here. Each key is a channel that will be triggered
+# by the corresponding commands.
+"alias" = ["alias", "unalias"]
+"env" = ["export", "unset"]
+"dirs" = ["cd", "ls", "rmdir", "z"]
+"files" = [
+  "cat",
+  "less",
+  "head",
+  "tail",
+  "vim",
+  "nano",
+  "bat",
+  "cp",
+  "mv",
+  "rm",
+  "touch",
+  "chmod",
+  "chown",
+  "ln",
+  "tar",
+  "zip",
+  "unzip",
+  "gzip",
+  "gunzip",
+  "xz",
+  "extract",
+]
+"git-diff" = ["git add", "git restore"]
+"git-branch" = [
+  "gsw",
+  "git checkout",
+  "git branch",
+  "git merge",
+  "git rebase",
+  "git pull",
+  "git push",
+]
+"git-log" = ["git log", "git show"]
+"docker-images" = ["docker run"]
+"git-repos" = ["nvim", "code", "hx", "git clone"]
+"procs" = ["kill", "procs", "caffeinate"]
+
+[shell_integration.keybindings]
+"smart_autocomplete" = "ctrl-t"
+"command_history" = "ctrl-r"

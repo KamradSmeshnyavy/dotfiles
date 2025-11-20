@@ -5,7 +5,7 @@ yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
 #testing autofocus. Options: off/autofocus/autoraise
 yabai -m config external_bar               all:40:0       \
-                mouse_follows_focus        off            \
+                mouse_follows_focus        on            \
                 focus_follows_mouse        autoraise      \
                 window_zoom_persist        off            \
                 window_placement           second_child   \

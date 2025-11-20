@@ -1,0 +1,153 @@
+notARepository: "skip" # one of: 'prompt' | 'create' | 'skip'
+promptToReturnFromSubprocess: false
+gui:
+  nerdFontsVersion: "3"
+  showIcons: true
+  showFileTree: true
+  scrollHeight: 10
+  scrollPastBottom: true
+  mouseEvents: true
+  skipDiscardChangeWarning: false
+  skipStashWarning: true
+  sidePanelWidth: 0.3333
+  expandFocusedSidePanel: true
+  enlargedSideViewLocation: top
+  mainPanelSplitMode: flexible
+  theme:
+    activeBorderColor:
+      - "#b4befe"
+      - bold
+    inactiveBorderColor:
+      - "#a6adc8"
+    optionsTextColor:
+      - "#89b4fa"
+    selectedLineBgColor:
+      - "#313244"
+    cherryPickedCommitBgColor:
+      - "#45475a"
+    cherryPickedCommitFgColor:
+      - "#b4befe"
+    unstagedChangesColor:
+      - "#f38ba8"
+    defaultFgColor:
+      - "#cdd6f4"
+    searchingActiveBorderColor:
+      - "#f9e2af"
+  authorColors:
+    "*": "#b4befe"
+  commitLength:
+    show: true
+  skipNoStagedFilesWarning: false
+  spinner:
+    # The frames of the spinner animation.
+    frames:
+      - "⣷ "
+      - "⣯ "
+      - "⣟ "
+      - "⡿ "
+      - "⢿ "
+      - "⣻ "
+      - "⣽ "
+      - "⣾ "
+    rate: 100
+  # portraitMode: always
+  # windowSize: half
+  statusPanelView: allBranchesLog
+  commandLogSize: 2
+  showRandomTip: false
+git:
+  pagers:
+    - colorArg: always
+      pager: "delta --dark --paging=never"
+  log:
+    showGraph: always
+    showWholeGraph: false
+  parseEmoji: true
+# Ref: https://github.com/jesseduffield/lazygit/wiki/Custom-Commands-Compendium
+customCommands:
+  # retrieved from: https://github.com/jesseduffield/lazygit/wiki/Custom-Commands-Compendium#conventional-commit
+  - key: "<c-v>"
+    context: "global"
+    description: "Create new conventional commit"
+    prompts:
+      - type: "menu"
+        key: "Type"
+        title: "Type of change"
+        options:
+          - name: "build"
+            description: "Changes that affect the build system or external dependencies"
+            value: "build"
+          - name: "feat"
+            description: "A new feature"
+            value: "feat"
+          - name: "fix"
+            description: "A bug fix"
+            value: "fix"
+          - name: "chore"
+            description: "Other changes that don't modify src or test files"
+            value: "chore"
+          - name: "ci"
+            description: "Changes to CI configuration files and scripts"
+            value: "ci"
+          - name: "docs"
+            description: "Documentation only changes"
+            value: "docs"
+          - name: "perf"
+            description: "A code change that improves performance"
+            value: "perf"
+          - name: "refactor"
+            description: "A code change that neither fixes a bug nor adds a feature"
+            value: "refactor"
+          - name: "revert"
+            description: "Reverts a previous commit"
+            value: "revert"
+          - name: "style"
+            description: "Changes that do not affect the meaning of the code"
+            value: "style"
+          - name: "test"
+            description: "Adding missing tests or correcting existing tests"
+            value: "test"
+      - type: "input"
+        title: "Scope"
+        key: "Scope"
+        initialValue: ""
+      - type: "menu"
+        key: "Breaking"
+        title: "Breaking change"
+        options:
+          - name: "no"
+            value: ""
+          - name: "yes"
+            value: "!"
+      - type: "input"
+        title: "message"
+        key: "Message"
+        initialValue: ""
+      - type: "confirm"
+        key: "Confirm"
+        title: "Commit"
+        body: "Are you sure you want to commit?"
+    command: "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'"
+    loadingText: "Creating conventional commit..."
+  - key: "<c-r>"
+    command: "gh pr create --fill --web"
+    context: "global"
+    loadingText: "Creating pull request on GitHub"
+  - key: t
+    command: tig {{.SelectedSubCommit.Sha}} -- {{.SelectedCommitFile.Name}}
+    context: commitFiles
+    description: tig file (history of commits affecting file)
+    output: terminal
+  - key: t
+    command: tig -- {{.SelectedFile.Name}}
+    context: files
+    description: tig file (history of commits affecting file)
+    output: terminal
+keybinding:
+  universal:
+    copyToClipboard: y
+    confirmInEditor: <c-d>
+os: # use nushell built-in cmd
+  editPreset: nvim
+  open: "start {{filename}}"
+  openLink: "start {{link}}"

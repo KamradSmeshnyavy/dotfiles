@@ -16,16 +16,12 @@ sort_sensitive = false
 [preview]
 cache_dir = ""
 image_filter = "triangle"
-image_quality = 85 #was 75
-# max_height = 3000
-# max_width = 3000
-max_width = 1200
-max_height = 800
-
+image_quality = 75
+max_height = 3000
+max_width = 3000
 tab_size = 2
 ueberzug_offset = [0, 0, 0, 0]
 ueberzug_scale = 1
-image = "kitty"
 
 [opener]
 edit = [
