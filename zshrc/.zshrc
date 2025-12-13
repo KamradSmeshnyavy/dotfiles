@@ -277,7 +277,6 @@ ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
 
 #update fzf
 source <(fzf --zsh)
-export EZA_CONFIG_DIR="~/.config/eza"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 
