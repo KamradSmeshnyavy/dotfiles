@@ -40,7 +40,7 @@ export export FUNCNEST=700
 source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
+[[ ! -f ${ZDOTDIR:-$HOME}/.p10k.zsh ]] || source ${ZDOTDIR:-$HOME}/.p10k.zsh
 
 
 # TODO: AWK
@@ -162,7 +162,7 @@ alias http="xh"
 bindkey jj vi-cmd-mode
 
 # eza
-export EZA_CONFIG_DIR=~/.config/eza
+export EZA_CONFIG_DIR=/Users/kamradsmeshnyavy/.config/eza      
 alias l="eza -l --icons --git -a"
 alias lt="eza --tree --level=2 --long --icons --git"
 alias ltree="eza --tree --level=2  --icons --git"
