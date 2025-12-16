@@ -179,8 +179,37 @@ alias fuzz='ffuf -w ~/hacking/SecLists/content_discovery_all.txt -mc all -u'
 alias gr='~/go/src/github.com/tomnomnom/gf/gf'
 
 ### FZF ###
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow'
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow'
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#
+
+
+if [ -f ~/.fzf.zsh ]; then
+
+  # After installing fzf with brew, you have to run the install script
+  # echo -e "y\ny\nn" | /opt/homebrew/opt/fzf/install
+
+  source ~/.fzf.zsh
+
+  # Preview file content using bat
+  export FZF_CTRL_T_OPTS="
+    --preview 'bat -n --color=always {}'
+    --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+
+  # Use :: as the trigger sequence instead of the default **
+  export FZF_COMPLETION_TRIGGER='::'
+  export FZF_DEFAULT_OPTS=" \
+  --color=bg+:#313244,bg:#1E1E2E,spinner:#F5E0DC,hl:#F38BA8 \
+  --color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC \
+  --color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8 \
+  --color=selected-bg:#45475A \
+  --color=border:#6C7086,label:#CDD6F4"
+
+  # Eldritch Colorscheme / theme
+  # https://github.com/eldritch-theme/fzf
+  # export FZF_DEFAULT_OPTS='--color=fg:#ebfafa,bg:#09090d,hl:#37f499 --color=fg+:#ebfafa,bg+:#0D1116,hl+:#37f499 --color=info:#04d1f9,prompt:#04d1f9,pointer:#7081d0 --color=marker:#7081d0,spinner:#f7c67f,header:#323449'
+fi
+
 
 
 
@@ -259,21 +288,24 @@ fi
   #fi
 #fi
 
-# zsh-syntax-highlighting
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-ZSH_HIGHLIGHT_STYLES[command]='fg=#82aaff'                 # blue
-ZSH_HIGHLIGHT_STYLES[alias]='fg=#ffcc00'                   # yellow
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=#c3e88d'                 # green
-ZSH_HIGHLIGHT_STYLES[function]='fg=#ffffcc'                # light yellow
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ff757f,bold'      # red
-ZSH_HIGHLIGHT_STYLES[separator]='fg=#828bb8'               # fg_dark
-ZSH_HIGHLIGHT_STYLES[argument]='fg=#c8d3f5'                # fg
-ZSH_HIGHLIGHT_STYLES[globbing]='fg=#ff966c'                # orange
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#fca7ea'  # purple
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#86e1fc'  # cyan
-ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=#65bcff' # blue1
-ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
+# # tokyonight
+# # zsh-syntax-highlighting
+# source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ZSH_HIGHLIGHT_STYLES[command]='fg=#82aaff'                 # blue
+# ZSH_HIGHLIGHT_STYLES[alias]='fg=#ffcc00'                   # yellow
+# ZSH_HIGHLIGHT_STYLES[builtin]='fg=#c3e88d'                 # green
+# ZSH_HIGHLIGHT_STYLES[function]='fg=#ffffcc'                # light yellow
+# ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ff757f,bold'      # red
+# ZSH_HIGHLIGHT_STYLES[separator]='fg=#828bb8'               # fg_dark
+# ZSH_HIGHLIGHT_STYLES[argument]='fg=#c8d3f5'                # fg
+# ZSH_HIGHLIGHT_STYLES[globbing]='fg=#ff966c'                # orange
+# ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#fca7ea'  # purple
+# ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#86e1fc'  # cyan
+# ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=#65bcff' # blue1
+# ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
 
+
+source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 
 
 #update fzf
 source <(fzf --zsh)
