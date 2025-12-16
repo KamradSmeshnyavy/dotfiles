@@ -18,5 +18,25 @@ use = "imsi32/yatline"
 rev = "88bd1c5"
 hash = "981acbe9b758b1af3a8154c932bb936d"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:mactag"
+rev = "19dc890"
+hash = "326eb39db39c855a1d564b777b810f05"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "19dc890"
+hash = "3996fc74044bc44144b323686f887e1"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:vcs-files"
+rev = "19dc890"
+hash = "4ee57085277d616acfa0ef1fef37dc00"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "19dc890"
+hash = "5b2eb0cc2050cec1e4de83cfa51a5b90"
+
 [flavor]
 deps = []

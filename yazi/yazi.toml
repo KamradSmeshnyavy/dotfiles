@@ -177,3 +177,13 @@ run = "git"
 id = "git"
 name = "*/"
 run = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "mactag"
+name = "*"
+run  = "mactag"
+
+[[plugin.prepend_fetchers]]
+id   = "mactag"
+name = "*/"
+run  = "mactag"
