@@ -38,5 +38,15 @@ use = "yazi-rs/plugins:chmod"
 rev = "19dc890"
 hash = "5b2eb0cc2050cec1e4de83cfa51a5b90"
 
+[[plugin.deps]]
+use = "Ape/reflink"
+rev = "7ecd36b"
+hash = "555a412745356f7ce1fd4777917bbfbf"
+
+[[plugin.deps]]
+use = "XYenon/clipboard"
+rev = "9089f90"
+hash = "e6efc609de1b617c7e8e98efd5286221"
+
 [flavor]
 deps = []

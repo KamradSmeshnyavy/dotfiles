@@ -739,3 +739,7 @@ desc = "Show Git file changes"
 on   = [ "c", "m" ]
 run  = "plugin chmod"
 desc = "Chmod on selected files"
+
+[[mgr.prepend_keymap]]
+on  = "Y"
+run = [ "yank", 'plugin clipboard -- --action=copy' ]
