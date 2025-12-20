@@ -268,6 +268,8 @@ export PATH=$PATH:~/.spoofdpi/bin
 
 # Created by `pipx` on 2025-09-13 12:59:56
 export PATH="$PATH:/Users/kamradsmeshnyavy/.local/bin"
+export PATH="$PATH:/Users/kamradsmeshnyavy/Library/Python/3.9/bin"
+
 
 # FPATH for alacritty(design kamrad)
 if type brew &>/dev/null; then
@@ -293,7 +295,7 @@ fi
 # source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # ZSH_HIGHLIGHT_STYLES[command]='fg=#82aaff'                 # blue
 # ZSH_HIGHLIGHT_STYLES[alias]='fg=#ffcc00'                   # yellow
-# ZSH_HIGHLIGHT_STYLES[builtin]='fg=#c3e88d'                 # green
+# ZSH_HIGHLIGHT_STYLES[builtin]='fg=#/Users/kamradsmeshnyavy/Library/Python/3.9/binc3e88d'                 # green
 # ZSH_HIGHLIGHT_STYLES[function]='fg=#ffffcc'                # light yellow
 # ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ff757f,bold'      # red
 # ZSH_HIGHLIGHT_STYLES[separator]='fg=#828bb8'               # fg_dark
@@ -315,3 +317,4 @@ export PATH="/opt/homebrew/bin:$PATH"
 
 
 export PATH=$PATH:/Users/kamradsmeshnyavy/.spicetify
+export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
