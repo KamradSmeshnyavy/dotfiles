@@ -1,7 +1,7 @@
 # User Configuration
 [user]
-	name = Efterklang
-	email = gaojiaxing2004@qq.com
+	name = KamradSmeshnyavy
+	email = ibragimovdenis36@gmail.com
 	useConfigOnly = true
 
 # Core Settings
@@ -94,5 +94,5 @@
 	insteadOf = gh:
 [url "https://github.com/"]
     insteadOf = ghh:
-[url "git@github.com:Efterklang/"]
+[url "git@github.com:KamradSmeshnyavy /"]
 	insteadOf = my:
