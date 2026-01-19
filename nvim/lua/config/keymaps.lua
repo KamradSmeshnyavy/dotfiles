@@ -25,3 +25,4 @@ map("n", "dd", '"+dd', { noremap = true, silent = true })
 map("n", "p", '"+p', { noremap = true, silent = true })
 
 vim.api.nvim_set_keymap("i", "jj", "<Esc>", { noremap = false })
+vim.api.nvim_set_keymap("i", "оо", "<Esc>", { noremap = false })
