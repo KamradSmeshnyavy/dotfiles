@@ -8,21 +8,33 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Enhanced right_cmd",
-                        "enabled": false,
+                        "description": "Right_cmd: Esc if alone, Delete if with Backspace",
                         "manipulators": [
                             {
+                                "description": "Right Command + Backspace = Delete",
+                                "from": {
+                                    "key_code": "delete_or_backspace",
+                                    "modifiers": {
+                                        "mandatory": ["right_command"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [{ "key_code": "delete_forward" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Right Command = Escape if alone, Command if held",
                                 "from": {
                                     "key_code": "right_command",
                                     "modifiers": { "optional": ["any"] }
                                 },
-                                "to": [{ "key_code": "left_control" }],
-                                "to_if_alone": [
+                                "to": [
                                     {
-                                        "key_code": "1",
-                                        "modifiers": ["right_alt"]
+                                        "key_code": "right_command",
+                                        "lazy": true
                                     }
                                 ],
+                                "to_if_alone": [{ "key_code": "escape" }],
                                 "type": "basic"
                             }
                         ]
