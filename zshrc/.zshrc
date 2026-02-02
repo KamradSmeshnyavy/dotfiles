@@ -91,6 +91,17 @@ function yy() {
     rm -f -- "$tmp"
 }
 
+# nnn 
+alias n="nnn"
+function nnn () {
+  command nnn "$@"
+
+  if [ -f "$NNN_TMPFILE" ]; then
+          . "$NNN_TMPFILE"
+  fi
+}
+export NNN_PLUG='f:finder;o:fzopen;p:mocq;d:diffs;t:nmount;v:imgview'
+
 # Git
 alias gc="git commit -m"
 alias gca="git commit -a -m"
@@ -127,7 +138,7 @@ alias ......="cd ../../../../.."
 export GOPATH='/Users/kamradsmeshnyavy/go'
 
 # VIM
-alias v="/run/current-system/sw/bin/nvim"
+alias v="/opt/homebrew/bin/nvim"
 
 # Nmap
 alias nm="nmap -sC -sV -oN nmap"
@@ -311,6 +322,7 @@ source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-high
 
 #update fzf
 source <(fzf --zsh)
+
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 
@@ -318,3 +330,5 @@ export PATH="/opt/homebrew/bin:$PATH"
 
 export PATH=$PATH:/Users/kamradsmeshnyavy/.spicetify
 export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
+
+eval "$(tv init zsh)"
