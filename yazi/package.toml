@@ -1,41 +1,36 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "1ab21d4"
-hash = "63b6c222bf2103b3023389dde5e2ecfe"
+rev = "da5b695"
+hash = "73788c7dc5827ef4677c502c3ea8fa19"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:max-preview"
-rev = "8ed2537"
+rev = "da5b695"
 hash = "9bc26d10d2f6e2aa93b10905b1b76979"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "8ed2537"
-hash = "c1a2739e9ef2d837030ccb4267be3ed1"
-
-[[plugin.deps]]
-use = "imsi32/yatline"
-rev = "88bd1c5"
-hash = "981acbe9b758b1af3a8154c932bb936d"
+rev = "da5b695"
+hash = "56fdabc96fc1f4d53c96eb884b02a5be"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mactag"
-rev = "19dc890"
-hash = "326eb39db39c855a1d564b777b810f05"
+rev = "1612f00"
+hash = "899fccc2e4caaebf4c2ce9a491cd2283"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "19dc890"
+rev = "1612f00"
 hash = "3996fc74044bc44144b323686f887e1"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:vcs-files"
-rev = "19dc890"
+rev = "1612f00"
 hash = "4ee57085277d616acfa0ef1fef37dc00"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "19dc890"
+rev = "1612f00"
 hash = "5b2eb0cc2050cec1e4de83cfa51a5b90"
 
 [[plugin.deps]]
@@ -48,5 +43,7 @@ use = "XYenon/clipboard"
 rev = "9089f90"
 hash = "e6efc609de1b617c7e8e98efd5286221"
 
-[flavor]
-deps = []
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "ca61658"
+hash = "8eabb4e88096f10905a6df62cfaadbf4"
