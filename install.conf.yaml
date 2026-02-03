@@ -1,0 +1,89 @@
+- defaults:
+    clean:
+      force: true
+    link:
+      create: true
+      relink: true
+      force: true
+    shell:
+      stdout: true
+      stderr: true
+      stdin: true
+- clean: ["~", "~/.config", "~/Library/Application Support"]
+- link:
+    ~/.config/atuin: tui_cli/atuin
+    ~/.config/bat: tui_cli/bat
+    ~/.config/btop: tui_cli/btop
+    ~/.config/carapace: tui_cli/carapace
+    ~/.config/cava: tui_cli/cava
+    ~/.config/dust: tui_cli/dust
+    ~/.config/fastfetch: tui_cli/fastfetch
+    ~/.config/scooter: tui_cli/scooter
+    ~/.config/rmpc: tui_cli/rmpc
+    ~/.config/git: ./tui_cli/git
+    ~/.config/ghostty: ./application/ghostty
+    ~/.config/helix: tui_cli/helix
+    ~/.config/kitty: ./application/kitty
+    ~/.config/lazygit: tui_cli/lazygit
+    ~/.config/lla: tui_cli/lla
+    ~/.config/nushell: shells/nushell
+    ~/.config/nvim: tui_cli/nvim
+    ~/.config/ohmyposh: tui_cli/ohmyposh
+    ~/.config/procs: tui_cli/procs
+    ~/.config/television: ./tui_cli/television
+    ~/.config/tig: ./tui_cli/tig
+    ~/.config/tmux: ./tui_cli/tmux
+    ~/.config/vscode/markdown-preview-enhanced: application/vscode/markdown-preview-enhanced
+    ~/.config/yazi: tui_cli/yazi
+    ~/.config/zellij: tui_cli/zellij
+    ~/.config/zsh: shells/zsh
+    ~/.config/fish: shells/fish
+    ~/.config/.markdownlint-cli2.yaml: ./misc/.markdownlint-cli2.yaml
+    ~/.config/mpd: ./tui_cli/mpd
+    ~/.config/starship.toml: ./tui_cli/starship.toml
+    ~/.local/share/TauonMusicBox/:
+      glob: true
+      path: application/tauon/**
+    # Windows specific configurations
+    ~/.config/scoop:
+      path: packages/scoop
+      if: ver
+    ~/.config/yasb:
+      path: application/yasb
+      if: ver
+    ~/.wslconfig:
+      path: misc/.wslconfig
+      if: ver
+    # MacOS specific configurations
+    ~/Library/LaunchAgents/env.xdg.plist:
+      path: ./misc/env.xdg.plist
+      if: "[ `uname` = Darwin ]"
+    ~/.config/borders:
+      path: application/borders
+      if: "[ `uname` = Darwin ]"
+    ~/.config/karabiner:
+      path: application/karabiner
+      if: "[ `uname` = Darwin ]"
+    ~/.config/sketchybar:
+      path: ./application/sketchybar
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/Code/User/settings.json:
+      path: application/vscode/settings.json
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/Code/User/keybindings.json:
+      path: application/vscode/keybindings.json
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/Code/User/snippets:
+      path: application/vscode/snippets
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/io.github.clash-verge-rev.clash-verge-rev/profiles/Script.js:
+      path: application/clash-verge-rev/profiles/Script.js
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/io.github.clash-verge-rev.clash-verge-rev/dns_config.yaml:
+      path: application/clash-verge-rev/dns_config.yaml
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/io.github.clash-verge-rev.clash-verge-rev/verge.yaml:
+      path: application/clash-verge-rev/verge.yaml
+      if: "[ `uname` = Darwin ]"
+- shell:
+    - [bat cache --build]

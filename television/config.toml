@@ -114,6 +114,9 @@ fallback_channel = "files"
 "git-repos" = ["nvim", "code", "hx", "git clone"]
 "procs" = ["kill", "procs", "caffeinate"]
 
+[keybindings]
+"alt-?" = "toggle_help"
+
 [shell_integration.keybindings]
 "smart_autocomplete" = "ctrl-t"
 "command_history" = "ctrl-r"

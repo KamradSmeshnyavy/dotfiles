@@ -181,8 +181,36 @@ $env.config = {
         mode: vi_normal
         event: { edit: MoveToEnd }
     }
+    # {
+    #   name: vi_insert_to_normal
+    #   modifier: none
+    #   keycode: char_j
+    #   mode: [vi_insert]
+    #   event: {
+    #     # Используйте этот синтаксис
+    #     until: [
+    #       { keycode: char_j } # Ожидает второе 'j'
+    #       { edit: insertchar, value: "j" } # Если второго 'j' нет, вставляет 'j'
+    #     ]
+    #   }
+    # }
   ]
 }
+
+
+# $env.config.keybindings ++= [{
+#     name: jj_to_normal_mode
+#     modifier: none
+#     keycode: char_j
+#     mode: vi_insert
+#     event: [
+#         { send: historyhintcomplete }
+#         { edit: insertstring value: "j" }
+#         { send: left }
+#         { edit: backspaceword }
+#         { send: esc }
+#     ]
+# }]
 
 # platform-releated configuration
 const window_module = if $nu.os-info.name == windows { "./platform/win.nu" } else { null }

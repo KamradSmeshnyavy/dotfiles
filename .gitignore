@@ -1,5 +1,23 @@
+*.log
+*.log.*
+history.txt
+**/state.yml
+**/state.json
+misc/yasb/*.py
+elevated-state.json
+lazy-lock.json
+*.bak
+# mac
+.DS_Store
+# chrome extension
+*.pak
+secret.toml
+application/karabiner/automatic_backups
+tui_cli/tmux/plugins
+shells/zsh/.zsh_history
 .DS_Store
 tmux/plugins/
 raycast
 fzf
 history.txt
+
