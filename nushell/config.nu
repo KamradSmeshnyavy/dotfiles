@@ -223,3 +223,4 @@ source ./plugins/plugins.nu
 source ./aliases/alias.nu
 source ./completions/completions.nu
 source ./themes/catppuccin-mocha.nu
+# source $"($nu.home-path)/.cargo/env.nu"
