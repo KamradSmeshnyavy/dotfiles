@@ -48,3 +48,16 @@ vim.keymap.set("n", "<leader>bx", function()
   local status = is_enabled and "OFF" or "ON"
   print("Diagnostics " .. status)
 end, { desc = "Toggle diagnostics in buffer" })
+
+if vim.g.neovide then
+  -- Функция для корректной вставки из системного буфера ("+ регистр)
+  local function paste()
+    vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+  end
+
+  -- Привязываем Cmd+V для всех основных режимов
+  vim.keymap.set({ "n", "i", "v", "c", "t" }, "<D-v>", paste, { silent = true, desc = "Paste from system clipboard" })
+
+  -- Опционально: привязываем Cmd+C для копирования в визуальном режиме
+  vim.keymap.set("v", "<D-c>", [["+y]], { desc = "Copy to system clipboard" })
+end
