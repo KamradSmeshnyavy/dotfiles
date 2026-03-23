@@ -332,3 +332,5 @@ export PATH=$PATH:/Users/kamradsmeshnyavy/.spicetify
 export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
 
 eval "$(tv init zsh)"
+
+alias qutebrowser='~/qutebrowser/.venv/bin/python3 -m qutebrowser --qt-arg webengine --widevine-path=$HOME/.local/share/qutebrowser/widevine'
