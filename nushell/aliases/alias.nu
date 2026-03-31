@@ -4,6 +4,49 @@ source ./ffmpeg.nu
 source ./obsidian.nu
 source ./mpd.nu
 
+# My custom aliases 
+
+# Переход в папку и просмотр содержимого
+def --env cx [path: path = "."] {
+    cd $path
+    ls
+}
+
+# Интерактивный поиск папки через fzf и переход в неё
+def --env fcd [] {
+    let dir = (fd --type d --hidden --exclude .git | fzf | str trim)
+    if ($dir | is-not-empty) {
+        cd $dir
+        ls
+    }
+}
+
+# Поиск файла и копирование пути в буфер обмена (macOS)
+def f [] {
+    let file = (fd --type f --hidden --exclude .git | fzf | str trim)
+    if ($file | is-not-empty) {
+        $file | pbcopy
+        echo $"Путь ($file) скопирован в буфер."
+    }
+}
+
+# Поиск файла и открытие его в nvim
+def fv [] {
+    let file = (fd --type f --hidden --exclude .git | fzf | str trim)
+    if ($file | is-not-empty) {
+        nvim $file
+    }
+}
+
+alias rm = rmt
+alias rmi = rmt --ti #info
+alias rmf = rmt --tf #flash
+alias rmd = rmt --td #GUI
+
+
+
+
+
 def --env yy [...args] {
   let tmp = (mktemp -t "yazi-cwd.XXXXXX")
   yazi ...$args --cwd-file $tmp

@@ -36,6 +36,7 @@ alias bi = brew install
 alias bui = brew uninstall
 alias bou = brew outdated 
 alias bu = brew upgrade
+alias buu = brew update; if $env.LAST_EXIT_CODE == 0 { brew upgrade }
 alias bua = brew-update-all
 alias rm_brewlock = rm -rf $"(brew --prefix)/var/homebrew/locks"
 
