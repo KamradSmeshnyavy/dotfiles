@@ -1,0 +1,16 @@
+/* Глобальные настройки для всех сайтов */
+html {
+    background-color: #1a1b26 !important;
+    color: #a9b1d6 !important;
+}
+/* Пример для улучшения ссылок */
+a {
+    color: #7aa2f7 !important;
+}
+a:visited {
+    color: #bb9af7 !important;
+}
+/* Изображения и видео не трогаем, чтобы не инвертировать */
+img, video {
+    filter: brightness(0.9) !important;
+}

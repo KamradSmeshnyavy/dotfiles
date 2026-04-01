@@ -33,9 +33,9 @@ end
 if is_enabled("volume") then
   safe_require("items.volume.volume")
 end
-if is_enabled("chat") then
-  safe_require("items.chat.qq_wechat")
-end
+-- if is_enabled("chat") then
+--   safe_require("items.chat.qq_wechat")
+-- end
 if is_enabled("brew") then
   safe_require("items.brew.brew")
 end
@@ -76,3 +76,4 @@ if is_enabled("battery") and is_enabled("brew") then
     },
   })
 end
+

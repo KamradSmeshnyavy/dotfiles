@@ -30,14 +30,16 @@ yabai -m config external_bar all:40:0 \
   right_padding 8 \
   window_gap 10
 
+yabai -m config layout bsp
+
 # Exclude problematic apps from being managed:
-yabai -m rule --add app="^(Ghidra|Terminal|LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|Python|LibreOffice|App Store|Steam|Alfred|Activity Monitor)$" manage=off
+yabai -m rule --add app="^(AmneziaVPN|Ghidra|Terminal|LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|Python|LibreOffice|App Store|Steam|Alfred|Activity Monitor)$" manage=off
 yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
 yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
-yabai -m config layout bsp
+# yabai -m config layout bsp
 
 yabai -m rule --add app="Telegram" space=3
 yabai -m rule --add app="Spotify" space=3

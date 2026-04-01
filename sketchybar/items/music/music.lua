@@ -23,6 +23,7 @@ local DELAY_TIME = 0.2
 local music_anchor = SBAR.add("item", "music.anchor", {
   position = "right",
   update_freq = 1,
+  scroll_texts = false,
   padding_right = PADDINGS + 6,
   icon = {
     string = "􁁒",
@@ -57,6 +58,7 @@ local albumart = SBAR.add("item", "music.cover", {
 
 local track_title = SBAR.add("item", "music.title", {
   position = popup_position,
+  scroll_texts = false,
   icon = { drawing = false },
   padding_left = 0,
   padding_right = 0,
@@ -74,6 +76,7 @@ local track_title = SBAR.add("item", "music.title", {
 
 local track_artist = SBAR.add("item", "music.artist", {
   position = popup_position,
+  scroll_texts = false,
   icon = { drawing = false },
   y_offset = 50 + Y_OFFSET,
   padding_left = 0,
@@ -89,6 +92,7 @@ local track_artist = SBAR.add("item", "music.artist", {
 
 local track_album = SBAR.add("item", "music.album", {
   position = popup_position,
+  scroll_texts = false,
   icon = { drawing = false },
   padding_left = 0,
   padding_right = 0,

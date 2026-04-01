@@ -12,6 +12,8 @@ confirm-close-surface=false
 # font-family
 font-family = RecMonoCasual Nerd Font
 font-family = Maple Mono NF CN
+# font-family = "JetBrainsMono Nerd Font"
+font-size = 16
 window-title-font-family = Maple Mono NF CN
 # ss01: != and ===
 font-feature = "ss01"

@@ -11,7 +11,7 @@ local icons = {
   wechat = "󰘑",
   brew = "􀐛",
   brew_check = "􀆅",
-
+  telegram = "󰘑",
   switch = {
     on = "􁏮",
     off = "􁏯",
