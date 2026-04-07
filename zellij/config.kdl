@@ -62,13 +62,23 @@ keybinds clear-defaults=true {
                 floating true
                 close_on_exit true
                 cwd "."
-            }
+                width "80%"
+                height "70%"
+                // Настройка положения (чтобы было по центру: (100-80)/2 = 10)
+                x "10%"
+                y "15%"
+               }
         }
         bind "Alt ," {
             Run "jolt" {
                 floating true
                 close_on_exit true
                 cwd "."
+                width "80%"
+                height "70%"
+                // Настройка положения (чтобы было по центру: (100-80)/2 = 10)
+                x "10%"
+                y "15%"
             }
         }
         bind "Alt ." {
@@ -76,6 +86,11 @@ keybinds clear-defaults=true {
                 floating true
                 close_on_exit true
                 cwd "."
+                width "80%"
+                height "70%"
+                // Настройка положения (чтобы было по центру: (100-80)/2 = 10)
+                x "10%"
+                y "15%"
             }
         }
     }
@@ -89,16 +104,24 @@ keybinds clear-defaults=true {
         bind "k" { MoveFocus "up"; SwitchToMode "normal"; }
         bind "l" { MoveFocus "right"; SwitchToMode "normal"; }
         bind "p" { SwitchFocus; SwitchToMode "normal"; }
-        bind "o" { FocusNextPane; SwitchToMode "normal"; }
-        bind "s" { NewPane "right"; SwitchToMode "normal"; }
-        bind "v" { NewPane "down"; SwitchToMode "normal"; }
+        // bind "o" { FocusNextPane; SwitchToMode "normal"; }
+        // bind "s" { NewPane "right"; SwitchToMode "normal"; }
+        // bind "v" { NewPane "down"; SwitchToMode "normal"; }
+        bind "n" { NewPane; SwitchToMode "Normal"; }
+        bind "d" { NewPane "Down"; SwitchToMode "Normal"; }
+        bind "r" { NewPane "Right"; SwitchToMode "Normal"; }
+        bind "s" { NewPane "stacked"; SwitchToMode "Normal"; }
+
         bind "x" { CloseFocus; SwitchToMode "normal"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "normal"; }
         bind "S" { ToggleActiveSyncTab; SwitchToMode "normal"; }
         bind "i" { TogglePaneFrames; SwitchToMode "normal"; }
         bind "t" { SwitchToMode "move"; }
-        bind "r" { SwitchToMode "renamepane"; PaneNameInput 0; }
-        bind "w" { ToggleFloatingPanes; }
+        bind "R" { SwitchToMode "renamepane"; PaneNameInput 0; }
+        // bind "w" { ToggleFloatingPanes; }
+        bind "w" { ToggleFloatingPanes; SwitchToMode "Normal"; }
+        bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Normal"; }
+        bind "P" { TogglePanePinned; SwitchToMode "Normal"; }
 
         // tmux arrows in PANE_MODE: swap with adjacent
         bind "Left" { MovePane "left"; }
@@ -125,12 +148,12 @@ keybinds clear-defaults=true {
         bind "Enter" "Esc" { SwitchToMode "normal"; }
 
         // tmux WINDOW_MODE
-        bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
         bind "h" "k" "Up" { GoToPreviousTab; SwitchToMode "normal"; }
         bind "l" "j" "Down" { GoToNextTab; SwitchToMode "normal"; }
         bind "n" { NewTab; SwitchToMode "normal"; }
         bind "x" { CloseTab; SwitchToMode "normal"; }
-        bind "s" { ToggleActiveSyncTab; SwitchToMode "normal"; }
+        bind "S" { ToggleActiveSyncTab; SwitchToMode "normal"; }
         bind "a" { ToggleTab; SwitchToMode "normal"; }
         bind "b" { BreakPane; SwitchToMode "normal"; }
         bind "]" { BreakPaneRight; SwitchToMode "normal"; }
@@ -161,6 +184,7 @@ keybinds clear-defaults=true {
         bind "L" { Resize "decrease right"; }
         bind "=" "+" { Resize "increase"; }
         bind "z" { ToggleFocusFullscreen; }
+        bind "-" { Resize "Decrease"; }
 
         // tmux arrows in RESIZE_MODE: swap panes
         bind "Left" { MovePane "left"; }
@@ -253,6 +277,14 @@ keybinds clear-defaults=true {
             };
             SwitchToMode "Normal"
         }
+        bind "p" {
+            LaunchOrFocusPlugin "plugin-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "Normal"
+        }
+ 
     }
 
     shared_except "locked" {
