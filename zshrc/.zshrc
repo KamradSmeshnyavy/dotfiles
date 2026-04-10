@@ -8,14 +8,19 @@
 # Path to your oh-my-zsh installation.
 export ZSH='$HOME/.oh-my-zsh'
 export SHELL=/bin/zsh
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # Reevaluate the prompt string each time it's displaying a prompt
 setopt prompt_subst
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit
 compinit
-source <(kubectl completion zsh)
-complete -C '/usr/local/bin/aws_completer' aws
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion zsh)
+fi
+if [[ -x /usr/local/bin/aws_completer ]]; then
+  complete -C '/usr/local/bin/aws_completer' aws
+fi
 
 #eval "$(brew shellenv)"
 
@@ -29,7 +34,7 @@ bindkey '^j' down-line-or-search
 bindkey '^p' up-line-or-history
 bindkey '^n' down-line-or-history
 
-export export FUNCNEST=700
+export FUNCNEST=700
 # export TERM=screen-256color
 # export TERM=xterm-256color
 
@@ -39,7 +44,11 @@ export export FUNCNEST=700
 # eval "$(starship init zsh)"
 # export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
-source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
+if command -v brew >/dev/null 2>&1 && [[ -f "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme"
+elif [[ -f /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [[ ! -f ${ZDOTDIR:-$HOME}/.p10k.zsh ]] || source ${ZDOTDIR:-$HOME}/.p10k.zsh
@@ -145,7 +154,7 @@ alias v="/opt/homebrew/bin/nvim"
 # Nmap
 alias nm="nmap -sC -sV -oN nmap"
 
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:${GOPATH}/bin:/Users/kamradsmeshnyavy/.cargo/bin
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:${GOPATH}/bin:/Users/kamradsmeshnyavy/.cargo/bin:$PATH"
 
 
 
@@ -225,8 +234,6 @@ fi
 
 
 
-
-export PATH=/opt/homebrew/bin:$PATH
 
 alias mat='osascript -e "tell application \"System Events\" to key code 126 using {command down}" && tmux neww "cmatrix"'
 
