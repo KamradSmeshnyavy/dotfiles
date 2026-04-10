@@ -9,6 +9,8 @@
 
 For installation instructions, refer to [docs/INSTALL.md](docs/INSTALL.md)
 
+For Nix/Lix migration in this repository, see [nix-darwin/README.md](nix-darwin/README.md)
+
 - [VSCode](#vscode)
 - [Music Player](#music-player)
 - [Bar](#bar)

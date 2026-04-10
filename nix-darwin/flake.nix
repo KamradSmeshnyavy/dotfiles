@@ -1,118 +1,47 @@
 {
-  description = "My Darwin system flake";
+  description = "kamradsmeshnyavy dotfiles on nix-darwin + home-manager + brew";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    #home-manager = {
-    #  url = "github:nix-community/home-manager";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
+
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs }:
-  let
-    configuration = { pkgs, ... }: {
-      # List packages installed in system profile. To search by name, run:
-      # $ nix-env -qaP | grep wget
-      environment.systemPackages =
-      [
-        pkgs.vim
-        pkgs.direnv
-        pkgs.sshs
-        pkgs.glow
-        pkgs.nushell
-        pkgs.carapace
-        pkgs.neovim
+  outputs = inputs@{ nixpkgs, nix-darwin, home-manager, ... }:
+    let
+      system = "aarch64-darwin";
+      username = "kamradsmeshnyavy";
+      hostname = "MacBook-Pro-Denis";
+      dotfilesRoot = "/Users/${username}/dotfiles";
 
-        # LSP серверы
-        pkgs.nodejs_20
-        pkgs.gopls
-        pkgs.yaml-language-server
-        pkgs.nodePackages.dockerfile-language-server-nodejs
-        pkgs.nodePackages.vscode-langservers-extracted
+      specialArgs = {
+        inherit inputs username hostname dotfilesRoot;
+      };
+    in
+    {
+      darwinConfigurations.${hostname} = nix-darwin.lib.darwinSystem {
+        inherit system specialArgs;
 
-        # Инструменты для Neovim
-        pkgs.tree-sitter          # для treesitter-cli
-        pkgs.ghostscript          # для snacks (gs)
-        pkgs.tectonic             # для LaTeX в snacks
-        pkgs.nodePackages.mermaid-cli  # для mmdc в snacks
-        pkgs.fd                   # современная версия fd
-        pkgs.luarocks
-        # Полезные утилиты
-        pkgs.ripgrep
-        pkgs.fzf
-        pkgs.bat
-        pkgs.lazygit
-        #pkgs.kubectl
-        #pkgs.kubelogin
-        #pkgs.starship
-        #pkgs.zsh-autosuggestions
-        #pkgs.zsh-syntax-highlighting
-
-
-
-
-      ];
-
-      #services.nix-daemon.enable = true; # old nix
-      nix.enable = true;
-
-      nix.settings.experimental-features = "nix-command flakes";
-      #system settings
-      programs.zsh.enable = true;  # default shell on catalina
-      system.configurationRevision = self.rev or self.dirtyRev or null;
-      system.stateVersion = 4;
-      nixpkgs.hostPlatform = "aarch64-darwin";
-      security.pam.services.sudo_local.touchIdAuth = true;
-
-      # ВАЖНО: Исправить GID mismatch
-      ids.gids.nixbld = 350;
-
-
-      users.users.kamradsmeshnyavy.home = "/Users/kamradsmeshnyavy";
-      #home-manager.backupFileExtension = "backup";
-
-      system.primaryUser = "kamradsmeshnyavy";
-      #nix.configureBuildUsers = true; # old nix
-      #nix.useDaemon = true; # old nix
-
-      system.defaults = {
-        dock.autohide = true;
-        dock.mru-spaces = false;
-        finder.AppleShowAllExtensions = true;
-        finder.FXPreferredViewStyle = "clmv";
-        loginwindow.LoginwindowText = "kamradsmeshnyavy-create";
-        screencapture.location = "~/Pictures/screenshots";
-        screensaver.askForPasswordDelay = 10;
+        modules = [
+          ./hosts/darwin
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
+            home-manager.users.${username} = import ./home;
+          }
+        ];
       };
 
-      # Homebrew needs to be installed on its own!
-      homebrew.enable = true;
-      homebrew.casks = [
-	            "wireshark"
-              "google-chrome"
-      ];
-      homebrew.brews = [
-	       "imagemagick"
-      ];
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
     };
-  in
-  {
-    darwinConfigurations."MacBook-Pro-Denis" = nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
-      modules = [
-	  configuration
-#        home-manager.darwinModules.home-manager {
-#          home-manager.useGlobalPkgs = true;
-#          home-manager.useUserPackages = true;
-#          home-manager.users.kamradsmeshnyavy = import ./home.nix;
-#        }
-      ];
-    };
-
-    # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."MacBook-Pro-Denis".pkgs;
-  };
 }

@@ -330,7 +330,7 @@ ui {
 theme "ctp"
 mouse_mode true
 auto_layout true
-default_layout "default"
+// default_layout "default"
 copy_clipboard "system"
 copy_on_select true
 session_name "main"
