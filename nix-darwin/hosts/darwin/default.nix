@@ -41,13 +41,12 @@
     enable = true;
 
     onActivation = {
-      autoUpdate = true;
-      cleanup = "zap";
-      upgrade = true;
+      autoUpdate = false;
+      cleanup = "none";
+      upgrade = false;
     };
 
     brews = [
-      "mas"
       "imagemagick"
     ];
 
