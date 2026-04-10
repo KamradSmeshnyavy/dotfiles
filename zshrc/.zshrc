@@ -26,6 +26,8 @@ bindkey '^u' autosuggest-toggle
 bindkey '^L' vi-forward-word
 bindkey '^k' up-line-or-search
 bindkey '^j' down-line-or-search
+bindkey '^p' up-line-or-history
+bindkey '^n' down-line-or-history
 
 export export FUNCNEST=700
 # export TERM=screen-256color
@@ -258,13 +260,7 @@ fcd() { cd "$(find . -type d -not -path '*/.*' | fzf)" && l; }
 f() { echo "$(find . -type f -not -path '*/.*' | fzf)" | pbcopy }
 fv() { nvim "$(find . -type f -not -path '*/.*' | fzf)" }
 
- # Nix
- if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-	 . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
- fi
- # End Nix
-
-export XDG_CONFIG_HOME="/Users/kamradsmeshnyavy/.config"
+ export XDG_CONFIG_HOME="/Users/kamradsmeshnyavy/.config"
 
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
@@ -334,3 +330,11 @@ export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
 eval "$(tv init zsh)"
 
 alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser' 
+
+# Nix
+ if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+	 . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+ fi
+ # End Nix
+
+export PATH=/Users/kamradsmeshnyavy/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/Users/kamradsmeshnyavy/.npm-global/bin:/Users/kamradsmeshnyavy/.pyenv/shims:/Users/kamradsmeshnyavy/.nix-profile/bin:/run/current-system/sw/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:/Users/kamradsmeshnyavy/go/bin:/Users/kamradsmeshnyavy/.cargo/bin:/opt/homebrew/opt/fzf/bin:/Users/kamradsmeshnyavy/.spoofdpi/bin:/Users/kamradsmeshnyavy/.local/bin:/Users/kamradsmeshnyavy/Library/Python/3.9/bin:/Users/kamradsmeshnyavy/.spicetify:/opt/homebrew/opt/postgresql@15/bin:/Applications/Ghostty.app/Contents/MacOS
