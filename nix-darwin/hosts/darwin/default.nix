@@ -9,6 +9,10 @@
     warn-dirty = false;
   };
 
+  # Avoid legacy channel lookup warnings such as:
+  # /nix/var/nix/profiles/per-user/root/channels does not exist
+  nix.nixPath = [ ];
+
   nix.package = pkgs.lixPackageSets.stable.lix;
 
   programs.zsh.enable = true;
