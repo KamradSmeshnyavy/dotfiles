@@ -16,6 +16,10 @@
   users.users.${username}.home = "/Users/${username}";
   system.primaryUser = username;
 
+  # Fix for existing Nix installation where nixbld group is already created.
+  # Prevents: "Build user group has mismatching GID" during activation.
+  ids.gids.nixbld = 350;
+
   security.pam.services.sudo_local.touchIdAuth = true;
 
   environment.systemPackages = with pkgs; [
