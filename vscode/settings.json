@@ -60,10 +60,12 @@
     "workbench.layoutControl.enabled": false,
     "workbench.editorAssociations": {
         "*.copilotmd": "vscode.markdown.preview.editor",
+        "{hexdiff}:/**/*.*": "hexEditor.hexedit",
         "*.png": "imagePreview.previewEditor",
         "*.md": "default",
         "*.svg": "hediet.vscode-drawio-text",
-        "{git,git-graph}:/**/*.{md,csv,svg}": "default"
+        "{git,git-graph}:/**/*.{md,csv,svg}": "default",
+        "*.pdf": "pdf.preview"
     },
     "workbench.productIconTheme": "fluent-icons",
     // * ╭───────────────────────────────────────────────────────╮
@@ -127,7 +129,6 @@
         "workbench.action.focusAuxiliaryBar",
         "workbench.files.action.focusFilesExplorer"
     ],
-    "terminal.integrated.fontSize": 13,
     "terminal.integrated.copyOnSelection": true,
     "terminal.integrated.allowMnemonics": true,
     "terminal.integrated.hideOnStartup": "always",
@@ -136,7 +137,7 @@
     "terminal.integrated.fontFamily": "maple mono nf, monaspace radon Var, JetBrainsMono Nerd Font Mono,Segoe UI Variable",
     "terminal.integrated.lineHeight": 1.0,
     "terminal.integrated.fontWeight": "650",
-    "terminal.integrated.defaultProfile.osx": "nu",
+    "terminal.integrated.defaultProfile.osx": "zsh",
     "terminal.integrated.defaultProfile.windows": "nu",
     "terminal.integrated.smoothScrolling": true,
     "terminal.integrated.customGlyphs": true,
@@ -176,13 +177,24 @@
         "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
         "*.jsx": "${capture}.js",
         "*.tsx": "${capture}.ts",
-        "_config.yml": "_config*.yml, gulpfile.js",
         "tsconfig.json": "tsconfig.*.json",
-        "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock"
+        "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock",
+        "_config.yml": "_config*.yml, gulpfile.js",
+        "*.sqlite": "${capture}.${extname}-*",
+        "*.db": "${capture}.${extname}-*",
+        "*.sqlite3": "${capture}.${extname}-*",
+        "*.db3": "${capture}.${extname}-*",
+        "*.sdb": "${capture}.${extname}-*",
+        "*.s3db": "${capture}.${extname}-*"
     },
     // #region Files
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 500,
+    // "files.autoSave": "afterDelay",
+    // "files.autoSaveDelay": 500,
+    // "files.associations": {
+    //     "*.json": "jsonc"
+    // #region Files
+    "files.autoSave": "off",
+    // "files.autoSaveDelay": 500,
     "files.associations": {
         "*.json": "jsonc"
     },
@@ -267,8 +279,8 @@
         "Tabs": 200
     },
     "custom-ui-style.external.imports": [
-        "file:///Users/kamradsmeshnyavy/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
-        "file:///Users/kamradsmeshnyavy/Projects/dotfiles/application/vscode/custom.css"
+        "file:///Users/kamradsmeshnyavy/Projects/dotfiles/application/vscode/custom.css",
+        "file:///Users/kamradsmeshnyavy/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js"
     ],
     // "custom-ui-style.external.loadStrategy": "cache",
     // * ╭───────────────────────────────────────────────────────╮
@@ -317,19 +329,30 @@
     // * ╰───────────────────────────────────────────────────────╯
     "better-comments.tags": [
         {
-            "tag": [ "╭", "│", "╰", "*" ],
+            "tag": [
+                "╭",
+                "│",
+                "╰",
+                "*"
+            ],
             "color": "#b4befe",
             "bold": true
         },
         {
-            "tag": [ "TODO", "Note" ],
+            "tag": [
+                "TODO",
+                "Note"
+            ],
             "color": "#1e1e2e",
             "strikethrough": false,
             "bold": true,
             "backgroundColor": "#f9e2af",
         },
         {
-            "tag": [ "#region", "#endregion" ],
+            "tag": [
+                "#region",
+                "#endregion"
+            ],
             "color": "#1e1e2e",
             "strikethrough": false,
             "bold": true,
@@ -346,7 +369,7 @@
     "errorLens.gutterIconsEnabled": true,
     "errorLens.fontFamily": "Maple Mono NF",
     "errorLens.fontWeight": "100",
-    "leetcode.endpoint": "leetcode-en",
+    "leetcode.endpoint": "leetcode",
     "leetcode.nodePath": "/opt/homebrew/bin/node",
     "leetcode.workspaceFolder": "/Users/kamradsmeshnyavy/Projects/code_draft/leetcode",
     "leetcode.defaultLanguage": "python3",
@@ -504,6 +527,12 @@
     // * │                    VSCode Vim                         │
     // * ╰───────────────────────────────────────────────────────╯
     // #region VSCode Vim
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [ "j", "j" ],
+            "after": [ "<Esc>" ]
+        }
+    ],
     "vim.leader": "=",
     "vim.easymotion": true,
     "vim.easymotionDimBackground": true,
@@ -525,129 +554,244 @@
     "vim.visualstar": true,
     "vim.normalModeKeyBindings": [
         {
-            "before": [ "x" ],
-            "commands": [ "workbench.action.closeActiveEditor" ]
+            "before": [
+                "x"
+            ],
+            "commands": [
+                "workbench.action.closeActiveEditor"
+            ]
         },
         {
-            "before": [ "s" ],
-            "after": [ "<leader>", "<leader>", "/" ]
+            "before": [
+                "s"
+            ],
+            "after": [
+                "<leader>",
+                "<leader>",
+                "/"
+            ]
         },
         {
-            "before": [ "f" ],
-            "after": [ "<leader>", "<leader>", "f" ]
+            "before": [
+                "f"
+            ],
+            "after": [
+                "<leader>",
+                "<leader>",
+                "f"
+            ]
         },
         {
-            "before": [ "F" ],
-            "after": [ "<leader>", "<leader>", "F" ]
+            "before": [
+                "F"
+            ],
+            "after": [
+                "<leader>",
+                "<leader>",
+                "F"
+            ]
         },
         {
-            "before": [ "<space>" ],
-            "commands": [ "whichkey.show" ],
+            "before": [
+                "<space>"
+            ],
+            "commands": [
+                "whichkey.show"
+            ],
             "silent": true
         },
         {
-            "before": [ "enter" ],
-            "commands": [ "lineBreakInsert" ]
+            "before": [
+                "enter"
+            ],
+            "commands": [
+                "lineBreakInsert"
+            ]
         },
         {
-            "before": [ "K" ],
-            "commands": [ "editor.action.showHover" ]
+            "before": [
+                "K"
+            ],
+            "commands": [
+                "editor.action.showHover"
+            ]
         },
         // 转到定义
         {
-            "before": [ "g", "d" ],
-            "commands": [ "editor.action.revealDefinition" ]
+            "before": [
+                "g",
+                "d"
+            ],
+            "commands": [
+                "editor.action.revealDefinition"
+            ]
         },
         // 转到引用
         {
-            "before": [ "g", "r" ],
-            "commands": [ "editor.action.goToReferences" ]
+            "before": [
+                "g",
+                "r"
+            ],
+            "commands": [
+                "editor.action.goToReferences"
+            ]
         },
         // Перейти к реализации
         {
-            "before": [ "g", "i" ],
-            "commands": [ "editor.action.goToImplementation" ]
+            "before": [
+                "g",
+                "i"
+            ],
+            "commands": [
+                "editor.action.goToImplementation"
+            ]
         },
         // 回退到上一个位置
         {
-            "before": [ "g", "b" ],
-            "commands": [ "workbench.action.navigateBack" ]
+            "before": [
+                "g",
+                "b"
+            ],
+            "commands": [
+                "workbench.action.navigateBack"
+            ]
         },
         {
-            "before": [ "X" ],
-            "commands": [ "workbench.action.closeAllEditors" ]
+            "before": [
+                "X"
+            ],
+            "commands": [
+                "workbench.action.closeAllEditors"
+            ]
         },
         {
-            "before": [ "H" ],
-            "commands": [ "workbench.action.navigateBack" ]
+            "before": [
+                "H"
+            ],
+            "commands": [
+                "workbench.action.navigateBack"
+            ]
         },
         {
-            "before": [ "L" ],
-            "commands": [ "workbench.action.navigateForward" ]
+            "before": [
+                "L"
+            ],
+            "commands": [
+                "workbench.action.navigateForward"
+            ]
         },
         {
-            "before": [ ">" ],
-            "commands": [ "editor.action.indentLines" ]
+            "before": [
+                ">"
+            ],
+            "commands": [
+                "editor.action.indentLines"
+            ]
         },
         {
-            "before": [ "<" ],
-            "commands": [ "editor.action.outdentLines" ]
+            "before": [
+                "<"
+            ],
+            "commands": [
+                "editor.action.outdentLines"
+            ]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
         {
-            "before": [ "<space>" ],
-            "commands": [ "whichkey.show" ],
+            "before": [
+                "<space>"
+            ],
+            "commands": [
+                "whichkey.show"
+            ],
             "silent": true
         }
     ],
     "vim.visualModeKeyBindings": [
         {
-            "before": [ "<space>" ],
-            "commands": [ "whichkey.show" ],
+            "before": [
+                "<space>"
+            ],
+            "commands": [
+                "whichkey.show"
+            ],
             "silent": true
         },
         // format selection
         {
-            "before": [ "/" ],
-            "commands": [ "actions.findWithSelection", "workbench.action.focusFindWidget" ],
+            "before": [
+                "/"
+            ],
+            "commands": [
+                "actions.findWithSelection",
+                "workbench.action.focusFindWidget"
+            ],
             "silent": true
         },
         {
-            "before": [ "f" ],
-            "commands": [ "editor.action.formatSelection" ],
+            "before": [
+                "f"
+            ],
+            "commands": [
+                "editor.action.formatSelection"
+            ],
             "silent": true
         },
         // expand seletion
         {
-            "before": [ "l" ],
-            "commands": [ "editor.action.smartSelect.grow" ],
+            "before": [
+                "l"
+            ],
+            "commands": [
+                "editor.action.smartSelect.grow"
+            ],
             "silent": true
         },
         // shrink selection
         {
-            "before": [ "h" ],
-            "commands": [ "editor.action.smartSelect.shrink" ],
+            "before": [
+                "h"
+            ],
+            "commands": [
+                "editor.action.smartSelect.shrink"
+            ],
             "silent": true
         },
         // stage selection
         {
-            "before": [ "s" ],
-            "commands": [ "git.stageSelectedRanges" ]
+            "before": [
+                "s"
+            ],
+            "commands": [
+                "git.stageSelectedRanges"
+            ]
         },
         // revert selection
         {
-            "before": [ "r" ],
-            "commands": [ "git.revertSelectedRanges" ]
+            "before": [
+                "r"
+            ],
+            "commands": [
+                "git.revertSelectedRanges"
+            ]
         },
         // Bind > and < in visual mode to indent/outdent lines (repeatable):
         {
-            "before": [ ">" ],
-            "commands": [ "editor.action.indentLines" ]
+            "before": [
+                ">"
+            ],
+            "commands": [
+                "editor.action.indentLines"
+            ]
         },
         {
-            "before": [ "<" ],
-            "commands": [ "editor.action.outdentLines" ]
+            "before": [
+                "<"
+            ],
+            "commands": [
+                "editor.action.outdentLines"
+            ]
         }
     ],
     // "vim.enableNeovim": true,
@@ -657,8 +801,9 @@
     "vim.cursorStylePerMode.normal": "block",
     "vim.foldfix": true,
     "vim.startInInsertMode": false,
-    "vim.useCtrlKeys": false,
-    "vim.cursorStylePerMode.insert": "block",
+    // "vim.useCtrlKeys": false,
+    "vim.useCtrlKeys": true,
+    "vim.cursorStylePerMode.insert": "line",
     "vim.highlightedyank.enable": true,
     // #endregion
     // * ╭───────────────────────────────────────────────────────╮
@@ -1162,14 +1307,17 @@
     "resmon.disk.format": "PercentUsed",
     "security.workspace.trust.untrustedFiles": "open",
     "update.mode": "manual",
-    "wordcount_cjk.activateLanguages": [ "markdown" ],
+    "wordcount_cjk.activateLanguages": [
+        "markdown"
+    ],
     "code-runner.executorMapByGlob": {
         "*.java": "cd $dir && java $fileName",
         "python": "cd $dir && python $fileName"
     },
     "errorLens.excludeBySource": [
         "Ruff(F405)",
-        "Pylance(reportOptionalMemberAccess)"
+        "Pylance(reportOptionalMemberAccess)",
+        "markdownlint(MD022)"
     ],
     "catppuccin-noctis-icons.hidesExplorerArrows": false,
     "database-client.autoSync": true,
@@ -1194,7 +1342,7 @@
     "vscode-office.pasterImgPath": "assets/${fileName}/${now}.png",
     "window.autoDetectColorScheme": true,
     "color-highlight.useARGB": true,
-    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.defaultInterpreterPath": "/usr/local/bin/python3",
     "inlineChat.enableV2": true,
     "inlineChat.hideOnRequest": true,
     "code-runner.runInTerminal": true,
@@ -1204,10 +1352,10 @@
     "yazi-vscode.yaziPath": "/opt/homebrew/bin/yazi",
     "yazi-vscode.configPath": "/Users/kamradsmeshnyavy/.config/yazi/yazi.toml",
     "chat.editing.confirmEditRequestRemoval": false,
-
-
     // update locale
     "locale": "en",
     "accessibility.voice.speechLanguage": "en-US",
     "typescript.locale": "en",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "terminal.integrated.fontSize": 10,
 }
