@@ -13,7 +13,7 @@
 
 1. Применить изменения:
    - `sudo -H /nix/var/nix/profiles/default/bin/nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis`
-   - sudo -H nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
+   - `sudo -H nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis`
 
 5. Применить без шумных warning:
    - `./switch-no-warnings.sh`
