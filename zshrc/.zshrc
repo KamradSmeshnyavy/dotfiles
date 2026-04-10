@@ -102,7 +102,7 @@ function yy() {
     rm -f -- "$tmp"
 }
 
-# nnn 
+# nnn
 alias n="nnn"
 function nnn () {
   command nnn "$@"
@@ -184,7 +184,7 @@ alias http="xh"
 bindkey jj vi-cmd-mode
 
 # eza
-export EZA_CONFIG_DIR=/Users/kamradsmeshnyavy/.config/eza      
+export EZA_CONFIG_DIR=/Users/kamradsmeshnyavy/.config/eza
 alias l="eza -l --icons --git -a"
 alias lt="eza --tree --level=2 --long --icons --git"
 alias ltree="eza --tree --level=2  --icons --git"
@@ -321,7 +321,7 @@ fi
 # ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
 
 
-source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 
+source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 
 #update fzf
 source <(fzf --zsh)
@@ -336,7 +336,7 @@ export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
 
 eval "$(tv init zsh)"
 
-alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser' 
+alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser'
 
 # Nix
  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then

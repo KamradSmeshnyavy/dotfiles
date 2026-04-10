@@ -54,9 +54,11 @@
 
     brews = [
       "imagemagick"
+      "cava"
     ];
 
     casks = [
+      "firefox"
       "google-chrome"
       "visual-studio-code"
       "ghostty"
