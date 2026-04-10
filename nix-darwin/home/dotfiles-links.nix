@@ -41,8 +41,17 @@ in
     ".config/starship.toml".source = link "${dotfilesRoot}/starship.toml";
     ".zshrc".source = link "${dotfilesRoot}/zshrc/.zshrc";
 
-    "Library/Application Support/Code/User/settings.json".source = link "${dotfilesRoot}/vscode/settings.json";
-    "Library/Application Support/Code/User/keybindings.json".source = link "${dotfilesRoot}/vscode/keybindings.json";
-    "Library/Application Support/Code/User/snippets".source = link "${dotfilesRoot}/vscode/snippets";
+    "Library/Application Support/Code/User/settings.json" = {
+      source = link "${dotfilesRoot}/vscode/settings.json";
+      force = true;
+    };
+    "Library/Application Support/Code/User/keybindings.json" = {
+      source = link "${dotfilesRoot}/vscode/keybindings.json";
+      force = true;
+    };
+    "Library/Application Support/Code/User/snippets" = {
+      source = link "${dotfilesRoot}/vscode/snippets";
+      force = true;
+    };
   };
 }
