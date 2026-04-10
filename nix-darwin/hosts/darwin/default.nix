@@ -30,6 +30,8 @@
     git
     curl
     wget
+    kubectl
+    kubectx
     neovim
     ripgrep
     fd
