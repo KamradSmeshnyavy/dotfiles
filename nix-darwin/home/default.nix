@@ -19,7 +19,6 @@
     atuin
     btop
     carapace
-    cava
     gh
     glow
     jq
