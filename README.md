@@ -25,8 +25,8 @@ For Nix/Lix migration in this repository, see [nix-darwin/README.md](nix-darwin/
 
 - Theme: Catppuccin Mocha
 - Icon: Catppuccin Noctis Icons
-- Custom CSS: check [this file](https://github.com/Efterklang/dotfiles/blob/main/application/vscode/custom.css)
-- Settings.json: check [this file](https://github.com/Efterklang/dotfiles/blob/main/application/vscode/settings.json)
+- Custom CSS: check [this file](https://github.com/Efterklang/dotfiles/blob/main/apps/vscode/custom.css)
+- Settings.json: check [this file](https://github.com/Efterklang/dotfiles/blob/main/apps/vscode/settings.json)
 
 | File/Directory     | Description                                  |
 | ------------------ | -------------------------------------------- |

@@ -3,7 +3,7 @@
 history.txt
 **/state.yml
 **/state.json
-misc/yasb/*.py
+mics/yasb/*.py
 elevated-state.json
 lazy-lock.json
 *.bak
@@ -12,9 +12,9 @@ lazy-lock.json
 # chrome extension
 *.pak
 secret.toml
-application/karabiner/automatic_backups
-tui_cli/tmux/plugins
-shells/zsh/.zsh_history
+apps/karabiner/automatic_backups
+tui/tmux/plugins
+shells/zshrc/.zsh_history
 .DS_Store
 tmux/plugins/
 raycast

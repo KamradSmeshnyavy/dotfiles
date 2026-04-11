@@ -31,7 +31,7 @@ def _enable_community_plugins [plugin_name: string ] {
     }
 }
 
-let global_setting_home = $"($env.HOME)/Projects/dotfiles/application/obsidian"
+let global_setting_home = $"($env.HOME)/Projects/dotfiles/apps/obsidian"
 
 # hotkeys
 alias ob-key = _create_soft_link $"($global_setting_home)/hotkeys.json" "./.obsidian/hotkeys.json"

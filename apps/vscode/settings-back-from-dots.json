@@ -273,7 +273,7 @@
         "Tabs": 200
     },
     "custom-ui-style.external.imports": [
-        "file:///Users/kamradsmeshnyavy/Projects/dotfiles/application/vscode/custom.css",
+        "file:///Users/kamradsmeshnyavy/Projects/dotfiles/apps/vscode/custom.css",
         "file:///Users/kamradsmeshnyavy/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js"
     ],
     // "custom-ui-style.external.loadStrategy": "cache",

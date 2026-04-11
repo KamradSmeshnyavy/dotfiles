@@ -2,9 +2,9 @@
 	path = .dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
-[submodule "application/ghostty/shaders"]
-	path = application/ghostty/shaders
+[submodule "apps/ghostty/shaders"]
+	path = apps/ghostty/shaders
 	url = https://github.com/hackr-sh/ghostty-shaders.git
-[submodule "application/sketchybar"]
-	path = application/sketchybar
+[submodule "apps/sketchybar"]
+	path = apps/sketchybar
 	url = my:sketchybar
