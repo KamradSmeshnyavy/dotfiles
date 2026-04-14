@@ -1,9 +1,11 @@
 after-startup-command = ['exec-and-forget sketchybar']
 
 # Notify Sketchybar about workspace change
-exec-on-workspace-change = ['/bin/bash', '-c',
+exec-on-workspace-change = [
+  '/bin/bash',
+  '-c',
   'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
-  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0',
 ]
 
 # Start AeroSpace at login
@@ -48,7 +50,6 @@ automatically-unhide-macos-hidden-apps = false
 # run = ['layout floating', 'move-node-to-workspace S']  # The callback itself
 
 
-
 [[on-window-detected]]
 if.app-name-regex-substring = 'finder'
 run = 'layout floating'
@@ -56,7 +57,7 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-name-regex-substring = 'safari'
 run = 'layout floating'
- 
+
 [[on-window-detected]]
 if.app-name-regex-substring = 'camera'
 run = 'layout floating'
@@ -129,6 +130,57 @@ run = 'layout floating'
 if.app-name-regex-substring = 'terminal'
 run = 'layout floating'
 
+# --- migrated from old yabai config ---
+# old yabai: manage=off for problematic apps
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)amneziavpn|ghidra|terminal|lulu|calculator|software update|dictionary|vlc|system preferences|system settings|zoom\.us|photo booth|archive utility|python|libreoffice|app store|steam|alfred|activity monitor'
+run = 'layout floating'
+
+# old yabai Finder dialog rule
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^finder$'
+if.window-title-regex-substring = '(?i)co(py|nnect)|move|info|pref'
+run = 'layout floating'
+
+# old yabai Safari settings rule
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^safari$'
+if.window-title-regex-substring = '(?i)^general|(tab|password|website|extension)s|autofill|se(arch|curity)|privacy|advance$'
+run = 'layout floating'
+
+# old yabai About This Mac rule
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)system information'
+if.window-title-regex-substring = '(?i)about this mac'
+run = 'layout floating'
+
+# old yabai Inkscape save dialog rule
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^inkscape$'
+if.window-title-regex-substring = '(?i)select file to save to'
+run = 'layout floating'
+
+# old yabai app->space rules
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^telegram$'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^spotify$'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^zen$'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^code$'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)^ghidra$'
+run = 'move-node-to-workspace 5'
+
 # Possible values: (qwerty|dvorak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
 [key-mapping]
@@ -142,12 +194,18 @@ preset = 'qwerty'
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-inner.horizontal = 20
-inner.vertical =   20
-outer.left =       20
-outer.bottom =     20
-outer.top =        10
-outer.right =      20
+# old: inner.horizontal = 20
+# old: inner.vertical = 20
+# old: outer.left = 20
+# old: outer.bottom = 20
+# old: outer.top = 10
+# old: outer.right = 20
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -182,6 +240,92 @@ outer.right =      20
 alt-ctrl-shift-f = 'fullscreen'
 alt-ctrl-f = 'layout floating tiling'
 
+# Space navigation
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+
+# Focus navigation
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+alt-tab = 'focus dfs-prev'
+alt-shift-tab = 'focus dfs-next'
+alt-semicolon = 'focus --dfs-index 0'
+alt-quote = 'exec-and-forget aerospace focus --dfs-index $(( $(aerospace list-windows --workspace focused --count) - 1 ))'
+
+# Float / fullscreen behavior
+alt-space = 'layout floating tiling'
+alt-shift-f = 'fullscreen'
+alt-f = 'fullscreen --no-outer-gaps'
+
+# Move windows
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+alt-shift-s = 'layout horizontal vertical'
+
+# Move window to workspace
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-p = [
+  'move-node-to-workspace prev --focus-follows-window',
+  'workspace prev',
+]
+alt-shift-n = [
+  'move-node-to-workspace next --focus-follows-window',
+  'workspace next',
+]
+
+# Stack-like actions
+ctrl-shift-h = 'join-with left'
+ctrl-shift-j = 'join-with down'
+ctrl-shift-k = 'join-with up'
+ctrl-shift-l = 'join-with right'
+ctrl-shift-n = 'focus dfs-next'
+ctrl-shift-p = 'focus dfs-prev'
+
+# Resize / balance
+alt-ctrl-h = 'resize smart -100'
+alt-ctrl-j = 'resize smart +100'
+alt-ctrl-k = 'resize smart -100'
+alt-ctrl-l = 'resize smart +100'
+alt-ctrl-e = 'balance-sizes'
+alt-ctrl-g = 'exec-and-forget sketchybar --trigger aerospace_toggle_gaps'
+
+# Approximations for yabai-only features
+alt-shift-x = 'layout horizontal'
+alt-shift-y = 'layout vertical'
+alt-ctrl-shift-h = ['join-with left', 'move left']
+alt-ctrl-shift-j = ['join-with down', 'move down']
+alt-ctrl-shift-k = ['join-with up', 'move up']
+alt-ctrl-shift-l = ['join-with right', 'move right']
+alt-ctrl-shift-s = 'layout accordion'
+
+# Display navigation
+alt-ctrl-d = 'focus-monitor --wrap-around next'
+alt-ctrl-1 = 'focus-monitor 1'
+alt-ctrl-2 = 'focus-monitor 2'
+alt-ctrl-3 = 'focus-monitor 3'
+alt-ctrl-shift-n = 'move-node-to-monitor --focus-follows-window next'
+alt-ctrl-shift-p = 'move-node-to-monitor --focus-follows-window prev'
+
+# Extra utility shortcuts (ported from skhd)
+alt-s = 'layout horizontal'
+alt-v = 'layout vertical'
+alt-shift-space = 'exec-and-forget sketchybar --bar hidden=toggle'
+alt-shift-backslash = 'exec-and-forget /Users/kamradsmeshnyavy/dotfiles/apps/yabai/scripts/hide-all-float.sh'
+
+# Keep arrow-key join shortcuts
 alt-shift-left = 'join-with left'
 alt-shift-down = 'join-with down'
 alt-shift-up = 'join-with up'
@@ -191,39 +335,39 @@ alt-shift-right = 'join-with right'
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#focus
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+# # See: https://nikitabobko.github.io/AeroSpace/commands#focus
+# alt-h = 'focus left'
+# alt-j = 'focus down'
+# alt-k = 'focus up'
+# alt-l = 'focus right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+# # See: https://nikitabobko.github.io/AeroSpace/commands#move
+# alt-shift-h = 'move left'
+# alt-shift-j = 'move down'
+# alt-shift-k = 'move up'
+# alt-shift-l = 'move right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#resize
-alt-shift-minus = 'resize smart -50'
-alt-shift-equal = 'resize smart +50'
+# # See: https://nikitabobko.github.io/AeroSpace/commands#resize
+# alt-shift-minus = 'resize smart -50'
+# alt-shift-equal = 'resize smart +50'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
+# # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+# alt-1 = 'workspace 1'
+# alt-2 = 'workspace 2'
+# alt-3 = 'workspace 3'
+# alt-4 = 'workspace 4'
+# alt-5 = 'workspace 5'
+# alt-6 = 'workspace 6'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-1 = 'move-node-to-workspace 1 --focus-follows-window'
-alt-shift-2 = 'move-node-to-workspace 2 --focus-follows-window'
-alt-shift-3 = 'move-node-to-workspace 3 --focus-follows-window'
-alt-shift-4 = 'move-node-to-workspace 4 --focus-follows-window'
-alt-shift-5 = 'move-node-to-workspace 5 --focus-follows-window'
-alt-shift-6 = 'move-node-to-workspace 6 --focus-follows-window'
-alt-tab = 'workspace-back-and-forth'
-alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+# # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+# alt-shift-1 = 'move-node-to-workspace 1 --focus-follows-window'
+# alt-shift-2 = 'move-node-to-workspace 2 --focus-follows-window'
+# alt-shift-3 = 'move-node-to-workspace 3 --focus-follows-window'
+# alt-shift-4 = 'move-node-to-workspace 4 --focus-follows-window'
+# alt-shift-5 = 'move-node-to-workspace 5 --focus-follows-window'
+# alt-shift-6 = 'move-node-to-workspace 6 --focus-follows-window'
+# alt-tab = 'workspace-back-and-forth'
+# alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
@@ -243,7 +387,10 @@ alt-shift-semicolon = 'mode service'
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
-f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+f = [
+  'layout floating tiling',
+  'mode main',
+] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
 [mode.apps.binding]
