@@ -7,9 +7,15 @@
   <img src="https://img.shields.io/github/license/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="License">
 </h1>
 
-For installation instructions, refer to [docs/INSTALL.md](docs/INSTALL.md)
+> Основной способ установки теперь: **`nix-darwin` + `home-manager`**.
 
-For Nix/Lix migration in this repository, see [nix-darwin/README.md](nix-darwin/README.md)
+Подробный разбор Nix-конфигурации: [packages/nix-darwin/README.md](packages/nix-darwin/README.md)
+
+- [Установка (мини-гайд)](#установка-мини-гайд)
+  - [1) Первый запуск через nix-darwin (рекомендуется)](#1-первый-запуск-через-nix-darwin-рекомендуется)
+  - [2) Применение изменений (ежедневно)](#2-применение-изменений-ежедневно)
+  - [3) Legacy-установка без nix-darwin](#3-legacy-установка-без-nix-darwin)
+- [Структура Nix-конфига](#структура-nix-конфига)
 
 - [VSCode](#vscode)
 - [Music Player](#music-player)
@@ -20,6 +26,42 @@ For Nix/Lix migration in this repository, see [nix-darwin/README.md](nix-darwin/
   - [Terminal Multiplexer](#terminal-multiplexer)
   - [Fuzzy finders](#fuzzy-finders)
   - [TUI/CLI Tools](#tuicli-tools)
+
+## Установка (мини-гайд)
+
+### 1) Первый запуск через nix-darwin (рекомендуется)
+
+```bash
+git clone https://github.com/Efterklang/dotfiles.git ~/dotfiles
+cd ~/dotfiles/packages/nix-darwin
+nix flake update
+sudo nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
+```
+
+### 2) Применение изменений (ежедневно)
+
+После правок в `.nix` файлах:
+
+```bash
+cd ~/dotfiles/packages/nix-darwin
+sudo nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
+```
+
+### 3) Legacy-установка без nix-darwin
+
+Если нужен старый вариант через симлинки (dotbot):
+
+```bash
+cd ~/dotfiles
+python3 install.py
+```
+
+## Структура Nix-конфига
+
+- `packages/nix-darwin/flake.nix` — входная точка `nix-darwin`.
+- `packages/nix-darwin/hosts/darwin/default.nix` — системные настройки macOS, Homebrew и системные пакеты.
+- `packages/nix-darwin/home/default.nix` — пользовательские пакеты/настройки Home Manager.
+- `packages/nix-darwin/home/dotfiles-links.nix` — симлинки на текущие dotfiles.
 
 ## VSCode
 
