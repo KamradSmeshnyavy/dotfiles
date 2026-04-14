@@ -33,6 +33,11 @@ default_tab_template {
             format_left   "#[bg=$base,fg=$lavender]#[bg=$lavender,fg=$crust,bold] {session} #[bg=$base]{mode}#[bg=$base] {tabs}"
             format_center "{notifications}"
             format_right  "#[bg=$base,fg=$flamingo]#[fg=$crust,bg=$flamingo] #[bg=$surface1,fg=$flamingo,bold] {command_user}@{command_host}#[bg=$base,fg=$surface1]"
+            // ⚡ BATTERY TIPS (zjstatus):
+            // 1) Минимизируй динамические виджеты (notifications / command_*).
+            // 2) Увеличивай *_interval (реже обновления => ниже CPU/energy).
+            // 3) Если нужен максимум экономии, оставь только статичный format_left.
+            // 4) Можно убрать {notifications} из format_center или сделать format_center "".
             // format_right "{pipe_zjstatus_hints}"
             pipe_zjstatus_hints_format "#[bg=$red,fg=$base,italic]{output}"
 
@@ -76,16 +81,19 @@ default_tab_template {
 
             notification_format_unread "#[bg=base,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$base,fg=$yellow]"
             notification_format_no_notifications ""
-            notification_show_interval "10"
+            // ⚡ Было 10s. Больше значение = реже перерисовка уведомлений.
+            notification_show_interval "60"
 
             command_host_command    "uname -n"
             command_host_format     "{stdout}"
+            // ⚡ 0 + static = выполнить один раз и не обновлять
             command_host_interval   "0"
             command_host_rendermode "static"
 
             command_user_command    "whoami"
             command_user_format     "{stdout}"
-            command_user_interval   "10"
+            // ⚡ Было 10s. Для батареи лучше реже (например 5-10 минут) или 0 при static.
+            command_user_interval   "600"
             command_user_rendermode "static"
             }
         }

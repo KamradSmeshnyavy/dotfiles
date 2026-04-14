@@ -158,6 +158,8 @@ keybinds clear-defaults=true {
         bind "b" { BreakPane; SwitchToMode "normal"; }
         bind "]" { BreakPaneRight; SwitchToMode "normal"; }
         bind "[" { BreakPaneLeft; SwitchToMode "normal"; }
+        bind "Left" { MoveTab "Left"; }
+        bind "Right" { MoveTab "Right"; }
 
         bind "1" { GoToTab 1; }
         bind "2" { GoToTab 2; }
@@ -201,14 +203,22 @@ keybinds clear-defaults=true {
         bind "Ctrl k" { MoveFocus "up"; }
         bind "Ctrl l" { MoveFocus "right"; }
 
+        // text selection/copy in scroll mode
+        // NOTE: у Zellij нет отдельного keybinding-action для старта visual selection,
+        // поэтому на "v" открываем EditScrollback в $EDITOR (обычно nvim), где можно
+        // выделять текст через visual mode. На "y" копируем текущее выделение Zellij.
+        // bind "v" { EditScrollback; }
+        // bind "y" { Copy; }
+
         // tmux copy-mode-vi
+        bind "g" { ScrollToTop; }
         bind "G" { ScrollToBottom; }
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
         bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; }
         bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; }
-        bind "d" { HalfPageScrollDown; }
-        bind "u" { HalfPageScrollUp; }
+        bind "d" "Ctrl d"{ HalfPageScrollDown; }
+        bind "u" "Ctrl u"{ HalfPageScrollUp; }
         bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
         bind "e" { EditScrollback; SwitchToMode "normal"; }
     }
@@ -220,8 +230,8 @@ keybinds clear-defaults=true {
         bind "k" "Up" { ScrollUp; }
         bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; }
         bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; }
-        bind "d" { HalfPageScrollDown; }
-        bind "u" { HalfPageScrollUp; }
+        bind "d" "Ctrl d"{ HalfPageScrollDown; }
+        bind "u" "Ctrl u"{ HalfPageScrollUp; }
         bind "n" { Search "down"; }
         bind "p" { Search "up"; }
         bind "c" { SearchToggleOption "CaseSensitivity"; }
@@ -284,7 +294,7 @@ keybinds clear-defaults=true {
             };
             SwitchToMode "Normal"
         }
- 
+
     }
 
     shared_except "locked" {
@@ -314,11 +324,11 @@ plugins {
         overflow_str ""
         pipe_name "zjstatus_hints"
     }
-    autolock location="file:/Users/kamradsmeshnyavy/.config/zellij/plugins/zellij-autolock.wasm" {
-        default_mode "locked"
-        vim_cmd "nvim"
-        vim_args "--listen /tmp/nvim.pipe"
-    }
+    // autolock location="file:/Users/kamradsmeshnyavy/.config/zellij/plugins/zellij-autolock.wasm" {
+    //     default_mode "locked"
+    //     vim_cmd "nvim"
+    //     vim_args "--listen /tmp/nvim.pipe"
+    // }
 }
 
 ui {
@@ -328,7 +338,8 @@ ui {
 }
 
 theme "ctp"
-mouse_mode true
+// mouse_mode true
+mouse_mode false
 auto_layout true
 // default_layout "default"
 copy_clipboard "system"
@@ -336,6 +347,10 @@ copy_on_select true
 session_name "main"
 attach_to_session true
 styled_underlines true
+// ⚡ battery tip:
+// session_serialization сейчас либо true/false (интервал не настраивается).
+// В актуальном Zellij сериализация выполняется часто (около 1 раза в секунду).
+// Поставь false, если хочешь заметно снизить расход батареи.
 show_startup_tips false
 session_serialization true
 //eval "$(zellij setup --generate-auto-start zsh)"
