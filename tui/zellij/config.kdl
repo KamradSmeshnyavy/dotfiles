@@ -338,8 +338,8 @@ ui {
 }
 
 theme "ctp"
-// mouse_mode true
-mouse_mode false
+mouse_mode true
+// mouse_mode false
 auto_layout true
 // default_layout "default"
 copy_clipboard "system"
