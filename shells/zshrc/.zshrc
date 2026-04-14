@@ -149,7 +149,16 @@ alias ......="cd ../../../../.."
 export GOPATH='/Users/kamradsmeshnyavy/go'
 
 # VIM
-alias v="/opt/homebrew/bin/nvim"
+# alias v="/opt/homebrew/bin/nvim"
+# 1. Определяем переменную с командой (без типов, просто строка)
+editable_files='fd -L --exclude "*.{code,data,webm,mp4,mp3,png,avif,webp,jpg,jpeg}"'
+# 2. Функция-обёртка, аналогичная alias из Nushell
+v() {
+  local file
+  # Передаём значение переменной как команду-источник
+  file=$(tv files --source-command "$editable_files")
+  [[ -n "$file" ]] && nvim "$file"
+}
 
 # Nmap
 alias nm="nmap -sC -sV -oN nmap"
