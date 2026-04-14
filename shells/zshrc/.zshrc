@@ -267,6 +267,281 @@ fcd() { cd "$(find . -type d -not -path '*/.*' | fzf)" && l; }
 f() { echo "$(find . -type f -not -path '*/.*' | fzf)" | pbcopy }
 fv() { nvim "$(find . -type f -not -path '*/.*' | fzf)" }
 
+# ===== Nushell aliases migrated to zsh =====
+# conflicts (existing zsh alias kept unchanged):
+# la -> zsh: tree
+# la -> nushell: eza --all --icons
+# n -> zsh: nnn
+# n -> nushell: exec nu
+# k -> zsh: kubectl
+# k -> nushell: zellij delete-all-sessions -y; zellij kill-all-sessions -y
+# v -> zsh: /opt/homebrew/bin/nvim
+# v -> nushell: nvim (tv files --source-command $editable_files)
+# ga -> zsh: git add -p
+# ga -> nushell: git add
+# gc -> zsh: git commit -m
+# gc -> nushell: git commit --verbose
+# gca -> zsh: git commit -a -m
+# gca -> nushell: git commit --verbose --all
+# gp -> zsh: git push origin HEAD
+# gp -> nushell: git push
+# gpu -> zsh: git pull origin
+# gpu -> nushell: git push upstream
+# gst -> zsh: git status
+# gst -> nushell: custom status def + aliases (gss/gsb)
+# gr -> zsh: ~/go/src/github.com/tomnomnom/gf/gf
+# gr -> nushell: git remote
+# cl -> zsh: clear
+# cl -> nushell: clear
+
+# replace.nu
+alias cd='z'
+alias curl='curlie'
+alias du='dust'
+alias dig='doggo'
+alias grep='rg'
+alias top='btop'
+alias vim='nvim'
+
+# brew.nu
+alias bi='brew install'
+alias bui='brew uninstall'
+alias bou='brew outdated'
+alias bu='brew upgrade'
+alias bua='brew update && brew upgrade && brew cleanup'
+alias rm_brewlock='rm -rf "$(brew --prefix)/var/homebrew/locks"'
+
+# eza.nu + lla.nu
+alias ll='eza --long --icons'
+alias lst='eza --all --icons --tree'
+alias llt='eza --long --icons --tree'
+alias lls='lla --sizemap'
+alias lltl='lla --timeline'
+alias llg='lla --git'
+
+# mac.nu
+alias nu-kill='kill'
+alias kill='command kill'
+alias python='python3'
+alias pip='pip3'
+
+# alias.nu (safe direct aliases)
+alias a='gh copilot suggest'
+alias b='bun run'
+alias d='dust'
+alias e='exit 0'
+alias ff='fastfetch'
+alias g='lazygit --use-config-dir ~/.config/lazygit'
+alias h='bun run hexo s'
+alias i='gemini'
+alias m='start_mpd'
+alias o='open'
+alias p='tmux popup -w 80% -h 80%'
+alias q='exit 0'
+alias r='rmpc'
+alias s='somo'
+alias t='tokei'
+alias u='uv'
+alias w='wsl'
+alias x='~/.local/bin/extract'
+alias y='yazi'
+alias ze='zellij attach --create gnix'
+alias c2p='code2prompt'
+alias ci='code'
+alias gg='gitui'
+alias lc='nvim leetcode.nvim'
+alias hexo='bun run hexo'
+# renamed from `pyenv` to avoid shadowing real pyenv binary in zsh startup
+alias pyenvnu='overlay use .venv/bin/activate.nu'
+alias scene='adb shell sh /storage/emulated/0/Android/data/com.omarea.vtools/up.sh'
+alias shizuku='adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh'
+alias zo='zoxide'
+
+# folder aliases (as in nushell)
+alias music='yazi ~/OneDrive/Music'
+alias vluv='cd ~/vluv'
+alias wiki='cd ~/astro-docs'
+alias draft='nvim ~/.cahce/temp.md'
+
+# git.nu (non-conflicting aliases)
+git_current_branch() { git rev-parse --abbrev-ref HEAD 2>/dev/null; }
+git_main_branch() { git remote show origin 2>/dev/null | sed -n 's/.*HEAD branch: //p'; }
+
+alias gaa='git add --all'
+alias gapa='git add --patch'
+alias gau='git add --update'
+alias gav='git add --verbose'
+alias gap='git apply'
+alias gapt='git apply --3way'
+alias gbd='git branch --delete'
+alias gbD='git branch --delete --force'
+alias gbl='git blame -b -w'
+alias gbm='git branch --move'
+alias gbmc='git branch --move "$(git_current_branch)"'
+alias gbnm='git branch --no-merged'
+alias gbr='git branch --remote'
+alias gbs='git bisect'
+alias gbsb='git bisect bad'
+alias gbsg='git bisect good'
+alias gbsn='git bisect new'
+alias gbso='git bisect old'
+alias gbsr='git bisect reset'
+alias gbss='git bisect start'
+alias gcn='git commit --verbose --no-edit'
+alias gcam='git commit --all --message'
+alias gcsm='git commit --signoff --message'
+alias gcas='git commit --all --signoff'
+alias gcasm='git commit --all --signoff --message'
+alias gcb='git checkout -b'
+alias gcd='git checkout develop'
+alias gcf='git config --list'
+alias gcl='git clone --recurse-submodules'
+alias gscl='git clone --depth=1'
+alias gclean='git clean --interactive -d'
+alias gcm='git checkout "$(git_main_branch)"'
+alias gcmsg='git commit --message'
+alias gcor='git checkout --recurse-submodules'
+alias gcount='git shortlog --summary --numbered'
+alias gcp='git cherry-pick'
+alias gcpa='git cherry-pick --abort'
+alias gcpc='git cherry-pick --continue'
+alias gcs='git commit --gpg-sign'
+alias gcss='git commit --gpg-sign --signoff'
+alias gcssm='git commit --gpg-sign --signoff --message'
+alias gd='git diff'
+alias gdca='git diff --cached'
+alias gdcw='git diff --cached --word-diff'
+alias gdct='git describe --tags "$(git rev-list --tags --max-count=1)"'
+alias gds='git diff --staged'
+alias gdt='git diff-tree --no-commit-id --name-only -r'
+alias gdup='git diff @{upstream}'
+alias gdw='git diff --word-diff'
+alias gf='git fetch'
+alias gfa='git fetch --all --prune'
+alias gfo='git fetch origin'
+alias gignore='git update-index --assume-unchanged'
+alias gl='git log'
+alias glg='git log --stat'
+alias glgp='git log --stat --patch'
+alias glgg='git log --graph'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias glo='git log --oneline --decorate'
+alias gm='git merge'
+alias gmtl='git mergetool --no-prompt'
+alias gmtlvim='git mergetool --no-prompt --tool=vimdiff'
+alias gma='git merge --abort'
+alias gpd='git push --dry-run'
+alias gpf='git push --force-with-lease'
+alias gpl='git pull'
+alias gpod='git push origin --delete'
+alias gpodc='git push origin --delete "$(git_current_branch)"'
+alias gpr='git pull --rebase'
+alias gpv='git push --verbose'
+alias gpra='git pull --rebase --autostash'
+alias gprav='git pull --rebase --autostash --verbose'
+alias gprv='git pull --rebase --verbose'
+alias gpsup='git push --set-upstream origin "$(git_current_branch)"'
+alias gra='git remote add'
+alias grb='git rebase'
+alias grba='git rebase --abort'
+alias grbc='git rebase --continue'
+alias grbd='git rebase develop'
+alias grbi='git rebase --interactive'
+alias grbm='git rebase "$(git_main_branch)"'
+alias grbo='git rebase --onto'
+alias grbs='git rebase --skip'
+alias grev='git revert'
+alias grh='git reset'
+alias grhh='git reset --hard'
+alias groh='git reset "origin/$(git_current_branch)" --hard'
+alias grm='git rm'
+alias grmc='git rm --cached'
+alias grs='git restore'
+alias grss='git restore --source'
+alias grst='git restore --staged'
+alias grt='cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"'
+alias gru='git reset --'
+alias grup='git remote update'
+alias grv='git remote --verbose'
+alias gsb='git status --short --branch'
+alias gsd='git svn dcommit'
+alias gsh='git show'
+alias gshs='git show -s'
+alias gsi='git submodule init'
+alias gsps='git show --pretty=short --show-signature'
+alias gsr='git svn rebase'
+alias gss='git status --short'
+alias gsta='git stash push'
+alias gstaa='git stash apply'
+alias gstc='git stash clear'
+alias gstd='git stash drop'
+alias gstl='git stash list'
+alias gstp='git stash pop'
+alias gsts='git stash show --text'
+alias gstu='gsta --include-untracked'
+alias gstall='git stash --all'
+alias gsu='git submodule update'
+alias gsw='git switch'
+alias gswc='git switch --create'
+alias gts='git tag --sign'
+alias glum='git pull upstream "$(git_main_branch)"'
+alias gunignore='git update-index --no-assume-unchanged'
+alias gup='git pull --rebase'
+alias gupv='git pull --rebase --verbose'
+alias gupa='git pull --rebase --autostash'
+alias gupav='git pull --rebase --autostash --verbose'
+alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
+alias gwt='git worktree'
+alias gwta='git worktree add'
+alias gwtls='git worktree list'
+alias gwtmv='git worktree move'
+alias gwtrm='git worktree remove'
+alias gam='git am'
+alias gamc='git am --continue'
+alias gams='git am --skip'
+alias gama='git am --abort'
+alias gamscp='git am --show-current-patch'
+
+start_mpd() {
+  if ! pgrep mpd >/dev/null 2>&1; then
+    echo "[INFO] Starting MPD..."
+    mpd ~/.config/mpd/mpd.conf
+  else
+    echo "[INFO] MPD is already running."
+  fi
+
+  local retries=5
+  while (( retries > 0 )); do
+    if mpc status >/dev/null 2>&1; then
+      break
+    fi
+    sleep 0.5
+    ((retries--))
+  done
+
+  if (( retries == 0 )); then
+    echo "[ERROR] MPD did not respond after waiting."
+    return 1
+  fi
+
+  echo "[INFO] MPD started. Initializing queue..."
+  if mpc listall | mpc add >/dev/null 2>&1; then
+    echo "[INFO] Queue initialized."
+  else
+    echo "[ERROR] Error adding songs."
+  fi
+
+  if [[ "$OSTYPE" == darwin* ]] && command -v mpd-now-playable >/dev/null 2>&1; then
+    if ! pgrep -f mpd-now-playable >/dev/null 2>&1; then
+      echo "[INFO] Starting mpd-now-playable for Now Playing widget integration..."
+      nohup mpd-now-playable >/dev/null 2>&1 &
+    else
+      echo "[INFO] mpd-now-playable is already running."
+    fi
+  fi
+}
+
  export XDG_CONFIG_HOME="/Users/kamradsmeshnyavy/.config"
 
 eval "$(zoxide init zsh)"
@@ -274,10 +549,10 @@ eval "$(atuin init zsh)"
 eval "$(direnv hook zsh)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+eval "$(command pyenv init -)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+eval "$(command pyenv init -)"
 export PATH=$PATH:~/.spoofdpi/bin
 
 # Created by `pipx` on 2025-09-13 12:59:56
