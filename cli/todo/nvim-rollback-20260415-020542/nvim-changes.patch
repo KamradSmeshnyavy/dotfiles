@@ -1,0 +1,1442 @@
+diff --git a/packages/nix-darwin/README.md b/packages/nix-darwin/README.md
+index ee3cee6..fe3d4e2 100644
+--- a/packages/nix-darwin/README.md
++++ b/packages/nix-darwin/README.md
+@@ -28,6 +28,7 @@
+ - Пакеты Homebrew: `hosts/darwin/default.nix` → `homebrew.brews`, `homebrew.casks`
+ - Пакеты пользователя: `home/default.nix` → `home.packages`
+ - Симлинки dotfiles: `home/dotfiles-links.nix`
++- Neovim (подробный гайд): `home/modules/neovim/README.md`
+ 
+ ## Lix
+ 
+diff --git a/packages/nix-darwin/flake.lock b/packages/nix-darwin/flake.lock
+index 8d304c7..0d59b48 100644
+--- a/packages/nix-darwin/flake.lock
++++ b/packages/nix-darwin/flake.lock
+@@ -20,6 +20,27 @@
+         "type": "github"
+       }
+     },
++    "flake-parts": {
++      "inputs": {
++        "nixpkgs-lib": [
++          "nixvim",
++          "nixpkgs"
++        ]
++      },
++      "locked": {
++        "lastModified": 1772408722,
++        "narHash": "sha256-rHuJtdcOjK7rAHpHphUb1iCvgkU3GpfvicLMwwnfMT0=",
++        "owner": "hercules-ci",
++        "repo": "flake-parts",
++        "rev": "f20dc5d9b8027381c474144ecabc9034d6a839a3",
++        "type": "github"
++      },
++      "original": {
++        "owner": "hercules-ci",
++        "repo": "flake-parts",
++        "type": "github"
++      }
++    },
+     "home-manager": {
+       "inputs": {
+         "nixpkgs": [
+@@ -76,12 +97,50 @@
+         "type": "github"
+       }
+     },
++    "nixvim": {
++      "inputs": {
++        "flake-parts": "flake-parts",
++        "nixpkgs": [
++          "nixpkgs"
++        ],
++        "systems": "systems"
++      },
++      "locked": {
++        "lastModified": 1776128025,
++        "narHash": "sha256-spZM5zll0cBPHHSZPioZREArzCsllurKQsJME08nnXY=",
++        "owner": "nix-community",
++        "repo": "nixvim",
++        "rev": "0a12693297d23f1b3af04ba6112b5936e2eba41b",
++        "type": "github"
++      },
++      "original": {
++        "owner": "nix-community",
++        "repo": "nixvim",
++        "type": "github"
++      }
++    },
+     "root": {
+       "inputs": {
+         "catppuccin": "catppuccin",
+         "home-manager": "home-manager",
+         "nix-darwin": "nix-darwin",
+-        "nixpkgs": "nixpkgs"
++        "nixpkgs": "nixpkgs",
++        "nixvim": "nixvim"
++      }
++    },
++    "systems": {
++      "locked": {
++        "lastModified": 1681028828,
++        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
++        "owner": "nix-systems",
++        "repo": "default",
++        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
++        "type": "github"
++      },
++      "original": {
++        "owner": "nix-systems",
++        "repo": "default",
++        "type": "github"
+       }
+     }
+   },
+diff --git a/packages/nix-darwin/flake.nix b/packages/nix-darwin/flake.nix
+index 3f40196..c5d7a4a 100644
+--- a/packages/nix-darwin/flake.nix
++++ b/packages/nix-darwin/flake.nix
+@@ -14,13 +14,18 @@
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+ 
++    nixvim = {
++      url = "github:nix-community/nixvim";
++      inputs.nixpkgs.follows = "nixpkgs";
++    };
++
+     catppuccin = {
+       url = "github:catppuccin/nix";
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+   };
+ 
+-  outputs = inputs@{ nixpkgs, nix-darwin, home-manager, ... }:
++  outputs = inputs@{ nixpkgs, nix-darwin, home-manager, nixvim, ... }:
+     let
+       system = "aarch64-darwin";
+       username = "kamradsmeshnyavy";
+diff --git a/packages/nix-darwin/home/default.nix b/packages/nix-darwin/home/default.nix
+index 15e63c2..08dabbb 100644
+--- a/packages/nix-darwin/home/default.nix
++++ b/packages/nix-darwin/home/default.nix
+@@ -4,6 +4,7 @@
+     ./dotfiles-links.nix
+     inputs.catppuccin.homeModules.catppuccin
+     ./modules/theme.nix
++    ./modules/neovim
+   ];
+ 
+   home.username = username;
+@@ -14,20 +15,37 @@
+ 
+   # Declarative global theme configuration (similar to Isabel's dotfiles).
+   dotfiles.theme = {
+-    enable = true;
++    # Temporarily disabled: current catppuccin/nix revision removed gtk options
++    # and breaks evaluation for this host.
++    enable = false;
+     flavor = "mocha";
+     accent = "pink";
+   };
+ 
++  # Neovim module:
++  # - backend = "compat": exact old LazyVim config from ~/dotfiles/home/nvim (1:1 behavior)
++  # - backend = "nixvim": fully rewritten nixvim config
++  dotfiles.neovim = {
++    enable = true;
++    backend = "compat";
++  };
++
+   home.sessionVariables = {
+     EDITOR = "nvim";
+     VISUAL = "nvim";
+   };
+ 
++  # Ensure user profile binaries (including nixvim's wrapped nvim)
++  # are resolved before Homebrew binaries in interactive shells.
++  home.sessionPath = [
++    "/etc/profiles/per-user/${username}/bin"
++  ];
++
+   home.packages = with pkgs; [
+     atuin
+     btop
+     carapace
++    neovim
+     gh
+     glow
+     jq
+diff --git a/packages/nix-darwin/home/dotfiles-links.nix b/packages/nix-darwin/home/dotfiles-links.nix
+index dd284c2..9dd86b5 100644
+--- a/packages/nix-darwin/home/dotfiles-links.nix
++++ b/packages/nix-darwin/home/dotfiles-links.nix
+@@ -26,7 +26,6 @@ in
+     ".config/mpd".source = link "${dotfilesRoot}/tui/mpd";
+     ".config/nnn".source = link "${dotfilesRoot}/tui/nnn";
+     ".config/nushell".source = link "${dotfilesRoot}/shells/nushell";
+-    ".config/nvim".source = link "${dotfilesRoot}/tui/nvim";
+     ".config/ohmyposh".source = link "${dotfilesRoot}/shells/ohmyposh";
+     ".config/procs".source = link "${dotfilesRoot}/tui/procs";
+     ".config/qutebrowser".source = link "${dotfilesRoot}/apps/qutebrowser";
+@@ -38,7 +37,10 @@ in
+     ".config/tig".source = link "${dotfilesRoot}/tui/tig";
+     ".config/todo".source = link "${dotfilesRoot}/cli/todo";
+     ".config/tmux".source = link "${dotfilesRoot}/tui/tmux";
+-    ".config/vscode/markdown-preview-enhanced".source = link "${dotfilesRoot}/apps/vscode/markdown-preview-enhanced";
++    ".config/vscode/markdown-preview-enhanced" = {
++      source = link "${dotfilesRoot}/apps/vscode/markdown-preview-enhanced";
++      force = true;
++    };
+     ".config/wezterm".source = link "${dotfilesRoot}/apps/wezterm";
+     ".config/yabai".source = link "${dotfilesRoot}/apps/yabai";
+     ".config/yazi".source = link "${dotfilesRoot}/tui/yazi";
+@@ -47,7 +49,7 @@ in
+     ".config/svim".source = link "${dotfilesRoot}/tui/svim";
+ 
+     ".config/starship.toml".source = link "${dotfilesRoot}/shells/starship.toml";
+-    ".ssh".source = link "${dotfilesRoot}/cli/ssh";
++    # Keep ~/.ssh unmanaged by Home Manager to avoid clobbering real keys.
+     ".zshrc".source = link "${dotfilesRoot}/shells/zshrc/.zshrc";
+ 
+     "Library/Application Support/Code/User/settings.json" = {
+diff --git a/packages/nix-darwin/home/modules/neovim/default.nix b/packages/nix-darwin/home/modules/neovim/default.nix
+new file mode 100644
+index 0000000..e2bdbf8
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/default.nix
+@@ -0,0 +1,47 @@
++{ lib, config, inputs, dotfilesRoot, ... }:
++let
++  cfg = config.dotfiles.neovim;
++  link = config.lib.file.mkOutOfStoreSymlink;
++in
++{
++  imports = [
++    inputs.nixvim.homeModules.nixvim
++    ./options.nix
++    ./keymaps.nix
++    ./plugins.nix
++    ./lsp.nix
++  ];
++
++  options.dotfiles.neovim = {
++    enable = lib.mkEnableOption "modular declarative neovim (nixvim)";
++
++    backend = lib.mkOption {
++      type = lib.types.enum [ "compat" "nixvim" ];
++      default = "compat";
++      description = "Neovim backend: compat (exact old LazyVim) or nixvim (full Nix rewrite).";
++    };
++  };
++
++  config = lib.mkMerge [
++    (lib.mkIf (cfg.enable && cfg.backend == "compat") {
++      # Exact behavior mode: reuse existing LazyVim tree as-is.
++      home.file.".config/nvim" = {
++        source = link "${dotfilesRoot}/home/nvim";
++        force = true;
++      };
++    })
++
++    (lib.mkIf (cfg.enable && cfg.backend == "nixvim") {
++      programs.nixvim = {
++        enable = true;
++        defaultEditor = true;
++        viAlias = true;
++        vimAlias = true;
++
++        globals = {
++          mapleader = " ";
++        };
++      };
++    })
++  ];
++}
+diff --git a/packages/nix-darwin/home/modules/neovim/keymaps.nix b/packages/nix-darwin/home/modules/neovim/keymaps.nix
+new file mode 100644
+index 0000000..b9fd70d
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/keymaps.nix
+@@ -0,0 +1,307 @@
++{ lib, config, ... }:
++let
++  cfg = config.dotfiles.neovim;
++in
++{
++  config = lib.mkIf (cfg.enable && cfg.backend == "nixvim") {
++    programs.nixvim.keymaps = [
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<A-Left>";
++        action = "^";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<A-Right>";
++        action = "$";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<A-Up>";
++        action = ":m .-2<CR>==";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<A-Down>";
++        action = ":m .+1<CR>==";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-Left>";
++        action = "b";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-Right>";
++        action = "w";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-Delete>";
++        action = "dw";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<C-s>";
++        action = ":x<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-a>";
++        action = "ggVG";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-c>";
++        action = ''"+yy'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-x>";
++        action = ''"+dd'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-v>";
++        action = ''"+p'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = [ "n" "v" "x" ];
++        key = "<C-z>";
++        action = ":undo<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>ff";
++        action = "<cmd>Telescope find_files<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>fg";
++        action = "<cmd>Telescope live_grep<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>fb";
++        action = "<cmd>Telescope buffers<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>fh";
++        action = "<cmd>Telescope help_tags<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "gd";
++        action = "<cmd>lua vim.lsp.buf.definition()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "gr";
++        action = "<cmd>lua vim.lsp.buf.references()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "gi";
++        action = "<cmd>lua vim.lsp.buf.implementation()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "K";
++        action = "<cmd>lua vim.lsp.buf.hover()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>rn";
++        action = "<cmd>lua vim.lsp.buf.rename()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>ca";
++        action = "<cmd>lua vim.lsp.buf.code_action()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "<leader>f";
++        action = "<cmd>lua vim.lsp.buf.format()<CR>";
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "v";
++        key = "y";
++        action = ''"+y'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "v";
++        key = "d";
++        action = ''"+d'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "yy";
++        action = ''"+yy'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "dd";
++        action = ''"+dd'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++      {
++        mode = "n";
++        key = "p";
++        action = ''"+p'';
++        options = {
++          noremap = true;
++          silent = true;
++        };
++      }
++    ];
++
++    programs.nixvim.extraConfigLua = ''
++      vim.keymap.set("i", "jj", "<Esc>", { noremap = false })
++      vim.keymap.set("i", "оо", "<Esc>", { noremap = false })
++
++      vim.keymap.set("n", "<leader><C-l>l", function()
++        if vim.fn.exists(":Lazy") == 2 then
++          vim.cmd("Lazy")
++        else
++          vim.notify("Lazy is not installed in nixvim profile", vim.log.levels.WARN)
++        end
++      end, { desc = "Меню плагинов (Lazy)" })
++
++      vim.keymap.set("n", "<leader><C-l>m", function()
++        if vim.fn.exists(":Mason") == 2 then
++          vim.cmd("Mason")
++        else
++          vim.notify("Mason is not used in this nixvim setup", vim.log.levels.INFO)
++        end
++      end, { desc = "Менеджер серверов (Mason)" })
++
++      vim.keymap.set("n", "<leader>bx", function()
++        local bufnr = 0
++        local is_enabled = vim.diagnostic.is_enabled({ bufnr = bufnr })
++        vim.diagnostic.enable(not is_enabled, { bufnr = bufnr })
++      end, { desc = "Toggle diagnostics in buffer" })
++
++      if vim.g.neovide then
++        local function paste()
++          vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
++        end
++
++        vim.keymap.set({ "n", "i", "v", "c", "t" }, "<D-v>", paste, { silent = true, desc = "Paste from system clipboard" })
++        vim.keymap.set("v", "<D-c>", [["+y]], { desc = "Copy to system clipboard" })
++      end
++    '';
++  };
++}
+diff --git a/packages/nix-darwin/home/modules/neovim/lsp.nix b/packages/nix-darwin/home/modules/neovim/lsp.nix
+new file mode 100644
+index 0000000..8296d7f
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/lsp.nix
+@@ -0,0 +1,57 @@
++{ lib, config, pkgs, ... }:
++let
++  cfg = config.dotfiles.neovim;
++in
++{
++  config = lib.mkIf (cfg.enable && cfg.backend == "nixvim") {
++    programs.nixvim = {
++      plugins = {
++        lsp = {
++          enable = true;
++          servers = {
++            lua_ls.enable = true;
++            dockerls.enable = true;
++            gopls.enable = true;
++            helm_ls.enable = true;
++            jdtls.enable = true;
++            jsonls.enable = true;
++            marksman.enable = true;
++            nushell.enable = true;
++            rust_analyzer = {
++              enable = true;
++              installCargo = false;
++              installRustc = false;
++            };
++            yamlls.enable = true;
++          };
++        };
++      };
++
++      extraPackages = with pkgs; [
++        lua-language-server
++        dockerfile-language-server
++        gopls
++        helm-ls
++        jdt-language-server
++        marksman
++        vscode-langservers-extracted
++        yaml-language-server
++        rust-analyzer
++      ];
++
++      extraConfigLua = lib.mkAfter ''
++        -- keep lua diagnostics compatible with local config style
++        pcall(function()
++          require("lspconfig").lua_ls.setup({
++            settings = {
++              Lua = {
++                diagnostics = { globals = { "vim" } },
++                workspace = { library = vim.api.nvim_get_runtime_file("", true) },
++              },
++            },
++          })
++        end)
++      '';
++    };
++  };
++}
+diff --git a/packages/nix-darwin/home/modules/neovim/lua/render-markdown.lua b/packages/nix-darwin/home/modules/neovim/lua/render-markdown.lua
+new file mode 100644
+index 0000000..c7d6a10
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/lua/render-markdown.lua
+@@ -0,0 +1,123 @@
++require("render-markdown").setup({
++  callout = {
++    abstract = {
++      raw = "[!ABSTRACT]",
++      rendered = "󰯂 Abstract",
++      highlight = "RenderMarkdownInfo",
++      category = "obsidian",
++    },
++    summary = { raw = "[!SUMMARY]", rendered = "󰯂 Summary", highlight = "RenderMarkdownInfo", category = "obsidian" },
++    tldr = { raw = "[!TLDR]", rendered = "󰦩 Tldr", highlight = "RenderMarkdownInfo", category = "obsidian" },
++    failure = { raw = "[!FAILURE]", rendered = " Failure", highlight = "RenderMarkdownError", category = "obsidian" },
++    fail = { raw = "[!FAIL]", rendered = " Fail", highlight = "RenderMarkdownError", category = "obsidian" },
++    missing = { raw = "[!MISSING]", rendered = " Missing", highlight = "RenderMarkdownError", category = "obsidian" },
++    attention = {
++      raw = "[!ATTENTION]",
++      rendered = " Attention",
++      highlight = "RenderMarkdownWarn",
++      category = "obsidian",
++    },
++    warning = { raw = "[!WARNING]", rendered = " Warning", highlight = "RenderMarkdownWarn", category = "github" },
++    danger = { raw = "[!DANGER]", rendered = " Danger", highlight = "RenderMarkdownError", category = "obsidian" },
++    error = { raw = "[!ERROR]", rendered = " Error", highlight = "RenderMarkdownError", category = "obsidian" },
++    bug = { raw = "[!BUG]", rendered = " Bug", highlight = "RenderMarkdownError", category = "obsidian" },
++    quote = { raw = "[!QUOTE]", rendered = " Quote", highlight = "RenderMarkdownQuote", category = "obsidian" },
++    cite = { raw = "[!CITE]", rendered = " Cite", highlight = "RenderMarkdownQuote", category = "obsidian" },
++    todo = { raw = "[!TODO]", rendered = " Todo", highlight = "RenderMarkdownInfo", category = "obsidian" },
++    wip = { raw = "[!WIP]", rendered = "󰦖 WIP", highlight = "RenderMarkdownHint", category = "obsidian" },
++    done = { raw = "[!DONE]", rendered = " Done", highlight = "RenderMarkdownSuccess", category = "obsidian" },
++  },
++  sign = { enabled = false },
++  code = {
++    -- general
++    width = "block",
++    min_width = 80,
++    -- borders
++    border = "thin",
++    left_pad = 1,
++    right_pad = 1,
++    -- language info
++    position = "right",
++    language_icon = true,
++    language_name = true,
++    -- avoid making headings ugly
++    highlight_inline = "RenderMarkdownCodeInfo",
++  },
++  heading = {
++    icons = { " 󰼏 ", " 󰎨 ", " 󰼑 ", " 󰎲 ", " 󰼓 ", " 󰎴 " },
++    border = true,
++    render_modes = true, -- keep rendering while inserting
++  },
++  checkbox = {
++    unchecked = {
++      icon = "󰄱",
++      highlight = "RenderMarkdownCodeFallback",
++      scope_highlight = "RenderMarkdownCodeFallback",
++    },
++    checked = {
++      icon = "󰄵",
++      highlight = "RenderMarkdownUnchecked",
++      scope_highlight = "RenderMarkdownUnchecked",
++    },
++    custom = {
++      question = {
++        raw = "[?]",
++        rendered = "",
++        highlight = "RenderMarkdownError",
++        scope_highlight = "RenderMarkdownError",
++      },
++      todo = {
++        raw = "[>]",
++        rendered = "󰦖",
++        highlight = "RenderMarkdownInfo",
++        scope_highlight = "RenderMarkdownInfo",
++      },
++      canceled = {
++        raw = "[-]",
++        rendered = "",
++        highlight = "RenderMarkdownCodeFallback",
++        scope_highlight = "@text.strike",
++      },
++      important = {
++        raw = "[!]",
++        rendered = "",
++        highlight = "RenderMarkdownWarn",
++        scope_highlight = "RenderMarkdownWarn",
++      },
++      favorite = {
++        raw = "[~]",
++        rendered = "",
++        highlight = "RenderMarkdownMath",
++        scope_highlight = "RenderMarkdownMath",
++      },
++    },
++  },
++  pipe_table = {
++    preset = "round",
++  },
++  link = {
++    wiki = { icon = " ", highlight = "RenderMarkdownWikiLink", scope_highlight = "RenderMarkdownWikiLink" },
++    image = " ",
++    custom = {
++      github = { pattern = "github", icon = " " },
++      gitlab = { pattern = "gitlab", icon = "󰮠 " },
++      youtube = { pattern = "youtube", icon = " " },
++      cern = { pattern = "cern.ch", icon = " " },
++    },
++    hyperlink = " ",
++  },
++  anti_conceal = {
++    disabled_modes = { "n" },
++    ignore = {
++      bullet = true, -- render bullet in insert mode
++      head_border = true,
++      head_background = true,
++    },
++  },
++  -- https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/509
++  win_options = { concealcursor = { rendered = "nvc" } },
++  completions = {
++    blink = { enabled = true },
++    lsp = { enabled = true },
++  },
++})
+diff --git a/packages/nix-darwin/home/modules/neovim/lua/snacks.lua b/packages/nix-darwin/home/modules/neovim/lua/snacks.lua
+new file mode 100644
+index 0000000..3d4704c
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/lua/snacks.lua
+@@ -0,0 +1,82 @@
++local header = [[
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⢀⠀⡀⠠⣐⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⡀⠁⠈⠁⠁⠘⠠⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⢀⠀⠑⠀⠀⠀⠀⠁⠠⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠤⠀⢀⣀⢠⠠⡄⢤⠒⠔⠢⢒⠤⣂⢄⡰⢀⠀⡀⠀⠀⡀⠀⢀⣮⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠛⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠰⡠⢆⠊⠄⡉⠄⡡⢔⠠⢈⠼⣥⠂⡘⢰⢊⡔⢣⠔⠠⢉⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⡄⠆⠓⡈⠄⠁⠡⢈⡐⠐⡈⠄⡉⡐⠠⠌⣀⠒⣌⠣⣎⡼⣥⢎⡓⡈⠌⡐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠰⡐⠀⠐⠈⠀⠀⢀⢀⠂⠆⣐⢡⡌⢶⣰⣱⢳⣚⣴⢫⢶⣹⢎⡷⣹⢞⡰⢁⠂⠔⡁⠀⣤⡀⠀⠀⠀⠀⢀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠐⠀⠉⠀⠀⠀⠠⡐⢌⢂⠬⣜⣺⣥⢷⣻⡟⣶⢯⣟⣳⣞⣯⢳⣏⡟⣾⢳⢯⠰⡁⠌⡐⠀⠀⠊⠁⠀⠀⠀⢀⠂⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⡐⠬⠑⣌⢺⣼⢻⣭⢷⣯⣟⣷⣻⣽⣻⡞⣷⣻⢞⣯⢾⡝⣮⢟⢢⠓⠠⠌⠠⠁⠀⠀⠀⠀⠀⢀⠂⢌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⢀⠢⠐⡡⢜⡳⣞⣟⣮⣟⣾⣻⣾⢿⣾⣟⣾⣷⣻⢧⣻⢟⣮⢷⡹⣾⢉⠦⢉⡐⢈⠁⠀⠀⠀⠀⠀⢀⠂⠌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠄⠀⠀⢂⠈⠤⢁⢎⣱⢾⣹⣞⡽⡾⣽⢾⣿⣽⣿⣳⣿⣟⣾⢯⣛⣾⣻⠼⣧⡛⢦⠩⠐⡠⠐⠀⠀⠁⠀⠀⣠⣆⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠈⠌⡐⢎⣼⢣⡟⣶⢯⣻⣝⣯⢿⣻⣾⢿⣽⣷⣻⣭⢿⡽⣺⢵⣻⠜⡱⠊⠄⢡⠀⠃⠀⠀⠀⠀⠠⠐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠁⠎⢠⡙⡼⣧⢯⡽⣯⣻⢗⡾⣭⣟⣯⣟⣯⢷⣞⡷⣫⣟⡼⢏⡳⠌⠊⡅⢈⠔⠀⠀⠀⠀⠀⡐⠈⠄⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠊⢄⠣⣜⡳⣝⢮⡗⣯⢳⣯⡟⣷⣫⢾⡽⣞⣟⡾⣵⠛⣎⠱⡉⠐⠣⠁⠄⠣⠀⠀⠀⠀⢤⡁⠄⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠌⠌⡠⢓⢼⡹⣎⡟⣞⢷⣫⢞⡽⣣⢟⢭⡛⠵⡊⠖⠣⢉⡄⢂⠐⠉⠀⠀⠈⠀⢀⠠⢈⢒⠈⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠠⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠌⡰⠀⡏⣜⡳⣝⡞⣩⠚⡬⢉⢖⠡⣎⢂⢉⠰⢀⠊⠄⡡⠀⠀⠀⢠⠀⢆⠠⠁⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢘⠁⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠀⡐⠡⢘⠤⡙⠴⡘⡤⢋⠐⠠⡌⢠⠉⠄⡂⢁⠢⢈⠘⣁⢐⠠⢑⠢⠙⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠁⠢⠙⡈⠇⡳⢜⡠⢃⠂⠤⠁⣌⡐⡠⢅⠲⢊⠘⠢⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣄⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠱⠈⢁⠋⠈⠃⠀⠁⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
++]]
++
++---@diagnostic disable: missing-fields
++require("snacks").setup({
++  notifier = {},
++  picker = {
++    matcher = { frecency = true, cwd_bonus = true, history_bonus = true },
++    formatters = { icon_width = 5 },
++  },
++  dashboard = {
++    preset = {
++      keys = {
++        { icon = "󰈞 ", key = "f", desc = "Find files", action = ":lua Snacks.picker.smart()" },
++        { icon = " ", key = "o", desc = "Find history", action = "lua Snacks.picker.recent()" },
++        { icon = "󰑑 ", key = "g", desc = "Grep", action = ":lua Snacks.picker.grep()" },
++        {
++          icon = " ",
++          key = "c",
++          desc = "Config",
++          action = ":lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })",
++        },
++        {
++          icon = " ",
++          key = "d",
++          desc = "Find dotfiles",
++          action = ":lua Snacks.picker.files({ cwd = '~/dotfiles' })",
++        },
++        { icon = " ", key = "o", desc = "Recent files", action = ":lua Snacks.picker.recent()" },
++        { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
++        { icon = "", key = "x", desc = "Lazy Extra", action = ":LazyExtras", enabled = package.loaded.lazy ~= nil },
++        { icon = " ", key = "M", desc = "Mason", action = ":Mason", enabled = package.loaded.lazy ~= nil },
++        { icon = " ", key = "q", desc = "Quit", action = ":qa" },
++      },
++      header = header,
++    },
++    sections = {
++      { section = "header" },
++      { section = "keys" },
++    },
++  },
++  image = {
++    enabled = true,
++    doc = { enabled = true, inline = false, float = true, max_width = 80, max_height = 20 },
++  },
++  indent = {
++    enabled = false,
++    indent = { enabled = false },
++    animate = { duration = { step = 10, duration = 100 } },
++    scope = { enabled = true, char = "┊", underline = false, only_current = true, priority = 1000 },
++  },
++  styles = {
++    snacks_image = {
++      border = "rounded",
++      backdrop = false,
++    },
++  },
++})
+diff --git a/packages/nix-darwin/home/modules/neovim/options.nix b/packages/nix-darwin/home/modules/neovim/options.nix
+new file mode 100644
+index 0000000..ad42c41
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/options.nix
+@@ -0,0 +1,62 @@
++{ lib, config, ... }:
++let
++  cfg = config.dotfiles.neovim;
++in
++{
++  config = lib.mkIf (cfg.enable && cfg.backend == "nixvim") {
++    programs.nixvim = {
++      opts = {
++        number = true;
++        relativenumber = true;
++
++        tabstop = 2;
++        shiftwidth = 2;
++        expandtab = true;
++
++        mouse = "a";
++        ignorecase = true;
++        smartcase = true;
++        termguicolors = true;
++        signcolumn = "yes";
++        updatetime = 200;
++        timeoutlen = 500;
++
++        winborder = "rounded";
++      };
++
++      colorschemes.catppuccin.enable = true;
++
++      extraConfigLua = ''
++        vim.diagnostic.config({
++          virtual_text = true,
++          signs = true,
++          underline = true,
++          update_in_insert = false,
++          severity_sort = true,
++        })
++
++        local function my_paste(_)
++          return function(_)
++            local content = vim.fn.getreg('"')
++            return vim.split(content, "\n")
++          end
++        end
++
++        vim.opt.clipboard:append("unnamedplus")
++        if os.getenv("SSH_TTY") ~= nil then
++          vim.g.clipboard = {
++            name = "OSC 52",
++            copy = {
++              ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
++              ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
++            },
++            paste = {
++              ["+"] = my_paste("+"),
++              ["*"] = my_paste("*"),
++            },
++          }
++        end
++      '';
++    };
++  };
++}
+diff --git a/packages/nix-darwin/home/modules/neovim/plugins.nix b/packages/nix-darwin/home/modules/neovim/plugins.nix
+new file mode 100644
+index 0000000..df6d4be
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/neovim/plugins.nix
+@@ -0,0 +1,458 @@
++{ lib, config, pkgs, ... }:
++let
++  cfg = config.dotfiles.neovim;
++  snacksConfig = builtins.readFile ./lua/snacks.lua;
++  renderMarkdownConfig = builtins.readFile ./lua/render-markdown.lua;
++in
++{
++  config = lib.mkIf (cfg.enable && cfg.backend == "nixvim") {
++    programs.nixvim = {
++      plugins = {
++        lualine.enable = true;
++        web-devicons.enable = true;
++        which-key.enable = true;
++
++        telescope = {
++          enable = true;
++          extensions.fzf-native.enable = true;
++          settings = {
++            defaults = {
++              layout_strategy = "horizontal";
++              sorting_strategy = "ascending";
++              winblend = 0;
++              file_ignore_patterns = [ "node_modules" ".git/" ];
++            };
++          };
++        };
++
++        treesitter = {
++          enable = true;
++          settings = {
++            ensure_installed = [
++              "bash"
++              "dockerfile"
++              "go"
++              "helm"
++              "java"
++              "json"
++              "lua"
++              "markdown"
++              "markdown_inline"
++              "nix"
++              "nu"
++              "python"
++              "rust"
++              "toml"
++              "vim"
++              "yaml"
++            ];
++            highlight.enable = true;
++            indent.enable = true;
++          };
++        };
++
++        gitsigns = {
++          enable = true;
++          settings = {
++            signs = {
++              add.text = "+";
++              change.text = "~";
++              delete.text = "-";
++              topdelete.text = "‾";
++              changedelete.text = "=";
++              untracked.text = "?";
++            };
++          };
++        };
++
++        oil.enable = true;
++      };
++
++      extraPlugins = with pkgs.vimPlugins; [
++        catppuccin-nvim
++        snacks-nvim
++        mini-nvim
++        blink-cmp
++        colorful-menu-nvim
++        copilot-vim
++        copilot-lua
++        CopilotChat-nvim
++        symbols-outline-nvim
++        yazi-nvim
++        multicursor-nvim
++        nvim-colorizer-lua
++        switch-vim
++        bullets-vim
++        img-clip-nvim
++        vim-wakatime
++        zellij-nav-nvim
++        leetcode-nvim
++        kitty-scrollback-nvim
++        render-markdown-nvim
++        telescope-fzf-native-nvim
++        nui-nvim
++        plenary-nvim
++        nvim-lint
++        vim-tmux-navigator
++        none-ls-nvim
++      ];
++
++      extraConfigLua = lib.mkAfter ''
++        -- Snacks dashboard + picker config
++        ${snacksConfig}
++
++        -- Render Markdown full config
++        ${renderMarkdownConfig}
++
++        -- symbols-outline
++        vim.keymap.set("n", "<leader>cs", "<cmd>SymbolsOutline<cr>", { desc = "Symbols Outline" })
++
++        -- telescope fzf extension
++        pcall(function()
++          require("telescope").load_extension("fzf")
++        end)
++
++        -- telescope plugin-files key from old config
++        vim.keymap.set(
++          "n",
++          "<leader>fp",
++          function()
++            local root = vim.fn.stdpath("data")
++            pcall(function()
++              root = require("lazy.core.config").options.root
++            end)
++            require("telescope.builtin").find_files({ cwd = root })
++          end,
++          { desc = "Find Plugin File" }
++        )
++
++        -- yazi
++        pcall(function()
++          require("yazi").setup({
++            open_for_directories = true,
++            keymaps = { show_help = "<f1>" },
++          })
++        end)
++        vim.keymap.set("n", "<leader>e", "<cmd>Yazi<cr>", { desc = "Open yazi at the current file" })
++        vim.keymap.set("n", "<leader>E", "<cmd>Yazi cwd<cr>", { desc = "Open the file manager in nvim's working directory" })
++        vim.keymap.set("n", "<c-up>", "<cmd>Yazi toggle<cr>", { desc = "Resume the last yazi session" })
++
++        -- nvim-colorizer
++        pcall(function()
++          require("colorizer").setup({
++            "lua",
++            "html",
++            "xml",
++            "python",
++            "kitty",
++            "tmux",
++            "toml",
++            "json",
++          }, {
++            names = false,
++          })
++        end)
++
++        -- switch.vim custom definitions
++        vim.g.switch_custom_definitions = {
++          { "> [!TODO]", "> [!WIP]", "> [!DONE]", "> [!FAIL]" },
++        }
++        vim.keymap.set("n", "`", function()
++          vim.cmd([[Switch]])
++        end, { desc = "Switch strings" })
++
++        -- img-clip
++        pcall(function()
++          require("img-clip").setup({
++            default = {
++              dir_path = "assets",
++              use_absolute_path = false,
++              copy_images = true,
++              prompt_for_file_name = false,
++              file_name = "%y%m%d-%H%M%S",
++              extension = "avif",
++              process_cmd = "magick convert - -quality 75 avif:-",
++            },
++            filetypes = {
++              markdown = {
++                template = "![image$CURSOR]($FILE_PATH)",
++              },
++              tex = {
++                dir_path = "./figs",
++                extension = "png",
++                process_cmd = "",
++                template = [[
++  \begin{figure}[h]
++    \centering
++    \includegraphics[width=0.8\textwidth]{$FILE_PATH}
++  \end{figure}
++                ]],
++              },
++              typst = {
++                dir_path = "./figs",
++                extension = "png",
++                process_cmd = "magick convert - -density 300 png:-",
++                template = [[
++                #align(center)[#image("$FILE_PATH", height: auto)]
++                ]],
++              },
++            },
++          })
++        end)
++        vim.keymap.set("n", "<leader>P", "<cmd>PasteImage<cr>", { desc = "Paste image from system clipboard" })
++
++        -- vim-tmux-navigator
++        vim.g.tmux_navigator_no_mappings = 1
++        vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { silent = true, desc = "Navigate Left" })
++        vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { silent = true, desc = "Navigate Down" })
++        vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { silent = true, desc = "Navigate Up" })
++        vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { silent = true, desc = "Navigate Right" })
++        vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>", { silent = true, desc = "Navigate Previous" })
++        vim.keymap.set("t", "<C-h>", "<C-\\><C-n><cmd>TmuxNavigateLeft<cr>", { silent = true, desc = "Navigate Left" })
++        vim.keymap.set("t", "<C-j>", "<C-\\><C-n><cmd>TmuxNavigateDown<cr>", { silent = true, desc = "Navigate Down" })
++        vim.keymap.set("t", "<C-k>", "<C-\\><C-n><cmd>TmuxNavigateUp<cr>", { silent = true, desc = "Navigate Up" })
++        vim.keymap.set("t", "<C-l>", "<C-\\><C-n><cmd>TmuxNavigateRight<cr>", { silent = true, desc = "Navigate Right" })
++        vim.keymap.set("t", "<C-\\>", "<C-\\><C-n><cmd>TmuxNavigatePrevious<cr>", { silent = true, desc = "Navigate Previous" })
++
++        -- zellij-nav
++        vim.keymap.set("n", "<C-h>", "<cmd>ZellijNavigateLeft<cr>", { silent = true, desc = "Move left" })
++        vim.keymap.set("n", "<C-j>", "<cmd>ZellijNavigateDown<cr>", { silent = true, desc = "Move down" })
++        vim.keymap.set("n", "<C-k>", "<cmd>ZellijNavigateUp<cr>", { silent = true, desc = "Move up" })
++        vim.keymap.set("n", "<C-l>", "<cmd>ZellijNavigateRight<cr>", { silent = true, desc = "Move right" })
++
++        -- kitty scrollback
++        pcall(function()
++          require("kitty-scrollback").setup()
++        end)
++
++        -- leetcode
++        pcall(function()
++          local leet = require("leetcode")
++          leet.setup({
++            lang = "python",
++            cn = {
++              enabled = true,
++              translator = false,
++              translate_problems = true,
++            },
++            storage = {
++              home = vim.fn.expand("~/Projects/code_draft/leetcode"),
++              cache = vim.fn.stdpath("cache") .. "/leetcode",
++            },
++          })
++        end)
++
++        -- copilot chat keymaps from old config
++        vim.keymap.set("n", "<leader>cii", "<cmd>CopilotChatToggle<cr>", { desc = "CopilotChat - Toggle" })
++        vim.keymap.set("v", "<leader>cie", "<cmd>CopilotChatExplain<cr>", { desc = "CopilotChat - Explain code" })
++
++        -- blink.cmp setup from old config
++        pcall(function()
++          require("blink.cmp").setup({
++            completion = {
++              menu = {
++                draw = {
++                  columns = { { "kind_icon" }, { "label", gap = 1 } },
++                  components = {
++                    label = {
++                      text = function(ctx)
++                        return require("colorful-menu").blink_components_text(ctx)
++                      end,
++                      highlight = function(ctx)
++                        return require("colorful-menu").blink_components_highlight(ctx)
++                      end,
++                    },
++                  },
++                },
++              },
++              documentation = {
++                auto_show = true,
++                auto_show_delay_ms = 500,
++              },
++            },
++            keymap = {
++              ["<C-u>"] = { "scroll_documentation_up", "fallback" },
++              ["<C-d>"] = { "scroll_documentation_down", "fallback" },
++            },
++            signature = {
++              enabled = true,
++            },
++            cmdline = {
++              completion = {
++                menu = {
++                  auto_show = true,
++                },
++              },
++            },
++            sources = {
++              providers = {
++                snippets = { score_offset = 5 },
++              },
++            },
++          })
++        end)
++
++        -- multicursor setup from old config
++        pcall(function()
++          local mc = require("multicursor-nvim")
++          mc.setup()
++
++          local set = vim.keymap.set
++          set({ "n", "x" }, "<C-A-up>", function() mc.lineAddCursor(-1) end)
++          set({ "n", "x" }, "<C-A-down>", function() mc.lineAddCursor(1) end)
++          set({ "n", "x" }, "<S-C-A-up>", function() mc.lineSkipCursor(-1) end)
++          set({ "n", "x" }, "<S-C-A-down>", function() mc.lineSkipCursor(1) end)
++          set({ "n", "x" }, "<leader><C-C>n", function() mc.matchAddCursor(1) end, { desc = "Add cursor match 1" })
++          set({ "n", "x" }, "<leader><C-C>s", function() mc.matchSkipCursor(1) end, { desc = "Skip cursor match 1" })
++          set({ "n", "x" }, "<leader><C-C>N", function() mc.matchAddCursor(-1) end, { desc = "Add cursor match -1" })
++          set({ "n", "x" }, "<leader><C-C>S", function() mc.matchSkipCursor(-1) end, { desc = "Skip cursor match -1" })
++          set("n", "<c-leftmouse>", mc.handleMouse)
++          set("n", "<c-leftdrag>", mc.handleMouseDrag)
++          set("n", "<c-leftrelease>", mc.handleMouseRelease)
++          set({ "n", "x" }, "<c-q>", mc.toggleCursor)
++
++          mc.addKeymapLayer(function(layerSet)
++            layerSet({ "n", "x" }, "<C-A-left>", mc.prevCursor)
++            layerSet({ "n", "x" }, "<C-A-right>", mc.nextCursor)
++            layerSet({ "n", "x" }, "<leader><C-x>", mc.deleteCursor)
++            layerSet("n", "<esc>", function()
++              if not mc.cursorsEnabled() then
++                mc.enableCursors()
++              else
++                mc.clearCursors()
++              end
++            end)
++          end)
++
++          local hl = vim.api.nvim_set_hl
++          hl(0, "MultiCursorCursor", { reverse = true })
++          hl(0, "MultiCursorVisual", { link = "Visual" })
++          hl(0, "MultiCursorSign", { link = "SignColumn" })
++          hl(0, "MultiCursorMatchPreview", { link = "Search" })
++          hl(0, "MultiCursorDisabledCursor", { reverse = true })
++          hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
++          hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
++        end)
++
++        -- oil.nvim custom behavior from old config
++        function _G.get_oil_winbar()
++          local dir = require("oil").get_current_dir()
++          if dir then
++            return vim.fn.fnamemodify(dir, ":~")
++          else
++            return vim.api.nvim_buf_get_name(0)
++          end
++        end
++
++        local detail = false
++        require("oil").setup({
++          default_file_explorer = true,
++          keymaps = {
++            ["<C-h>"] = false,
++            ["<C-l>"] = false,
++            ["<C-k>"] = false,
++            ["<C-j>"] = false,
++            ["<C-r>"] = "actions.refresh",
++            ["<leader>y"] = "actions.yank_entry",
++            ["g."] = false,
++            ["zh"] = "actions.toggle_hidden",
++            ["-"] = "actions.close",
++            ["<BS>"] = "actions.parent",
++            ["gd"] = {
++              desc = "Toggle file detail view",
++              callback = function()
++                detail = not detail
++                if detail then
++                  require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
++                else
++                  require("oil").set_columns({ "icon" })
++                end
++              end,
++            },
++          },
++          win_options = {
++            winbar = "%!v:lua.get_oil_winbar()",
++          },
++        })
++
++        -- snacks picker keymaps from old config
++        local map = function(key, func, desc)
++          vim.keymap.set("n", key, func, { desc = desc })
++        end
++
++        -- mini.surround from old config
++        pcall(function()
++          require("mini.surround").setup({
++            mappings = {
++              add = "ra",
++              delete = "rd",
++              find = "gsf",
++              find_left = "gsF",
++              highlight = "gsh",
++              replace = "gsr",
++              update_n_lines = "gsn",
++            },
++          })
++        end)
++
++        -- nvim-lint from old config
++        pcall(function()
++          local lint = require("lint")
++          local home = vim.env.HOME or ""
++          lint.linters["markdownlint-cli2"] = lint.linters["markdownlint-cli2"] or {}
++          lint.linters["markdownlint-cli2"].args = {
++            "--config",
++            home .. "/.config/.markdownlint-cli2.yaml",
++            "--",
++          }
++        end)
++
++        pcall(function()
++          map("<leader>ff", Snacks.picker.smart, "Smart find file")
++          map("<leader>fr", Snacks.picker.recent, "Find recent file")
++          map("<leader>fw", Snacks.picker.grep, "Find content")
++          map("<leader>fh", function() Snacks.picker.help({ layout = "dropdown" }) end, "Find in help")
++          map("<leader>fk", function() Snacks.picker.keymaps({ layout = "dropdown" }) end, "Find keymap")
++          map("<leader>fm", Snacks.picker.marks, "Find mark")
++          map("<leader>fn", function() Snacks.picker.notifications({ layout = "dropdown" }) end, "Find notification")
++          map("grr", Snacks.picker.lsp_references, "Find lsp references")
++          map("<leader>fS", Snacks.picker.lsp_workspace_symbols, "Find workspace symbol")
++          map("<leader>fs", function()
++            local bufnr = vim.api.nvim_get_current_buf()
++            local clients = vim.lsp.get_clients({ bufnr = bufnr })
++
++            local function has_lsp_symbols()
++              for _, client in ipairs(clients) do
++                if client.server_capabilities.documentSymbolProvider then
++                  return true
++                end
++              end
++              return false
++            end
++
++            if has_lsp_symbols() then
++              Snacks.picker.lsp_symbols({ tree = true })
++            else
++              Snacks.picker.treesitter()
++            end
++          end, "Find symbol in current buffer")
++          map("<leader>fd", Snacks.picker.diagnostics_buffer, "Find diagnostic in current buffer")
++          map("<leader>fH", Snacks.picker.highlights, "Find highlight")
++          map("<leader>f/", Snacks.picker.search_history, "Find search history")
++          map("<leader>fj", Snacks.picker.jumps, "Find jump")
++          map("<leader>bc", Snacks.bufdelete.delete, "Delete buffers")
++          map("<leader>bC", Snacks.bufdelete.other, "Delete other buffers")
++          map("<leader>gg", function() Snacks.lazygit({ cwd = Snacks.git.get_root() }) end, "Open lazygit")
++          map("<leader>n", Snacks.notifier.show_history, "Notification history")
++          map("<leader><C-l>d", function() Snacks.dashboard.open() end, "Открыть Dashboard")
++        end)
++      '';
++    };
++
++    # tools expected by plugin configs
++    home.packages = with pkgs; [
++      imagemagick
++      markdownlint-cli2
++    ];
++  };
++}
+diff --git a/packages/nix-darwin/home/modules/nvim.nix b/packages/nix-darwin/home/modules/nvim.nix
+new file mode 100644
+index 0000000..ae15379
+--- /dev/null
++++ b/packages/nix-darwin/home/modules/nvim.nix
+@@ -0,0 +1,7 @@
++# Deprecated: replaced by modular Neovim configuration in ./neovim/
++# - ./neovim/default.nix
++# - ./neovim/options.nix
++# - ./neovim/keymaps.nix
++# - ./neovim/plugins.nix
++# - ./neovim/lsp.nix
++{ }
+diff --git a/packages/nix-darwin/hosts/darwin/default.nix b/packages/nix-darwin/hosts/darwin/default.nix
+index ccd67dd..e7f012a 100644
+--- a/packages/nix-darwin/hosts/darwin/default.nix
++++ b/packages/nix-darwin/hosts/darwin/default.nix
+@@ -1,9 +1,14 @@
+-{ pkgs, username, hostname, ... }:
++{ pkgs, username, hostname, lib, ... }:
+ {
+   networking.hostName = hostname;
+ 
+   nixpkgs.hostPlatform = "aarch64-darwin";
+ 
++  nixpkgs.config.allowUnfreePredicate = pkg:
++    builtins.elem (lib.getName pkg) [
++      "copilot.vim"
++    ];
++
+   nix.settings = {
+     experimental-features = [ "nix-command" "flakes" ];
+     warn-dirty = false;
+diff --git a/shells/zshrc/.zshrc b/shells/zshrc/.zshrc
+index 0b0ae1d..ced0ce2 100644
+--- a/shells/zshrc/.zshrc
++++ b/shells/zshrc/.zshrc
+@@ -62,7 +62,7 @@ fi
+ # You may need to manually set your language environment
+ export LANG=en_US.UTF-8
+ 
+-export EDITOR=/opt/homebrew/bin/nvim
++export EDITOR=nvim
+ 
+ alias ping=gping
+ alias la=tree
+@@ -149,7 +149,12 @@ alias ......="cd ../../../../.."
+ export GOPATH='/Users/kamradsmeshnyavy/go'
+ 
+ # VIM
+-alias v="/opt/homebrew/bin/nvim"
++if [[ -x "/etc/profiles/per-user/$USER/bin/nvim" ]]; then
++  alias nvim="/etc/profiles/per-user/$USER/bin/nvim"
++elif [[ -x "/run/current-system/sw/bin/nvim" ]]; then
++  alias nvim="/run/current-system/sw/bin/nvim"
++fi
++alias v="nvim"
+ 
+ # Nmap
+ alias nm="nmap -sC -sV -oN nmap"
