@@ -39,7 +39,9 @@ quick-terminal-position = center
 font-feature = -calt, -liga, -dlig
 
 # shaders
-custom-shader = ./my_shaders/cursor.glsl
+# custom-shader = ./my_shaders/cursor.glsl
+# custom-shader = ./shader_git/cursor_warp.glsl
+custom-shader = ./my_shaders_new/cursor_warp_mauve_trail.glsl
 # custom-shader = ./shaders/glitchy.glsl
 # custom-shader = ./shaders/bloom.glsl
 # custom-shader = ./shaders/retro-terminal.glsl
