@@ -1,6 +1,6 @@
 local M = {}
 
-M.profile = "pink"
+M.profile = "current"
 
 M.profiles = {
   current = {

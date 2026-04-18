@@ -6,7 +6,7 @@ clipboard-read = allow
 clipboard-write = allow
 copy-on-select = true
 window-save-state = always
-theme = Catppuccin Mocha
+theme = dark:Catppuccin Mocha, light:TokyoNight
 # theme = Catppuccin Mocha
 confirm-close-surface=false
 # font-family
