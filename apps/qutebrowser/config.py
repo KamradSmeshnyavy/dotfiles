@@ -207,3 +207,12 @@ config.set('content.local_content_can_access_remote_urls', True,
 # Type: Bool
 config.set('content.local_content_can_access_file_urls', False,
            'file:///Users/kamradsmeshnyavy/Library/Application%20Support/qutebrowser/userscripts/*')
+
+config.bind('pw', 'spawn --userscript /Users/kamradsmeshnyavy/qutebrowser-env/bin/python /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591',
+            # Альтернативный бинд для режима ввода (опционально)
+            mode='normal')
+
+config.bind('<Alt-Shift-u>', 'spawn --userscript /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591', mode='insert')
+
+# Для TOTP (коды двухфакторной аутентификации)
+config.bind('pt', 'spawn --userscript /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591 --totp', mode='normal')

@@ -40,12 +40,12 @@ $python\
 $character"""
 
 [directory]
-style = "blue"
+style = "pink"
 
 [character]
 success_symbol = "[❯](green)"
 error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](sky)"
+vimcmd_symbol = "[❮](pink)"
 
 [git_branch]
 format = "[$branch]($style)"

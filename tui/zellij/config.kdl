@@ -337,7 +337,7 @@ ui {
     }
 }
 
-theme "ctp"
+theme "ctp_pink"
 mouse_mode true
 // mouse_mode false
 auto_layout true

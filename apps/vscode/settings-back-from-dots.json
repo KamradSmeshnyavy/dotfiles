@@ -252,7 +252,7 @@
     "material-icon-theme.folders.theme": "specific",
     "catppuccin.extraBordersEnabled": true,
     "catppuccin.italicComments": false,
-    "catppuccin.accentColor": "lavender",
+    "catppuccin.accentColor": "pink",
     "catppuccin.bracketMode": "neovim",
     "catppuccin.workbenchMode": "minimal",
     "catppuccin.boldKeywords": true,

@@ -1,0 +1,38 @@
+FROM archlinux:latest
+
+RUN pacman-key --init && pacman-key --populate
+{% if unstable %}
+RUN sed -i '/^# after the header/a[kde-unstable]\nInclude = /etc/pacman.d/mirrorlist\n\n[core-testing]\nInclude = /etc/pacman.d/mirrorlist\n\n[extra-testing]\nInclude = /etc/pacman.d/mirrorlist' /etc/pacman.conf
+{% endif %}
+RUN pacman -Sy --noconfirm archlinux-keyring
+RUN pacman -Su --noconfirm \
+    git \
+    python-tox \
+    python-distlib \
+    libxml2-legacy \
+    qt6-base \
+    qt6-declarative \
+    qt6-webengine \
+    python-pyqt6-webengine \
+    pdfjs \
+    python-pyqt6 \
+    xorg-xinit \
+    xorg-server-xvfb \
+    ttf-bitstream-vera \
+    gcc \
+    libyaml \
+    xorg-xdpyinfo
+
+RUN useradd user -u 1001 && \
+    mkdir /home/user && \
+    chown user:users /home/user
+
+RUN python3 -c "from PyQt6 import QtWebEngineCore, QtWebEngineWidgets"
+
+USER user
+WORKDIR /home/user
+RUN git config --global --add safe.directory /outside/.git
+
+CMD git clone /outside qutebrowser.git && \
+    cd qutebrowser.git && \
+    {{ python }} -m tox -e py-qt6
