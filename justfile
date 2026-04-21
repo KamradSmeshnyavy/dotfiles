@@ -5,6 +5,9 @@ hostname  := "MacBook-Pro-Denis"
 switch:
     sudo darwin-rebuild switch --flake {{flake_dir}}#{{hostname}}
 
+switch-lix:
+    sudo -H nix run nix-darwin -- switch --flake {{flake_dir}}#{{hostname}}
+
 # Собрать и проверить конфигурацию без применения (check)
 build:
     sudo darwin-rebuild build --flake {{flake_dir}}#{{hostname}}
