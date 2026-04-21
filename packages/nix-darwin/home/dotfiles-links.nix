@@ -6,7 +6,7 @@ in
   home.file = {
     ".config/aerospace".source = link "${dotfilesRoot}/apps/aerospace";
     ".config/neovide".source = link "${dotfilesRoot}/apps/neovide";
-    ".config/hammerspoon".source = link "${dotfilesRoot}/apps/hammerspoon";
+    ".hammerspoon".source = link "${dotfilesRoot}/apps/hammerspoon";
     ".config/atuin".source = link "${dotfilesRoot}/tui/atuin";
     ".config/bat".source = link "${dotfilesRoot}/tui/bat";
     ".config/borders".source = link "${dotfilesRoot}/apps/borders";
