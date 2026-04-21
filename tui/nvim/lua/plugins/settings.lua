@@ -1,13 +1,5 @@
 return {
   {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000,
-    opts = function()
-      return require("config.theme_profile").catppuccin
-    end,
-  },
-  {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = function()

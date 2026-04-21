@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
-
 local header = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -26,37 +24,6 @@ local header = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ]]
-
-local theme_profile = require("config.theme_profile")
-
-local dashboard_colors = {
-  current = {
-    desc = "#b4befe",
-    icon = "#b4befe",
-    file = "#89b4fa",
-    key = "#fab387",
-  },
-  pink = {
-    desc = "#f5c2e7",
-    icon = "#f5c2e7",
-    file = "#f2cdcd",
-    key = "#fab387",
-  },
-}
-
-local function apply_dashboard_highlights()
-  local palette = dashboard_colors[theme_profile.profile] or dashboard_colors.current
-  vim.api.nvim_set_hl(0, "SnacksDashboardDesc", { fg = palette.desc })
-  vim.api.nvim_set_hl(0, "SnacksDashboardIcon", { fg = palette.icon })
-  vim.api.nvim_set_hl(0, "SnacksDashboardFile", { fg = palette.file })
-  vim.api.nvim_set_hl(0, "SnacksDashboardKey", { fg = palette.key })
-end
-
-local dashboard_hl_group = vim.api.nvim_create_augroup("dotfiles_snacks_dashboard_hl", { clear = true })
-vim.api.nvim_create_autocmd("ColorScheme", {
-  group = dashboard_hl_group,
-  callback = apply_dashboard_highlights,
-})
 
 ---@diagnostic disable: missing-fields
 require("snacks").setup({
@@ -113,5 +80,3 @@ require("snacks").setup({
     },
   },
 })
-
-apply_dashboard_highlights()
