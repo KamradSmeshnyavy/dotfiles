@@ -39,6 +39,7 @@ in
     ".config/television".source = link "${dotfilesRoot}/tui/television";
     ".config/tig".source = link "${dotfilesRoot}/tui/tig";
     ".config/todo".source = link "${dotfilesRoot}/cli/todo";
+    ".p10k.zsh".source = link "${dotfilesRoot}/cli/p10k/.p10k.zsh";
     ".config/tmux".source = link "${dotfilesRoot}/tui/tmux";
     ".config/vscode/markdown-preview-enhanced".source = link "${dotfilesRoot}/apps/vscode/markdown-preview-enhanced";
     ".config/wezterm".source = link "${dotfilesRoot}/apps/wezterm";
