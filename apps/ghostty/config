@@ -28,6 +28,10 @@ font-feature = "liga"
 font-thicken = true
 font-thicken-strength = 255
 
+# background
+# background-opacity = 0.80
+# background-blur-radius = 20
+
 link-url = true
 link-previews = true
 
