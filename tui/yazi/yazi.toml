@@ -21,8 +21,8 @@ ueberzug_scale = 1
 
 [opener]
 edit = [
-  { run = '${EDITOR:=vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
-  { run = 'nvim "%*"', block = true, desc = "nvim", for = "windows" },
+	{ run = '${EDITOR:=vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+	{ run = 'nvim "%*"', block = true, desc = "nvim", for = "windows" },
 ]
 code = [
 	{ run = 'code "$@"', orphan = true, desc = "VSCode", for = "unix" },
@@ -177,13 +177,13 @@ run = "git"
 group = "git"
 
 [[plugin.prepend_fetchers]]
-id   = "mactag"
-url  = "*"
-run  = "mactag"
+id = "mactag"
+url = "*"
+run = "mactag"
 group = "mactag"
 
 [[plugin.prepend_fetchers]]
-id   = "mactag"
-url  = "*/"
-run  = "mactag"
+id = "mactag"
+url = "*/"
+run = "mactag"
 group = "mactag"
