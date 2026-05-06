@@ -1,7 +1,3 @@
-# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
-# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
-"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
-
 [mgr]
 
 keymap = [
@@ -124,7 +120,7 @@ keymap = [
 	{ on = [
 		"<Space>",
 	], run = [
-		"toggle --state=none",
+		"toggle",
 		"arrow 1",
 	], desc = "Toggle the current selection state" },
 	{ on = [
@@ -135,10 +131,10 @@ keymap = [
 	], run = "visual_mode --unset", desc = "Enter visual mode (unset mode)" },
 	{ on = [
 		"<C-a>",
-	], run = "toggle_all --state=true", desc = "Select all files" },
+	], run = "toggle_all --state=on", desc = "Select all files" },
 	{ on = [
 		"<C-r>",
-	], run = "toggle_all --state=none", desc = "Inverse selection of all files" },
+	], run = "toggle_all", desc = "Inverse selection of all files" },
 
 	# Operation
 	{ on = [
@@ -197,13 +193,13 @@ keymap = [
 	], run = "hidden toggle", desc = "Toggle the visibility of hidden files" },
 	{ on = [
 		"s",
-	], run = "search fd", desc = "Search files by name using fd" },
+	], run = "search --via=fd", desc = "Search files by name using fd" },
 	{ on = [
 		"S",
-	], run = "search rg", desc = "Search files by content using ripgrep" },
+	], run = "search --via=rg", desc = "Search files by content using ripgrep" },
 	{ on = [
 		"<C-s>",
-	], run = "search none", desc = "Cancel the ongoing search" },
+	], run = "escape --search", desc = "Cancel the ongoing search" },
 	{ on = [
 		"z",
 	], run = "plugin zoxide", desc = "Jump to a directory using zoxide" },
@@ -366,7 +362,7 @@ keymap = [
 	# Tasks
 	{ on = [
 		"w",
-	], run = "tasks_show", desc = "Show the tasks manager" },
+	], run = "tasks:show", desc = "Show the tasks manager" },
 
 	# Goto
 	{ on = [
