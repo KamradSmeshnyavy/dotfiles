@@ -15,6 +15,7 @@
   - [1) Первый запуск через nix-darwin (рекомендуется)](#1-первый-запуск-через-nix-darwin-рекомендуется)
   - [2) Применение изменений (ежедневно)](#2-применение-изменений-ежедневно)
   - [3) Legacy-установка без nix-darwin](#3-legacy-установка-без-nix-darwin)
+  - [4) Installer (macOS/omarchy)](#4-installer-macosomarchy)
 - [Структура Nix-конфига](#структура-nix-конфига)
 
 - [VSCode](#vscode)
@@ -52,9 +53,20 @@ sudo nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
 Если нужен старый вариант через симлинки (dotbot):
 
 ```bash
-cd ~/dotfiles
+cd ~/dotfiles/install
 python3 install.py
 ```
+
+### 4) Installer (macOS/omarchy)
+
+Установка пакетов + применение dotfiles (скрипт с выбором):
+
+```bash
+cd ~/dotfiles/install
+./bootstrap.sh
+```
+
+Списки пакетов находятся в `install/packages/`.
 
 ## Структура Nix-конфига
 
