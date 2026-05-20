@@ -6,9 +6,14 @@
 # fi
 
 # Path to your oh-my-zsh installation.
-export ZSH='$HOME/.oh-my-zsh'
+export ZSH="$HOME/.oh-my-zsh"
 export SHELL=/bin/zsh
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+is_macos() { [[ "$OSTYPE" == darwin* ]]; }
+path_prepend() { for p in "$@"; do [[ -d "$p" ]] && PATH="$p:$PATH"; done }
+path_append() { for p in "$@"; do [[ -d "$p" ]] && PATH="$PATH:$p"; done }
+
+path_prepend /opt/homebrew/bin /opt/homebrew/sbin /usr/local/bin /usr/bin /bin /usr/sbin /sbin
 # Reevaluate the prompt string each time it's displaying a prompt
 setopt prompt_subst
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -24,7 +29,7 @@ fi
 
 #eval "$(brew shellenv)"
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+[[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^w' autosuggest-execute
 bindkey '^e' autosuggest-accept
 bindkey '^u' autosuggest-toggle
@@ -62,7 +67,11 @@ fi
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
-export EDITOR=/opt/homebrew/bin/nvim
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR="$(command -v nvim)"
+else
+  export EDITOR=vim
+fi
 
 alias ping=gping
 alias la=tree
@@ -90,10 +99,12 @@ alias rmf='rmt --tf' #flash
 alias rmd='rmt --td' #GUI
 
 # ssh
-alias sshx='export DISPLAY=:0.0 && open /Applications/Utilities/XQuartz.app && ssh -X'
+if is_macos && command -v open >/dev/null 2>&1; then
+  alias sshx='export DISPLAY=:0.0 && open /Applications/Utilities/XQuartz.app && ssh -X'
+fi
 
 # yazi
-export YAZI_CONFIG_HOME='/Users/kamradsmeshnyavy/.config/yazi'
+export YAZI_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/yazi"
 function yy() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     yazi "$@" --cwd-file="$tmp"
@@ -146,7 +157,7 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
 # GO
-export GOPATH='/Users/kamradsmeshnyavy/go'
+export GOPATH="$HOME/go"
 
 # VIM
 # alias v="/opt/homebrew/bin/nvim"
@@ -163,7 +174,7 @@ v() {
 # Nmap
 alias nm="nmap -sC -sV -oN nmap"
 
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:${GOPATH}/bin:/Users/kamradsmeshnyavy/.cargo/bin:$PATH"
+path_prepend "$HOME/.vimpkg/bin" "${GOPATH}/bin" "$HOME/.cargo/bin"
 
 
 
@@ -193,7 +204,7 @@ alias http="xh"
 bindkey jj vi-cmd-mode
 
 # eza
-export EZA_CONFIG_DIR=/Users/kamradsmeshnyavy/.config/eza
+export EZA_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/eza"
 alias l="eza -l --icons --git -a"
 alias lt="eza --tree --level=2 --long --icons --git"
 alias ltree="eza --tree --level=2  --icons --git"
@@ -244,14 +255,18 @@ fi
 
 
 
-alias mat='osascript -e "tell application \"System Events\" to key code 126 using {command down}" && tmux neww "cmatrix"'
+if is_macos && command -v osascript >/dev/null 2>&1; then
+  alias mat='osascript -e "tell application \"System Events\" to key code 126 using {command down}" && tmux neww "cmatrix"'
+fi
 
 # Nix!
 export NIX_CONF_DIR=$HOME/.config/nix
 export PATH=/run/current-system/sw/bin:$PATH
 export PATH=$HOME/.nix-profile/bin:$PATH
 
-alias nixuu='cd /Users/kamradsmeshnyavy/dotfiles/nix-darwin && nix flake update && sudo darwin-rebuild switch --flake .# && cd -'
+if is_macos; then
+  alias nixuu='cd "$HOME/dotfiles/nix-darwin" && nix flake update && sudo darwin-rebuild switch --flake .# && cd -'
+fi
 
 function ranger {
 	local IFS=$'\t\n'
@@ -273,7 +288,20 @@ alias rr='ranger'
 # navigation
 cx() { cd "$@" && l; }
 fcd() { cd "$(find . -type d -not -path '*/.*' | fzf)" && l; }
-f() { echo "$(find . -type f -not -path '*/.*' | fzf)" | pbcopy }
+f() {
+  local file
+  file="$(find . -type f -not -path '*/.*' | fzf)"
+  [[ -n "$file" ]] || return
+  if command -v pbcopy >/dev/null 2>&1; then
+    printf '%s' "$file" | pbcopy
+  elif command -v wl-copy >/dev/null 2>&1; then
+    printf '%s' "$file" | wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    printf '%s' "$file" | xclip -selection clipboard
+  else
+    echo "$file"
+  fi
+}
 fv() { nvim "$(find . -type f -not -path '*/.*' | fzf)" }
 
 # ===== Nushell aliases migrated to zsh =====
@@ -551,22 +579,32 @@ start_mpd() {
   fi
 }
 
- export XDG_CONFIG_HOME="/Users/kamradsmeshnyavy/.config"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-eval "$(zoxide init zsh)"
-eval "$(atuin init zsh)"
-eval "$(direnv hook zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
 # export PYENV_ROOT="$HOME/.pyenv"
 # command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 # eval "$(command pyenv init -)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(command pyenv init -)"
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 export PATH=$PATH:~/.spoofdpi/bin
 
 # Created by `pipx` on 2025-09-13 12:59:56
-export PATH="$PATH:/Users/kamradsmeshnyavy/.local/bin"
-export PATH="$PATH:/Users/kamradsmeshnyavy/Library/Python/3.9/bin"
+path_append "$HOME/.local/bin"
+if is_macos; then
+  path_append "$HOME/Library/Python/3.9/bin"
+fi
 
 
 # FPATH for alacritty(design kamrad)
@@ -605,20 +643,26 @@ fi
 # ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#4fd6be'    # teal/green1
 
 
-source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+if [[ -f /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]]; then
+  source /opt/homebrew/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+fi
 
 #update fzf
-source <(fzf --zsh)
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 
-export PATH="$HOME/.npm-global/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
+path_prepend "$HOME/.npm-global/bin"
+path_prepend /opt/homebrew/bin
 
 
 
-export PATH=$PATH:/Users/kamradsmeshnyavy/.spicetify
-export PATH="$PATH:/opt/homebrew/opt/postgresql@15/bin"
+path_append "$HOME/.spicetify"
+path_append /opt/homebrew/opt/postgresql@15/bin
 
-eval "$(tv init zsh)"
+if command -v tv >/dev/null 2>&1; then
+  eval "$(tv init zsh)"
+fi
 
 alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser'
 
@@ -628,4 +672,9 @@ alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser'
  fi
  # End Nix
 
-export PATH=/Users/kamradsmeshnyavy/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/Users/kamradsmeshnyavy/.npm-global/bin:/Users/kamradsmeshnyavy/.pyenv/shims:/Users/kamradsmeshnyavy/.nix-profile/bin:/run/current-system/sw/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/kamradsmeshnyavy/.vimpkg/bin:/Users/kamradsmeshnyavy/go/bin:/Users/kamradsmeshnyavy/.cargo/bin:/opt/homebrew/opt/fzf/bin:/Users/kamradsmeshnyavy/.spoofdpi/bin:/Users/kamradsmeshnyavy/.local/bin:/Users/kamradsmeshnyavy/Library/Python/3.9/bin:/Users/kamradsmeshnyavy/.spicetify:/opt/homebrew/opt/postgresql@15/bin:/Applications/Ghostty.app/Contents/MacOS
+path_prepend "$HOME/.nix-profile/bin" /nix/var/nix/profiles/default/bin /run/current-system/sw/bin
+path_prepend "$HOME/.pyenv/shims" "$HOME/.spoofdpi/bin"
+path_prepend /opt/homebrew/opt/fzf/bin
+if is_macos; then
+  path_append /Applications/Ghostty.app/Contents/MacOS
+fi

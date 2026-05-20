@@ -279,8 +279,8 @@
         "Tabs": 200
     },
     "custom-ui-style.external.imports": [
-        "file:///Users/kamradsmeshnyavy/Projects/dotfiles/apps/vscode/custom.css",
-        "file:///Users/kamradsmeshnyavy/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js"
+        "file://${env:HOME}/Projects/dotfiles/apps/vscode/custom.css",
+        "file://${env:HOME}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js"
     ],
     // "custom-ui-style.external.loadStrategy": "cache",
     // * ╭───────────────────────────────────────────────────────╮
@@ -312,8 +312,8 @@
     "git.terminalGitEditor": true,
     "git.blame.editorDecoration.enabled": true,
     "git.blame.editorDecoration.template": "${subject}, ${authorName} (${authorDateAgo})",
-    "lazygit-vscode.lazygitPath": "/opt/homebrew/bin/lazygit",
-    "lazygit-vscode.configPath": "/Users/kamradsmeshnyavy/.config/lazygit/config.yml",
+    "lazygit-vscode.lazygitPath": "lazygit",
+    "lazygit-vscode.configPath": "${env:HOME}/.config/lazygit/config.yml",
     "lazygit-vscode.autoMaximizeWindow": true,
     "diffEditor.wordWrap": "off",
     "diffEditor.ignoreTrimWhitespace": false,
@@ -371,7 +371,7 @@
     "errorLens.fontWeight": "100",
     "leetcode.endpoint": "leetcode",
     "leetcode.nodePath": "/opt/homebrew/bin/node",
-    "leetcode.workspaceFolder": "/Users/kamradsmeshnyavy/Projects/code_draft/leetcode",
+    "leetcode.workspaceFolder": "${env:HOME}/Projects/code_draft/leetcode",
     "leetcode.defaultLanguage": "python3",
     "leetcode.filePath": {
         "python3": {
@@ -1350,7 +1350,7 @@
     "notebook.formatOnSave.enabled": true,
     "roo-cline.deniedCommands": [ ],
     "yazi-vscode.yaziPath": "/opt/homebrew/bin/yazi",
-    "yazi-vscode.configPath": "/Users/kamradsmeshnyavy/.config/yazi/yazi.toml",
+    "yazi-vscode.configPath": "${env:HOME}/.config/yazi/yazi.toml",
     "chat.editing.confirmEditRequestRemoval": false,
     // update locale
     "locale": "en",
@@ -1358,4 +1358,9 @@
     "typescript.locale": "en",
     "terminal.integrated.enableMultiLinePasteWarning": "never",
     "terminal.integrated.fontSize": 10,
+    "yaml.schemas": {
+        "file://${env:HOME}/.vscode/extensions/continue.continue-1.2.22-darwin-arm64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ]
+    },
 }

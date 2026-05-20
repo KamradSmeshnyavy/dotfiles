@@ -3,8 +3,11 @@ c = c  # noqa: F821 pylint: disable=E0602,C0103
 config = config  # noqa: F821 pylint: disable=E0602,C0103
 # pylint settings included to disable linting errors
 
-import catppuccin
+import os
+import sys
+from pathlib import Path
 
+import catppuccin
 
 c.colors.statusbar.normal.bg = "#00000000"
 c.colors.statusbar.command.bg = "#00000000"
@@ -23,58 +26,63 @@ c.fonts.web.size.default = 20
 
 c.url.searchengines = {
     # note - if you use duckduckgo, you can make use of its built in bangs, of which there are many! https://duckduckgo.com/bangs
-    'DEFAULT': 'https://duckduckgo.com/?q={}',
-    '!aw': 'https://wiki.archlinux.org/?search={}',
-    '!apkg': 'https://archlinux.org/packages/?sort=&q={}&maintainer=&flagged=',
-    '!gh': 'https://github.com/search?o=desc&q={}&s=stars',
-    '!yt': 'https://www.youtube.com/results?search_query={}',
+    "DEFAULT": "https://duckduckgo.com/?q={}",
+    "!aw": "https://wiki.archlinux.org/?search={}",
+    "!apkg": "https://archlinux.org/packages/?sort=&q={}&maintainer=&flagged=",
+    "!gh": "https://github.com/search?o=desc&q={}&s=stars",
+    "!yt": "https://www.youtube.com/results?search_query={}",
 }
 
 c.completion.open_categories = [
-    'searchengines', 'quickmarks', 'bookmarks', 'history', 'filesystem']
+    "searchengines",
+    "quickmarks",
+    "bookmarks",
+    "history",
+    "filesystem",
+]
 
 config.load_autoconfig()  # load settings done via the gui
 
 c.auto_save.session = True  # save tabs on quit/restart
 
 # keybinding changes
-config.bind('=', 'cmd-set-text -s :open')
-config.bind('h', 'history')
-config.bind('cc', 'hint images spawn sh -c "cliphist link {hint-url}"')
-config.bind('cs', 'cmd-set-text -s :config-source')
-config.bind('tH', 'config-cycle tabs.show multiple never')
-config.bind('sH', 'config-cycle statusbar.show always never')
-config.bind('T', 'hint links tab')
-config.bind('pP', 'open -- {primary}')
-config.bind('pp', 'open -- {clipboard}')
-config.bind('pt', 'open -t -- {clipboard}')
-config.bind('qm', 'macro-record')
-config.bind('<ctrl-y>', 'spawn --userscript ytdl.sh')
-config.bind('tT', 'config-cycle tabs.position top left')
-config.bind('gJ', 'tab-move +')
-config.bind('gK', 'tab-move -')
-config.bind('gm', 'tab-move')
+config.bind("=", "cmd-set-text -s :open")
+config.bind("h", "history")
+config.bind("cc", 'hint images spawn sh -c "cliphist link {hint-url}"')
+config.bind("cs", "cmd-set-text -s :config-source")
+config.bind("tH", "config-cycle tabs.show multiple never")
+config.bind("sH", "config-cycle statusbar.show always never")
+config.bind("T", "hint links tab")
+config.bind("pP", "open -- {primary}")
+config.bind("pp", "open -- {clipboard}")
+config.bind("pt", "open -t -- {clipboard}")
+config.bind("qm", "macro-record")
+config.bind("<ctrl-y>", "spawn --userscript ytdl.sh")
+config.bind("tT", "config-cycle tabs.position top left")
+config.bind("gJ", "tab-move +")
+config.bind("gK", "tab-move -")
+config.bind("gm", "tab-move")
 
 # dark mode setup
 c.colors.webpage.darkmode.enabled = True
-c.colors.webpage.darkmode.algorithm = 'lightness-cielab'
-c.colors.webpage.darkmode.policy.images = 'never'
-config.set('colors.webpage.darkmode.enabled', False, 'file://*')
+c.colors.webpage.darkmode.algorithm = "lightness-cielab"
+c.colors.webpage.darkmode.policy.images = "never"
+config.set("colors.webpage.darkmode.enabled", False, "file://*")
 
 # styles, cosmetics
 # c.content.user_stylesheets = ["~/.config/qutebrowser/styles/youtube-tweaks.css"]
-c.tabs.padding = {'top': 5, 'bottom': 5, 'left': 9, 'right': 9}
+c.tabs.padding = {"top": 5, "bottom": 5, "left": 9, "right": 9}
 c.tabs.indicator.width = 0  # no tab indicators
 # c.window.transparent = True # apparently not needed
-c.tabs.width = '7%'
+c.tabs.width = "7%"
 
 # fonts
 c.fonts.default_family = []
-c.fonts.default_size = '13pt'
-c.fonts.web.family.fixed = 'monospace'
-c.fonts.web.family.sans_serif = 'monospace'
-c.fonts.web.family.serif = 'monospace'
-c.fonts.web.family.standard = 'monospace'
+c.fonts.default_size = "13pt"
+c.fonts.web.family.fixed = "monospace"
+c.fonts.web.family.sans_serif = "monospace"
+c.fonts.web.family.serif = "monospace"
+c.fonts.web.family.standard = "monospace"
 
 # privacy - adjust these settings based on your preference
 # config.set("completion.cmd_history_max_items", 0)
@@ -82,8 +90,7 @@ c.fonts.web.family.standard = 'monospace'
 config.set("content.webgl", False, "*")
 config.set("content.canvas_reading", False)
 config.set("content.geolocation", False)
-config.set("content.webrtc_ip_handling_policy",
-           "default-public-interface-only")
+config.set("content.webrtc_ip_handling_policy", "default-public-interface-only")
 config.set("content.cookies.accept", "all")
 config.set("content.cookies.store", True)
 # config.set("content.javascript.enabled", False) # tsh keybind to toggle
@@ -116,27 +123,25 @@ c.content.blocking.enabled = True
 #         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/unbreak.txt"]
 
 c.url.start_pages = ["https://google.com"]
-c.url.searchengines = {
-    "DEFAULT": "https://google.com{}", "g": "https://github.com{}"}
+c.url.searchengines = {"DEFAULT": "https://google.com{}", "g": "https://github.com{}"}
 
 
-catppuccin.setup(c, 'mocha', True)
+catppuccin.setup(c, "mocha", True)
 
 c.auto_save.session = True
 c.session.lazy_restore = True
 
 c.content.plugins = True
-c.qt.args = ['enable-accelerated-video-decode', 'enable-gpu-rasterization']
+c.qt.args = ["enable-accelerated-video-decode", "enable-gpu-rasterization"]
 
 c.url.searchengines = {
-    'DEFAULT': 'https://www.google.com/search?q={}',
-    'g': 'https://www.google.com/search?q={}',
-    'ddg': 'https://duckduckgo.com/?q={}',
-    'yt': 'https://www.youtube.com/results?search_query={}',
-    'wp': 'https://en.wikipedia.org/wiki/Special:Search?search={}',
+    "DEFAULT": "https://www.google.com/search?q={}",
+    "g": "https://www.google.com/search?q={}",
+    "ddg": "https://duckduckgo.com/?q={}",
+    "yt": "https://www.youtube.com/results?search_query={}",
+    "wp": "https://en.wikipedia.org/wiki/Special:Search?search={}",
 }
-config.set('content.headers.accept_language',
-           '', 'https://matchmaker.krunker.io/*')
+config.set("content.headers.accept_language", "", "https://matchmaker.krunker.io/*")
 
 # User agent to send.  The following placeholders are defined:  *
 # `{os_info}`: Something like "X11; Linux x86_64". * `{webkit_version}`:
@@ -153,8 +158,11 @@ config.set('content.headers.accept_language',
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
-config.set('content.headers.user_agent',
-           'Mozilla/5.0 ({os_info}; rv:145.0) Gecko/20100101 Firefox/145.0', 'https://accounts.google.com/*')
+config.set(
+    "content.headers.user_agent",
+    "Mozilla/5.0 ({os_info}; rv:145.0) Gecko/20100101 Firefox/145.0",
+    "https://accounts.google.com/*",
+)
 
 # User agent to send.  The following placeholders are defined:  *
 # `{os_info}`: Something like "X11; Linux x86_64". * `{webkit_version}`:
@@ -171,48 +179,78 @@ config.set('content.headers.user_agent',
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
-config.set('content.headers.user_agent',
-           'Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version_short} Safari/{webkit_version}', 'https://gitlab.gnome.org/*')
+config.set(
+    "content.headers.user_agent",
+    "Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version_short} Safari/{webkit_version}",
+    "https://gitlab.gnome.org/*",
+)
 
 # Load images automatically in web pages.
 # Type: Bool
-config.set('content.images', True, 'chrome-devtools://*')
+config.set("content.images", True, "chrome-devtools://*")
 
 # Load images automatically in web pages.
 # Type: Bool
-config.set('content.images', True, 'devtools://*')
+config.set("content.images", True, "devtools://*")
 
 # Enable JavaScript.
 # Type: Bool
-config.set('content.javascript.enabled', True, 'chrome-devtools://*')
+config.set("content.javascript.enabled", True, "chrome-devtools://*")
 
 # Enable JavaScript.
 # Type: Bool
-config.set('content.javascript.enabled', True, 'devtools://*')
+config.set("content.javascript.enabled", True, "devtools://*")
 
 # Enable JavaScript.
 # Type: Bool
-config.set('content.javascript.enabled', True, 'chrome://*/*')
+config.set("content.javascript.enabled", True, "chrome://*/*")
 
 # Enable JavaScript.
 # Type: Bool
-config.set('content.javascript.enabled', True, 'qute://*/*')
+config.set("content.javascript.enabled", True, "qute://*/*")
+
 
 # Allow locally loaded documents to access remote URLs.
 # Type: Bool
-config.set('content.local_content_can_access_remote_urls', True,
-           'file:///Users/kamradsmeshnyavy/Library/Application%20Support/qutebrowser/userscripts/*')
+def _qute_userscripts_dir() -> Path:
+    if sys.platform == "darwin":
+        return Path.home() / "Library/Application Support/qutebrowser/userscripts"
+    data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
+    return data_home / "qutebrowser" / "userscripts"
+
+
+_userscripts_dir = _qute_userscripts_dir()
+_userscripts_uri = _userscripts_dir.as_uri() + "/*"
+
+config.set("content.local_content_can_access_remote_urls", True, _userscripts_uri)
 
 # Allow locally loaded documents to access other local URLs.
 # Type: Bool
-config.set('content.local_content_can_access_file_urls', False,
-           'file:///Users/kamradsmeshnyavy/Library/Application%20Support/qutebrowser/userscripts/*')
+config.set("content.local_content_can_access_file_urls", False, _userscripts_uri)
 
-config.bind('pw', 'spawn --userscript /Users/kamradsmeshnyavy/qutebrowser-env/bin/python /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591',
-            # Альтернативный бинд для режима ввода (опционально)
-            mode='normal')
+_default_keepassxc_python = Path.home() / "qutebrowser-env" / "bin" / "python"
+_keepassxc_python = os.environ.get(
+    "QUTEBROWSER_KEEPASSXC_PYTHON",
+    str(_default_keepassxc_python) if _default_keepassxc_python.exists() else "python3",
+)
+_keepassxc_script = _userscripts_dir / "qute-keepassxc"
 
-config.bind('<Alt-Shift-u>', 'spawn --userscript /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591', mode='insert')
+config.bind(
+    "pw",
+    f"spawn --userscript {_keepassxc_python} {_keepassxc_script} --key 5295B5FEACE4D591",
+    # Альтернативный бинд для режима ввода (опционально)
+    mode="normal",
+)
+
+config.bind(
+    "<Alt-Shift-u>",
+    f"spawn --userscript {_keepassxc_script} --key 5295B5FEACE4D591",
+    mode="insert",
+)
 
 # Для TOTP (коды двухфакторной аутентификации)
-config.bind('pt', 'spawn --userscript /Users/kamradsmeshnyavy/.qutebrowser/userscripts/qute-keepassxc --key 5295B5FEACE4D591 --totp', mode='normal')
+config.bind(
+    "pt",
+    f"spawn --userscript {_keepassxc_script} --key 5295B5FEACE4D591 --totp",
+    mode="normal",
+)
