@@ -53,16 +53,31 @@ def sync_git_submodules():
     print(f"{COLOR_INFO}[INFO]{COLOR_RESET} Syncing git submodules...")
 
     repo_root = get_repo_root()
-    dotbot_dir = repo_root / ".dotbot"
-
     # 同步子模块
-    cmd1 = ["git", "-C", str(dotbot_dir), "submodule", "sync", "--quiet", "--recursive"]
+    cmd1 = [
+        "git",
+        "-C",
+        str(repo_root),
+        "submodule",
+        "sync",
+        "--quiet",
+        "--recursive",
+    ]
     if not run_command(cmd1):
         print(f"{COLOR_WARNING}[WARNING]{COLOR_RESET} Git submodule sync failed")
         return False
 
     # 更新子模块
-    cmd2 = ["git", "submodule", "update", "--init", "--recursive", str(dotbot_dir)]
+    cmd2 = [
+        "git",
+        "-C",
+        str(repo_root),
+        "submodule",
+        "update",
+        "--init",
+        "--recursive",
+        ".dotbot",
+    ]
     if not run_command(cmd2):
         print(f"{COLOR_WARNING}[WARNING]{COLOR_RESET} Git submodule update failed")
         return False
