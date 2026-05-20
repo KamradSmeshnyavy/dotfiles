@@ -1,0 +1,44 @@
+# Homebrew formulae (one per line)
+# Example:
+# git
+# neovim
+
+atuin
+bat
+borders
+btop
+carapace
+cava
+dust
+eza
+fastfetch
+fd
+ffmpeg
+fish
+fzf
+git
+github-cli
+gitui
+helix
+lla
+lazygit
+mpd
+nnn
+nushell
+neovim
+oh-my-posh
+procs
+rmpc
+ripgrep
+sketchybar
+skhd
+scooter
+aerospace
+starship
+television
+tig
+tmux
+yabai
+yazi
+zellij
+zoxide

@@ -1,0 +1,39 @@
+# Pacman packages (one per line)
+# Example:
+# git
+# neovim
+
+atuin
+bat
+btop
+carapace
+cava
+direnv
+dust
+eza
+fastfetch
+fd
+fish
+fzf
+git
+github-cli
+gitui
+helix
+kitty
+lazygit
+mpd
+neovim
+nnn
+nushell
+oh-my-posh
+procs
+qutebrowser
+ripgrep
+rmpc
+starship
+tig
+tmux
+wezterm
+yazi
+zoxide
+zsh

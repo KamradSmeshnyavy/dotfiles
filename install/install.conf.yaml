@@ -1,0 +1,92 @@
+- defaults:
+    clean:
+      force: true
+    link:
+      create: true
+      relink: true
+      force: true
+    shell:
+      stdout: true
+      stderr: true
+      stdin: true
+- clean: ["~", "~/.config", "~/Library/Application Support"]
+- link:
+    ~/.config/aerospace:
+      path: apps/aerospace
+      if: "[ `uname` = Darwin ]"
+    ~/.config/atuin: tui/atuin
+    ~/.config/bat: tui/bat
+    ~/.config/borders:
+      path: apps/borders
+      if: "[ `uname` = Darwin ]"
+    ~/.config/btop: tui/btop
+    ~/.config/carapace: tui/carapace
+    ~/.config/cava: tui/cava
+    ~/.config/chromium: apps/chromium
+    ~/.config/dust: tui/dust
+    ~/.config/eza: tui/eza
+    ~/.config/fastfetch: tui/fastfetch
+    ~/.config/fish: shells/fish
+    ~/.config/fsh: shells/fsh
+    ~/.config/git: tui/git
+    ~/.config/gitui: tui/gitui
+    ~/.config/ghostty: apps/ghostty
+    ~/.config/helix: tui/helix
+    ~/.config/karabiner:
+      path: apps/karabiner
+      if: "[ `uname` = Darwin ]"
+    ~/.config/kitty: apps/kitty
+    ~/.config/lazygit: tui/lazygit
+    ~/.config/lla: tui/lla
+    ~/.config/mpd: tui/mpd
+    ~/.config/nnn: tui/nnn
+    ~/.config/neovide: apps/neovide
+    ~/.config/nushell: shells/nushell
+    ~/.config/nvim: tui/nvim
+    ~/.config/ohmyposh: shells/ohmyposh
+    ~/.config/procs: tui/procs
+    ~/.config/qutebrowser: apps/qutebrowser
+    ~/.config/rmpc: tui/rmpc
+    ~/.config/scooter: tui/scooter
+    ~/.config/sketchybar:
+      path: apps/sketchybar
+      if: "[ `uname` = Darwin ]"
+    ~/.config/skhd:
+      path: apps/skhd
+      if: "[ `uname` = Darwin ]"
+    ~/.config/television: tui/television
+    ~/.config/tig: tui/tig
+    ~/.config/tmux: tui/tmux
+    ~/.config/vscode/markdown-preview-enhanced: apps/vscode/markdown-preview-enhanced
+    ~/.config/wezterm: apps/wezterm
+    ~/.config/yabai:
+      path: apps/yabai
+      if: "[ `uname` = Darwin ]"
+    ~/.config/yazi: tui/yazi
+    ~/.config/zellij: tui/zellij
+    ~/.config/starship.toml: shells/starship.toml
+    ~/.ssh: cli/ssh
+    ~/.config/todo: cli/todo
+    ~/.zshrc: shells/zshrc/.zshrc
+    # MacOS specific configurations
+    ~/Library/Application Support/Code/User/settings.json:
+      path: apps/vscode/settings.json
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/Code/User/keybindings.json:
+      path: apps/vscode/keybindings.json
+      if: "[ `uname` = Darwin ]"
+    ~/Library/Application Support/Code/User/snippets:
+      path: apps/vscode/snippets
+      if: "[ `uname` = Darwin ]"
+    # Linux (omarchy) VS Code configurations
+    ~/.config/Code/User/settings.json:
+      path: apps/vscode/settings.json
+      if: "[ `uname` = Linux ]"
+    ~/.config/Code/User/keybindings.json:
+      path: apps/vscode/keybindings.json
+      if: "[ `uname` = Linux ]"
+    ~/.config/Code/User/snippets:
+      path: apps/vscode/snippets
+      if: "[ `uname` = Linux ]"
+- shell:
+    - [bat cache --build]

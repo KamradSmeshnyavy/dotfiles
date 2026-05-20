@@ -1,0 +1,13 @@
+# Homebrew casks (one per line)
+# Example:
+# kitty
+# wezterm
+
+chromium
+ghostty
+karabiner-elements
+kitty
+neovide
+qutebrowser
+visual-studio-code
+wezterm

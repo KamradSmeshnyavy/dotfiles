@@ -1,0 +1,8 @@
+# AUR packages (one per line)
+# Example:
+# ghostty
+
+ghostty
+lla
+scooter
+television
