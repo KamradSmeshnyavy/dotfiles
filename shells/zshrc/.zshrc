@@ -94,10 +94,10 @@ function extract() {
 
 # rmt -- rm with trash
 
-alias rm=rmt
-alias rmi='rmt --ti' #info
-alias rmf='rmt --tf' #flash
-alias rmd='rmt --td' #GUI
+# alias rm=rmt
+alias rmti='rmt --ti' #info
+alias rmtf='rmt --tf' #flash
+alias rmtd='rmt --td' #GUI
 
 # ssh
 if is_macos && command -v open >/dev/null 2>&1; then
