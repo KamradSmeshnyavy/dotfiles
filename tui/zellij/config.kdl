@@ -337,7 +337,7 @@ ui {
     }
 }
 
-theme "ctp"
+theme "omarchy"
 mouse_mode true
 // mouse_mode false
 auto_layout true

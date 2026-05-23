@@ -3,7 +3,11 @@ return {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = function()
-        require("catppuccin").load()
+        local omarchy_path = vim.fn.stdpath("config") .. "/lua/config/omarchy.lua"
+        local ok = pcall(dofile, omarchy_path)
+        if not ok then
+          require("catppuccin").load()
+        end
       end,
     },
   },

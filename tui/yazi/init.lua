@@ -1,7 +1,17 @@
-local catppuccin_theme = require("yatline-catppuccin"):setup("mocha")
+local omarchy_theme = nil
+local home = os.getenv("HOME")
+
+if home then
+  local ok, theme = pcall(dofile, home .. "/.config/yazi/omarchy.lua")
+  if ok and type(theme) == "table" then
+    omarchy_theme = theme
+  end
+end
+
+local fallback_theme = require("yatline-catppuccin"):setup("mocha")
 
 require("yatline"):setup({
-  theme = catppuccin_theme,
+  theme = omarchy_theme or fallback_theme,
   section_separator = { open = "", close = "" },
   part_separator = { open = "", close = "" },
   inverse_separator = { open = "", close = "" },
