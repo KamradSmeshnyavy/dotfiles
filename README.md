@@ -70,12 +70,18 @@ cd ~/dotfiles/install
 
 ## Omarchy themes
 
-Для Omarchy есть базовые конфиги Waybar и Alacritty, которые подтягивают цвета из текущей темы:
+Для Omarchy есть базовые конфиги, которые подтягивают текущую тему из `~/.config/omarchy/current/theme`.
+Хук `~/.config/omarchy/hooks/theme-set` синхронизирует файлы при смене темы.
 
-- Waybar: `apps/waybar/style.css` импортирует `~/.config/omarchy/current/theme/waybar.css`
-- Alacritty: `apps/alacritty/alacritty.toml` импортирует `~/.config/omarchy/current/theme/alacritty.toml`
+Поддерживаемые конфиги:
 
-При смене темы изменяется только `~/.config/omarchy/current/theme`, а сами конфиги остаются стабильными.
+- Waybar: `apps/waybar/style.css` импортирует `omarchy.css`
+- Alacritty: `apps/alacritty/alacritty.toml` импортирует `omarchy.toml`
+- Kitty: `apps/kitty/kitty.conf` включает `omarchy.conf`
+- Ghostty: `apps/ghostty/config*` включает `omarchy.conf`
+- btop: `tui/btop/btop.conf` использует тему `catppuccin_mocha`, которую хук заменяет на Omarchy
+
+При смене темы обновляются только Omarchy-файлы, а сами конфиги остаются стабильными.
 
 ## Структура Nix-конфига
 

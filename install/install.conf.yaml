@@ -17,6 +17,9 @@
     ~/.config/alacritty/alacritty.toml:
       path: apps/alacritty/alacritty.toml
       if: "[ `uname` = Linux ]"
+    ~/.config/alacritty/omarchy.toml:
+      path: apps/alacritty/omarchy.toml
+      if: "[ `uname` = Linux ]"
     ~/.config/atuin: tui/atuin
     ~/.config/bat: tui/bat
     ~/.config/borders:
@@ -65,6 +68,9 @@
     ~/.config/waybar/style.css:
       path: apps/waybar/style.css
       if: "[ `uname` = Linux ]"
+    ~/.config/waybar/omarchy.css:
+      path: apps/waybar/omarchy.css
+      if: "[ `uname` = Linux ]"
     ~/.config/yabai:
       path: apps/yabai
       if: "[ `uname` = Darwin ]"
@@ -93,6 +99,9 @@
       if: "[ `uname` = Linux ]"
     ~/.config/Code/User/snippets:
       path: apps/vscode/snippets
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/hooks/theme-set:
+      path: apps/omarchy/hooks/theme-set
       if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]

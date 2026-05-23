@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THEME_DIR="$HOME/.config/omarchy/current/theme"
+
+if [[ ! -d "$THEME_DIR" ]]; then
+  exit 0
+fi
+
+link_theme() {
+  local source="$1"
+  local target="$2"
+
+  if [[ -f "$source" ]]; then
+    mkdir -p "$(dirname "$target")"
+    ln -sfn "$source" "$target"
+  fi
+}
+
+link_theme "$THEME_DIR/waybar.css" "$HOME/.config/waybar/omarchy.css"
+link_theme "$THEME_DIR/alacritty.toml" "$HOME/.config/alacritty/omarchy.toml"
+link_theme "$THEME_DIR/kitty.conf" "$HOME/.config/kitty/omarchy.conf"
+link_theme "$THEME_DIR/ghostty.conf" "$HOME/.config/ghostty/omarchy.conf"
+link_theme "$THEME_DIR/btop.theme" "$HOME/.config/btop/themes/catppuccin_mocha.theme"
