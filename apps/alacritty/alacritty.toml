@@ -1,1 +1,1 @@
-general.import = ["~/.config/omarchy/current/theme/alacritty.toml"]
+import = ["~/.config/omarchy/current/theme/alacritty.toml"]
