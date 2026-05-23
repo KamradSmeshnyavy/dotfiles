@@ -1,0 +1,9 @@
+@import "../omarchy/current/theme/waybar.css";
+
+* {
+  color: @foreground;
+}
+
+window#waybar {
+  background: @background;
+}

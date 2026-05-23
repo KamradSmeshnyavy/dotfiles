@@ -68,6 +68,15 @@ cd ~/dotfiles/install
 
 Списки пакетов находятся в `install/packages/`.
 
+## Omarchy themes
+
+Для Omarchy есть базовые конфиги Waybar и Alacritty, которые подтягивают цвета из текущей темы:
+
+- Waybar: `apps/waybar/style.css` импортирует `~/.config/omarchy/current/theme/waybar.css`
+- Alacritty: `apps/alacritty/alacritty.toml` импортирует `~/.config/omarchy/current/theme/alacritty.toml`
+
+При смене темы изменяется только `~/.config/omarchy/current/theme`, а сами конфиги остаются стабильными.
+
 ## Структура Nix-конфига
 
 - `packages/nix-darwin/flake.nix` — входная точка `nix-darwin`.
