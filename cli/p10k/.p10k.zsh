@@ -21,41 +21,42 @@
   # Catppuccin Mocha Palette for Powerlevel10k
   # This file defines the color palette used for the Mocha theme.
   
+  [ -f ~/dotfiles/omarchy/zsh-colors.zsh ] && source ~/dotfiles/omarchy/zsh-colors.zsh
   # Core colors
-  typeset -g P10K_COLOR_BASE="#1e1e2e"   # Base
-  typeset -g P10K_COLOR_MANTLE="#181825" # Mantle
-  typeset -g P10K_COLOR_CRUST="#11111b"  # Crust
+  typeset -g P10K_COLOR_BASE=none  # Base
+  typeset -g P10K_COLOR_MANTLE=none # Mantle
+  typeset -g P10K_COLOR_CRUST=none  # Crust
   
   # Text and Subtext
-  typeset -g P10K_COLOR_TEXT="#cdd6f4"     # Text
-  typeset -g P10K_COLOR_SUBTEXT1="#bac2de" # Subtext 1
-  typeset -g P10K_COLOR_SUBTEXT0="#a6adc8" # Subtext 0
+  typeset -g P10K_COLOR_TEXT=none     # Text
+  typeset -g P10K_COLOR_SUBTEXT1=none # Subtext 1
+  typeset -g P10K_COLOR_SUBTEXT0=none # Subtext 0
   
   # Overlays
-  typeset -g P10K_COLOR_OVERLAY2="#9399b2" # Overlay 2
-  typeset -g P10K_COLOR_OVERLAY1="#7f849c" # Overlay 1
-  typeset -g P10K_COLOR_OVERLAY0="#6c7086" # Overlay 0
+  typeset -g P10K_COLOR_OVERLAY2=none # Overlay 2
+  typeset -g P10K_COLOR_OVERLAY1=none # Overlay 1
+  typeset -g P10K_COLOR_OVERLAY0=none # Overlay 0
   
   # Surfaces
-  typeset -g P10K_COLOR_SURFACE2="#585b70" # Surface 2
-  typeset -g P10K_COLOR_SURFACE1="#45475a" # Surface 1
-  typeset -g P10K_COLOR_SURFACE0="#313244" # Surface 0
+  typeset -g P10K_COLOR_SURFACE2=none # Surface 2
+  typeset -g P10K_COLOR_SURFACE1=none # Surface 1
+  typeset -g P10K_COLOR_SURFACE0=none # Surface 0
   
   # Accent colors
-  typeset -g P10K_COLOR_BLUE="#89b4fa"      # Blue
-  typeset -g P10K_COLOR_LAVENDER="#b4befe"  # Lavender
-  typeset -g P10K_COLOR_SAPPHIRE="#74c7ec"  # Sapphire
-  typeset -g P10K_COLOR_SKY="#89dceb"       # Sky
-  typeset -g P10K_COLOR_TEAL="#94e2d5"      # Teal
-  typeset -g P10K_COLOR_GREEN="#a6e3a1"     # Green
-  typeset -g P10K_COLOR_YELLOW="#f9e2af"    # Yellow
-  typeset -g P10K_COLOR_PEACH="#fab387"     # Peach
-  typeset -g P10K_COLOR_RED="#f38ba8"       # Red
-  typeset -g P10K_COLOR_MAROON="#eba0ac"    # Maroon
-  typeset -g P10K_COLOR_PINK="#f5c2e7"      # Pink
-  typeset -g P10K_COLOR_FLAMINGO="#f2cdcd"  # Flamingo
-  typeset -g P10K_COLOR_ROSEWATER="#f5e0dc" # Rosewater
-  typeset -g P10K_COLOR_MAUVE="#cba6f7"     # Mauve
+  typeset -g P10K_COLOR_BLUE=none      # Blue
+  typeset -g P10K_COLOR_LAVENDER=none  # Lavender
+  typeset -g P10K_COLOR_SAPPHIRE=none  # Sapphire
+  typeset -g P10K_COLOR_SKY=none       # Sky
+  typeset -g P10K_COLOR_TEAL=none      # Teal
+  typeset -g P10K_COLOR_GREEN=none     # Green
+  typeset -g P10K_COLOR_YELLOW=none    # Yellow
+  typeset -g P10K_COLOR_PEACH=none     # Peach
+  typeset -g P10K_COLOR_RED=none       # Red
+  typeset -g P10K_COLOR_MAROON=none    # Maroon
+  typeset -g P10K_COLOR_PINK=none      # Pink
+  typeset -g P10K_COLOR_FLAMINGO=none  # Flamingo
+  typeset -g P10K_COLOR_ROSEWATER=none # Rosewater
+  typeset -g P10K_COLOR_MAUVE=none     # Mauve
 
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(

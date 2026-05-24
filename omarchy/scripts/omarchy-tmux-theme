@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""
+Генерирует файл ~/.config/tmux/om-theme.conf с tmux-переменными,
+основанными на colours.toml активной темы Omarchy.
+"""
+import sys, os, tomllib
+
+THEME_TOML = os.path.expanduser("~/.config/omarchy/current/theme/colors.toml")
+OUTPUT     = os.path.expanduser("~/.config/tmux/om-theme.conf")
+
+def hex_to_tmux_colour(hex_str):
+    """Преобразует '#rrggbb' в 'colourN' по ближайшему индексу 0..255."""
+    hex_str = hex_str.lstrip('#')
+    r, g, b = int(hex_str[0:2], 16), int(hex_str[2:4], 16), int(hex_str[4:6], 16)
+    # Простейший способ: ищем ближайший цвет в стандартной 256‑цветной палитре.
+    # Вместо сложного перебора можно взять 16 базовых ANSI и 216 цветовой куб.
+    # Здесь для простоты используем 16 ANSI-цветов, т.к. темы обычно используют их.
+    # Более точный маппинг на 256 можно сделать при необходимости.
+    ansi_palette = [
+        0x000000, 0xcd0000, 0x00cd00, 0xcdcd00,
+        0x0000ee, 0xcd00cd, 0x00cdcd, 0xe5e5e5,
+        0x7f7f7f, 0xff0000, 0x00ff00, 0xffff00,
+        0x5c5cff, 0xff00ff, 0x00ffff, 0xffffff
+    ]
+    best = min(range(16), key=lambda i:
+        (r - ((ansi_palette[i] >> 16) & 0xFF)) ** 2 +
+        (g - ((ansi_palette[i] >> 8) & 0xFF)) ** 2 +
+        (b - (ansi_palette[i] & 0xFF)) ** 2
+    )
+    return f"colour{best}"
+
+def load_omarchy_colors():
+    with open(THEME_TOML, "rb") as f:
+        data = tomllib.load(f)
+    return data.get("colors", data)
+
+def generate_tmux_vars(colors):
+    # Назначаем семантические переменные
+    mapping = {
+        "bg":     colors.get("background", "#000000"),
+        "fg":     colors.get("foreground", "#ffffff"),
+        "red":    colors.get("color1", colors.get("red", "#ff0000")),
+        "green":  colors.get("color2", colors.get("green", "#00ff00")),
+        "yellow": colors.get("color3", colors.get("yellow", "#ffff00")),
+        "blue":   colors.get("color4", colors.get("blue", "#0000ff")),
+        "magenta":colors.get("color5", colors.get("magenta", "#ff00ff")),
+        "cyan":   colors.get("color6", colors.get("cyan", "#00ffff")),
+        "white":  colors.get("color7", colors.get("white", "#ffffff")),
+        "black":  colors.get("color0", colors.get("black", "#000000")),
+        "overlay0": colors.get("color8", colors.get("brightblack", "#7f7f7f")),
+        "overlay1": colors.get("color15", colors.get("brightwhite", "#ffffff")),
+        "rosewater": colors.get("color15", "#ffffff"),  # fallback
+        "lavender":  colors.get("color12", "#5c5cff"),
+        "maroon":    colors.get("color9", "#ff0000"),
+    }
+    lines = []
+    for name, hex_val in mapping.items():
+        tmux_color = hex_to_tmux_colour(hex_val)
+        lines.append(f'set -g @om_{name} "{tmux_color}"')
+    return "\n".join(lines)
+
+if __name__ == "__main__":
+    try:
+        colors = load_omarchy_colors()
+        conf = generate_tmux_vars(colors)
+        with open(OUTPUT, "w") as f:
+            f.write(conf + "\n")
+        print(f"✅ {OUTPUT} обновлён.")
+    except Exception as e:
+        sys.exit(f"Ошибка: {e}")

@@ -8,7 +8,7 @@ include_dirs = true
 
 permission_format = "symbolic"
 
-theme = "catppuccin"
+# theme = "catppuccin"
 
 enabled_plugins = []
 plugins_dir = "~/.config/lla/plugins"

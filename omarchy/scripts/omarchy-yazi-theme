@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""
+Конвертирует Yazi theme.toml с HEX-цветами в тему с ANSI-именами,
+основываясь на текущей палитре терминала (colors.toml темы Omarchy).
+
+Использование:
+  omarchy-yazi-ansi-theme <путь/к/вашему/theme.toml> > ~/.config/yazi/theme.toml
+"""
+import sys, re, tomllib
+from pathlib import Path
+
+THEME_DIR = Path.home() / ".config/omarchy/current/theme"
+COLORS_TOML = THEME_DIR / "colors.toml"
+
+# 16 стандартных ANSI‑имён (порядок 0..15)
+ANSI_NAMES = [
+    "Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White",
+    "BrightBlack", "BrightRed", "BrightGreen", "BrightYellow",
+    "BrightBlue", "BrightMagenta", "BrightCyan", "BrightWhite"
+]
+
+def load_omarchy_palette():
+    """Читает colors.toml и возвращает список из 16 HEX-строк."""
+    with open(COLORS_TOML, "rb") as f:
+        data = tomllib.load(f)
+    colors = data.get("colors", data)
+    palette = []
+    for i in range(16):
+        key = f"color{i}"
+        if key in colors:
+            palette.append(colors[key].lower())
+        else:
+            # fallback на чёрный
+            palette.append("#000000")
+    return palette
+
+def hex_to_rgb(hex_str):
+    hex_str = hex_str.lstrip('#')
+    return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+
+def color_distance(c1, c2):
+    """Евклидово расстояние между двумя RGB-кортежами."""
+    return sum((a - b) ** 2 for a, b in zip(c1, c2)) ** 0.5
+
+def nearest_ansi_name(hex_color, palette_rgb):
+    """Возвращает имя ANSI-цвета, ближайшего к hex_color."""
+    target = hex_to_rgb(hex_color)
+    best_idx = min(range(16), key=lambda i: color_distance(target, palette_rgb[i]))
+    return ANSI_NAMES[best_idx]
+
+def convert_theme(input_path):
+    palette_hex = load_omarchy_palette()
+    palette_rgb = [hex_to_rgb(h) for h in palette_hex]
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Ищем все строки вида "#rrggbb" (в кавычках)
+    def replacer(match):
+        hex_val = match.group(1)
+        name = nearest_ansi_name(hex_val, palette_rgb)
+        return f'"{name}"'
+
+    new_content = re.sub(r'"#([0-9a-fA-F]{6})"', replacer, content)
+    return new_content
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        sys.exit("Укажите путь к исходному theme.toml с HEX-цветами")
+    input_path = sys.argv[1]
+    try:
+        print(convert_theme(input_path))
+    except FileNotFoundError as e:
+        sys.exit(f"Ошибка: {e}")

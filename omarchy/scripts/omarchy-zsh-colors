@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""
+Генерирует Zsh-совместимый файл с HEX-переменными из colors.toml.
+Использование: omarchy-zsh-colors > ~/.config/omarchy/zsh-colors.zsh
+"""
+import sys, os, tomllib  # Python ≥ 3.11
+
+THEME_DIR = os.path.expanduser("~/.config/omarchy/current/theme")
+COLORS_TOML = os.path.join(THEME_DIR, "colors.toml")
+OUTPUT = os.path.expanduser("~/dotfiles/omarchy/zsh-colors.zsh")
+
+def load_colors():
+    with open(COLORS_TOML, "rb") as f:
+        return tomllib.load(f)
+
+def main():
+    try:
+        data = load_colors()
+    except FileNotFoundError:
+        sys.exit(f"Файл не найден: {COLORS_TOML}")
+    except Exception as e:
+        sys.exit(f"Ошибка парсинга: {e}")
+
+    # Ожидаем структуру: [colors] с ключами background, foreground, color0..color15
+    colors = data.get("colors", data)  # на случай, если таблица называется иначе
+
+    lines = ["# Автосгенерировано из темы Omarchy"]
+    for i in range(16):
+        key = f"color{i}"
+        if key in colors:
+            lines.append(f'export COLOR_{i}="{colors[key]}"')
+    if "background" in colors:
+        lines.append(f'export COLOR_BG="{colors["background"]}"')
+    if "foreground" in colors:
+        lines.append(f'export COLOR_FG="{colors["foreground"]}"')
+    # Дополнительно можно пробросить именованные переменные
+    for name in ("red", "green", "blue", "cyan", "magenta", "yellow", "white", "black"):
+        if name in colors:
+            lines.append(f'export COLOR_{name}="{colors[name]}"')
+
+    print("\n".join(lines))
+
+if __name__ == "__main__":
+    main()
