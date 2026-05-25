@@ -1,12 +1,12 @@
 return {
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = function()
-        require("catppuccin").load()
-      end,
-    },
-  },
+  -- {
+  --   "LazyVim/LazyVim",
+  --   opts = {
+  --     colorscheme = function()
+  --       require("catppuccin").load()
+  --     end,
+  --   },
+  -- },
   -- add symbols-outline
   {
     "simrat39/symbols-outline.nvim",
