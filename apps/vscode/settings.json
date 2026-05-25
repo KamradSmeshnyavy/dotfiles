@@ -1,4 +1,4 @@
-{
+{ "workbench.colorTheme": "Dark Horizon",
   // * ╭───────────────────────────────────────────────────────╮
   // * │               VSCode Workbench                        │
   // * ╰───────────────────────────────────────────────────────╯
@@ -35,7 +35,7 @@
     ]
   },
   "workbench.navigationControl.enabled": false,
-  "workbench.colorTheme": "Matte Black",
+  
   "workbench.preferredDarkColorTheme": "Hackerman",
   "workbench.preferredLightColorTheme": "Rosé Pine Dawn",
   "workbench.iconTheme": "catppuccin noctis icons",
