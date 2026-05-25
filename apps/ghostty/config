@@ -6,14 +6,15 @@ clipboard-read = allow
 clipboard-write = allow
 copy-on-select = true
 window-save-state = always
-theme = dark:Catppuccin Mocha, light:TokyoNight
+# theme = dark:Catppuccin Mocha, light:TokyoNight
 # theme = Catppuccin Mocha
+theme = theme.conf
 confirm-close-surface=false
 # font-family
 font-family = RecMonoCasual Nerd Font
 font-family = Maple Mono NF CN
 # font-family = "JetBrainsMono Nerd Font"
-font-size = 16
+font-size = 12
 window-title-font-family = Maple Mono NF CN
 # ss01: != and ===
 font-feature = "ss01"
