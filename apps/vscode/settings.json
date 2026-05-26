@@ -35,8 +35,8 @@
     ]
   },
   "workbench.navigationControl.enabled": false,
-  
-  "workbench.preferredDarkColorTheme": "Hackerman",
+
+  "workbench.preferredDarkColorTheme": "Dark Horizon",
   "workbench.preferredLightColorTheme": "Rosé Pine Dawn",
   "workbench.iconTheme": "catppuccin noctis icons",
   "workbench.editor.editorActionsLocation": "hidden",
