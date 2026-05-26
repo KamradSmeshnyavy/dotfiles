@@ -1,0 +1,59 @@
+(defsrc
+  ;; Физические клавиши, поведение которых переопределяется
+  altgr
+  h j k l
+  q w e r t y u i o p [ ]
+  a s d f g ; '
+  z x c v b n m , . /
+  
+  ;; Так как кнопка Copilot теперь выдает Правый Ctrl, перехватываем именно его
+  rctrl
+)
+
+(defvar
+  tap-time 200
+  hold-time 200
+)
+
+(defalias
+  ;; Настройки для Правого Альта (AltGr) -> Слой стрелок
+  alt-mod (tap-hold $tap-time $hold-time esc (layer-toggle arrow-layer))
+
+  ;; Настройки для кнопки Copilot (которая теперь rctrl) -> Слой символов
+  copilot-mod (layer-toggle symbols-layer)
+)
+
+;; ================= БАЗОВЫЙ СЛОЙ =================
+(deflayer base
+  @alt-mod
+  h   j   k   l
+  q   w   e   r   t   y   u   i   o   p   [   ]
+  a   s   d   f   g   ;   '
+  z   x   c   v   b   n   m   ,   .   /
+  
+  ;; Привязываем активацию слоя символов к кнопке Copilot
+  @copilot-mod
+)
+
+;; ================= СЛОЙ СТРЕЛОК (Удержание Правого Альта) =================
+(deflayer arrow-layer
+  _
+  left down up right    ;; hjkl превращаются в стрелки
+  _   _   _   _   _   _   _   _   _   _   _   _
+  _   _   _   _   _   _   _
+  _   _   _   _   _   _   _   _   _   _
+  
+  _
+)
+
+;; ================= СЛОЙ СИМВОЛОВ (Удержание Copilot) =================
+(deflayer symbols-layer
+  _
+  _   _   _   _                                      
+  S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`    ;; Верхний ряд: @ ( ) [ ] { } < > = | ~
+  S-3 S-4 S-5 S-6 S-7 S-; S-'                        ;; Средний ряд: # $ % ^ & : "
+  /   \   S-/ S-1 S-\ S-, S-. S-, S-. S-/            ;; Нижний ряд:  / \ ? ! | < > < > ?
+  
+  _
+)
+
