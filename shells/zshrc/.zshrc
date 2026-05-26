@@ -682,3 +682,5 @@ path_prepend /opt/homebrew/opt/fzf/bin
 if is_macos; then
   path_append /Applications/Ghostty.app/Contents/MacOS
 fi
+
+export MOZ_ENABLE_WAYLAND=1
