@@ -234,7 +234,7 @@ records = true
 # tcp_port = 8889
 
 [theme]
-name = "catppuccin-mocha-lavender"
+# name = "catppuccin-mocha-lavender"
 
 ## Whether the theme manager should output normal or extra information to help fix themes.
 ## Boolean, true or false. If unset, left up to the theme manager.
