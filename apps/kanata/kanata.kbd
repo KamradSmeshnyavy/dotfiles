@@ -1,15 +1,14 @@
 (defsrc
-  ;; Физические клавиши, поведение которых переопределяется
-  altgr
-  h j k l
-  q w e r t y u i o p [ ]
-  a s d f g ; '
-  z x c v b n m , . /
+  ;; Ряд 1 (QWE...)
+  q   w   e   r   t   y   u   i   o   p   [   ]
+  ;; Ряд 2 (ASD...) + hjkl
+  a   s   d   f   g   h   j   k   l   ;   '
+  ;; Ряд 3 (ZXC...)
+  z   x   c   v   b   n   m   ,   .   /
   
-  ;; Добавляем Backspace в перехват
+  ;; Системные клавиши модификаторы
+  altgr
   bspc
-
-  ;; Кнопка Copilot (Правый Ctrl)
   rctrl
 )
 
@@ -22,49 +21,48 @@
   ;; Настройки для Правого Альта (AltGr) -> Слой стрелок и Delete
   alt-mod (tap-hold $tap-time $hold-time esc (layer-toggle arrow-layer))
 
-  ;; Настройки для кнопки Copilot -> Слой символов
+  ;; Настройки для кнопки Copilot (Правый Ctrl) -> Слой символов
   copilot-mod (layer-toggle symbols-layer)
 )
 
 ;; ================= БАЗОВЫЙ СЛОЙ =================
 (deflayer base
-  @alt-mod
-  h   j   k   l
   q   w   e   r   t   y   u   i   o   p   [   ]
-  a   s   d   f   g   ;   '
+  a   s   d   f   g   h   j   k   l   ;   '
   z   x   c   v   b   n   m   ,   .   /
   
-  ;; Стандартный Backspace в базовом слое
+  @alt-mod
   bspc
-  
   @copilot-mod
 )
 
-;; ================= СЛОЙ СТРЕЛОК И DELETE (Удержание Правого Альта) =================
+;; ================= СЛОЙ СТРЕЛОК И DELETE =================
+;; Активируется при удержании AltGr
 (deflayer arrow-layer
-  _
-  left down up right    ;; hjkl превращаются в стрелки
   _   _   _   _   _   _   _   _   _   _   _   _
-  _   _   _   _   _   _   _
+  _   _   _   _   _   left down up right _   _  ;; hjkl превращаются в стрелки
   _   _   _   _   _   _   _   _   _   _
   
-  ;; Когда зажат Правый Альт, клавиша Backspace превращается в Delete
-  del
-  
+  _
+  del                                           ;; Backspace превращается в Delete
   _
 )
 
-;; ================= СЛОЙ СИМВОЛОВ (Удержание Copilot) =================
+;; ================= СЛОЙ СИМВОЛОВ =================
+;; Активируется при удержании Copilot (Right Ctrl)
 (deflayer symbols-layer
-  _
-  _   _   _   _                                      
-  S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`    ;; Верхний ряд: @ ( ) [ ] { } < > = | ~
-  S-3 S-4 S-5 S-6 S-7 S-; S-'                        ;; Средний ряд: # $ % ^ & : "
-  /   \   S-/ S-1 S-\ S-, S-. S-, S-. S-/            ;; Нижний ряд:  / \ ? ! | < > < > ?
+  ;; Ряд 1: @ ( ) [ ] { } < > = | ~
+  S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`    
   
-  ;; В слое символов Backspace работает как обычно
-  _
+  ;; Ряд 2: # $ % ^ &  *  -  _  +  :  "
+  ;; hjkl теперь выводят математические знаки
+  S-3 S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'        
   
+  ;; Ряд 3: / \ ? ! | < > < > ?
+  /   \   S-/ S-1 S-\ S-, S-. S-, S-. S-/            
+  
+  _
+  _                                             ;; Стандартный Backspace
   _
 )
 
