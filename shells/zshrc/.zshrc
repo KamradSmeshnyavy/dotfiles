@@ -75,6 +75,7 @@ else
   export EDITOR=vim
 fi
 
+alias wifi=impala
 alias ping=gping
 alias la=tree
 alias cat=bat
