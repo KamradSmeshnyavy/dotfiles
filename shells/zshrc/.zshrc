@@ -592,14 +592,42 @@ fi
 if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
+# # export PYENV_ROOT="$HOME/.pyenv"
+# # command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# # eval "$(command pyenv init -)"
 # export PYENV_ROOT="$HOME/.pyenv"
-# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(command pyenv init -)"
+# # command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# # if command -v pyenv >/dev/null 2>&1; then
+# #   eval "$(pyenv init -)"
+# # fi
+# # Проверяем, инициализирован ли уже pyenv в этой сессии
+# if [ -z "$PYENV_INITIALIZED" ] && command -v pyenv >/dev/null 2>&1; then
+#     export PYENV_INITIALIZED=1
+#     eval "$(pyenv init -)"
+# fi
+
+
+
+# 1. Указываем путь к pyenv и добавляем его бинарники в PATH
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv >/dev/null 2>&1; then
-  eval "$(pyenv init -)"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+
+# 2. Правильная и безопасная инициализация (защита от race condition)
+if [ -z "$PYENV_INITIALIZED" ] && command -v pyenv >/dev/null 2>&1; then
+    export PYENV_INITIALIZED=1
+    eval "$(pyenv init -)"
 fi
+
+# # 3. Добавление SpoofDPI (БЕЗ упоминания shims от pyenv!)
+# if [ -f "$HOME/.bashrc" ]; then # или проверка существования функции path_prepend
+#     path_prepend "$HOME/.spoofdpi/bin"
+# else
+#     export PATH="$HOME/.spoofdpi/bin:$PATH"
+# fi
+
+
+
+
 export PATH=$PATH:~/.spoofdpi/bin
 
 # Created by `pipx` on 2025-09-13 12:59:56
@@ -677,7 +705,7 @@ alias qutebrowser='~/clone/qutebrowser/.venv/bin/python3 -m qutebrowser'
  # End Nix
 
 path_prepend "$HOME/.nix-profile/bin" /nix/var/nix/profiles/default/bin /run/current-system/sw/bin
-path_prepend "$HOME/.pyenv/shims" "$HOME/.spoofdpi/bin"
+# path_prepend "$HOME/.pyenv/shims" "$HOME/.spoofdpi/bin"
 path_prepend /opt/homebrew/opt/fzf/bin
 if is_macos; then
   path_append /Applications/Ghostty.app/Contents/MacOS
