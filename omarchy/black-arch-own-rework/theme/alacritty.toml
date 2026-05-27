@@ -1,0 +1,47 @@
+# ────────────────────────────────────────────────────────────
+# Omarchy black_arch Theme for Alacritty
+# By Ankur
+# https://github.com/ankur311sudo
+# ────────────────────────────────────────────────────────────
+
+[window]
+# window padding {px}
+padding.x = 20
+padding.y = 20
+decorations = "none"
+
+[font]
+size = 12.0
+
+
+[colors.primary]
+foreground = "#ffffff"
+background = "#000000"
+
+[colors.selection]
+text = "#000000"
+background = "#ffffff"
+
+[colors.cursor]
+text = "#000000"
+cursor = "#ffffff"
+
+[colors.normal]
+black   = "#262626"
+red     = "#646464"
+green   = "#8e8e8e"
+yellow  = "#b9b9b9"
+blue    = "#989898"
+magenta = "#747474"
+cyan    = "#585858"
+white   = "#d4d4d4"
+
+[colors.bright]
+black   = "#262626"
+red     = "#646464"
+green   = "#8e8e8e"
+yellow  = "#b9b9b9"
+blue    = "#989898"
+magenta = "#747474"
+cyan    = "#585858"
+white   = "#d4d4d4"
