@@ -1,5 +1,5 @@
 [app]
-overall = { bg = "Black" }
+# overall = { bg = "Black" } # черный background
 
 [mgr]
 cwd = { fg = "Cyan" }
@@ -19,7 +19,7 @@ count_selected = { fg = "Black", bg = "BrightBlue" }
 border_symbol = "│"
 border_style = { fg = "BrightBlack" }
 
-syntect_theme = "~/.config/yazi/Catppuccin-mocha.tmTheme"
+# syntect_theme = "~/.config/yazi/Catppuccin-mocha.tmTheme"
 
 [tabs]
 active = { fg = "Black", bg = "White", bold = true }
