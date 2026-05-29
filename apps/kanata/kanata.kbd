@@ -1,15 +1,12 @@
 (defsrc
   ;; Ряд 1 (QWE...)
-  q   w   e   r   t   y   u   i   o   p   [   ]
-  ;; Ряд 2 (ASD...) + hjkl
-  a   s   d   f   g   h   j   k   l   ;   '
+  tab  q  w  e  r  t  y  u  i  o  p  [  ]
+  ;; Ряд 2 (ASD...)
+  a  s  d  f  g  h  j  k  l  ;  '
   ;; Ряд 3 (ZXC...)
-  z   x   c   v   b   n   m   ,   .   /
-  
+  z  x  c  v  b  n  m  ,  .  /
   ;; Системные клавиши модификаторы
-  altgr
-  bspc
-  rctrl
+  altgr bspc
 )
 
 (defvar
@@ -18,51 +15,36 @@
 )
 
 (defalias
-  ;; Настройки для Правого Альта (AltGr) -> Слой стрелок и Delete
-  alt-mod (tap-hold $tap-time $hold-time esc (layer-toggle arrow-layer))
-
-  ;; Настройки для кнопки Copilot (Правый Ctrl) -> Слой символов
-  copilot-mod (layer-toggle symbols-layer)
+  ;; Tab: при удержании — активирует arrow-layer, при тапе — обычный Tab
+  tab-mod (tap-hold $tap-time $hold-time tab (layer-toggle arrow-layer))
+  
+  ;; Правый Альт (AltGr): при удержании — символы, при тапе — Esc
+  alt-symbols (tap-hold $tap-time $hold-time esc (layer-toggle symbols-layer))
 )
 
 ;; ================= БАЗОВЫЙ СЛОЙ =================
 (deflayer base
-  q   w   e   r   t   y   u   i   o   p   [   ]
-  a   s   d   f   g   h   j   k   l   ;   '
-  z   x   c   v   b   n   m   ,   .   /
-  
-  @alt-mod
-  bspc
-  @copilot-mod
+  @tab-mod q  w  e  r  t  y  u  i  o  p  [  ]
+  a        s  d  f  g  h  j  k  l  ;  '
+  z        x  c  v  b  n  m  ,  .  /
+  @alt-symbols bspc
 )
 
-;; ================= СЛОЙ СТРЕЛОК И DELETE =================
-;; Активируется при удержании AltGr
+;; ================= СЛОЙ СТРЕЛОК И НАВИГАЦИИ =================
+;; Активируется при удержании Tab
 (deflayer arrow-layer
-  _   _   _   _   _   _   _   _   _   _   _   _
-  _   _   _   _   _   left down up right _   _  ;; hjkl превращаются в стрелки
-  _   _   _   _   _   _   _   _   _   _
-  
-  _
-  del                                           ;; Backspace превращается в Delete
-  _
+  _    _  _  _  _  _  _  bspc del  _  _  _  _  ;; 'u' -> bspc, 'i' -> del
+  _    _  _  _  _  left down up   right _  _
+  _    _  _  _  _  _  ret  _    _    _         ;; 'm' -> ret (Enter)
+  _    del
 )
 
 ;; ================= СЛОЙ СИМВОЛОВ =================
-;; Активируется при удержании Copilot (Right Ctrl)
+;; Активируется при удержании AltGr
 (deflayer symbols-layer
-  ;; Ряд 1: @ ( ) [ ] { } < > = | ~
-  S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`    
-  
-  ;; Ряд 2: # $ % ^ &  *  -  _  +  :  "
-  ;; hjkl теперь выводят математические знаки
-  S-3 S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'        
-  
-  ;; Ряд 3: / \ ? ! | < > < > ?
-  /   \   S-/ S-1 S-\ S-, S-. S-, S-. S-/            
-  
-  _
-  _                                             ;; Стандартный Backspace
-  _
+  _    S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`
+  S-3  S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'
+  S-/  S-1 S-\ S-, S-. S-, S-. S-/ _   _
+  _    _
 )
 
