@@ -363,7 +363,7 @@ alias llg='lla --git'
 alias nu-kill='kill'
 alias kill='command kill'
 alias python='python3'
-alias pip='pip3'
+# alias pip='pip3'
 
 # alias.nu (safe direct aliases)
 alias a='gh copilot suggest'
@@ -713,3 +713,9 @@ if is_macos; then
 fi
 
 export MOZ_ENABLE_WAYLAND=1
+
+# Exports for another apps
+export _JAVA_OPTIONS="-Dsun.java2d.uiScale=2"
+
+
+. "$HOME/.local/share/../bin/env"
