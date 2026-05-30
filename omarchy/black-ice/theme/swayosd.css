@@ -1,5 +1,29 @@
-@define-color background-color #000000;
-@define-color border-color #f0f2f5;
-@define-color label #f0f2f5;
-@define-color image #f0f2f5;
-@define-color progress #7a8da8;
+@define-color background-color #05080a;
+@define-color border-color #141719;
+@define-color label #fff6ff;
+@define-color image #baf7b5;
+@define-color progress #dfbaff;
+
+/* Cancel out Omarchy settings */
+window:not(:backdrop),
+window:backdrop {
+    border: none;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 12px;
+}
+
+
+/* Draw a new background */
+window:not(:backdrop) #container,
+window:backdrop #container {
+    border: 2px solid @border-color;
+    border-radius: 6px;
+    background-color: @background-color;
+    padding: 12px;
+    background-clip: padding-box;
+    box-shadow: 2px 2px 9px 0px rgba(22, 22, 22, 1);
+
+}

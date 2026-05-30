@@ -1,45 +1,27 @@
-# God Is In The Rain
+# SAGA
+[SAGA](https://github.com/SAGAtheme/SAGA) by [SAGAthemecolor](https://github.com/SAGAthemecolor)
 
-A high-contrast, near-monochrome theme for [Omarchy](https://github.com/basecamp/omarchy) — a tribute to the rooftop scene in *V for Vendetta*.
+# Installation
 
-Built on the bones of [Vantablack](https://github.com/bjarneo/vantablack.nvim) by [@bjarneo](https://github.com/bjarneo). Pure black background, near-white foreground, with subtle steel-blue, brick-red, and amber accents introduced where Vantablack stays grayscale. Color only surfaces in ANSI output, btop graphs, window borders, and notifications — like rain seen against a streetlamp.
+To install this theme, simply use the omarchy-theme-install command:
 
-> "God is in the rain." — V
-
-![Preview](preview.png)
-
-## Installation
-
-```sh
-omarchy theme install https://github.com/mavdi/omarchy-god-is-in-the-rain
+```bash
+omarchy-theme-install https://github.com/HANCORE-linux/omarchy-saga-theme.git
 ```
 
-## Wallpaper
+<img width="2560" height="1440" alt="screenshot-2026-04-08_15-48-13" src="https://github.com/user-attachments/assets/7cb05e85-ee98-4bc9-bb00-3a7c5fb9c13f" />
+<img width="2560" height="1440" alt="screenshot-2026-04-08_15-48-27" src="https://github.com/user-attachments/assets/5be9e57c-51cc-4647-9224-dbad7a9ca63d" />
+<img width="2560" height="1440" alt="screenshot-2026-04-10_11-30-11" src="https://github.com/user-attachments/assets/548672a4-b602-4eba-bdac-8a202c7b0156" />
+<img width="2560" height="1440" alt="screenshot-2026-05-04_23-20-46" src="https://github.com/user-attachments/assets/21528465-e816-4e7c-b419-6ed5eb907c96" />
 
-![Wallpaper](preview-wallpaper.png)
 
-## Palette
 
-| Role           | Swatch | Hex |
-|----------------|:------:|-----|
-| Background     | ⬛ | `#000000` |
-| Foreground     | ⬜ | `#f0f2f5` |
-| Accent         | 🟦 | `#7a8da8` |
-| Selection      | ⬜ | `#c8d2e0` |
-| Red            | 🟥 | `#c47878` |
-| Orange         | 🟧 | `#d6a06b` |
-| Blue           | 🟦 | `#7a95c2` |
-| Green          | ⬜ | `#a8b0a8` |
-| Cyan           | 🟦 | `#a4b8c4` |
+#### VSCode
+- manually: VSCode SAGAtheme follow the instruction by OldJobobo check [here](https://github.com/OldJobobo/saga-theme-dark?tab=readme-ov-file)
+- automatically: alternative VSCode theme for auto load already included 
 
-The full palette lives in [`colors.toml`](colors.toml). Btop, terminal, mako, walker, and Hyprland border colors are derived from it via Omarchy's themed templates — so the same six accents propagate through the whole desktop.
+#### Waybar
+[LINK](https://github.com/HANCORE-linux/waybar-themes)
 
-## Credits
-
-- Original Vantablack theme by [@bjarneo](https://github.com/bjarneo)
-- Wallpaper inspired by *V for Vendetta* (2005)
-- Theme by [@mavdi](https://github.com/mavdi)
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+#### Recommendations for 3rd-Party App Theming
+Using Bypass Theme-Hook script for GTK, Vesktop, Steam, Spotify etc [LINK](https://github.com/imbypass/omarchy-theme-hook)
