@@ -71,10 +71,15 @@ vec2 getRectangleCenter(vec4 rectangle) {
     return vec2(rectangle.x + (rectangle.z / 2.), rectangle.y - (rectangle.w / 2.));
 }
 
+// const vec4 TRAIL_COLOR = vec4(0.7961, 0.6510, 0.9686, 1.0); // mauve
+// const vec4 CURRENT_CURSOR_COLOR = TRAIL_COLOR;
+// const vec4 PREVIOUS_CURSOR_COLOR = TRAIL_COLOR;
+// const vec4 TRAIL_COLOR_ACCENT = vec4(0.7961, 0.6510, 0.9686, 1.0);
 const vec4 TRAIL_COLOR = vec4(0.7961, 0.6510, 0.9686, 1.0); // mauve
 const vec4 CURRENT_CURSOR_COLOR = TRAIL_COLOR;
 const vec4 PREVIOUS_CURSOR_COLOR = TRAIL_COLOR;
 const vec4 TRAIL_COLOR_ACCENT = vec4(0.7961, 0.6510, 0.9686, 1.0);
+
 const float DURATION = .5;
 const float OPACITY = .2;
 // Don't draw trail within that distance * cursor size.
