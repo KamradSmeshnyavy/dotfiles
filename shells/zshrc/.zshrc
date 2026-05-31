@@ -712,6 +712,14 @@ if is_macos; then
   path_append /Applications/Ghostty.app/Contents/MacOS
 fi
 
+
+# Профили зарядки TLP для ThinkPad
+# alias tlp-profile-work="sudo tlp setcharge 15 20 BAT0 && echo 'Включен профиль работы (15-20%)'"
+alias tlp-profile-desk="sudo tlp setcharge 40 50 BAT0 && echo 'Включен Стационарный профиль (40-50%)'"
+alias tlp-profile-default="sudo tlp setcharge 70 80 BAT0 && echo 'Включен Сбалансированный профиль (70-80%)'"
+alias tlp-profile-mob="sudo tlp setcharge 90 100 BAT0 && echo 'Включен Мобильный профиль (90-100%)'"
+
+
 export MOZ_ENABLE_WAYLAND=1
 
 # Exports for another apps
