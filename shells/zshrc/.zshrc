@@ -613,10 +613,36 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 
+# Clear stale pyenv rehash lock so new rehashes do not hang.
+pyenv_clear_stale_lock() {
+  local lock="$PYENV_ROOT/shims/.pyenv-shim"
+  [[ -f "$lock" ]] || return 0
+
+  local pid
+  pid="$(<"$lock")"
+  if [[ -z "$pid" || ! "$pid" =~ '^[0-9]+$' ]]; then
+    rm -f -- "$lock"
+    return 0
+  fi
+
+  if ! kill -0 "$pid" 2>/dev/null; then
+    rm -f -- "$lock"
+  fi
+}
+
+pyenv_clear_stale_lock
+
 # 2. Правильная и безопасная инициализация (защита от race condition)
 if [ -z "$PYENV_INITIALIZED" ] && command -v pyenv >/dev/null 2>&1; then
     export PYENV_INITIALIZED=1
     eval "$(pyenv init -)"
+    if typeset -f pyenv >/dev/null 2>&1; then
+      functions -c pyenv _pyenv_original
+      pyenv() {
+        pyenv_clear_stale_lock
+        _pyenv_original "$@"
+      }
+    fi
 fi
 
 # # 3. Добавление SpoofDPI (БЕЗ упоминания shims от pyenv!)
