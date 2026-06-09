@@ -76,6 +76,7 @@ else
 fi
 
 alias wifi=impala
+alias btui=bluetui
 alias ping=gping
 alias la=tree
 alias cat=bat
