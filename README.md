@@ -7,6 +7,11 @@
   <img src="https://img.shields.io/github/license/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="License">
 </h1>
 
+|                altgr        |
+| :----------------------------------: |
+| ![altgr](assets/altgr-keyboard.webp) |
+
+
 > Основной способ установки теперь: **`nix-darwin` + `home-manager`**.
 
 Подробный разбор Nix-конфигурации: [packages/nix-darwin/README.md](packages/nix-darwin/README.md)
