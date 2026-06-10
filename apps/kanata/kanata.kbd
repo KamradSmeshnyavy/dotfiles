@@ -15,6 +15,13 @@
 )
 
 (defalias
+  ;; Алиас для клавиши 0, чтобы макрос не путал её с задержкой времени
+  n0 0
+
+  hex (macro @n0 x)     ;; Теперь корректно печатает 0x
+  ptr (macro - S-.)     ;; Печатает -> (минус и Shift+точка)
+  neq (macro S-1 =)     ;; Печатает != (Shift+1 и равно)
+
   ;; Tab: при удержании — активирует arrow-layer, при тапе — обычный Tab
   tab-mod (tap-hold $tap-time $hold-time tab (layer-toggle arrow-layer))
   
@@ -44,7 +51,9 @@
 (deflayer symbols-layer
   _    S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`
   S-3  S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'
-  S-/  S-1 S-\ S-, S-. S-, S-. S-/ _   _
+  /    \   S-/ S-1 S-\ ret bspc @ptr @hex @neq
   _    _
 )
-
+;;@()[]{}<>=|~
+;;#$%^&*-_+:"
+;;/\?!| ret bspc -> 0x !=
