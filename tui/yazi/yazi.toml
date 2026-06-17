@@ -55,6 +55,7 @@ rules = [
 		"edit",
 		"open",
 		"reveal",
+    "code",
 	] },
 	{ mime = "text/*", use = [
 		"edit",
