@@ -52,3 +52,58 @@ child:selected {
   border-left: 0px solid @accent;
 }
 
+
+/* AI */
+/* @define-color selected-text #000000; */
+/* @define-color text #e6e1cf; */
+/* @define-color base #000000; */
+/* @define-color border #222222; */
+/* @define-color foreground #e6e1cf; */
+/* @define-color background #000000; */
+/* @define-color accent #36a3d9; */
+/**/
+/* window .box-wrapper { */
+/*   background: @background; */
+/*   padding: 12px; */
+/*   color: @text; */
+/*   border: 3px solid @border; */
+/*   border-radius: 8px; */
+/*   margin: 0; */
+/* } */
+/**/
+/* window .search-container { */
+/*   background: @base; */
+/*   border: 2px solid @border; */
+/*   color: @text; */
+/*   border-radius: 8px; */
+/* } */
+/**/
+/* window .placeholder { */
+/*   opacity: 0.4; */
+/*   color: @text; */
+/* } */
+/**/
+/* window .input { */
+/*   color: @text; */
+/*   padding: 0; */
+/*   font-weight: 300; */
+/* } */
+/**/
+/* child { */
+/*   padding: 0 8px; */
+/*   background: transparent; */
+/*   border-radius: 0; */
+/*   border-left: 0px solid transparent; */
+/*   transition: all 160ms ease-in-out; */
+/* } */
+/**/
+/* child:hover { */
+/*   background: linear-gradient(90deg, alpha(@accent, 0.08), transparent 80%); */
+/*   border-left: 2px solid alpha(@accent, 0.4); */
+/* } */
+/**/
+/* child:selected { */
+/*   background: #222222; */
+/*   border-radius: 8px; */
+/*   border-left: 0px solid @accent; */
+/* } */
