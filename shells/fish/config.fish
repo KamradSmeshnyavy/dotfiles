@@ -15,3 +15,7 @@ alias lg="lazygit"
 alias vim="nvim"
 alias cd="z"
 alias cat="bat"
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/kamradsmeshnyavy/.local/bin" $PATH
