@@ -754,3 +754,7 @@ export _JAVA_OPTIONS="-Dsun.java2d.uiScale=2"
 
 
 . "$HOME/.local/share/../bin/env"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/kamradsmeshnyavy/.local/bin:$PATH"
