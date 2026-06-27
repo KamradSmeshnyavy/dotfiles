@@ -1,4 +1,4 @@
-{ "workbench.colorTheme": "Dobri Next -A01- Dark",
+{ "workbench.colorTheme": "Black",
   // * ╭───────────────────────────────────────────────────────╮
   // * │               VSCode Workbench                        │
   // * ╰───────────────────────────────────────────────────────╯
@@ -1300,7 +1300,7 @@
   "chat.editor.wordWrap": "on",
   "evenBetterToml.formatter.columnWidth": 80,
   "excalidraw.language": "en",
-  "extensions.autoUpdate": false,
+  "extensions.autoUpdate": "off",
   "file-size.position": "left",
   "hediet.vscode-drawio.codeLinkActivated": true,
   "hediet.vscode-drawio.resizeImages": null,
