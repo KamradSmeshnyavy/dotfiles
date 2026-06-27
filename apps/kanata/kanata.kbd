@@ -2,7 +2,7 @@
   ;; Ряд 1 (QWE...)
   tab  q  w  e  r  t  y  u  i  o  p  [  ]
   ;; Ряд 2 (ASD...)
-  a  s  d  f  g  h  j  k  l  ;  '
+  caps a  s  d  f  g  h  j  k  l  ;  '
   ;; Ряд 3 (ZXC...)
   z  x  c  v  b  n  m  ,  .  /
   ;; Системные клавиши модификаторы
@@ -32,7 +32,7 @@
 ;; ================= БАЗОВЫЙ СЛОЙ =================
 (deflayer base
   @tab-mod q  w  e  r  t  y  u  i  o  p  [  ]
-  a        s  d  f  g  h  j  k  l  ;  '
+  lctl     a  s  d  f  g  h  j  k  l  ;  '
   z        x  c  v  b  n  m  ,  .  /
   @alt-symbols bspc
 )
@@ -41,7 +41,7 @@
 ;; Активируется при удержании Tab
 (deflayer arrow-layer
   _    _  _  _  _  _  _  bspc del  _  _  _  _  ;; 'u' -> bspc, 'i' -> del
-  _    _  _  _  _  left down up   right _  _
+  _    _  _  _  _  _  left down up   right _  _
   _    _  _  _  _  _  ret  _    _    _         ;; 'm' -> ret (Enter)
   _    del
 )
@@ -50,7 +50,7 @@
 ;; Активируется при удержании AltGr
 (deflayer symbols-layer
   _    S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`
-  S-3  S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'
+  _    S-3  S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'
   /    \   S-/ S-1 S-\ ret bspc @ptr @hex @neq
   _    _
 )
