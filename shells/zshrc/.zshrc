@@ -77,6 +77,7 @@ fi
 
 alias wifi=impala
 alias btui=bluetui
+alias yandex-browser='yandex-browser-stable --ozone-platform=wayland'
 alias ping=gping
 alias la=tree
 alias cat=bat
