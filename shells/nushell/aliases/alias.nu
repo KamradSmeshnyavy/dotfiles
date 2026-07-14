@@ -38,11 +38,10 @@ def fv [] {
     }
 }
 
-alias rm = rmt
-alias rmi = rmt --ti #info
-alias rmf = rmt --tf #flash
-alias rmd = rmt --td #GUI
-
+# alias rm = rmt
+# alias rmi = rmt --ti #info
+# alias rmf = rmt --tf #flash
+# alias rmd = rmt --td #GUI
 
 
 
@@ -145,3 +144,5 @@ alias music = yazi ~/OneDrive/Music
 alias vluv = cd ~/vluv
 alias wiki = cd ~/astro-docs
 alias draft = nvim ~/.cahce/temp.md
+alias lzg = lazygit
+alias lzd = lazydocker
