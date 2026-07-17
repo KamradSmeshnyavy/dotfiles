@@ -6,3 +6,7 @@ alias dig = doggo
 alias grep = rg
 alias top = btop
 alias vim = nvim
+alias wifi = impala
+alias btui = bluetui
+alias yandex-browser = yandex-browser-stable --ozone-platform=wayland
+alias ping = gping

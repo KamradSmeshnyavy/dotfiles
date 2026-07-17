@@ -3,6 +3,7 @@ source ./replace.nu
 source ./ffmpeg.nu
 source ./obsidian.nu
 source ./mpd.nu
+source ./eza.nu
 
 # My custom aliases 
 
@@ -146,3 +147,8 @@ alias wiki = cd ~/astro-docs
 alias draft = nvim ~/.cahce/temp.md
 alias lzg = lazygit
 alias lzd = lazydocker
+alias wifi = impala
+alias btui = bluetui
+alias yandex-browser = yandex-browser-stable --ozone-platform=wayland
+alias ping = gping
+# alias la = tree
