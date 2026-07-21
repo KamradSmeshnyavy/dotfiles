@@ -57,3 +57,9 @@ $env.PATH = ($env.PATH | prepend [
 
 # Mise integration
 source ./mise.nu
+
+# Используем встроенные в систему цвета dircolors
+if ('/usr/bin/dircolors' | path exists) {
+    $env.LS_COLORS = (dircolors -b | lines | first | str replace 'LS_COLORS=' '' | str replace -r ';$' '' | str replace -r '^[\x27"]' '' | str replace -r '[\x27"]$' '')
+}
+
