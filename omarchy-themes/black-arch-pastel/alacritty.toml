@@ -1,0 +1,39 @@
+[window]
+padding.x = 20
+padding.y = 20
+decorations = "none"
+
+[font]
+size = 12.0
+
+[colors.primary]
+foreground = "#dcd7cf"
+background = "#14161a"
+
+[colors.selection]
+text = "#14161a"
+background = "#dcd7cf"
+
+[colors.cursor]
+text = "#14161a"
+cursor = "#dcd7cf"
+
+[colors.normal]
+black   = "#14161a"
+red     = "#e8a0a0"
+green   = "#b8cc80"
+yellow  = "#e8c890"
+blue    = "#6bb8e0"
+magenta = "#f0ddaa"
+cyan    = "#7ec8e3"
+white   = "#dcd7cf"
+
+[colors.bright]
+black   = "#6a6a7a"
+red     = "#f0b0b0"
+green   = "#c8d890"
+yellow  = "#f0d8a0"
+blue    = "#7ec8e8"
+magenta = "#f8e8b8"
+cyan    = "#90d8ee"
+white   = "#ffffff"
