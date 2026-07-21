@@ -127,7 +127,7 @@ alias v = nvim (tv files --source-command $editable_files)
 alias w = wsl
 alias x = ~/.local/bin/extract
 alias y = yazi
-alias z = z
+# alias z = z
 
 alias ze = zellij attach --create gnix
 alias c2p = code2prompt
@@ -149,6 +149,4 @@ alias lzg = lazygit
 alias lzd = lazydocker
 alias wifi = impala
 alias btui = bluetui
-alias yandex-browser = yandex-browser-stable --ozone-platform=wayland
-alias ping = gping
-# alias la = tree
+alias nm = nmap -sC -sV -oN nmap
