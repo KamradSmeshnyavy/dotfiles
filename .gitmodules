@@ -8,3 +8,6 @@
 [submodule "apps/sketchybar"]
 	path = apps/sketchybar
 	url = my:sketchybar
+[submodule "omarchy-themes/thinkpad-boot-screen"]
+	path = omarchy-themes/thinkpad-boot-screen
+	url = https://github.com/Yilmaz41/Thinkpad-boot-screen.git
