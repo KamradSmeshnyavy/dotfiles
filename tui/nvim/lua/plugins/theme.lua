@@ -1,0 +1,14 @@
+-- return {
+--   {
+--     "noahfrederick/vim-noctu", -- Исправленный адрес репозитория
+--     lazy = false,
+--     priority = 1000,
+--     config = function()
+--       -- Отключаем True Color, чтобы Neovim читал 16 ANSI-цветов из Kitty
+--       vim.opt.termguicolors = true
+--       -- Активируем тему
+--       vim.cmd([[colorscheme noctu]])
+--     end,
+--   },
+-- }
+return {}
