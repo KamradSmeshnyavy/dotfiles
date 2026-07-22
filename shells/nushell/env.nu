@@ -60,6 +60,8 @@ source ./mise.nu
 
 # Используем встроенные в систему цвета dircolors
 if ('/usr/bin/dircolors' | path exists) {
-    $env.LS_COLORS = (dircolors -b | lines | first | str replace 'LS_COLORS=' '' | str replace -r ';$' '' | str replace -r '^[\x27"]' '' | str replace -r '[\x27"]$' '')
+    # $env.LS_COLORS = (dircolors -b | lines | first | str replace 'LS_COLORS=' '' | str replace -r ';$' '' | str replace -r '^[\x27"]' '' | str replace -r '[\x27"]$' '')
+    $env.LS_COLORS = (($env.LS_COLORS? | default "") + ":ow=97;100:tw=97;100:")
+    # $env.LS_COLORS = (($env.LS_COLORS? | default "") + ":ow=01;34:tw=01;34:")
 }
 

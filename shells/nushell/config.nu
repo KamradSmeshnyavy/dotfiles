@@ -33,19 +33,24 @@ $env.config = {
   bracketed_paste: true # enable bracketed paste, currently useless on windows
   edit_mode: vi
   color_config: {
+    # Элементы интерфейса таблицы
     separator: "white"
     header: { fg: "green" attr: "b" }
     row_index: { fg: "green" attr: "b" }
     
-    # Цвета для типов файлов (будут брать цвета из палитры терминала)
-    directory: "blue"
-    file: "white"
-    executable: "green"
-    symlink: "cyan"
+    # Исправленный формат для типов файлов (явно указываем fg - цвет текста)
+    directory: { fg: "blue" }
+    file: { fg: "white" }
+    executable: { fg: "green" }
+    symlink: { fg: "cyan" }
     
-    # Также можно продублировать базовые типы, если имя файла распознается как строка
+    # Базовые типы данных и защита от скрытых фонов
     string: "white"
+    empty: "n"
+    nothing: "n"
+    leading_trailing_space_bg: { attr: "n" }
   }
+
   shell_integration: {
     osc2: true
     osc7: true
