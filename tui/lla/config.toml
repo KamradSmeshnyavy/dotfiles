@@ -1,43 +1,176 @@
+# lla Configuration File
+# This file controls the behavior and appearance of the lla command
+
+# Default sorting method for file listings
+# Possible values:
+#   - "name": Sort alphabetically by filename (default)
+#   - "size": Sort by file size, largest first
+#   - "date": Sort by modification time, newest first
 default_sort = "name"
 
+# Default format for displaying files
+# Possible values:
+#   - "default": Quick and clean directory listing
+#   - "long": Detailed file information with metadata
+#   - "tree": Hierarchical directory visualization
+#   - "fuzzy": Interactive fuzzy search
+#   - "grid": Organized grid layout for better readability
+#   - "git": Git-aware view with repository status
+#   - "timeline": Group files by time periods
+#   - "sizemap": Visual representation of file sizes
+#   - "table": Structured data display
 default_format = "default"
 
-show_icons = true
+# Whether to show icons by default
+# When true, file and directory icons will be displayed in all views
+# Default: false
+show_icons = false
 
-include_dirs = true
+# Whether to include directory sizes in file listings
+# When true, directory sizes will be calculated recursively
+# This may impact performance for large directories; some views skip this when size is not used
+# Default: false
+include_dirs = false
 
+# Format for displaying file permissions
+# Possible values:
+#   - "symbolic": Traditional Unix-style (e.g., -rw-r--r--)
+#   - "octal": Numeric mode (e.g., d644)
+#   - "binary": Binary representation (e.g., 110100100)
+#   - "compact": Compact representation (e.g., 644)
+#   - "verbose": Verbose representation (e.g., type:file owner:rwx group:r-x others:r-x)
+# Default: "symbolic"
 permission_format = "symbolic"
 
-# theme = "catppuccin"
+# The theme to use for coloring
+# Place custom themes in ~/.config/lla/themes/
+# Default: "default"
+theme = "default"
 
+# List of enabled plugins
+# Each plugin provides additional functionality
+# Examples:
+#   - "git_status": Show Git repository information
+#   - "file_hash": Calculate and display file hashes
+#   - "file_tagger": Add and manage file tags
 enabled_plugins = []
-plugins_dir = "~/.config/lla/plugins"
 
+# Directory where plugins are stored
+# Default: ~/.config/lla/plugins
+plugins_dir = "/tmp/.tmpM8PSOc"
+
+# Paths to exclude from listings (tilde is supported)
+# Examples:
+#   - "~/Library/Mobile Documents"  # macOS iCloud Drive (Mobile Documents)
+#   - "~/Library/CloudStorage"      # macOS cloud storage providers
+# Default: [] (no exclusions)
+exclude_paths = []
+
+# Maximum depth for recursive directory traversal
+# Controls how deep lla will go when showing directory contents
+# Set to None for unlimited depth (may impact performance)
+# Default: 3 levels deep
 default_depth = 3
 
 # Sorting configuration
 [sort]
+# List directories before files
+# Default: false
 dirs_first = false
+
+# Enable case-sensitive sorting
+# Default: false
 case_sensitive = false
+
+# Use natural sorting for numbers (e.g., 2.txt before 10.txt)
+# Default: true
 natural = true
 
+# Filtering configuration
 [filter]
+# Enable case-sensitive filtering by default
+# Default: false
 case_sensitive = false
+
+# Hide dot files and directories by default
+# Default: false
 no_dotfiles = false
 
-[formatters.long]
-hide_group = true
-relative_dates = true
+# Respect .gitignore (and git exclude) rules when listing files
+# Default: false
+respect_gitignore = false
 
+# Named filter presets let you reuse complex filter combinations
+# Uncomment and customize the example below or define your own under [filter.presets.<name>]
+# [filter.presets.rust_sources]
+# description = "Common Rust sources"
+# filter = "glob:*.{rs,toml}"
+# size = "<2M"
+# modified = "<30d"
+
+# Formatter-specific configurations
 [formatters.tree]
+# Maximum number of entries to display in tree view
+# Controls memory usage and performance for large directories
+# Set to 0 to show all entries (may impact performance)
+# Default: 20000 entries
 max_lines = 20000
 
+# Grid formatter configuration
 [formatters.grid]
+# Whether to ignore terminal width by default
+# When true, grid view will use max_width instead of terminal width
+# Default: false
 ignore_width = false
+
+# Maximum width for grid view when ignore_width is true
+# This value is used when terminal width is ignored
+# Default: 200 columns
 max_width = 200
 
+# Long formatter configuration
+[formatters.long]
+# Hide the group column in long format
+# Default: false
+hide_group = false
+
+# Show relative dates (e.g., "2h ago") in long format
+# Default: false
+relative_dates = false
+
+# Date/time format for absolute dates in long format
+# Uses chrono strftime syntax (e.g., "%Y-%m-%d %H:%M" to show the year)
+# Default: "%b %d %H:%M"
+date_format = "%Y-%m-%d %H:%M"
+
+# Column order for long view (use built-in keys or field:<custom_field> for plugin data)
+columns = ["permissions", "size", "modified", "user", "group", "name"]
+
+# Table formatter configuration
+[formatters.table]
+# Columns rendered in table view (same keys as long view; include plugin fields via field:<name>)
+columns = ["permissions", "size", "modified", "name"]
+
+# Lister-specific configurations
 [listers.recursive]
+# Maximum number of entries to process in recursive listing
+# Controls memory usage and performance for deep directory structures
+# Set to 0 to process all entries (may impact performance)
+# Default: 20000 entries
 max_entries = 20000
 
+# Fuzzy lister configuration
 [listers.fuzzy]
-ignore_patterns = ["node_modules", "target", ".git", ".idea", ".vscode"]
+# Patterns to ignore when listing files in fuzzy mode
+# Can be:
+#  - Simple substring match: "node_modules"
+#  - Glob pattern: "glob:*.min.js"
+#  - Regular expression: "regex:.*\\.pyc$"
+# Default: ["node_modules", "target", ".git", ".idea", ".vscode"]
+ignore_patterns = ["node_modules","target",".git",".idea",".vscode"]
+
+# Editor to use for editing files in fuzzy view
+# Overrides the $EDITOR environment variable if set
+# Examples: "nvim", "vim", "nano", "code"
+# Default: "" (falls back to $EDITOR or $VISUAL, then nano)
+editor = ""
