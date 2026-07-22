@@ -4,7 +4,7 @@ set -euo pipefail
 SRC_DEFAULT="${HOME}/Documents/Wallpapers/Wallpapers"
 
 usage() {
-  cat <<EOF
+  cat <<HELP
 Usage: $(basename "$0") <theme-dir> [source-dir]
 
 Recolor wallpapers from source-dir into the theme's background directory
@@ -13,7 +13,7 @@ using the theme's color palette (colors.toml).
 Arguments:
   theme-dir    Path to theme directory (must contain colors.toml and backgrounds/)
   source-dir   Directory with source wallpapers (default: ${SRC_DEFAULT})
-EOF
+HELP
   exit 1
 }
 

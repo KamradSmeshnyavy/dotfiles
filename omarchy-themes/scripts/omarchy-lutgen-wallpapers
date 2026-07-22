@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC_DEFAULT="${HOME}/Documents/Wallpapers/Wallpapers"
+
+usage() {
+  cat <<HELP
+Usage: $(basename "$0") <theme-dir> [source-dir]
+
+Recolor wallpapers from source-dir into the theme's background directory
+using the theme's color palette (colors.toml).
+
+This script uses 'lutgen' to create high-quality smooth color mappings
+without dithering artifacts.
+
+Arguments:
+  theme-dir    Path to theme directory (must contain colors.toml and backgrounds/)
+  source-dir   Directory with source wallpapers (default: ${SRC_DEFAULT})
+HELP
+  exit 1
+}
+
+THEME_DIR="${1:-}"
+SRC_DIR="${2:-$SRC_DEFAULT}"
+
+if [ -z "$THEME_DIR" ] || [ "$THEME_DIR" = "-h" ] || [ "$THEME_DIR" = "--help" ]; then
+  usage
+fi
+
+[ ! -f "$THEME_DIR/colors.toml" ] && echo "Error: no colors.toml in $THEME_DIR" && exit 1
+
+BG_DIR="$THEME_DIR/backgrounds"
+mkdir -p "$BG_DIR"
+
+if ! command -v lutgen >/dev/null 2>&1; then
+  echo "Error: 'lutgen' is not installed."
+  echo "Please install it with: cargo install lutgen-cli"
+  exit 1
+fi
+
+echo "Extracting palette from $THEME_DIR/colors.toml..."
+COLORS=$(python3 -c "
+import tomllib
+with open('$THEME_DIR/colors.toml', 'rb') as f:
+    data = tomllib.load(f)
+colors = data.get('colors', data)
+seen = set()
+for i in range(16):
+    key = f'color{i}'
+    if key in colors:
+        c = '#' + colors[key].strip().lstrip('#')
+        if c not in seen:
+            seen.add(c)
+            print(c)
+")
+
+# Convert python output lines to an array
+mapfile -t LUTGEN_COLORS <<< "$COLORS"
+
+if [ ${#LUTGEN_COLORS[@]} -eq 0 ]; then
+  echo "Error: no colors found in colors.toml"
+  exit 1
+fi
+
+echo "Palette: ${#LUTGEN_COLORS[@]} unique colors"
+
+# Create a temporary directory to store lutgen output before moving it
+TMP_OUT=$(mktemp -d /tmp/lutgen-out-XXXXXX)
+trap 'rm -rf "$TMP_OUT"' EXIT
+
+# Find all valid image files
+echo "Finding images in $SRC_DIR..."
+mapfile -t FILES < <(find "$SRC_DIR" -maxdepth 1 -type f \( -iname \*.jpg -o -iname \*.jpeg -o -iname \*.png -o -iname \*.gif -o -iname \*.webp \))
+
+if [ ${#FILES[@]} -eq 0 ]; then
+  echo "No images found in $SRC_DIR"
+  exit 0
+fi
+
+echo "Processing ${#FILES[@]} images with lutgen (this might take a moment)..."
+lutgen apply -o "$TMP_OUT" "${FILES[@]}" -- "${LUTGEN_COLORS[@]}"
+
+echo "Copying processed wallpapers to $BG_DIR..."
+# Move processed files to background dir and cleanup old files with same basename
+for f in "$TMP_OUT"/*; do
+  [ -e "$f" ] || continue
+  base=$(basename "$f" | sed 's/\.[^.]*$//')
+  # remove any existing file in backgrounds with the same base name to avoid duplicates
+  rm -f "$BG_DIR/$base".*
+  cp "$f" "$BG_DIR/"
+done
+
+EXISTING=$(find "$BG_DIR" -maxdepth 1 -type f | wc -l)
+echo "Done! Backgrounds in $BG_DIR: $EXISTING files"
