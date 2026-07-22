@@ -1,175 +1,80 @@
 <h1 align="center">
-  <img alt="image" src="https://github.com/user-attachments/assets/b5f6fdaa-37c2-4bb4-9cc4-d5df0086b82f" width="60%"/>
-  <br>
-  Dotfiles
+  🌌 Omarchy Linux Dotfiles
   <br>
   <img src="https://img.shields.io/github/commit-activity/y/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="Commit Frequency">
   <img src="https://img.shields.io/github/license/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="License">
 </h1>
 
-|                altgr        |
-| :----------------------------------: |
-| ![altgr](assets/altgr-keyboard.webp) |
+<p align="center">
+  <i>Мои элегантные и воспроизводимые конфигурационные файлы для Arch Linux (Omarchy), стилизованные в кастомной теме <b>pastel-hacker</b>.</i>
+</p>
 
+---
 
-> Основной способ установки теперь: **`nix-darwin` + `home-manager`**.
+## 📸 Галерея (Screenshots)
 
-Подробный разбор Nix-конфигурации: [packages/nix-darwin/README.md](packages/nix-darwin/README.md)
+> **Заметка:** Чтобы галерея отображалась корректно, сделай актуальные скриншоты в своей системе с темой `pastel-hacker` и сохрани их в папку `assets/` с именами, указанными ниже.
 
-- [Установка (мини-гайд)](#установка-мини-гайд)
-  - [1) Первый запуск через nix-darwin (рекомендуется)](#1-первый-запуск-через-nix-darwin-рекомендуется)
-  - [2) Применение изменений (ежедневно)](#2-применение-изменений-ежедневно)
-  - [3) Legacy-установка без nix-darwin](#3-legacy-установка-без-nix-darwin)
-  - [4) Installer (macOS/omarchy)](#4-installer-macosomarchy)
-- [Структура Nix-конфига](#структура-nix-конфига)
+| Desktop (Hyprland + Waybar) | Terminal (Kitty + Nushell) |
+| :---: | :---: |
+| ![Desktop](assets/desktop-hyprland.png) | ![Terminal](assets/kitty-terminal.png) |
+| **Neovim** | **File Manager (Yazi)** |
+| ![Neovim](assets/neovim-editor.png) | ![Yazi](assets/yazi-filemanager.png) |
 
-- [VSCode](#vscode)
-- [Music Player](#music-player)
-- [Bar](#bar)
-- [Browser](#browser)
-- [Terminal](#terminal)
-  - [Shell](#shell)
-  - [Terminal Multiplexer](#terminal-multiplexer)
-  - [Fuzzy finders](#fuzzy-finders)
-  - [TUI/CLI Tools](#tuicli-tools)
+---
 
-## Установка (мини-гайд)
+## 🚀 Основные компоненты (Main Components)
 
-### 1) Первый запуск через nix-darwin (рекомендуется)
+Система построена вокруг современных, быстрых и эстетичных инструментов:
 
-```bash
-git clone https://github.com/Efterklang/dotfiles.git ~/dotfiles
-cd ~/dotfiles/packages/nix-darwin
-nix flake update
-sudo nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
-```
+| Категория | Инструменты |
+| :--- | :--- |
+| 🪟 **Window Manager** | **Hyprland** (Linux) — основной композитор. <br> _(Также сохранена поддержка Yabai / Aerospace для macOS)_. |
+| 🎨 **Theme & Styling** | Глобальная тема **`pastel-hacker`** управляется через Omarchy Theme Engine. Цвета автоматически применяются к GTK, Waybar, терминалам и редакторам. |
+| 🖥️ **Terminals** | **Kitty** (основной терминал), Ghostty, Wezterm, Alacritty. |
+| 🐚 **Shells** | **Nushell** (по умолчанию), Fish, Zsh. <br> Промпты стилизуются с помощью **Starship** и OhMyPosh. |
+| 📝 **Editors** | **Neovim** (основной консольный редактор, написан на Lua), **VS Code** (с кастомным CSS и темой Catppuccin). |
+| 🗃️ **Multiplexers** | **Zellij**, **Tmux**. |
+| 🛠️ **CLI / TUI Утилиты** | **yazi** / **nnn** (файловые менеджеры) <br> **bat** (замена cat) <br> **eza** / **lla** (замена ls) <br> **btop** / **procs** (мониторинг системы) <br> **lazygit** / **gitui** (работа с Git) <br> **zoxide** (умный cd) <br> **fzf** / **television** (fuzzy finders) |
 
-### 2) Применение изменений (ежедневно)
+---
 
-После правок в `.nix` файлах:
+## 📦 Зависимости (Requirements)
 
-```bash
-cd ~/dotfiles/packages/nix-darwin
-sudo nix run nix-darwin -- switch --flake .#MacBook-Pro-Denis
-```
+Перед установкой убедитесь, что в системе установлены базовые пакеты. (Большинство зависимостей устанавливаются скриптом, но для старта нужны):
 
-### 3) Legacy-установка без nix-darwin
+- `git`
+- `python3` (требуется для работы менеджера симлинков Dotbot)
+- `base-devel` (для сборки AUR-пакетов)
+- Любой **Nerd Font** (рекомендуется *JetBrainsMono Nerd Font* или *FiraCode Nerd Font*)
 
-Если нужен старый вариант через симлинки (dotbot):
+---
 
-```bash
-cd ~/dotfiles/install
-python3 install.py
-```
+## 🛠️ Установка (Installation)
 
-### 4) Installer (macOS/omarchy)
-
-Установка пакетов + применение dotfiles (скрипт с выбором):
+Процесс установки автоматизирован. Скрипт `bootstrap.sh` сам установит необходимые системные и AUR пакеты (через `pacman` и `yay`), а затем развернет конфигурацию с помощью **Dotbot**.
 
 ```bash
-cd ~/dotfiles/install
-./bootstrap.sh
+# 1. Клонируем репозиторий в домашнюю директорию
+git https://github.com/KamradSmeshnyavy/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+
+# 2. Запускаем скрипт установки
+./install/bootstrap.sh
 ```
 
-Списки пакетов находятся в `install/packages/`.
+При запуске скрипт предложит удобное меню:
+1. Установить только пакеты.
+2. Применить только dotfiles (создать симлинки).
+3. **Установить пакеты и применить dotfiles (рекомендуется для первой установки).**
 
-## Структура Nix-конфига
+---
 
-- `packages/nix-darwin/flake.nix` — входная точка `nix-darwin`.
-- `packages/nix-darwin/hosts/darwin/default.nix` — системные настройки macOS, Homebrew и системные пакеты.
-- `packages/nix-darwin/home/default.nix` — пользовательские пакеты/настройки Home Manager.
-- `packages/nix-darwin/home/dotfiles-links.nix` — симлинки на текущие dotfiles.
+## 📁 Структура репозитория
 
-## VSCode
-
-- Theme: Catppuccin Mocha
-- Icon: Catppuccin Noctis Icons
-- Custom CSS: check [this file](https://github.com/Efterklang/dotfiles/blob/main/apps/vscode/custom.css)
-- Settings.json: check [this file](https://github.com/Efterklang/dotfiles/blob/main/apps/vscode/settings.json)
-
-| File/Directory     | Description                                  |
-| ------------------ | -------------------------------------------- |
-| `custom.css`       | Custom CSS styling for VSCode                |
-| `keybindings.json` | Keyboard shortcuts configuration             |
-| `settings.json`    | VSCode global settings                       |
-| `snippets`         | Code snippets (markdown, python, java, etc.) |
-
-![1761896833616](assets/vscode.png)
-
-## Music Player
-
-|            Tauon            | mpd + rmpc + cava        |
-| :-------------------------: | ------------------------ |
-| ![tauon](assets/tauon.webp) | ![mpd](assets/rmpc.webp) |
-
-## Bar
-
-- Windows: Yasb, other options: glazewm, zebar
-- MacOS: SketchyBar, read [config](https://github.com/Efterklang/sketchybar)
-
-| Yasb(Windows)             | SketchyBar(Mac)                       |
-| ------------------------- | ------------------------------------- |
-| ![yasb](assets/yasb.webp) | ![sketchybar](assets/sketchybar.webp) |
-
-## Browser
-
-Extension List
-
-- [**Stylus**](https://add0n.com/stylus.html)
-  - User styles manager for customizing website appearance
-- [**Vimium C**](https://github.com/gdh1995/vimium-c)
-  - Keyboard-based navigation and tab operations
-  - Features advanced omnibar functionality
-
-|                Stylus                |             Vimium C              |
-| :----------------------------------: | :-------------------------------: |
-| ![Stylus Github](assets/stylus.webp) | ![vimium-c](assets/vimium_c.webp) |
-
-## Terminal
-
-### Shell
-
-I use nushell as my default shell. It has aesthetic and powerful features.
-
-![nushell](assets/nushell.png)
-
-### Terminal Multiplexer
-
-|            Zellij             |           Tmux            |
-| :---------------------------: | :-----------------------: |
-| ![zellij](assets/zellij.webp) | ![Tmux](assets/tmux.webp) |
-
-### Fuzzy finders
-
-|           Fzf           |              Television               |
-| :---------------------: | :-----------------------------------: |
-| ![Fzf](assets/fzf.webp) | ![Television](assets/television.webp) |
-
-### TUI/CLI Tools
-
-
-| Command | Replacement |
-| ------- | ----------- |
-| diff    | delta       |
-| cd      | zoxide      |
-| ls      | eza, lla    |
-| cat     | bat         |
-| grep    | ripgrep     |
-| vim     | nvim        |
-| git     | lazygit     |
-| top     | btop        |
-| ps      | procs       |
-| ranger  | yazi        |
-
-
-|            Delta             |             Zoxide              |
-| :--------------------------: | :-----------------------------: |
-| ![Delta](assets/delta.webp)  |  ![Zoxide](assets/zoxide.webp)  |
-|          eza & lla           |               Bat               |
-| ![eza](assets/eza_lla.webp)  |     ![Bat](assets/bat.webp)     |
-|            NeoVim            |             LazyGit             |
-| ![LazyVim](assets/nvim.webp) | ![LazyGit](assets/lazygit.webp) |
-|             btop             |              Procs              |
-|  ![btop](assets/btop.webp)   |   ![Procs](assets/procs.webp)   |
-|             Yazi             |             Scooter             |
-|  ![Yazi](assets/yazi.webp)   | ![Scooter](assets/scooter.webp) |
+- `apps/` — конфигурации графических приложений (Hyprland, Kitty, VS Code, Waybar и др.).
+- `cli/` и `tui/` — конфигурации консольных утилит (Zellij, Yazi, Git, Btop и др.).
+- `shells/` — настройки командных оболочек (Nushell, Zsh, Fish) и промптов (Starship).
+- `install/` — скрипты установки пакетов и линковки конфигов (`bootstrap.sh`, `install.py`).
+- `omarchy-themes/` — движок тем Omarchy и директории с темами (включая `pastel-hacker`).
+- `macos/` / `justfile` — legacy и специфичные скрипты для macOS.
