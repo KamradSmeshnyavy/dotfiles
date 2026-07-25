@@ -1,4 +1,4 @@
-{ "workbench.colorTheme": "Pastel Hacker",                                            
+{ "workbench.colorTheme": "Pastel Hacker",
   // * ╭───────────────────────────────────────────────────────╮
   // * │               VSCode Workbench                        │
   // * ╰───────────────────────────────────────────────────────╯
@@ -36,7 +36,7 @@
   },
   "workbench.navigationControl.enabled": false,
 
-  "workbench.preferredDarkColorTheme": "Dobri Next -A01- Dark",
+  "workbench.preferredDarkColorTheme": "Catppuccin Mocha",
   "workbench.preferredLightColorTheme": "Rosé Pine Dawn",
   "workbench.iconTheme": "catppuccin noctis icons",
   "workbench.editor.editorActionsLocation": "hidden",
@@ -258,7 +258,7 @@
   "material-icon-theme.folders.theme": "specific",
   "catppuccin.extraBordersEnabled": true,
   "catppuccin.italicComments": false,
-  "catppuccin.accentColor": "lavender",
+  "catppuccin.accentColor": "green",
   "catppuccin.bracketMode": "neovim",
   "catppuccin.workbenchMode": "minimal",
   "catppuccin.boldKeywords": true,
