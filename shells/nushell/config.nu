@@ -177,6 +177,13 @@ $env.config = {
     #  │               Custom keybindings                      │
     #  ╰───────────────────────────────────────────────────────╯
     {
+      name: enter_vi_normal
+      modifier: control
+      keycode: "char_["
+      mode: vi_insert
+      event: { send: vichangemode, mode: normal }
+    }
+    {
       name: tv_folder
       modifier: control
       keycode: char_f
