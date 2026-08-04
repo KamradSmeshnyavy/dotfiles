@@ -1,0 +1,18 @@
+-- return {
+--   {
+--     "neovim/nvim-lspconfig",
+--     opts = {
+--       servers = {
+--         ruff = {
+--           -- Отключаем публикацию диагностик (ошибок и предупреждений линтера)
+--           init_options = {
+--             settings = {
+--               publishDiagnostics = false,
+--             },
+--           },
+--         },
+--       },
+--     },
+--   },
+-- }
+return {}
