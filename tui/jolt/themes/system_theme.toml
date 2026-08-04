@@ -1,0 +1,36 @@
+name = "terminal_native"
+
+[dark]
+# default заставит Jolt использовать прозрачный/родной фон терминала
+bg = "default"
+dialog_bg = "black"     # Для окон поверх основного интерфейса
+fg = "default"          # Родной цвет текста терминала
+accent = "blue"
+accent_secondary = "magenta"
+highlight = "yellow"
+muted = "white"         # Обычно это неяркий серый текст
+success = "green"
+warning = "yellow"
+danger = "red"
+border = "black"
+selection_bg = "blue"
+selection_fg = "white"
+graph_line = "blue"
+
+[light]
+# Настройки для светлой темы терминала (если используете)
+bg = "default"
+dialog_bg = "white"
+fg = "default"
+accent = "blue"
+accent_secondary = "magenta"
+highlight = "yellow"
+muted = "black"
+success = "green"
+warning = "yellow"
+danger = "red"
+border = "white"
+selection_bg = "blue"
+selection_fg = "white"
+graph_line = "blue"
+

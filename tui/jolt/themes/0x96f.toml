@@ -1,0 +1,17 @@
+name = "0x96f"
+
+[dark]
+bg = "#262427"
+dialog_bg = "#2d2b2d"
+fg = "#fcfcfa"
+accent = "#49cae4"
+accent_secondary = "#a093e2"
+highlight = "#ffca58"
+muted = "#8c8c8b"
+success = "#bcdf59"
+warning = "#ffd271"
+danger = "#ff7272"
+border = "#383738"
+selection_bg = "#fcfcfa"
+selection_fg = "#262427"
+graph_line = "#49cae4"
