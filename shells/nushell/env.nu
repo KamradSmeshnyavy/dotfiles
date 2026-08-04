@@ -17,6 +17,11 @@ def --env import_systemd_env [] {
 }
 import_systemd_env
 
+# Принудительный запуск Firefox в нативной среде Wayland
+$env.MOZ_ENABLE_WAYLAND = "1"
+
+# Использование драйвера intel-media-driver для VA-API (важно для Lunar Lake)
+$env.LIBVA_DRIVER_NAME = "iHD"
 # Переменные окружения из Zsh
 $env.EDITOR = "nvim"
 $env.GOPATH = $"($env.HOME)/go"
