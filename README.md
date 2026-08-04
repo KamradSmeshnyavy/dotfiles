@@ -17,9 +17,9 @@
 
 | Desktop (Hyprland + Waybar) | Terminal (Kitty + Nushell) |
 | :---: | :---: |
-| ![Desktop](assets/desktop-hyprland.webp) | ![Terminal](assets/kitty-terminal.webp) |
+| ![Desktop](assets/desktop-hyprland.png) | ![Terminal](assets/kitty-terminal.png) |
 | **Neovim** | **File Manager (Yazi)** |
-| ![Neovim](assets/neovim-editor.webp) | ![Yazi](assets/yazi-filemanager.webp) |
+| ![Neovim](assets/neovim-editor.png) | ![Yazi](assets/yazi-filemanager.png) |
 
 ---
 
