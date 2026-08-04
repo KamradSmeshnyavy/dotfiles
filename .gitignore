@@ -20,5 +20,6 @@ tmux/plugins/
 raycast
 fzf
 history.txt
-tui/spotatui
+tui/spotatui/history
+tui/spotatui/streaming_cache
 tui/lla/jump.json
