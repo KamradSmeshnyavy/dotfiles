@@ -304,6 +304,37 @@
       font-family: var(--font-mono);
       color: var(--accent);
     }
+    .card-toggle {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 440px;
+      margin-bottom: 16px;
+    }
+    .toggle-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .toggle-btn:hover {
+      color: var(--text);
+      border-color: rgba(29, 185, 84, 0.3);
+    }
+    .toggle-btn.active {
+      background: rgba(29, 185, 84, 0.12);
+      border-color: rgba(29, 185, 84, 0.4);
+      color: var(--accent);
+    }
     .download-container {
       margin-top: 20px;
       width: 100%;
@@ -479,20 +510,24 @@
     <header class="app-header">
       <h1><span class="brand-logo">spota</span><span class="brand-accent">tui</span></h1>
       <p>Listening History Recap</p>
-      <p class="app-desc">A shareable HTML snapshot of your qualified local listening history, generated directly from spotatui.</p>
+      <p class="app-desc">No qualified local listening history was recorded for this window yet.</p>
     </header>
 
     <div class="dashboard-grid">
       <!-- Left Column: The Share Card Area -->
       <div class="share-column">
+        <div class="card-toggle">
+          <button id="card-toggle-0" class="toggle-btn active" onclick="setActiveCard(0)">Last 30 Days</button>
+          <button id="card-toggle-1" class="toggle-btn" onclick="setActiveCard(1)">All Time</button>
+        </div>
         <div class="card-wrapper">
           <div id="share-card" class="share-card">
             <!-- Ambient glowing node inside the card -->
             <div class="card-glow"></div>
-            
+
             <div class="card-header">
               <span class="card-brand">spota<span style="color:var(--accent)">tui</span></span>
-              <span class="period-badge">Last 30 Days</span>
+              <span id="card-period" class="period-badge">Last 30 Days</span>
             </div>
             
             <div class="cover-container">
@@ -504,28 +539,28 @@
             
             <div class="top-track-card">
               <span class="rank-badge">NO. 1 TRACK</span>
-              <div class="track-title">Nightcrawler (feat. Swae Lee &amp; Chief Keef)</div>
-              <div class="track-artist">Travis Scott, Swae Lee, Chief Keef</div>
+              <div id="card-track-title" class="track-title">No data</div>
+              <div id="card-track-artist" class="track-artist">No data</div>
             </div>
-            
+
             <div class="card-stats-grid">
               <div class="stats-row">
                 <div class="stat-pill">
                   <span class="stat-label">Qualified Plays</span>
-                  <span class="stat-value">1</span>
+                  <span id="card-plays" class="stat-value">0</span>
                 </div>
                 <div class="stat-pill">
                   <span class="stat-label">Listening Time</span>
-                  <span class="stat-value">5m</span>
+                  <span id="card-time" class="stat-value">0m</span>
                 </div>
               </div>
               <div class="stat-pill full-width">
                 <span class="stat-label">Top Artist</span>
-                <span class="stat-value">Chief Keef</span>
+                <span id="card-top-artist" class="stat-value">No data</span>
               </div>
               <div class="stat-pill full-width">
                 <span class="stat-label">Top Album</span>
-                <span class="stat-value">Rodeo</span>
+                <span id="card-top-album" class="stat-value">No data</span>
               </div>
             </div>
             
@@ -551,35 +586,32 @@
         <div class="grid">
           <article class="panel">
             <h2>Top Tracks</h2>
-            <ul class="ranked-list"><li><span class="rank">#1</span><div class="entry-details"><strong>Nightcrawler (feat. Swae Lee &amp; Chief Keef)</strong><div class="entry-artist">Travis Scott, Swae Lee, Chief Keef</div><div class="subtle">1 plays · 5m</div></div></li></ul>
+            <p class="subtle">No tracks yet.</p>
           </article>
           <article class="panel">
             <h2>Top Artists</h2>
-            <ul class="ranked-list"><li><span class="rank">#1</span><div class="entry-details"><strong>Chief Keef</strong><div class="subtle">1 track hits · 5m</div></div></li><li><span class="rank">#2</span><div class="entry-details"><strong>Swae Lee</strong><div class="subtle">1 track hits · 5m</div></div></li><li><span class="rank">#3</span><div class="entry-details"><strong>Travis Scott</strong><div class="subtle">1 track hits · 5m</div></div></li></ul>
+            <p class="subtle">No artists yet.</p>
           </article>
           <article class="panel">
             <h2>Top Albums</h2>
-            <ul class="ranked-list"><li><span class="rank">#1</span><div class="entry-details"><strong>Rodeo</strong><div class="subtle">1 plays · 5m</div></div></li></ul>
+            <p class="subtle">No albums yet.</p>
           </article>
           <article class="panel">
             <h2>Recent Plays</h2>
-            <ul class="ranked-list"><li><span class="recent-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span><div class="entry-details"><strong>Nightcrawler (feat. Swae Lee &amp; Chief Keef)</strong><div class="entry-artist">Travis Scott, Swae Lee, Chief Keef</div><div class="subtle">listened at May 27, 00:22</div></div></li></ul>
+            <p class="subtle">No recent plays.</p>
           </article>
         </div>
         
         <div class="grid">
           <article class="panel">
             <h2>Listening by Day</h2>
-            <div class="bars"><div class="bar-row">
-  <div class="bar-label"><span>2026-05-26</span><span>5m</span></div>
-  <div class="bar"><span style="width:100.00%"></span></div>
-</div></div>
+            <p class="subtle">No data yet.</p>
           </article>
           <article class="panel">
             <h2>Listening by Hour</h2>
             <div class="bars"><div class="bar-row">
-  <div class="bar-label"><span>00:00</span><span>5m</span></div>
-  <div class="bar"><span style="width:100.00%"></span></div>
+  <div class="bar-label"><span>00:00</span><span>0m</span></div>
+  <div class="bar"><span style="width:0.00%"></span></div>
 </div><div class="bar-row">
   <div class="bar-label"><span>01:00</span><span>0m</span></div>
   <div class="bar"><span style="width:0.00%"></span></div>
@@ -660,41 +692,276 @@
     </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const trackTitle = "Nightcrawler (feat. Swae Lee &amp; Chief Keef)";
-      const trackArtist = "Chief Keef";
-      
-      if (trackTitle && trackTitle !== "No data") {
-        // Clean parentheses or bracket noise for high search precision
-        const cleanTitle = trackTitle.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim();
-        const query = encodeURIComponent(`${cleanTitle} ${trackArtist}`);
-        const url = `https://itunes.apple.com/search?term=${query}&limit=1&entity=song`;
-        
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            if (data.results && data.results.length > 0) {
-              const artworkUrl = data.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
-              const img = document.getElementById('cover-art-img');
-              img.src = artworkUrl;
-              img.onload = () => {
-                img.style.display = 'block';
-                document.getElementById('cover-art-placeholder').style.display = 'none';
-              };
-            }
-          })
-          .catch(err => console.error('Error fetching cover art:', err));
+    // Raw (JS-escaped, not HTML-escaped) card data emitted by spotatui: the
+    // requested period first, the toggle alternative second.
+    const CARDS = [{ period: "Last 30 Days", track: "No data", artist: "No data", topArtist: "No data", topAlbum: "No data", plays: 0, time: "0m" }, { period: "All Time", track: "Nightcrawler (feat. Swae Lee & Chief Keef)", artist: "Travis Scott, Swae Lee, Chief Keef", topArtist: "Travis Scott", topAlbum: "Rodeo", plays: 76, time: "4h 16m" }];
+    let activeCard = 0;
+    // Cover-art URL per card: undefined = not fetched yet, null = none found.
+    const coverUrls = [undefined, undefined];
+
+    function showCoverPlaceholder() {
+      document.getElementById('cover-art-img').style.display = 'none';
+      document.getElementById('cover-art-placeholder').style.display = 'flex';
+    }
+
+    function applyCover(index) {
+      const img = document.getElementById('cover-art-img');
+      const url = coverUrls[index];
+      if (!url) {
+        showCoverPlaceholder();
+        return;
       }
+      showCoverPlaceholder();
+      img.onload = () => {
+        // Only reveal if this card is still the active one.
+        if (activeCard === index) {
+          img.style.display = 'block';
+          document.getElementById('cover-art-placeholder').style.display = 'none';
+        }
+      };
+      if (img.src === url && img.complete && img.naturalWidth > 0) {
+        img.onload();
+      } else {
+        img.src = url;
+      }
+    }
+
+    function loadCoverFor(index) {
+      if (coverUrls[index] !== undefined) {
+        applyCover(index);
+        return;
+      }
+      const card = CARDS[index];
+      if (!card.track || card.track === 'No data') {
+        coverUrls[index] = null;
+        applyCover(index);
+        return;
+      }
+      // Clean parentheses or bracket noise for high search precision
+      const cleanTitle = card.track.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim();
+      const query = encodeURIComponent(`${cleanTitle} ${card.artist}`);
+      const url = `https://itunes.apple.com/search?term=${query}&limit=1&entity=song`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          coverUrls[index] = (data.results && data.results.length > 0)
+            ? data.results[0].artworkUrl100.replace('100x100bb', '600x600bb')
+            : null;
+          if (activeCard === index) applyCover(index);
+        })
+        .catch(err => {
+          console.error('Error fetching cover art:', err);
+          coverUrls[index] = null;
+          if (activeCard === index) applyCover(index);
+        });
+    }
+
+    function setActiveCard(index) {
+      activeCard = index;
+      const card = CARDS[index];
+      document.getElementById('card-toggle-0').classList.toggle('active', index === 0);
+      document.getElementById('card-toggle-1').classList.toggle('active', index === 1);
+      document.getElementById('card-period').textContent = card.period;
+      document.getElementById('card-track-title').textContent = card.track;
+      document.getElementById('card-track-artist').textContent = card.artist;
+      document.getElementById('card-plays').textContent = String(card.plays);
+      document.getElementById('card-time').textContent = card.time;
+      document.getElementById('card-top-artist').textContent = card.topArtist;
+      document.getElementById('card-top-album').textContent = card.topAlbum;
+      loadCoverFor(index);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCoverFor(0);
     });
 
+    // ── Share-card renderer ────────────────────────────────────────────────
+    // Draws the card directly with the canvas 2D API: no external libraries,
+    // deterministic output, works offline.
+    const CANVAS_SCALE = 3;
+    const CARD_W = 440;
+    const CARD_H = 660;
+    const ACCENT = '#1db954';
+    const TEXT = '#f1f5f9';
+    const MUTED = '#94a3b8';
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+      r = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function fitText(ctx, text, maxWidth) {
+      if (ctx.measureText(text).width <= maxWidth) return text;
+      let t = text;
+      while (t.length > 1 && ctx.measureText(t + '…').width > maxWidth) {
+        t = t.slice(0, -1);
+      }
+      return t + '…';
+    }
+
+    function drawStatPill(ctx, x, y, w, h, label, value) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+      roundRectPath(ctx, x, y, w, h, 14);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.textAlign = 'left';
+      ctx.fillStyle = MUTED;
+      ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(label.toUpperCase(), x + 14, y + 21);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(fitText(ctx, value, w - 28), x + 14, y + 41);
+    }
+
+    function drawCardToCanvas() {
+      const card = CARDS[activeCard];
+      const canvas = document.createElement('canvas');
+      canvas.width = CARD_W * CANVAS_SCALE;
+      canvas.height = CARD_H * CANVAS_SCALE;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(CANVAS_SCALE, CANVAS_SCALE);
+
+      // Card background: gradient fill inside rounded border
+      const bg = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
+      bg.addColorStop(0, '#0b1a11');
+      bg.addColorStop(1, '#050a0f');
+      ctx.fillStyle = bg;
+      roundRectPath(ctx, 0, 0, CARD_W, CARD_H, 28);
+      ctx.fill();
+      ctx.save();
+      ctx.clip();
+
+      // Ambient glow at the top
+      const glow = ctx.createRadialGradient(CARD_W / 2, 0, 0, CARD_W / 2, 0, 220);
+      glow.addColorStop(0, 'rgba(29, 185, 84, 0.18)');
+      glow.addColorStop(1, 'rgba(29, 185, 84, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, CARD_W, 240);
+
+      // Header: brand left, period badge right
+      ctx.textAlign = 'left';
+      ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = TEXT;
+      ctx.fillText('spota', 32, 52);
+      ctx.fillStyle = ACCENT;
+      ctx.fillText('tui', 32 + ctx.measureText('spota').width, 52);
+
+      ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+      const badgeText = card.period.toUpperCase();
+      const badgeW = ctx.measureText(badgeText).width + 24;
+      ctx.fillStyle = 'rgba(29, 185, 84, 0.12)';
+      roundRectPath(ctx, CARD_W - 32 - badgeW, 34, badgeW, 24, 12);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(29, 185, 84, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = ACCENT;
+      ctx.fillText(badgeText, CARD_W - 32 - badgeW + 12, 50);
+
+      // Cover art (or placeholder) centered
+      const coverSize = 174;
+      const coverX = (CARD_W - coverSize) / 2;
+      const coverY = 96;
+      ctx.save();
+      roundRectPath(ctx, coverX, coverY, coverSize, coverSize, 20);
+      ctx.clip();
+      const coverGrad = ctx.createLinearGradient(coverX, coverY, coverX + coverSize, coverY + coverSize);
+      coverGrad.addColorStop(0, '#1b2820');
+      coverGrad.addColorStop(1, '#05080c');
+      ctx.fillStyle = coverGrad;
+      ctx.fillRect(coverX, coverY, coverSize, coverSize);
+      const img = document.getElementById('cover-art-img');
+      if (img && img.style.display === 'block' && img.complete && img.naturalWidth > 0) {
+        try {
+          ctx.drawImage(img, coverX, coverY, coverSize, coverSize);
+        } catch (e) {
+          console.warn('cover art could not be drawn, keeping placeholder:', e);
+        }
+      } else {
+        // Placeholder music note
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.font = '48px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('♪', coverX + coverSize / 2, coverY + coverSize / 2 + 16);
+      }
+      ctx.restore();
+      roundRectPath(ctx, coverX, coverY, coverSize, coverSize, 20);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Top-track panel
+      const panelY = 300;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+      roundRectPath(ctx, 32, panelY, CARD_W - 64, 104, 18);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      const rankText = 'NO. 1 TRACK';
+      const rankW = ctx.measureText(rankText).width + 16;
+      ctx.fillStyle = 'rgba(29, 185, 84, 0.1)';
+      roundRectPath(ctx, (CARD_W - rankW) / 2, panelY + 14, rankW, 20, 6);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(29, 185, 84, 0.18)';
+      ctx.stroke();
+      ctx.fillStyle = ACCENT;
+      ctx.fillText(rankText, CARD_W / 2, panelY + 28);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 18px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(fitText(ctx, card.track, CARD_W - 104), CARD_W / 2, panelY + 60);
+      ctx.fillStyle = MUTED;
+      ctx.font = '400 14px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(fitText(ctx, card.artist, CARD_W - 104), CARD_W / 2, panelY + 84);
+
+      // Stat pills
+      const pillW = (CARD_W - 64 - 12) / 2;
+      drawStatPill(ctx, 32, 424, pillW, 54, 'Qualified Plays', String(card.plays));
+      drawStatPill(ctx, 32 + pillW + 12, 424, pillW, 54, 'Listening Time', card.time);
+      drawStatPill(ctx, 32, 490, CARD_W - 64, 54, 'Top Artist', card.topArtist);
+      drawStatPill(ctx, 32, 556, CARD_W - 64, 54, 'Top Album', card.topAlbum);
+
+      // Footer
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.beginPath();
+      ctx.moveTo(32, 622);
+      ctx.lineTo(CARD_W - 32, 622);
+      ctx.stroke();
+      ctx.textAlign = 'left';
+      ctx.fillStyle = MUTED;
+      ctx.font = '400 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('generated by spotatui', 32, 642);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = ACCENT;
+      ctx.font = '400 11px "JetBrains Mono", monospace';
+      ctx.fillText('github.com/LargeModGames/spotatui', CARD_W - 32, 642);
+      ctx.restore();
+
+      // Card border on top of everything
+      roundRectPath(ctx, 0.5, 0.5, CARD_W - 1, CARD_H - 1, 28);
+      ctx.strokeStyle = 'rgba(29, 185, 84, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      return canvas;
+    }
+
     function downloadCard() {
-      const card = document.getElementById('share-card');
       const btn = document.querySelector('.download-btn');
-      const wrapper = document.querySelector('.card-wrapper');
       const originalText = btn.innerHTML;
-      
       btn.disabled = true;
       btn.innerHTML = `
         <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1 1 21.2 8H18" /></svg>
@@ -702,56 +969,27 @@
       `;
       btn.style.opacity = '0.7';
 
-      const originalTransform = wrapper.style.transform;
-      const originalMargin = wrapper.style.marginBottom;
-      const originalHeight = wrapper.style.height;
-      const originalBoxShadow = card.style.boxShadow;
-
-      wrapper.style.transform = 'none';
-      wrapper.style.marginBottom = '0';
-      wrapper.style.height = 'auto';
-      card.style.boxShadow = 'none';
+      const restore = () => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      };
 
       document.fonts.ready.then(() => {
-        setTimeout(() => {
-          html2canvas(card, {
-            scale: 3,
-            useCORS: true,
-            backgroundColor: '#05080c',
-            logging: false,
-            width: 440,
-            height: 660,
-            windowWidth: 440,
-            windowHeight: 660
-          }).then(canvas => {
-            wrapper.style.transform = originalTransform;
-            wrapper.style.marginBottom = originalMargin;
-            wrapper.style.height = originalHeight;
-            card.style.boxShadow = originalBoxShadow;
-
-            const link = document.createElement('a');
-            const dateStr = new Date().toISOString().slice(0, 10);
-            link.download = `spotatui-recap-${dateStr}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            btn.style.opacity = '1';
-          }).catch(err => {
-            console.error(err);
-            wrapper.style.transform = originalTransform;
-            wrapper.style.marginBottom = originalMargin;
-            wrapper.style.height = originalHeight;
-            card.style.boxShadow = originalBoxShadow;
-
-            alert('Could not render image. Please try again!');
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            btn.style.opacity = '1';
-          });
-        }, 300);
-      });
+        try {
+          const canvas = drawCardToCanvas();
+          const link = document.createElement('a');
+          const dateStr = new Date().toISOString().slice(0, 10);
+          const periodSlug = CARDS[activeCard].period.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          link.download = `spotatui-recap-${periodSlug}-${dateStr}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (err) {
+          console.error(err);
+          alert('Could not render image. Please try again!');
+        }
+        restore();
+      }).catch(restore);
     }
   </script>
 </body>

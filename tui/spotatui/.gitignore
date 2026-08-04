@@ -8,5 +8,6 @@
             spotatui_panic.log
 
             # Streaming credentials
-            streaming_cache/credentials.json
-            
+            streaming_cache
+            history
+            .spotify_token_cache_d420a117.json

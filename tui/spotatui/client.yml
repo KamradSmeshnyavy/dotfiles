@@ -2,7 +2,7 @@ client_id: d420a117a32841c2b3474932e49fb54b
 fallback_client_id: null
 client_secret: ''
 setup_version: 2
-device_id: 332d4e1acdccb7dca3bd13805e455f4ec2bef62c
+device_id: c35059f9-5077-40eb-b632-b67eef86130e
 port: 8989
 enable_streaming: true
 streaming_device_name: spotatui

@@ -1,5 +1,9 @@
 keybindings:
   back: q
+  move_up: k
+  move_down: j
+  move_left: h
+  move_right: l
   next_page: ctrl-d
   previous_page: ctrl-u
   jump_to_start: ctrl-a
@@ -25,9 +29,11 @@ keybindings:
   copy_album_url: C
   audio_analysis: v
   lyrics_view: B
+  miniplayer_view: T
   cover_art_view: G
   add_item_to_queue: z
   show_queue: Q
+  remove_from_queue: x
   open_settings: alt-,
   save_settings: alt-s
   listening_party: ctrl-p
@@ -36,12 +42,14 @@ keybindings:
 behavior:
   seek_milliseconds: 5000
   volume_increment: 10
-  volume_percent: 100
+  volume_percent: 62
   tick_rate_milliseconds: 250
   animation_tick_rate_milliseconds: 16
   enable_text_emphasis: true
+  banner_gradient: true
   show_loading_indicator: true
   enforce_wide_search_bar: false
+  group_folders_first: false
   enable_global_song_count: false
   disable_mouse_inputs: false
   enable_discord_rpc: true
@@ -51,7 +59,12 @@ behavior:
   seen_announcement_ids:
   - 2026-05-19-sonos-help-wanted
   - 2026-02-27-major-refactor-complete
+  - 2026-06-12-self-update-broken
+  - 2026-06-12-lua-scripting
+  - 2026-07-04-multi-source-playback
+  enable_monthly_recap_prompt: true
   shuffle_enabled: false
+  active_source: Spotify
   liked_icon: ♥
   shuffle_icon: 🔀
   repeat_track_icon: 🔂
@@ -73,7 +86,35 @@ behavior:
   draw_cover_art_forced: false
   playbar_cover_art_size_percent: 100
   keepawake_enabled: true
+  enable_media_keys: true
   sync_token: null
+  local_music_path: /home/kamradsmeshnyavy/Music
+  subsonic_url: null
+  subsonic_username: null
+  subsonic_password: null
+  radio_stations: null
+  ytdlp_path: null
+  gauge_filled_icon: ⣿
+  gauge_unfilled_icon: ⣉
+  active_source_icon: ●
+  episode_played_icon: ✔
+  sort_ascending_icon: ↑
+  sort_descending_icon: ↓
+  list_highlight_icon: ▶
+  playbar_control_labels: null
+  status_message_ttl_percent: 100
+  playback_poll_seconds: 5
+  table_scroll_padding: 5
+  like_animation_frames: 10
+  startup_route: home
+  default_sort_playlist_tracks: default
+  default_sort_saved_albums: default
+  default_sort_saved_artists: default
+  default_sort_recently_played: default
+  sidebar_position: left
+  playbar_position: bottom
+  small_terminal_width: 150
+  small_terminal_height: 45
 theme:
   preset: Custom
   active: Cyan
@@ -92,3 +133,6 @@ theme:
   background: Reset
   header: White
   highlighted_lyrics: 0, 200, 200
+plugin_commands: null
+format: null
+tables: null
