@@ -48,6 +48,16 @@ use = "moxuze/television"
 rev = "8d9ce62"
 hash = "b82055b61933310ebfa7ccf5239d5c46"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:mount"
+rev = "b9598e6"
+hash = "46cbdc05596a3ecd730b288e28c7079d"
+
+[[plugin.deps]]
+use = "ndtoan96/ouch"
+rev = "406ce6c"
+hash = "f5afc904d5106ee368c8aa2ded43bd74"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
 rev = "ca61658"

@@ -784,3 +784,20 @@ run = """plugin television -- \
   --tv-keybindings='enter="confirm_selection"' \
   --cd"""
 desc = "Jump to a file via television zoxide"
+
+[[mgr.prepend_keymap]]
+on   = [ "<C-d>" ]
+run  = "shell 'ripdrag \"$@\" -x 2>/dev/null &' --confirm"
+desc = "Drag and drop (ripdrag)"
+
+# Mount plugin
+[[mgr.prepend_keymap]]
+on   = [ "M" ]
+run  = "plugin mount"
+desc = "Mount a drive"
+
+# Ouch plugin (compress)
+[[mgr.prepend_keymap]]
+on   = [ "C" ]
+run  = "plugin ouch"
+desc = "Compress with ouch"
