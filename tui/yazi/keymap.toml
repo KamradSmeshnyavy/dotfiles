@@ -801,3 +801,9 @@ desc = "Mount a drive"
 on   = [ "C" ]
 run  = "plugin ouch"
 desc = "Compress with ouch"
+
+# Context Menu
+[[mgr.prepend_keymap]]
+on   = [ "<C-m>" ]
+run  = "shell 'bash ~/.config/yazi/context-menu.sh %s' --block --confirm"
+desc = "Context Menu"
