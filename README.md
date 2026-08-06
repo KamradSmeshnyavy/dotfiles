@@ -78,4 +78,4 @@ cd ~/dotfiles
 - `install/` — скрипты установки пакетов и линковки конфигов (`bootstrap.sh`, `install.py`).
 - `omarchy-themes/` — движок тем Omarchy и директории с темами (включая `pastel-hacker`).
 - `macos/` / `justfile` — legacy и специфичные скрипты для macOS.
-- `docs` - документация по каждому конфигу.
+- `docs/` - документация по каждому конфигу.
