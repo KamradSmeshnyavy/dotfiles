@@ -1,0 +1,108 @@
+(defsrc
+  caps tab
+  1  2  3  4  5  6  7  8  9  0  -  =
+  q  w  e  r  t  y  u  i  o  p  [  ]
+  a  s  d  f  g  h  j  k  l  ;  '
+  z  x  c  v  b  n  m  ,  .  /
+  spc
+)
+
+(defvar
+  tap-time 200
+  hold-time 175
+)
+
+(defalias
+  ;; Клавиши активации слоев (Tap-Hold)
+  caps-layer (tap-hold $tap-time $hold-time esc (layer-toggle nav))
+  tab-layer  (tap-hold $tap-time $hold-time tab (layer-toggle num))
+  spc-layer  (tap-hold $tap-time $hold-time spc (layer-toggle sym))
+
+  ;; Home Row Mods (Левая рука)
+  a-mod (tap-hold-release $tap-time $hold-time a lmet)
+  s-mod (tap-hold-release $tap-time $hold-time s lalt)
+  d-mod (tap-hold-release $tap-time $hold-time d lctl)
+  f-mod (tap-hold-release $tap-time $hold-time f lsft)
+  
+  ;; Home Row Mods (Правая рука)
+  j-mod (tap-hold-release $tap-time $hold-time j rsft)
+  k-mod (tap-hold-release $tap-time $hold-time k rctl)
+  l-mod (tap-hold-release $tap-time $hold-time l ralt)
+  ;-mod (tap-hold-release $tap-time $hold-time ; rmet)
+
+  ;; Горячие клавиши для слоя навигации (под левую руку)
+  undo C-z
+  cut  C-x
+  copy C-c
+  past C-v
+)
+
+;; Комбо: Если зажаты Caps (активирует nav) и Spc (активирует sym), включается системный слой
+(defchords sys-layer 50
+  (caps spc) (layer-toggle sys)
+)
+
+;; ========================================================================
+;; 1. БАЗОВЫЙ СЛОЙ
+;; ========================================================================
+(deflayer base
+  @caps-layer @tab-layer
+  1  2  3  4  5  6  7  8  9  0  -  =
+  q  w  e  r  t  y  u  i  o  p  [  ]
+  @a-mod @s-mod @d-mod @f-mod g  h  @j-mod @k-mod @l-mod @;-mod '
+  z  x  c  v  b  n  m  ,  .  /
+  @spc-layer
+)
+
+;; ========================================================================
+;; 2. СЛОЙ НАВИГАЦИИ (Зажатый Caps Lock)
+;; Перемещение по коду без отрыва рук + горячие клавиши слева
+;; ========================================================================
+(deflayer nav
+  _  _
+  _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _     _     _     home  pgdn  pgup  end   _     _     _
+  _     _     _     _     _     left  down  up    right bspc  del
+  @undo @cut  @copy @past _     _     enter _     _     _     
+  _
+)
+
+;; ========================================================================
+;; 3. СЛОЙ СИМВОЛОВ (Зажатый Пробел)
+;; Идеально для кода. Скобки на QWER, частые знаки — на домашнем ряду.
+;; ========================================================================
+(deflayer sym
+  _  _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  [    ]    {    }    _    _    ~    `    ^    \    |    _
+  =    +    -    *    /    _    (    )    _    _    _
+  _    _    _    _    _    _    _    _    _    _
+  _
+)
+
+;; ========================================================================
+;; 4. СЛОЙ ЦИФР (Зажатый Tab)
+;; Правая рука становится полноценным цифровым блоком (нампадом)
+;; ========================================================================
+(deflayer num
+  _  _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    7    8    9    _    _    _
+  _    _    _    _    _    _    4    5    6    _    _
+  _    _    _    _    _    _    1    2    3    _
+  0
+)
+
+;; ========================================================================
+;; 5. СИСТЕМНЫЙ СЛОЙ (Зажаты одновременно Caps Lock + Пробел)
+;; Функциональные клавиши и мультимедиа (яркость, звук)
+;; ========================================================================
+(deflayer sys
+  _  _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  f1   f2   f3   f4   f5   _    _    _    _    _    _    _
+  f6   f7   f8   f9   f10  _    voldwn volu mute _    _
+  f11  f12  _    _    _    _    brdn   brup _    _
+  _
+)
+
