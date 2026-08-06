@@ -29,8 +29,8 @@ code = [
 	{ run = 'code "%1"', orphan = true, desc = "VSCode", for = "windows" },
 ]
 extract = [
-	{ run = 'unar "$1"', desc = "Extract here", for = "unix" },
-	{ run = 'unar "%1"', desc = "Extract here", for = "windows" },
+	{ run = 'ouch d -y %s', desc = "Extract here", for = "unix" },
+	{ run = 'ouch d -y %s', desc = "Extract here", for = "windows" },
 ]
 open = [
 	{ run = 'xdg-open "$@"', desc = "Open", for = "linux" },
@@ -188,6 +188,10 @@ id = "mactag"
 url = "*/"
 run = "mactag"
 group = "mactag"
+
+[[plugin.prepend_previewers]]
+mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}"
+run = "ouch"
 
 [[plugin.prepend_previewers]]
 mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}"
