@@ -1,5 +1,6 @@
 // === ПОЛНЫЙ ПЕРЕНОС БИНДОВ TRIDACTYL В SURFINGKEYS ===
-
+settings.smoothScroll = false;
+//settings.scrollStepSize = 140;
 // Очищаем стандартные конфликтующие клавиши, которые мы переназначаем
 api.unmap('H');
 api.unmap('L');
@@ -13,8 +14,8 @@ api.map('H', 'S'); // H — назад по истории
 api.map('L', 'D'); // L — вперед по истории
 
 // 2. НАВИГАЦИЯ ПО ВКЛАДКАМ
-api.map('J', 'R'); // J — следующая вкладка (вправо)
-api.map('K', 'E'); // K — предыдущая вкладка (влево)
+api.map('K', 'R'); // J — следующая вкладка (вправо)
+api.map('J', 'E'); // K — предыдущая вкладка (влево)
 
 // Исправленные быстрые переходы по вкладкам
 api.mapkey('gt', 'Go to next tab', () => api.RUNTIME('nextTab'));
@@ -60,6 +61,69 @@ api.map('zz', 'zr'); // zz — сбросить масштаб
 
 // 10. РЕЖИМ ВЫДЕЛЕНИЯ ТЕКСТА
 api.map('v', 'v'); 
+
+//// === Кастомные скрипты ===
+//api.mapkey('gP', '#12Open incognito window', function() {
+//    api.RUNTIME("openIncognito");
+//});
+//
+api.mapkey('gt', '#8Translate clipboard', function() {
+    api.Clipboard.read(function(response) {
+        api.tabOpenLink("https://translate.yandex.ru/translator/" + encodeURIComponent(response.data));
+    });
+});
+
+//api.unmap('U')
+//// Бинд на клавишу "u" для скролла на страницу вверх (аналог PageUp)
+//api.mapkey('U', 'Scroll a page up', function() {
+//    window.scrollBy({ top: -window.innerHeight, behavior: 'instant' });
+//});
+//api.unmap('D')
+//// Бинд на клавишу "d" для скролла на страницу вниз (аналог PageDown)
+//api.mapkey('D', 'Scroll a page down', function() {
+//    window.scrollBy({ top: window.innerHeight, behavior: 'instant' });
+//});
+
+//// Нажмите 'tr' — Перевести текущую страницу на русский в этой же вкладке
+//api.unmap('t')
+//api.mapkey('tr', 'Перевести страницу на русский', function() {
+//    window.location.href = "https://translate.google.com/translate?sl=auto&tl=ru&u=" + encodeURIComponent(window.location.href);
+//});
+//
+//// Нажмите 'tR' (t + Shift+r) — Перевести страницу на русский в новой вкладке
+//api.mapkey('tR', 'Перевести страницу в новой вкладке', function() {
+//    tabOpenLink("https://translate.google.com/translate?sl=auto&tl=ru&u=" + encodeURIComponent(window.location.href));
+//});
+
+// Удаляем стандартные бинды для j и k
+//api.unmap('j');
+//api.unmap('k');
+//
+//// Кастомный бинд для j (вниз)
+//api.mapkey('j', 'Scroll down', function() {
+//    window.scrollBy({ top: 70, behavior: 'instant' });
+//});
+//
+//// Кастомный бинд для k (вверх)
+//api.mapkey('k', 'Scroll up', function() {
+//    window.scrollBy({ top: -70, behavior: 'instant' });
+//});
+
+// Удаляем стандартные бинды для d и u
+api.unmap('d');
+api.unmap('u');
+
+// Кастомный бинд для d (полстраницы вниз)
+api.mapkey('d', 'Scroll half page down', function() {
+    window.scrollBy({ top: window.innerHeight / 2, behavior: 'instant' });
+});
+
+// Кастомный бинд для u (полстраницы вверх)
+api.mapkey('u', 'Scroll half page up', function() {
+    window.scrollBy({ top: -window.innerHeight / 2, behavior: 'instant' });
+});
+
+
 
 // === НАСТРОЙКИ ТЕМЫ ОФОРМЛЕНИЯ ===
 settings.theme = `
@@ -293,7 +357,7 @@ div.sk_arrow[dir=up]>div:nth-of-type(2) {
 api.Hints.style(`
   background: #0d0e1a !important;
   color: #7dcea0 !important;
-  border: solid 1px #0d0e1a !important;
-  box-shadow: none !important;
+  border: solid 1px #0d0e1a !important; box-shadow: none !important;
 `);
+api.Hints.style("border: solid 2px #0d0e1a !important; color: #7dcea0 !important; background: #0d0e1a !important;", "text");
 
