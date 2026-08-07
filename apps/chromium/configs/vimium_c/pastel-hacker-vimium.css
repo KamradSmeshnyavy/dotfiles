@@ -16,10 +16,10 @@ Modified for pastel-hacker
     --bg-color: #0d0e1a;
     --select-color: #4a4d6a;
     --input-bg-color: #4a4d6a;
-    --input-text-color: #dcd7e6;
+    --input-text-color: #7dcea0;
     --li-source-color: #c9a0dc;
     --li-title-color: #dcd7e6;
-    --li-url-color: #8dd4cc;
+    --li-url-color: #4a4d6a;
     --match-text-color: inherit;
     --font-family: "Maple Mono NF CN";
 }
@@ -82,13 +82,13 @@ Modified for pastel-hacker
     /* Surface0 */
     --border: #4a4d6a;
     /* Crust */
-    --title: #c9a0dc;
+    --title: #dcd7e6;
     /* Mauve */
     --title-accent: #7dcea0;
     /* Green */
-    --link: #8dd4cc;
+    --link: #4a4d6a;
     /* Blue */
-    --link-accent: #f1948a;
+    --link-accent: #7dcea0;
     /* Red */
 
     /* ---------- NIGHT THEME ---------- */
@@ -100,13 +100,13 @@ Modified for pastel-hacker
     /* Surface1 */
     --nborder: #4a4d6a;
     /* Crust */
-    --ntitle: #c9a0dc;
+    --ntitle: #dcd7e6;
     /* Mauve */
     --ntitle-accent: #7dcea0;
     /* Green */
-    --nlink: #8dd4cc;
+    --nlink: #4a4d6a;
     /* Blue */
-    --nlink-accent: #f1948a;
+    --nlink-accent: #7dcea0;
     /* Red */
 
 
@@ -217,14 +217,14 @@ body.has-dark {}
 .item:hover {
     background-color: var(--accent-fg);
     border: none;
-    border-left: 3px solid var(--link);
+    border-left: 3px solid var(--title-accent);
     cursor: pointer;
 }
 
 .has-dark .item.s,
 .has-dark .item:hover {
     background-color: var(--naccent-fg);
-    border-left: 3px solid var(--nlink);
+    border-left: 3px solid var(--ntitle-accent);
 }
 
 .item .top {
@@ -287,7 +287,7 @@ body.has-dark {}
 .r.D {
     background-color: #0d0e1a;
     /* base */
-    color: #c9a0dc !important;
+    color: #7dcea0 !important;
     /* mauve */
     margin: 0;
     padding: 8px 12px;
@@ -302,7 +302,7 @@ body.has-dark {}
 .r #s,
 .r #i {
     font-weight: bold;
-    color: #dcd7e6;
+    color: #7dcea0;
     /* rosewater */
     background-color: #4a4d6a;
     /* surface0 */
