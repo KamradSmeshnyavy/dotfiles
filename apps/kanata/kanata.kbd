@@ -40,9 +40,9 @@
 ;; ================= СЛОЙ СТРЕЛОК И НАВИГАЦИИ =================
 ;; Активируется при удержании Tab
 (deflayer arrow-layer
-  _    _  _  _  _  _  _  bspc del  _  pgdn  _  _  ;; 'u' -> bspc, 'i' -> del 'p' -> PgUp
+  _    _  _  _  _  _  _  bspc del  _  pgup  _  _  ;; 'u' -> bspc, 'i' -> del 'p' -> PgUp
   _    _  _  _  _  _  left down up   right _  _
-  _    _  _  _  _  pgup  ret  _    _    _         ;; 'm' -> ret (Enter), 'n' -> PgDn
+  _    _  _  _  _  pgdn  ret  _    _    _         ;; 'm' -> ret (Enter), 'n' -> PgDn
   _    del
 )
 
