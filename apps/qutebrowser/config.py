@@ -23,6 +23,8 @@ c.tabs.show = "multiple"
 
 c.tabs.title.format = "{audio}{current_title}"
 c.fonts.web.size.default = 20
+c.zoom.default = "90%"
+
 
 c.url.searchengines = {
     # note - if you use duckduckgo, you can make use of its built in bangs, of which there are many! https://duckduckgo.com/bangs
@@ -78,7 +80,7 @@ c.tabs.width = "7%"
 
 # fonts
 c.fonts.default_family = []
-c.fonts.default_size = "13pt"
+c.fonts.default_size = "11pt"
 c.fonts.web.family.fixed = "monospace"
 c.fonts.web.family.sans_serif = "monospace"
 c.fonts.web.family.serif = "monospace"
@@ -93,7 +95,7 @@ config.set("content.geolocation", False)
 config.set("content.webrtc_ip_handling_policy", "default-public-interface-only")
 config.set("content.cookies.accept", "all")
 config.set("content.cookies.store", True)
-# config.set("content.javascript.enabled", False) # tsh keybind to toggle
+config.set("content.javascript.enabled", True)  # tsh keybind to toggle
 
 # Adblocking info -->
 # For yt ads: place the greasemonkey script yt-ads.js in your greasemonkey folder (~/.config/qutebrowser/greasemonkey).
@@ -102,25 +104,26 @@ config.set("content.cookies.store", True)
 # You can also watch yt vids directly in mpv, see qutebrowser FAQ for how to do that.
 # If you want additional blocklists, you can get the python-adblock package, or you can uncomment the ublock lists here.
 c.content.blocking.enabled = True
-# c.content.blocking.method = 'adblock' # uncomment this if you install python-adblock
-# c.content.blocking.adblock.lists = [
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/legacy.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2020.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2021.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2022.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2023.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2024.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badware.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/privacy.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badlists.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances-cookies.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances-others.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badlists.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/quick-fixes.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/resource-abuse.txt",
-#         "https://github.com/uBlockOrigin/uAssets/raw/master/filters/unbreak.txt"]
+c.content.blocking.method = "adblock"  # uncomment this if you install python-adblock
+c.content.blocking.adblock.lists = [
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/legacy.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2020.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2021.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2022.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2023.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters-2024.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badware.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/privacy.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badlists.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances-cookies.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/annoyances-others.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/badlists.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/quick-fixes.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/resource-abuse.txt",
+    "https://github.com/uBlockOrigin/uAssets/raw/master/filters/unbreak.txt",
+]
 
 c.url.start_pages = ["https://google.com"]
 c.url.searchengines = {"DEFAULT": "https://google.com{}", "g": "https://github.com{}"}
@@ -132,7 +135,15 @@ c.auto_save.session = True
 c.session.lazy_restore = True
 
 c.content.plugins = True
-c.qt.args = ["enable-accelerated-video-decode", "enable-gpu-rasterization"]
+c.qt.args = [
+    "enable-accelerated-video-decode",
+    "enable-gpu-rasterization",
+    "enable-oop-rasterization",
+    # "use-gl=egl",
+    "enable-zero-copy",
+    "ignore-gpu-blocklist",
+    "enable-features=VaapiVideoDecoder,VaapiVideoEncoder",
+]
 
 c.url.searchengines = {
     "DEFAULT": "https://www.google.com/search?q={}",
@@ -158,12 +169,18 @@ config.set("content.headers.accept_language", "", "https://matchmaker.krunker.io
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
+#
+# config.set(
+#     "content.headers.user_agent",
+#     "Mozilla/5.0 ({os_info}; rv:145.0) Gecko/20100101 Firefox/145.0",
+#     "https://accounts.google.com/*",
+# )
+#
 config.set(
     "content.headers.user_agent",
-    "Mozilla/5.0 ({os_info}; rv:145.0) Gecko/20100101 Firefox/145.0",
-    "https://accounts.google.com/*",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "*.yandex.ru",
 )
-
 # User agent to send.  The following placeholders are defined:  *
 # `{os_info}`: Something like "X11; Linux x86_64". * `{webkit_version}`:
 # The underlying WebKit version (set to a fixed value   with
@@ -179,11 +196,11 @@ config.set(
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
-config.set(
-    "content.headers.user_agent",
-    "Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version_short} Safari/{webkit_version}",
-    "https://gitlab.gnome.org/*",
-)
+# config.set(
+#     "content.headers.user_agent",
+#     "Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version_short} Safari/{webkit_version}",
+#     "https://gitlab.gnome.org/*",
+# )
 
 # Load images automatically in web pages.
 # Type: Bool
@@ -254,3 +271,83 @@ config.bind(
     f"spawn --userscript {_keepassxc_script} --key 5295B5FEACE4D591 --totp",
     mode="normal",
 )
+
+# Добавляем роли кнопок, ссылки и элементы с обработчиками кликов
+c.hints.selectors["all"].extend(
+    [
+        "[role='button']",
+        "[role='link']",
+        "[role='tab']",
+        "[role='checkbox']",
+        "[role='menuitem']",
+        "[onclick]",
+        ".button",
+        ".btn",
+        ".ytp-button",  # Кнопки плеера YouTube (пауза, субтитры, настройки)
+        ".ytp-panel-menu .ytp-menuitem",  # Пункты меню настроек YouTube (скорость, качество)
+        ".vjs-control",  # Кнопки универсального плеера Video.js
+        ".plyr__control",  # Кнопки популярного HTML5-плеера Plyr
+        "[aria-label*='Play']",  # Любые элементы с подсказкой "Воспроизвести"
+        "[aria-label*='Pause']",  # Любые элементы с подсказкой "Пауза"
+        ".video-player-control",  # Общий класс для многих кастомных плееров
+        # Большая кнопка воспроизведения по центру плеера
+        ".pjs-big-play-button",
+        ".pjs-big-play-icon",
+        # Элементы нижней панели управления (Play, Звук, Качество, Экран)
+        ".pjs-control",
+        ".pjs-control-button",
+        ".pjs-play-control",
+        ".pjs-fullscreen-control",
+        ".pjs-hd-control",
+        # Универсальный поиск по классам элементов управления для таких плееров
+        "[class*='play-control']",
+        "[class*='fullscreen']",
+        "[class*='hd-control']",
+    ]
+)
+# Пример для раскрытия комментариев на Reddit и кастомных кнопок
+config.set(
+    "hints.selectors",
+    {
+        "all": ["a", "area", "button", '[role="button"]'],  # базовые элементы
+        "*://*://*": [".expand", ".vote", "[aria-label]"],  # специфика для сайта
+    },
+)
+# Разрешаем сторонние куки для корректной работы Яндекс ID
+config.set("content.cookies.accept", "all", "*://*.yandex.ru/*")
+config.set("content.cookies.accept", "all", "*://passport.yandex.ru/*")
+
+# Подменяем User-Agent на стандартный Chrome для прохождения проверок Яндекса
+config.set(
+    "content.headers.user_agent",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "*://passport.yandex.ru/*",
+)
+config.set(
+    "content.headers.user_agent",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "*://*.yandex.ru/*",
+)
+
+# Отключаем блокировщик рекламы на странице входа, чтобы не резались скрипты авторизации
+config.set("content.blocking.enabled", False, "*://passport.yandex.ru/*")
+# Пример для домена .kz
+config.set("content.cookies.accept", "all", "*://*.yandex.kz/*")
+config.set(
+    "content.headers.user_agent",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "*://*.yandex.kz/*",
+)
+# config.set("colors.webpage.darkmode.enabled", False, "*://passport.yandex.ru/*")
+# config.set("colors.webpage.darkmode.enabled", False, "*://*.yandex.ru/*")
+
+# Разрешаем Яндексу читать Canvas (критично для отрисовки капчи и защиты от ботов)
+config.set("content.canvas_reading", True, "*://passport.yandex.ru/*")
+config.set("content.canvas_reading", True, "*://*.yandex.ru/*")
+
+# Разрешаем использование LocalStorage и sessionStorage для скриптов авторизации
+config.set("content.local_storage", True, "*://passport.yandex.ru/*")
+config.set("content.local_storage", True, "*://*.yandex.ru/*")
+
+# Включаем поддержку WebGL (Яндекс использует его для проверки реальности браузера)
+config.set("content.webgl", True)
