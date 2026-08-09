@@ -24,3 +24,4 @@ tui/spotatui/history
 tui/spotatui/streaming_cache
 tui/spotatui/.spotify_token_cache_d420a117.json
 tui/lla/jump.json
+tui/cliamp/**
