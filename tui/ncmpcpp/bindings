@@ -1,0 +1,36 @@
+# Move up and down
+def_key "j"
+  scroll_down
+def_key "k"
+  scroll_up
+
+# Move back/forward (in browser/library)
+def_key "h"
+  previous_column
+def_key "l"
+  next_column
+def_key "l"
+  play_item
+
+# Go to top/bottom
+def_key "g"
+  move_home
+def_key "G"
+  move_end
+
+# Add to playlist / select
+#def_key "space"
+#  add_item_to_playlist
+#  toggle_space_mode
+
+# Search
+def_key "/"
+  find
+def_key "n"
+  next_found_item
+def_key "N"
+  previous_found_item
+
+# Delete item from playlist
+def_key "d"
+  delete_playlist_items
