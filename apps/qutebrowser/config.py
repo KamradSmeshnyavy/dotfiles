@@ -89,7 +89,7 @@ c.fonts.web.family.standard = "monospace"
 # privacy - adjust these settings based on your preference
 # config.set("completion.cmd_history_max_items", 0)
 # config.set("content.private_browsing", True)
-config.set("content.webgl", False, "*")
+# config.set("content.webgl", False, "*")
 config.set("content.canvas_reading", False)
 config.set("content.geolocation", False)
 config.set("content.webrtc_ip_handling_policy", "default-public-interface-only")
@@ -273,38 +273,38 @@ config.bind(
 )
 
 # Добавляем роли кнопок, ссылки и элементы с обработчиками кликов
-c.hints.selectors["all"].extend(
-    [
-        "[role='button']",
-        "[role='link']",
-        "[role='tab']",
-        "[role='checkbox']",
-        "[role='menuitem']",
-        "[onclick]",
-        ".button",
-        ".btn",
-        ".ytp-button",  # Кнопки плеера YouTube (пауза, субтитры, настройки)
-        ".ytp-panel-menu .ytp-menuitem",  # Пункты меню настроек YouTube (скорость, качество)
-        ".vjs-control",  # Кнопки универсального плеера Video.js
-        ".plyr__control",  # Кнопки популярного HTML5-плеера Plyr
-        "[aria-label*='Play']",  # Любые элементы с подсказкой "Воспроизвести"
-        "[aria-label*='Pause']",  # Любые элементы с подсказкой "Пауза"
-        ".video-player-control",  # Общий класс для многих кастомных плееров
-        # Большая кнопка воспроизведения по центру плеера
-        ".pjs-big-play-button",
-        ".pjs-big-play-icon",
-        # Элементы нижней панели управления (Play, Звук, Качество, Экран)
-        ".pjs-control",
-        ".pjs-control-button",
-        ".pjs-play-control",
-        ".pjs-fullscreen-control",
-        ".pjs-hd-control",
-        # Универсальный поиск по классам элементов управления для таких плееров
-        "[class*='play-control']",
-        "[class*='fullscreen']",
-        "[class*='hd-control']",
-    ]
-)
+# c.hints.selectors["all"].extend(
+#     [
+#         "[role='button']",
+#         "[role='link']",
+#         "[role='tab']",
+#         "[role='checkbox']",
+#         "[role='menuitem']",
+#         "[onclick]",
+#         ".button",
+#         ".btn",
+#         ".ytp-button",  # Кнопки плеера YouTube (пауза, субтитры, настройки)
+#         ".ytp-panel-menu .ytp-menuitem",  # Пункты меню настроек YouTube (скорость, качество)
+#         ".vjs-control",  # Кнопки универсального плеера Video.js
+#         ".plyr__control",  # Кнопки популярного HTML5-плеера Plyr
+#         "[aria-label*='Play']",  # Любые элементы с подсказкой "Воспроизвести"
+#         "[aria-label*='Pause']",  # Любые элементы с подсказкой "Пауза"
+#         ".video-player-control",  # Общий класс для многих кастомных плееров
+#         # Большая кнопка воспроизведения по центру плеера
+#         ".pjs-big-play-button",
+#         ".pjs-big-play-icon",
+#         # Элементы нижней панели управления (Play, Звук, Качество, Экран)
+#         ".pjs-control",
+#         ".pjs-control-button",
+#         ".pjs-play-control",
+#         ".pjs-fullscreen-control",
+#         ".pjs-hd-control",
+#         # Универсальный поиск по классам элементов управления для таких плееров
+#         "[class*='play-control']",
+#         "[class*='fullscreen']",
+#         "[class*='hd-control']",
+#     ]
+# )
 # Пример для раскрытия комментариев на Reddit и кастомных кнопок
 config.set(
     "hints.selectors",
