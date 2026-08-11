@@ -2,22 +2,23 @@
 /* KooL Hyprland Rofi Style 10 - Fancy v2 */
 /* Credit to DaveDavenport & Rasmus Steinke */
 
+@theme "/home/kamradsmeshnyavy/dotfiles/apps/rofi/wallust/colors-rofi.rasi"
 /* global settings and color variables */
 * {
-    blue:        #A7c6E2;
-    blue-trans:  #A7c6e2aa;
-    darkblue:    #005F87;
-    green:       #00330088;
-    black:       #000000;
-    grey:        #444444;
-    orange:      #FFD391;
-    dark-orange: #FFA664;
-    light-grey:  #F5F5F5;
-    medium-grey: #D0D0D0;
-    dark-grey:   #002B36;
-    urgent:      #D75F00;
-    active:      #005F87;
-    transparent: #000000aa;
+    blue:        @color8;
+    blue-trans:  @color0;
+    darkblue:    @color0;
+    green:       @color0;
+    black:       @color7;
+    grey:        @color8;
+    orange:      @color0;
+    dark-orange: @color10;
+    light-grey:  @color0;
+    medium-grey: @color4;
+    dark-grey:   @color8;
+    urgent:      @color1;
+    active:      @color7;
+    transparent: @color0;
     spacing: 0em;
     padding: 0px;
     background-color: white;
@@ -25,11 +26,11 @@
 }
 
 prompt-box {
-  background-color    : transparent;
+  background-color    : @color0;
 }
 
 prompt {
-  background-color    : transparent;
+  background-color    : @color0;
   text-color          : white;
 }
 
@@ -122,11 +123,11 @@ element alternate.active {
 
 inputbar {
     spacing           : 5px;
-    background-color  : #88003300;
+    background-color  : @color0;
     border            : 0px 0px 2px 0px;
     border-radius     : 0px;
     padding           : 5px 10px 5px 35px;
-    background-color  : #00330088;
+    background-color  : @color0;
     color             : @black;
     end               : false;
 }
