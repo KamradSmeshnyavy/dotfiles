@@ -10,3 +10,4 @@ alias yandex-browser = yandex-browser-stable --ozone-platform=wayland
 alias ping = gping
 alias jolt = sudo ~/.cargo/bin/jolt
 alias spotify-tui = spotify_player 
+alias audio-ctl = wiremix 
