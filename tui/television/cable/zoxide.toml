@@ -12,12 +12,12 @@ frecency = false
 command = "ls -la --color=always '{}'"
 
 [keybindings]
-enter = "actions:cd"
+# enter = "actions:cd"
 ctrl-d = "actions:remove"
 
 [actions.cd]
 description = "Change to the selected directory"
-command = "cd '{}' && $SHELL"
+command = "do { cd '{}'; nu }"
 mode = "execute"
 
 [actions.remove]
