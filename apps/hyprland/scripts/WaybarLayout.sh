@@ -40,11 +40,7 @@ main() {
 
     # Launch rofi with the annotated list, pre‑selecting the active row
     choice=$(printf '%s\n' "${options[@]}" \
-        | rofi -i -dmenu \
-               -config "$rofi_config" \
-               -mesg "$msg" \
-               -selected-row "$default_row"
-    )
+        | walker --dmenu -p "Select:")
 
     # Exit if nothing chosen
     [[ -z "$choice" ]] && { echo "No option selected. Exiting."; exit 0; }
@@ -63,8 +59,8 @@ main() {
 }
 
 # Kill Rofi if already running before execution
-if pgrep -x "rofi" >/dev/null; then
-    pkill rofi
+if pgrep -x "walker" >/dev/null; then
+    walker --close
     #exit 0
 fi
 

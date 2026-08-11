@@ -3,7 +3,7 @@
 # Rofi menu for Settings (called by Waybar gear icon)
 
 OPTIONS="1. Change Animations\n2. Change Wallpaper (Theme Menu)\n3. Omarchy Menu (System)\n4. Waybar Styles\n5. Waybar Layout"
-CHOICE=$(echo -e "$OPTIONS" | rofi -dmenu -i -p "Settings:" -theme-str 'window {width: 400px;}')
+CHOICE=$(echo -e "$OPTIONS" | walker --dmenu -p "Select:")
 
 case "$CHOICE" in
     *"Animations"*)
@@ -13,7 +13,7 @@ case "$CHOICE" in
         ~/.config/hypr/scripts/ThemeMenu.sh
         ;;
     *"Omarchy Menu"*)
-        ~/.config/hypr/scripts/OmarchyRofiMenu.sh
+        omarchy-menu
         ;;
     *"Waybar Styles"*)
         ~/.config/hypr/scripts/WaybarStyles.sh

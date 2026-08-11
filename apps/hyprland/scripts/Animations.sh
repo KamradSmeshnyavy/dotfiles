@@ -3,8 +3,8 @@
 # For applying Animations from different users
 
 # Check if rofi is already running
-if pidof rofi > /dev/null; then
-  pkill rofi
+if pidof walker > /dev/null; then
+  walker --close
 fi
 
 # Variables
@@ -18,7 +18,7 @@ msg='❗NOTE:❗ This will copy animations into animations.conf'
 animations_list=$(find -L "$animations_dir" -maxdepth 1 -type f | sed 's/.*\///' | sed 's/\.conf$//' | sort -V)
 
 # Rofi Menu
-chosen_file=$(echo "$animations_list" | rofi -i -dmenu -config $rofi_theme -mesg "$msg")
+chosen_file=$(echo "$animations_list" | walker --dmenu -p "Select:")
 
 # Check if a file was selected
 if [[ -n "$chosen_file" ]]; then
