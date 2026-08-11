@@ -102,4 +102,29 @@ os.makedirs(os.path.dirname(waybar_path), exist_ok=True)
 with open(waybar_path, 'w') as f:
     f.write(waybar_colors)
 
+
+# Write swaync colors
+# Convert background hex to rgba for transparency
+def hex_to_rgba(hex_color, alpha):
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) == 6:
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        return f"rgba({r}, {g}, {b}, {alpha})"
+    return hex_color
+
+bg_rgba = hex_to_rgba(colors.get('background', '#000000'), 0.8)
+
+swaync_colors = f"""
+@define-color noti-bg {bg_rgba};
+@define-color noti-border-color {colors.get('color12', '#784CA0')};
+@define-color noti-bg-alt {colors.get('color8', '#3F3C40')};
+@define-color noti-bg-hover {colors.get('background', '#181519')};
+@define-color text-color {colors.get('foreground', '#FAE8E1')};
+"""
+
+swaync_path = os.path.expanduser("~/dotfiles/apps/swaync/wallust/colors-swaync.css")
+os.makedirs(os.path.dirname(swaync_path), exist_ok=True)
+with open(swaync_path, 'w') as f:
+    f.write(swaync_colors)
+
 print(f"Colors updated for {theme_name}")
