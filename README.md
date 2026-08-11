@@ -30,12 +30,15 @@
 | Категория | Инструменты |
 | :--- | :--- |
 | 🪟 **Window Manager** | **Hyprland** (Linux) — основной композитор. <br> _(Также сохранена поддержка Yabai / Aerospace для macOS)_. |
-| 🎨 **Theme & Styling** | Глобальная тема **`pastel-hacker`** управляется через Omarchy Theme Engine. Цвета автоматически применяются к GTK, Waybar, терминалам и редакторам. |
+| 🎨 **Theme & Styling** | Глобальная тема **`pastel-hacker`** управляется через Omarchy Theme Engine. Цвета динамически применяются к GTK, Waybar, Rofi, SwayNC, терминалам и редакторам через кастомные Python-хуки. |
 | 🖥️ **Terminals** | **Kitty** (основной терминал), Ghostty, Wezterm, Alacritty. |
 | 🐚 **Shells** | **Nushell** (по умолчанию), Fish, Zsh. <br> Промпты стилизуются с помощью **Starship** и OhMyPosh. |
 | 📝 **Editors** | **Neovim** (основной консольный редактор, написан на Lua), **VS Code** (с кастомным CSS и темой Catppuccin). |
 | 🗃️ **Multiplexers** | **Zellij**, **Tmux**. |
 | 🛠️ **CLI / TUI Утилиты** | **yazi** / **nnn** (файловые менеджеры) <br> **bat** (замена cat) <br> **eza** / **lla** (замена ls) <br> **btop** / **procs** (мониторинг системы) <br> **lazygit** / **gitui** (работа с Git) <br> **zoxide** (умный cd) <br> **fzf** / **television** (fuzzy finders) |
+| 🚀 **Launchers & Menus** | **Rofi** (Меню приложений, буфер обмена, селекторы тем), **Walker** (Системное меню Omarchy) |
+| 🔔 **Notifications** | **SwayNC** (Продвинутый центр уведомлений с историей и быстрыми настройками) |
+| ⏻ **Power Menu** | **Wlogout** (Полноэкранное меню выключения) |
 
 ---
 
