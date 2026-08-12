@@ -9,6 +9,12 @@ api.unmap('K');
 //api.unmap('d');
 //api.unmap('u');
 
+// Переназначаем клавишу 'T' на вызов поиска по закладкам (оригинальное действие клавиши 'b')
+api.map('T', 'b');
+
+// По умолчанию 'b' открывает закладки, а 'T' — табы. Меняем 'b' на поиск по табам:
+api.map('b', 'T');
+
 // 1. НАВИГАЦИЯ ПО ИСТОРИИ
 api.map('H', 'S'); // H — назад по истории
 api.map('L', 'D'); // L — вперед по истории
@@ -26,9 +32,6 @@ api.mapkey('g$', 'Go to last tab', () => {
     });
 });
 
-// По умолчанию 'b' открывает закладки, а 'T' — табы. Меняем 'b' на поиск по табам:
-api.map('b', 'T');
-
 // 3. УПРАВЛЕНИЕ ВКЛАДКАМИ (d/u уходят под скролл, закрытие на x/X)
 //api.unmap('x');
 //api.unmap('X');
@@ -45,6 +48,8 @@ api.map('O', 'ox'); // O — открыть URL в новой вкладке
 api.map('b', 'ob'); // b — поиск по открытым вкладкам (Buffer)
 
 // 7. ПРОКРУТКА (SCROLL)
+//api.mapkey('gg', 'Scroll to top', () => api.scroll('top'));
+api.map('G', 'G'); // G — в самый низ страницы
 //api.mapkey('d', 'Scroll down half page', () => api.scroll('pageDown'));
 //api.mapkey('u', 'Scroll up half page', () => api.scroll('pageUp'));
 
