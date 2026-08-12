@@ -25,11 +25,11 @@ prefix = "/"
 provider = "providerlist"
 
 [[providers.prefixes]]
-prefix = "."
+prefix = "^"
 provider = "files"
 
 [[providers.prefixes]]
-prefix = ":"
+prefix = "$"
 provider = "symbols"
 
 [[providers.prefixes]]
@@ -41,7 +41,7 @@ prefix = "@"
 provider = "websearch"
 
 [[providers.prefixes]]
-prefix = "$"
+prefix = "?"
 provider = "clipboard"
 
 [[emergencies]]
