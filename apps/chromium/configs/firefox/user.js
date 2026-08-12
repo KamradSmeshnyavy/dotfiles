@@ -4,6 +4,16 @@ user_pref("gfx.webrender.compositor", true);
 // user_pref("gfx.webrender.compositor.force-enabled", true);
 user_pref("layout.frame_rate", 60);
 // ------------------------------------------------------------
+// --- Own settings
+user_pref("browser.newtab.preload", false)
+user_pref("gfx.webrender.all", true)
+user_pref("ui.prefersReducedMotion", 1)
+user_pref("accessibility.force_disabled", 1)
+user_pref("extensions.pocket.enabled", false)
+user_pref("dom.ipc.processCount", 4)
+user_pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true)
+//dom.ipc.processPriorityManager.backgroundUsesEcoQoS ➔ true
+// ------------------------------------------------------------
 
 // --- Hardware Video Acceleration (VA-API) ---
 user_pref("media.ffmpeg.vaapi.enabled", true);
