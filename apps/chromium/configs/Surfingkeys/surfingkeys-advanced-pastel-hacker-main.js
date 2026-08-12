@@ -2,6 +2,10 @@
 settings.smoothScroll = false;
 //settings.scrollStepSize = 140;
 // Очищаем стандартные конфликтующие клавиши, которые мы переназначаем
+api.map('S', 'H')
+api.map('D', 'L')
+
+
 api.unmap('H');
 api.unmap('L');
 api.unmap('J');
@@ -9,11 +13,12 @@ api.unmap('K');
 //api.unmap('d');
 //api.unmap('u');
 
-// Переназначаем клавишу 'T' на вызов поиска по закладкам (оригинальное действие клавиши 'b')
-api.map('T', 'b');
+// Переназначаем клавишу 'B' на вызов поиска по закладкам (оригинальное действие клавиши 'b')
+api.map('B', 'b');
 
 // По умолчанию 'b' открывает закладки, а 'T' — табы. Меняем 'b' на поиск по табам:
 api.map('b', 'T');
+
 
 // 1. НАВИГАЦИЯ ПО ИСТОРИИ
 api.map('H', 'S'); // H — назад по истории
@@ -24,8 +29,8 @@ api.map('K', 'R'); // J — следующая вкладка (вправо)
 api.map('J', 'E'); // K — предыдущая вкладка (влево)
 
 // Исправленные быстрые переходы по вкладкам
-api.mapkey('gt', 'Go to next tab', () => api.RUNTIME('nextTab'));
-api.mapkey('gT', 'Go to prev tab', () => api.RUNTIME('previousTab'));
+// api.mapkey('gt', 'Go to next tab', () => api.RUNTIME('nextTab'));
+// api.mapkey('gT', 'Go to prev tab', () => api.RUNTIME('previousTab'));
 api.mapkey('g$', 'Go to last tab', () => {
     api.RUNTIME('getTabs', null, res => {
         api.RUNTIME('selectTab', {tabId: res.tabs[res.tabs.length - 1].id});
