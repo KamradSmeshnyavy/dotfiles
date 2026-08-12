@@ -126,8 +126,6 @@
 }
 
 .summary {
-    word-wrap: break-word;
-    white-space: pre-wrap;
     font-size: 1rem;
     font-weight: bold;
     background: transparent;
@@ -145,8 +143,6 @@
 }
 
 .body {
-    word-wrap: break-word;
-    white-space: pre-wrap;
     font-size: 1rem;
     font-weight: bold;
     background: transparent;
