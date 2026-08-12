@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC_DEFAULT="${HOME}/Documents/Wallpapers/Wallpapers"
+
+usage() {
+  cat <<HELP
+Usage: $(basename "$0") <theme-dir> [source-dir]
+
+Recolor wallpapers from source-dir into the theme's background directory
+using the theme's color palette (colors.toml).
+
+Arguments:
+  theme-dir    Path to theme directory (must contain colors.toml and backgrounds/)
+  source-dir   Directory with source wallpapers (default: ${SRC_DEFAULT})
+HELP
+  exit 1
+}
+
+THEME_DIR="${1:-}"
+SRC_DIR="${2:-$SRC_DEFAULT}"
+
+[ -z "$THEME_DIR" ] && usage
+[ ! -f "$THEME_DIR/colors.toml" ] && echo "Error: no colors.toml in $THEME_DIR" && exit 1
+
+BG_DIR="$THEME_DIR/backgrounds"
+mkdir -p "$BG_DIR"
+
+PALETTE=$(mktemp /tmp/palette-XXXXXX.png)
+trap 'rm -f "$PALETTE"' EXIT
+
+echo "Building palette from $THEME_DIR/colors.toml..."
+COLORS=$(python3 -c "
+import tomllib
+with open('$THEME_DIR/colors.toml', 'rb') as f:
+    data = tomllib.load(f)
+colors = data.get('colors', data)
+seen = set()
+for i in range(16):
+    key = f'color{i}'
+    if key in colors:
+        c = colors[key].strip().lstrip('#')
+        if c not in seen:
+            seen.add(c)
+            print(c)
+")
+
+PIXELS=()
+while IFS= read -r c; do
+  [ -n "$c" ] && PIXELS+=("xc:'#${c}'")
+done <<< "$COLORS"
+
+if [ ${#PIXELS[@]} -eq 0 ]; then
+  echo "Error: no colors found"
+  exit 1
+fi
+
+magick -size "1x${#PIXELS[@]}" "${PIXELS[@]}" +append "$PALETTE"
+echo "Palette: ${#PIXELS[@]} unique colors"
+
+TOTAL=$(find "$SRC_DIR" -maxdepth 1 -type f ! -name "*.zip" ! -name "retro2_live.gif" | wc -l)
+echo "Source files: $TOTAL"
+echo "Output: $BG_DIR"
+echo ""
+
+find "$SRC_DIR" -maxdepth 1 -type f ! -name "*.zip" ! -name "retro2_live.gif" -print0 | \
+  xargs -0 -P 4 -I {} bash -c '
+  src="$1"
+  base=$(basename "$src")
+  name="${base%.*}"
+  out="$2/${name}.png"
+  pal="$3"
+  if [ -f "$out" ]; then
+    exit 0
+  fi
+  magick "$src" -dither FloydSteinberg -remap "$pal" "$out"
+' _ {} "$BG_DIR" "$PALETTE"
+
+EXISTING=$(find "$BG_DIR" -maxdepth 1 -type f | wc -l)
+echo "Done. Backgrounds in $BG_DIR: $EXISTING files"
