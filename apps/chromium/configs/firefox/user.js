@@ -12,6 +12,7 @@ user_pref("accessibility.force_disabled", 1)
 user_pref("extensions.pocket.enabled", false)
 user_pref("dom.ipc.processCount", 4)
 user_pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true)
+user_pref("browser.sessionstore.interval", 60000)
 //dom.ipc.processPriorityManager.backgroundUsesEcoQoS ➔ true
 // ------------------------------------------------------------
 
