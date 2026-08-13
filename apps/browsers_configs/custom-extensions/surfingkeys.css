@@ -1,0 +1,87 @@
+:root {
+  --sk-bg: #05080a;
+  --sk-bg-elev: #0b1115;
+  --sk-fg: #fff6ff;
+  --sk-muted: #4b4c4d;
+  --sk-accent: #b2fff3;
+  --sk-accent-2: #ffc2df;
+  --sk-accent-3: #dfbaff;
+  --sk-warn: #ffc79b;
+  --sk-error: #ff9fbc;
+}
+
+.sk_theme {
+  background: var(--sk-bg);
+  color: var(--sk-fg);
+  border: 1px solid var(--sk-muted);
+}
+
+.sk_theme input,
+.sk_theme textarea,
+.sk_theme select {
+  background: var(--sk-bg-elev);
+  color: var(--sk-fg);
+  border: 1px solid var(--sk-muted);
+}
+
+#sk_omnibar {
+  background: var(--sk-bg);
+  color: var(--sk-fg);
+  border: 1px solid var(--sk-muted);
+  box-shadow: 0 10px 30px rgba(5, 8, 10, 0.6);
+}
+
+#sk_omnibarSearchResult li {
+  border-top: 1px solid rgba(255, 246, 255, 0.08);
+}
+
+#sk_omnibarSearchResult li.focused {
+  background: var(--sk-accent-2);
+  color: #05080a;
+}
+
+.sk_theme .omnibar_highlight {
+  color: var(--sk-accent);
+}
+
+.sk_theme .omnibar_timestamp {
+  color: var(--sk-muted);
+}
+
+.sk_theme .omnibar_folder {
+  color: var(--sk-accent-3);
+}
+
+.sk_theme .omnibar_visitcount {
+  color: var(--sk-warn);
+}
+
+.sk_theme .url {
+  color: var(--sk-accent);
+}
+
+.sk_theme .annotation {
+  color: var(--sk-muted);
+}
+
+#sk_status,
+#sk_find {
+  background: var(--sk-bg);
+  color: var(--sk-fg);
+  border: 1px solid var(--sk-muted);
+}
+
+#sk_keystroke {
+  background: var(--sk-accent);
+  color: #05080a;
+}
+
+#sk_hints .sk-hint {
+  background: var(--sk-accent-2);
+  color: #05080a;
+  border: 1px solid var(--sk-accent);
+}
+
+#sk_hints .sk-hint span {
+  color: #05080a;
+}
