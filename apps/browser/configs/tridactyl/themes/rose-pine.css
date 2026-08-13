@@ -1,0 +1,22 @@
+:root {
+    --tridactyl-bg: #191724;
+    --tridactyl-fg: #e0def4;
+    
+    --tridactyl-status-bg: #191724;
+    --tridactyl-status-fg: #e0def4;
+    --tridactyl-status-border: 1px solid #524f67;
+    
+    --tridactyl-cmdl-bg: #191724;
+    --tridactyl-cmdl-fg: #e0def4;
+    
+    --tridactyl-hintspan-bg: #f6c177;
+    --tridactyl-hintspan-fg: #191724;
+    --tridactyl-hintspan-border: 2px solid #ebbcba;
+    
+    --tridactyl-hint-active-bg: rgba(235, 188, 186, 0.4);
+    --tridactyl-hint-active-fg: #e0def4;
+    --tridactyl-hint-bg: rgba(25, 23, 36, 0.2);
+    
+    --tridactyl-search-highlight-color: #f6c177;
+    --tridactyl-search-highlight-active-color: #ebbcba;
+}

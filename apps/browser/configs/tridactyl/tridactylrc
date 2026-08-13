@@ -1,0 +1,24 @@
+" Энергоэффективность
+set smoothscroll false
+
+" Бинды
+bind ,y tabopen https://translate.yandex.ru/
+bind ,tr colorscheme rose-pine
+bind ,tp colorscheme pastel-hacker
+
+" Настройка подсказок (vimperator включен, simple закомментирован)
+" set hintfiltermode simple
+set hintfiltermode vimperator
+set hintchars hjklasdfgyuiopqwertnmzxcvb
+
+" Поисковые системы для безопасников/pwn и повседневные
+set searchengine yt https://translate.yandex.ru/?text=%s
+set searchengine habr https://habr.com/ru/search/?q=%s
+set searchengine edb https://www.exploit-db.com/search?cve=%s
+set searchengine shodan https://www.shodan.io/search?query=%s
+set searchengine gh https://github.com/search?q=%s
+set searchengine vt https://www.virustotal.com/gui/search/%s
+set searchengine cve https://cve.mitre.org/cgi-bin/cvename.cgi?name=%s
+
+" Устанавливаем текущую тему (которую вы используете в omarchy)
+colorscheme rose-pine
