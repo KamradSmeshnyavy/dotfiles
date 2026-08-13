@@ -36,7 +36,8 @@
     "group/notify",
   ],
   "modules-right": [
-    // "custom/settings","battery",
+    // "custom/settings",
+    // "battery",
     "group/laptop",
     "custom/separator#blank",
     "group/mobo_drawer",
