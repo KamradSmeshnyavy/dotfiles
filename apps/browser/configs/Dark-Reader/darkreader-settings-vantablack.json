@@ -1,0 +1,57 @@
+{
+  "schemeVersion": 2,
+  "enabled": true,
+  "fetchNews": true,
+  "theme": {
+    "mode": 1,
+    "brightness": 100,
+    "contrast": 100,
+    "grayscale": 0,
+    "sepia": 0,
+    "useFont": false,
+    "fontFamily": "Default",
+    "textStroke": 0,
+    "engine": "dynamicTheme",
+    "stylesheet": "div, section, article, li, aside, main, nav, form, header, footer, [role='region'], [role='article'], [role='main'] {\n    background-color: #000000 !important;\n    background: #000000 !important;\n    border-color: #111111 !important;\n}\n\n/* Фикс для сохранения читаемости текста */\np, span, h1, h2, h3, h4, h5, h6, a, code, pre, time, em, strong {\n    color: #ffffff !important;\n}",
+    "darkSchemeBackgroundColor": "#000000",
+    "darkSchemeTextColor": "#ffffff",
+    "lightSchemeBackgroundColor": "#fff6ff",
+    "lightSchemeTextColor": "#05080a",
+    "scrollbarColor": "auto",
+    "selectionColor": "#ffc2df",
+    "styleSystemControls": false,
+    "lightColorScheme": "Default",
+    "darkColorScheme": "Default",
+    "immediateModify": false
+  },
+  "presets": [],
+  "customThemes": [],
+  "enabledByDefault": true,
+  "enabledFor": [],
+  "disabledFor": [],
+  "changeBrowserTheme": false,
+  "syncSettings": true,
+  "syncSitesFixes": true,
+  "automation": {
+    "enabled": false,
+    "mode": "system",
+    "behavior": "OnOff"
+  },
+  "time": {
+    "activation": "18:00",
+    "deactivation": "9:00"
+  },
+  "location": {
+    "latitude": null,
+    "longitude": null
+  },
+  "previewNewDesign": true,
+  "enableForPDF": true,
+  "enableForProtectedPages": true,
+  "enableContextMenus": false,
+  "detectDarkTheme": false,
+  "automationBehaviour": "OnOff",
+  "readNews": [],
+  "displayedNews": [],
+  "notifyOfNews": false
+}
