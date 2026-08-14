@@ -1,98 +1,411 @@
-(defsrc
-  ;; Ряд 1 (QWE...)
-  tab  q  w  e  r  t  y  u  i  o  p  [  ]
-  ;; Ряд 2 (ASD...)
-  caps a  s  d  f  g  h  j  k  l  ;  '
-  ;; Ряд 3 (ZXC...)
-  z  x  c  v  b  n  m  ,  .  /
-  ;; Системные клавиши модификаторы
-  altgr bspc
+
+
+;; ========================================================================
+;;                           СХЕМА АКТИВАЦИИ СЛОЕВ
+;; ========================================================================
+;; 
+;; [ 1. АВТОМАТИЧЕСКАЯ АКТИВАЦИЯ ]
+;; Любая буква (Q...M) ──(быстрая печать)──> [ NOMODS ] (отключает homerow mods)
+;;                                               │
+;;                                        (пауза 250 мс)
+;;                                               ▼
+;;                                            [ DEF ] (возврат в базу)
+;; 
+;; [ 2. КОМБО (АККОРДЫ - нажать одновременно) ]
+;; Q + W + E + R ──────────────> [ MUGGLE ] (Вкл/выкл "чистой" клавиатуры)
+;; M + , + .     ──────────────> [ NUM ]    (Залипание цифрового слоя)
+;; 
+;; 
+;; [ 3. УДЕРЖАНИЕ КЛАВИШ (Hold) ]
+;; 
+;;  ( Физические клавиши нижнего ряда из твоего defsrc )
+;;  [ L-Alt ]       [ L-Meta/Win ]       [ Space ]        [ R-Meta/Win ]
+;;      │                 │                  │                  │
+;;   Удерж.            Удерж.                │               Удерж.
+;;      │                 │                  │                  │
+;;      ▼                 ▼                  │                  ▼
+;;   [ NUM ]           [ NAV ]            (Пробел)           [ SYM ]
+;;   (Цифры)         (Навигация)                             (Символы)
+;;      │                 │                                     │
+;;      │                 └─────( Удерживать обе вместе )───────┘
+;;      │                                    │
+;;      │                                    ▼
+;;      │                                 [ FUN ] (F1-F12 и настройки)
+;;      │
+;;      └────────────────────────────────┐
+;;  ( Альтернативные триггеры )          │
+;;  [ C ] ────────(удержание)────────────┤
+;;                                       │
+;;  [ 0 на слое NUM ] ──(удержание)──> [ SYM ]
+;;  
+;; ========================================================================
+
+;;  Легенда сокращений:
+;;  
+;;      Ct*, Al*, Sf*, Me* — One-shot модификаторы (нажал и отпустил, следующий напечатанный символ будет с модификатором).
+;;  
+;;      A/Ct, S/Al и т.д. — Homerow Mods (быстрое нажатие — буква, удержание — модификатор).
+;;  
+;;      Hy — Hyper (Ctrl+Alt+Shift+Win).
+;;  
+;;      -- — клавиша прозрачна (наследует базу) или отключена (XX).
+;;  
+;;  🟢 Слой 0: DEF (Базовый)
+;;  Plaintext
+;;  
+;;  [ 🔅 ][ 🔆 ][    ][    ][    ][    ]   [ ⏮ ][ ⏯ ][ ⏭ ][ 🔇 ][ 🔉 ][ 🔊 ]
+;;  [ Q  ][ W  ][ E  ][ R  ][ T  ]       [ Y  ][ U  ][ I  ][ O  ][ P  ][ [  ][ ]  ][ \  ]
+;;  [A/Ct][S/Al][D/Sf][F/Me][G/Hy]       [H/Hy][J/Me][K/Sf][L/Al][;/Ct][ '  ]
+;;  [Z/Fn][ X  ][C/Nm][ V  ][ B  ]       [ N  ][ M  ][ ,  ][ .  ][ /  ]
+;;             [ NUM ][ NAV ]       [   SPACE   ][ SYM ]
+;;  
+;;  (Удержание клавиш Z и C также активирует Fn и цифровой слой соответственно)
+;;  🛡 Слой 1: NOMODS (Защита при быстрой печати)
+;;  Plaintext
+;;  
+;;  [ 🔅 ][ 🔆 ][    ][    ][    ][    ]   [ ⏮ ][ ⏯ ][ ⏭ ][ 🔇 ][ 🔉 ][ 🔊 ]
+;;  [ q  ][ w  ][ e  ][ r  ][ t  ]       [ y  ][ u  ][ i  ][ o  ][ p  ][ [  ][ ]  ][ \  ]
+;;  [ a  ][ s  ][d/Sf][ f  ][ g  ]       [ h  ][ j  ][k/Sf][ l  ][ ;  ][ '  ]
+;;  [ z  ][ x  ][ c  ][ v  ][ b  ]       [ n  ][ m  ][ ,  ][ .  ][ /  ]
+;;             [ --  ][ --  ]       [    --     ][ --  ]
+;;  
+;;  (Срабатывает автоматически при наборе текста. Shift на d и k сохранен для быстрой печати заглавных букв)
+;;  🔢 Слой 2: NUM (Цифры и макросы)
+;;  Plaintext
+;;  
+;;  [ F1 ][ F2 ][ F3 ][ F4 ][ F5 ][ F6 ]   [ F7 ][ F8 ][ F9 ][ F10][ F11][ F12]
+;;  [    ][    ][    ][ r$ ][    ]       [ +  ][ 7  ][ 8  ][ 9  ][ *  ][    ][    ][    ]
+;;  [Ct* ][Al* ][Sf* ][Me* ][Bspc]       [ -  ][ 4  ][ 5  ][ 6  ][ /  ][    ]
+;;  [    ][Sf* ][    ][000 ][,00 ]       [ ,  ][ 1  ][ 2  ][ 3  ][ .  ]
+;;             [ --  ][N/Nv ]       [   N/Spc   ][0/Sy ]
+;;  
+;;  (Нажатие N/Nv перекинет в навигацию, N/Spc отменит залипание слоя, а удержание 0/Sy временно включит спецсимволы)
+;;  🧭 Слой 3: NAV (Навигация)
+;;  Plaintext
+;;  
+;;  [ F1 ][ F2 ][ F3 ][ F4 ][ F5 ][ F6 ]   [ F7 ][ F8 ][ F9 ][ F10][ F11][ F12]
+;;  [Tab ][Swap][CS-T][C-Tb][M-Lf]       [PgUp][Home][ Esc ][End ][Bspc][Play][    ][    ]
+;;  [Ct* ][Al* ][Sf* ][Me* ][M-Ri]       [Left][Down][ Up][Rght][Ent ][    ]
+;;  [C-z ][C-x ][C-c ][C-v ][F18 ]       [PgDn][F19 ][V-Dn][V-Up][Del ]
+;;             [ --  ][ --  ]       [    --     ][ --  ]
+;;  
+;;  (Swap — это умный Alt-Tab. Слева под левую руку выведены шорткаты Копировать/Вставить/Отменить, а в центре — Vim-подобные стрелки)
+;;  🔣 Слой 4: SYM (Спецсимволы)
+;;  Plaintext
+;;  
+;;  [ F1 ][ F2 ][ F3 ][ F4 ][ F5 ][ F6 ]   [ F7 ][ F8 ][ F9 ][ F10][ F11][ F12]
+;;  [Esc ][ {  ][ [  ][ (  ][ %  ]       [ &  ][ )  ][ ]  ][ }  ][ "  ][    ][    ][    ]
+;;  [ -  ][ ^  ][ `  ][ ~  ][ $  ]       [ #  ][Me* ][Sf* ][Al* ][Ct* ][    ]
+;;  [ +  ][ =  ][ *  ][ ⁄  ][ @  ]       [S-＼][ ＼ ][S-⁄ ][ !  ][ :  ]
+;;             [ --  ][ --  ]       [     _     ][ --  ]
+;;  
+;;  (На пробеле заведен символ нижнего подчеркивания _)
+;;  ⚙️ Слой 5: FUN (F-клавиши и системные)
+;;  
+;;  Активируется одновременным удержанием NAV + SYM
+;;  Plaintext
+;;  
+;;  [ F1 ][ F2 ][ F3 ][ F4 ][ F5 ][ F6 ]   [ F7 ][ F8 ][ F9 ][ F10][ F11][ F12]
+;;  [ 1  ][ 2  ][ 3  ][ 4  ][ 5  ]       [ 6  ][ 7  ][ 8  ][ 9  ][ 0  ][    ][    ][    ]
+;;  [Ct* ][Al* ][Sf* ][Me* ][F11 ]       [F12 ][Me* ][Sf* ][Al* ][Ct* ][    ]
+;;  [ F1 ][ F2 ][ F3 ][ F4 ][ F5 ]       [ F6 ][ F7 ][ F8 ][ F9 ][F10 ]
+;;             [ --  ][ --  ]       [   Caps    ][ --  ]
+;;  
+;;  🧑‍💻 Слой 6: MUGGLE ("Режим для обычных людей")
+;;  
+;;  Включается и выключается комбо Q + W + E + R
+;;  Plaintext
+;;  
+;;  [ 🔅 ][ 🔆 ][    ][    ][    ][    ]   [ ⏮ ][ ⏯ ][ ⏭ ][ 🔇 ][ 🔉 ][ 🔊 ]
+;;  [ Q  ][ W  ][ E  ][ R  ][ T  ]       [ Y  ][ U  ][ I  ][ O  ][ P  ][ [  ][ ]  ][ \  ]
+;;  [ A  ][ S  ][ D  ][ F  ][ G  ]       [ H  ][ J  ][ K  ][ L  ][ ;  ][ '  ]
+;;  [ Z  ][ X  ][ C  ][ V  ][ B  ]       [ N  ][ M  ][ ,  ][ .  ][ /  ]
+;;             [LAlt ][LMet ]       [   Space   ][AltGr]
+;;  
+;;  🎹 Быстрые аккорды (Combos)
+;;  
+;;  Ты можешь нажимать эти клавиши одновременно, чтобы срабатывали скрытые действия (работает на большинстве слоев):
+;;  
+;;      W + E + R или U + I + O ➔ Escape
+;;  
+;;      W + R или U + O ➔ Tab
+;;  
+;;      S + D + F или J + K + L ➔ Enter
+;;  
+;;      S + F или J + L ➔ Backspace
+;;  
+;;      D + K ➔ Caps Word (умный CapsLock, который сам отключается при нажатии пробела)
+;;  
+;;      M + , + . ➔ Вкл/Выкл залипания слоя NUM
+;;  
+;;      G + H ➔ Перезагрузить конфиг Kanata
+;;  
+;;      Q + W + E + R ➔ Переключить Muggle Mode
+;;  
+(defcfg
+  process-unmapped-keys yes   
+  block-unmapped-keys no      
+  log-layer-changes no        
+  concurrent-tap-hold yes     
+  delegate-to-first-layer yes 
+  chords-v2-min-idle 350      
+ 
+  linux-dev-names-exclude (
+    "mouseless keyboard"
+    "mouseless mouse"
+    "mouseless pointer"
+    "ydotoold virtual device"
+  ) 
+  ;; Прямой захват клавиатуры ThinkPad для снижения инпут-лага
+  linux-dev /dev/input/by-path/platform-i8042-serio-0-event-kbd
 )
 
 (defvar
-  tap-time 150
-  hold-time 150
+  ;; Тайминги
+  one-shot-timeout 60000                 
+  tapping-term 300                       
+  quick-tap-ms 200                       
+  require-prior-idle 250                 
+  combo-timeout 60                       
+
+  ;; Зоны для перехвата фантомов (двустороннее разделение)
+  left-side-keys   (q w e r t x   c v b) 
+  right-side-keys  (y u i o p [ ] \ ' m n , .) 
+  home-row-left-keys  (a s d f g z)      
+  home-row-right-keys (h j k l ;)        
+)
+
+;; Шаблоны Homerow Mods от Urob
+(deftemplate lhrm (tappingterm tap-key hold-key)
+  (tap-hold-release-tap-keys-release $quick-tap-ms $tappingterm (multi $tap-key @tap) $hold-key $left-side-keys $home-row-left-keys)
+)
+
+(deftemplate rhrm (tappingterm tap-key hold-key)
+  (tap-hold-release-tap-keys-release $quick-tap-ms $tappingterm (multi $tap-key @tap) $hold-key $right-side-keys $home-row-right-keys)
+)
+
+(deftemplate nomod (tap-key)
+  (multi $tap-key @tap)
 )
 
 (defalias
-  ;; Алиас для клавиши 0, чтобы макрос не путал её с задержкой времени
-  n0 0
+  hyper (multi lctrl lalt lshift lmet) ;; Hyper-клавиша (идеально для биндов в Hyprland)
 
-  hex (macro @n0 x)     ;; Теперь корректно печатает 0x
-  ptr (macro - S-.)     ;; Печатает -> (минус и Shift+точка)
-  neq (macro S-1 =)     ;; Печатает != (Shift+1 и равно)
+  ;; Эмуляция 'require-prior-idle' для защиты от фантомов
+  tap (multi                                             
+    (layer-switch nomods)                                
+    (on-idle $require-prior-idle tap-virtualkey to-base) 
+  )
 
-  ;; Tab: при удержании — активирует arrow-layer, при тапе — обычный Tab
-  tab-mod (tap-hold $tap-time $hold-time tab (layer-toggle arrow-layer))
+  ;; Homerow mods (A = Ctrl, S = Alt, D = Shift, F = Super)
+  a (t! lhrm   $tapping-term        a lctrl  )
+  s (t! lhrm   $tapping-term        s lalt   )
+  d (t! lhrm   $tapping-term        d lsft   )
+  f (t! lhrm   $tapping-term        f lmet   )
+  g (t! lhrm   $tapping-term        g @hyper )
+
+  h (t! rhrm   $tapping-term        h @hyper )
+  j (t! rhrm   $tapping-term        j lmet   )
+  k (t! rhrm   $tapping-term        k rsft   )
+  l (t! rhrm   $tapping-term        l lalt   )
+  ; (t! rhrm   $tapping-term        ; rctl   )
+
+  ;; Обертка букв для защиты от фантомов
+  q (t! nomod q) 
+  w (t! nomod w) 
+  e (t! nomod e) 
+  r (t! nomod r)
+  t (t! nomod t)
+
+  y (t! nomod y)
+  u (t! nomod u)
+  i (t! nomod i)
+  o (t! nomod o)
+  p (t! nomod p)
+  [ (t! nomod [)
+  ] (t! nomod ])
+  \ (t! nomod \)
   
-  ;; Правый Альт (AltGr): при удержании — символы, при тапе — Esc
-  alt-symbols (tap-hold $tap-time $hold-time esc (layer-toggle symbols-layer))
+  ' (t! nomod ')
+
+  z (t! nomod z)
+  x (t! nomod x)
+  c (t! nomod c) 
+  v (t! nomod v)
+  b (t! nomod b)
+
+  n (t! nomod n) 
+  m (t! nomod m) 
+  , (t! nomod ,)
+  . (t! nomod .)
+  / (t! nomod /) 
+
+  spc (t! nomod spc)
+
+  ;; Клавиши нижнего ряда
+  zfn (t! lhrm   $tapping-term        @z fn     )
+  cnum (tap-hold-release $quick-tap-ms $tapping-term @c (layer-while-held num))
+
+  ;; One-shot модификаторы
+  osm (one-shot $one-shot-timeout lmet)
+  oss (one-shot $one-shot-timeout lshift)
+  osa (one-shot $one-shot-timeout lalt)
+  osc (one-shot $one-shot-timeout lctrl)
+
+  ;; Мультимедиа tap-dance
+  ppmnp (tap-dance 200 ((tap-hold $quick-tap-ms $tapping-term pp mute) next prev))
+
+  ;; Tri-layer логика
+  tlnav (multi
+    (on-press   press-virtualkey    lnav)
+    (on-press   tap-virtualkey      release_all_mods)
+    (on-press   tap-virtualkey      evaluate_tri_layer)
+    (on-release tap-virtualkey      ops)
+    (on-release release-virtualkey  lnav)
+    (on-release release-virtualkey  swappermod) ;; Отпускаем Alt при отпускании слоя
+    (on-release tap-virtualkey      evaluate_tri_layer)
+  )
+
+  tlsym (multi
+    (on-press   press-virtualkey    lsym)
+    (on-press   tap-virtualkey      evaluate_tri_layer)
+    (on-release tap-virtualkey      ops) 
+    (on-release release-virtualkey  lsym)
+    (on-release tap-virtualkey      evaluate_tri_layer)
+  )
+
+  ;; Swapper (Умный Alt-Tab)
+  swapper (multi
+    (on-press   press-virtualkey    swappermod)
+    (on-press   tap-virtualkey      swappertab)
+  )
+
+  toggle_num_word
+    (switch
+      ((layer def)) (layer-switch num) break
+      ((layer num)) (layer-switch def) break
+    )
+
+  toggle_muggle_mode 
+    (switch
+      ((layer def)) (layer-switch muggle) break
+      ((layer muggle)) (layer-switch def) break
+    )
+
+  num (layer-while-held num)
+  capsword (caps-word-custom-toggle 5000 (a b c d e f g h i j k l m n o p q r s t u v w x y z) (lshift rshift grv apos 6 nop0 nop1 nop9 bspc))
+
+  0_sym    (tap-hold-release $tapping-term $quick-tap-ms 0 (layer-while-held sym))
+  num_spc  (multi (layer-switch def) spc)                                                           
+  num_nav  (tap-hold-release $tapping-term $quick-tap-ms (layer-switch def) (layer-while-held nav)) 
+
+  r$       (macro S-r S-4 spc)
+  ,00      (macro , Digit0 Digit0 spc)
+  000      (macro Digit0 Digit0 Digit0)
 )
 
-;; ================= БАЗОВЫЙ СЛОЙ =================
-(deflayer base
-  @tab-mod q  w  e  r  t  y  u  i  o  p  [  ]
-  lctl     a  s  d  f  g  h  j  k  l  ;  '
-  z        x  c  v  b  n  m  ,  .  /
-  @alt-symbols bspc
+(defchordsv2
+  (w e r)   esc     $combo-timeout all-released  (nav sym fun nomods)
+  (w   r)   tab     $combo-timeout all-released  (nav sym fun nomods)
+  (s d f)   enter   $combo-timeout first-release (nav sym fun nomods)   
+  (s   f)   bspc    $combo-timeout first-release (nav sym fun nomods)
+
+  (u i o)   esc     $combo-timeout all-released  (nav sym fun nomods) 
+  (u   o)   tab     $combo-timeout all-released  (nav sym fun nomods) 
+  (j k l)   enter   $combo-timeout first-release (nav sym fun nomods)  
+  (j   l)   bspc    $combo-timeout first-release (nav sym fun nomods)
+
+  (d k)     @capsword             $combo-timeout all-released  (nav sym fun num) 
+  (m , .)   @toggle_num_word      $combo-timeout all-released  (nav sym fun nomods)
+
+  (f rmet)  S-grave               $combo-timeout all-released  (nav sym fun num) 
+  (s rmet)  S-6                   $combo-timeout all-released  (nav sym fun num) 
+  (d rmet)  S-6                   $combo-timeout all-released  (nav sym fun num) 
+
+  (g h)     lrld                  $combo-timeout all-released  (def nav sym num nomods) ;; Перезагрузка конфига
+  (q w e r) @toggle_muggle_mode   $combo-timeout all-released  (nav sym fun num)  
 )
 
-;; ================= СЛОЙ СТРЕЛОК И НАВИГАЦИИ =================
-;; Активируется при удержании Tab
-(deflayer arrow-layer
-  _    _  _  _  _  _  _  bspc del  _  pgup  _  _  ;; 'u' -> bspc, 'i' -> del 'p' -> PgUp
-  _    _  _  _  _  _  left down up   right _  _
-  _    _  _  _  _  pgdn  ret  _    _    _         ;; 'm' -> ret (Enter), 'n' -> PgDn
-  _    del
+(defvirtualkeys  
+  to-base (layer-switch def) 
+  ops (one-shot-pause-processing 10) 
+
+  ;; Для Linux используем левый Alt для Alt-Tab
+  swappermod lalt 
+  swappertab tab   
+
+  lnav nop0 
+  lsym nop1 
+
+  evaluate_tri_layer (switch 
+    ((and nop0 nop1)) (layer-switch fun) break
+    ((and nop0 (not nop1))) (layer-switch nav) break
+    ((and nop1 (not nop0))) (layer-switch sym) break
+    ((not (and nop0 nop1))) (layer-switch def) break
+  )
+  release_all_mods nop9 
 )
 
-;; ================= СЛОЙ СИМВОЛОВ =================
-;; Активируется при удержании AltGr
-(deflayer symbols-layer
-  _    S-2 S-9 S-0 [   ]   S-[ S-] S-, S-. =   S-\ S-`
-  _    S-3  S-4 S-5 S-6 S-7 S-8 -   S-- S-= S-; S-'
-  /    \   S-/ S-1 S-\ ret bspc @ptr @hex @neq
-  _    _
+(defsrc
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  q w e r t     y u i o p [ ] \
+  a s d f g     h j k l ; '
+  z x c v b     n m , . /
+       lalt lmet spc altgr
 )
-;;@()[]{}<>=|~
-;;#$%^&*-_+:"
-;;/\?!| ret bspc -> 0x !=
-;;//  ========================================= БАЗОВЫЙ СЛОЙ (base) =========================================
-;;//  || `   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 0   | -   | =   |   Backspace   ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  || @tab-mod|  Q  |  W  |  E  |  R  |  T  |  Y  |  U  |  I  |  O  |  P  |  [  |  ]  |     \     ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||   Caps  |  A  |  S  |  D  |  F  |  G  |  H  |  J  |  K  |  L  |  ;  |  '  |     Enter     ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||   Shift   |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |       Shift       ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||         |  Ctrl |  Win  |  Alt  |    Space    | @alt-symbols  |  bspc |  Win  |  Menu       ||
-;;//  =================================================================================================
-;;//   * @tab-mod      = Tap: Tab       | Hold: Активация Arrow-layer
-;;//   * @alt-symbols  = Tap: Esc       | Hold: Активация Symbols-layer
-;;
-;;
-;;//  ==================================== СЛОЙ СТРЕЛОК (arrow-layer) ====================================
-;;//  ||     |     |     |     |     |     |     |     |     |     |     |     |     |               ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||    _    |  _  |  _  |  _  |  _  |  _  |  _  | Bspc| Del |  _  | PgUp|  _  |  _  |     _     ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||         |  _  |  _  |  _  |  _  |  _  | Left| Down|  Up |Right|  _  |  _  |               ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||           |  _  |  _  |  _  |  _  |  _  | PgDn| Ret |  _  |  _  |  _  |                   ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||         |       |       |       |             |       _       |  del  |       |             ||
-;;//  =================================================================================================
-;;
-;;
-;;//  ==================================== СЛОЙ СИМВОЛОВ (symbols-layer) ==================================
-;;//  ||     |     |     |     |     |     |     |     |     |     |     |     |     |               ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||    _    |  @  |  (  |  )  |  [  |  ]  |  {  |  }  |  <  |  >  |  =  |  |  |  ~  |     _     ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||         |  #  |  $  |  %  |  ^  |  &  |  * |  -  |  _  |  +  |  :  |  "  |               ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||           |  /  |  \  |  ?  |  !  |  |  | Ret | Bspc|  -> |  0x |  != |                   ||
-;;//  ||---------------------------------------------------------------------------------------------||
-;;//  ||         |       |       |       |             |       _       |   _   |       |             ||
-;;//  =================================================================================================
+
+(deflayer def
+  brdn brup XX  XX  XX  XX  prev pp next mute vold volu
+  @q   @w   @e  @r  @t      @y   @u  @i   @o   @p @[ @] @\
+  @a   @s   @d  @f  @g      @h   @j  @k   @l   @; @'
+  @zfn @x @cnum @v  @b      @n   @m  @,   @.   @/
+            @num @tlnav   @spc  @tlsym
+)
+
+(deflayer nomods 
+  brdn brup XX  XX  XX  XX  prev pp next mute vold volu
+  q  w  e  r  t     y  u  i  o  p [ ] \
+  a  s @d  f  g     h  j @k  l  ; ' ;; d и k остаются как Shift для быстрой печати
+  z  x  c  v  b     n  m  ,  .  /
+           _  _     _  _
+)
+
+(deflayer num
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  XX    XX    XX    @r$   XX             S-= 7 8 9 S-8  XX XX XX
+  @osc  @osa  @oss  @osm  bspc           -   4 5 6 / XX
+  XX    @oss  XX    @000  @,00           ,   1 2 3 .
+                    _  @num_nav @num_spc @0_sym
+)
+
+(deflayer nav
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  tab   @swapper S-C-tab C-tab  M-left    pgup   home  esc    end   bspc @ppmnp XX XX
+  @osc  @osa     @oss    @osm   M-right   left   down  up  right enter XX
+  C-z   C-x      C-c     C-v    f18       pgdn   f19   vold  volu  del  
+                              _ _       _  _ 
+)
+
+(deflayer sym
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  esc S-lbrc lbrc S-9   S-5     S-7   S-0   rbrc  S-rbrc  S-' XX XX XX
+  -   S-6    grv  S-grv S-4     S-3   @osm  @oss  @osa    @osc XX
+  S-= =      S-8  ⁄     S-2     S-＼  ＼    S-⁄   S-1     S-;
+                        _ _     S-- _ 
+)
+
+(deflayer fun
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  1     2     3    4    5       6   7    8    9    0 XX XX XX
+  @osc  @osa  @oss @osm f11     f12 @osm @oss @osa @osc XX
+  f1    f2    f3   f4   f5      f6  f7   f8   f9   f10 
+                        _ _     caps _  
+)
+
+(deflayer muggle 
+  brdn brup XX  XX  XX  XX  prev pp next mute vold volu
+  q w e r t     y u i o p [ ] \
+  a s d f g     h j k l ; '
+  z x c v b     n m , . /
+       lalt lmet spc rmet 
+)
