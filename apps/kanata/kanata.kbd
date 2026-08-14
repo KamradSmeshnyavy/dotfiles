@@ -355,7 +355,8 @@
 )
 
 (deflayer def
-  brdn brup XX  XX  XX  XX  prev pp next mute vold volu
+;; brdn brup XX  XX  XX  XX  prev pp next mute vold volu
+   1     2   3   4   5       6    7   8    9    0  -  =
   @q   @w   @e  @r  @t      @y   @u  @i   @o   @p @[ @] @\
   @a   @s   @d  @f  @g      @h   @j  @k   @l   @; @'
   @zfn @x @cnum @v  @b      @n   @m  @,   @.   @/
@@ -372,9 +373,9 @@
 
 (deflayer num
   f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
-  XX    XX    XX    @r$   XX             S-= 7 8 9 S-8  XX XX XX
+  XX    XX    XX    @r$   XX             S-= 1 2 9 S-8  XX XX XX
   @osc  @osa  @oss  @osm  bspc           -   4 5 6 / XX
-  XX    @oss  XX    @000  @,00           ,   1 2 3 .
+  XX    @oss  XX    @000  @,00           ,   7 8 9 .
                     _  @num_nav @num_spc @0_sym
 )
 
