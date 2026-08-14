@@ -53,7 +53,7 @@
 ;;  🟢 Слой 0: DEF (Базовый)
 ;;  Plaintext
 ;;  
-;;  [ 🔅 ][ 🔆 ][    ][    ][    ][    ]   [ ⏮ ][ ⏯ ][ ⏭ ][ 🔇 ][ 🔉 ][ 🔊 ]
+;;  [ 1 ][ 2 ][ 3  ][ 4  ][ 5  ][ 5  ]   [ 7 ][ 8 ][ 9 ][ 0 ][ - ][ = ]
 ;;  [ Q  ][ W  ][ E  ][ R  ][ T  ]       [ Y  ][ U  ][ I  ][ O  ][ P  ][ [  ][ ]  ][ \  ]
 ;;  [A/Ct][S/Al][D/Sf][F/Me][G/Hy]       [H/Hy][J/Me][K/Sf][L/Al][;/Ct][ '  ]
 ;;  [Z/Fn][ X  ][C/Nm][ V  ][ B  ]       [ N  ][ M  ][ ,  ][ .  ][ /  ]
@@ -347,7 +347,7 @@
 )
 
 (defsrc
-  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  1  2  3  4  5  6  7  8  9 0 - =
   q w e r t     y u i o p [ ] \
   a s d f g     h j k l ; '
   z x c v b     n m , . /
@@ -359,7 +359,7 @@
   @q   @w   @e  @r  @t      @y   @u  @i   @o   @p @[ @] @\
   @a   @s   @d  @f  @g      @h   @j  @k   @l   @; @'
   @zfn @x @cnum @v  @b      @n   @m  @,   @.   @/
-            @num @tlnav   @spc  @tlsym
+            @tlnav @num    @spc  @tlsym
 )
 
 (deflayer nomods 
