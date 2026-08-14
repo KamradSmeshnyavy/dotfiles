@@ -1,0 +1,78 @@
+# the keyboard devices to read from, if left empty, it reads from all keyboards
+# one can either specify the name or path of the device (preferably the name, as the path might change)
+# run `mouseless -l` to see all available devices
+devices:
+# - "Name of keyboard"
+# - "/dev/input/by-id/usb-1234_5678-event-kbd"
+
+# one can also exclude specific devices with this option
+devicesExclude:
+# - "Name of keyboard"
+# - "/dev/input/by-id/usb-1234_5678-event-kbd"
+
+# in case one wants to run multiple instances of mouseless, they must have different instanceNames
+# instanceName: "mouseless"
+
+# this is executed when mouseless starts, e.g. useful for setting the keyboard layout
+# startCommand: "setxkbmap de"
+
+# the rate at which the mouse pointer moves (in ms)
+mouseLoopInterval: 20
+
+# the default speed for mouse movement and scrolling
+baseMouseSpeed: 750.0
+baseScrollSpeed: 20.0
+
+# the time it takes to accelerate to baseMouseSpeed (in ms), 0 to reach top speed immediately
+mouseAccelerationTime: 200.0
+# the shape of the acceleration curve, 1.0 is linear, higher values have more time at low speeds
+mouseAccelerationCurve: 2.0
+# speed of the mouse when it starts moving
+startMouseSpeed: 0.0
+# same for deceleration
+mouseDecelerationTime: 300.0
+mouseDecelerationCurve: 3.0
+
+# enables auto-repeat of a tap key when pressed twice within this duration
+quickTapTime: 150
+# two keys must be pressed within this duration to activate a combo (e.g. f+d)
+comboTime: 25
+
+# the rest of the config defines the layers with their bindings
+layers:
+  - name: initial
+    passThrough: true
+    bindings:
+      # Toggle mouse layer with f20 (sent by Kanata upon Super+M)
+      f20: layer mouse
+
+  - name: mouse
+    passThrough: true
+    enterCommand: "echo 1 > /tmp/mouseless_state && hyprctl keyword cursor:inactive_timeout 0 && hyprctl keyword cursor:hide_on_key_press false && notify-send 'Mouseless' 'Mouse mode activated'"
+    exitCommand: "echo 0 > /tmp/mouseless_state && hyprctl keyword cursor:inactive_timeout 3 && hyprctl keyword cursor:hide_on_key_press true && notify-send 'Mouseless' 'Mouse mode deactivated'"
+    bindings:
+      # Movement (Vim-style to match user's Hyprland config)
+      h: move -1  0
+      j: move  0  1
+      k: move  0 -1
+      l: move  1  0
+
+      # Fast movement (Space is under thumb, leaves Shift free for passing through)
+      space: speed 4.0
+
+      # Slow movement (with Alt)
+      leftalt: speed 0.3
+
+      # Clicks (matching user's Hyprland config)
+      s: button left
+      d: button middle
+      f: button right
+
+      # Scroll by holding keys
+      e: scroll up
+      r: scroll down
+
+      # Exit mouse layer explicitly if needed (matches Hyprland escape)
+      esc: layer initial
+      # Exit with the same Kanata shortcut (Super+M -> F20)
+      f20: layer initial
