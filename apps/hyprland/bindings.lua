@@ -73,6 +73,28 @@ o.bind("SUPER + CTRL + L", "Resize window right", hl.dsp.window.resize({ x = 100
 o.bind("SUPER + CTRL + K", "Resize window up", hl.dsp.window.resize({ x = 0, y = -100, relative = true }))
 o.bind("SUPER + CTRL + J", "Resize window down", hl.dsp.window.resize({ x = 0, y = 100, relative = true }))
 
+-- Вход в режим изменения размера (SUPER + R)
+hl.bind("SUPER + R", hl.dsp.submap("resize"))
+
+-- Определение субкарты "resize"
+hl.define_submap("resize", function()
+	-- Изменение размера окон (L, H, K, J)
+	hl.bind("L", hl.dsp.window.resize({ x = 20, y = 0, relative = true }), { repeating = true })
+	hl.bind("H", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
+	hl.bind("K", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
+	hl.bind("J", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), { repeating = true })
+
+	-- Перемещение плавающих окон (SHIFT + L, H, K, J)
+	hl.bind("SHIFT + L", hl.dsp.window.move({ x = 20, y = 0, relative = true }), { repeating = true })
+	hl.bind("SHIFT + H", hl.dsp.window.move({ x = -20, y = 0, relative = true }), { repeating = true })
+	hl.bind("SHIFT + K", hl.dsp.window.move({ x = 0, y = -20, relative = true }), { repeating = true })
+	hl.bind("SHIFT + J", hl.dsp.window.move({ x = 0, y = 20, relative = true }), { repeating = true })
+
+	-- Выход из субкарты (escape или return)
+	hl.bind("escape", hl.dsp.submap("reset"))
+	hl.bind("return", hl.dsp.submap("reset"))
+end)
+
 o.bind("SUPER + Period", "Layout consume", hl.dsp.layout("consume"))
 o.bind("SUPER + SHIFT + Period", "Layout expel", hl.dsp.layout("expel"))
 
