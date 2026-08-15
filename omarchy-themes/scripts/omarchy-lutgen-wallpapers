@@ -45,13 +45,24 @@ with open('$THEME_DIR/colors.toml', 'rb') as f:
     data = tomllib.load(f)
 colors = data.get('colors', data)
 seen = set()
-for i in range(16):
+
+# Try to parse legacy numbered format
+for i in range(256):
     key = f'color{i}'
     if key in colors:
         c = '#' + colors[key].strip().lstrip('#')
         if c not in seen:
             seen.add(c)
             print(c)
+
+# If no numbered colors exist (e.g. new 24-color palettes), extract all valid hex colors
+if len(seen) == 0:
+    for key, val in colors.items():
+        if isinstance(val, str) and val.startswith('#'):
+            c = '#' + val.strip().lstrip('#')
+            if c not in seen:
+                seen.add(c)
+                print(c)
 ")
 
 # Convert python output lines to an array

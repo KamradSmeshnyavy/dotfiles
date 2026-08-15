@@ -5,7 +5,7 @@ export SHELL=$(which bash)
 
 mkdir -p ~/dotfiles/apps/hyprland/
 
-MENU_OPTIONS="1. 🎨 Hyprland Animations\n2. 📊 Shell Layouts\n3. 🖌️ Omarchy Themes\n4. 🖼️ Recolor Wallpaper (Lutgen)\n5. ❌ Exit"
+MENU_OPTIONS="1. 🎨 Hyprland Animations\n2. 📊 Shell Layouts\n3. 🖌️ Omarchy Themes\n4. 🖼️ Theme Wallpaper (No Recolor)\n5. 🖼️ Recolor Wallpaper (Lutgen)\n6. ❌ Exit"
 CHOICE=$(echo -e "$MENU_OPTIONS" | fzf --prompt="Select Category: " --height=15 --border=rounded)
 
 if [[ "$CHOICE" == *"Hyprland Animations"* ]]; then
@@ -42,12 +42,46 @@ elif [[ "$CHOICE" == *"Shell Layouts"* ]]; then
     fi
 
 elif [[ "$CHOICE" == *"Omarchy Themes"* ]]; then
-    uwsm-app -- xdg-terminal-exec -- omarchy theme set
+    THEMES=$(omarchy theme list)
+    SELECTED_THEME=$(echo "$THEMES" | fzf --prompt="Select Theme: " \
+        --preview='
+            DIR=$(omarchy theme dir "{}" 2>/dev/null)
+            if [ -n "$DIR" ] && [ -f "$DIR/preview.png" ]; then
+                kitty +kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 "$DIR/preview.png"
+            elif [ -n "$DIR" ] && [ -f "$DIR/preview.jpg" ]; then
+                kitty +kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 "$DIR/preview.jpg"
+            else
+                echo -e "\n  Theme: {}\n"
+                echo "  No preview image available in theme directory."
+            fi
+        ' --height=80% --border=rounded)
+    
+    if [ -n "$SELECTED_THEME" ]; then
+        notify-send -t 3000 "Theme" "Applying $SELECTED_THEME..."
+        omarchy theme set "$SELECTED_THEME"
+        notify-send -t 3000 "Theme" "Applied $SELECTED_THEME!"
+    fi
+
+elif [[ "$CHOICE" == *"Theme Wallpaper"* ]]; then
+    THEME_NAME=$(cat ~/.local/state/omarchy/current/theme.name 2>/dev/null || echo "default")
+    THEME_DIR="$HOME/.config/omarchy/themes/$THEME_NAME"
+    
+    if [ ! -d "$THEME_DIR/backgrounds" ]; then
+        notify-send "Wallpaper" "No backgrounds directory found for the current theme ($THEME_NAME)."
+        exit 1
+    fi
+    
+    SELECTED_WP=$(find "$THEME_DIR/backgrounds" -maxdepth 1 -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null | fzf --prompt="Select Theme Wallpaper: " --preview='kitty +kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}' --height=80% --border=rounded)
+    
+    if [ -n "$SELECTED_WP" ]; then
+        omarchy theme bg set "$SELECTED_WP"
+        notify-send -t 3000 "Wallpaper" "Applied $(basename "$SELECTED_WP")!"
+    fi
 
 elif [[ "$CHOICE" == *"Recolor Wallpaper"* ]]; then
     WP_DIR="$HOME/Wallpapers"
     [ ! -d "$WP_DIR" ] && WP_DIR="$HOME/Pictures"
-    SELECTED_WP=$(find "$WP_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null | fzf --prompt="Select Wallpaper: " --preview="kitty +kitten icat --clear --transfer-mode=memory --place=40x40@0x0 {}" --height=80% --border=rounded)
+    SELECTED_WP=$(find "$WP_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null | fzf --prompt="Select Wallpaper: " --preview='kitty +kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}' --height=80% --border=rounded)
     if [ -n "$SELECTED_WP" ]; then
         THEME_NAME=$(cat ~/.local/state/omarchy/current/theme.name 2>/dev/null || echo "default")
         THEME_DIR="$HOME/.config/omarchy/themes/$THEME_NAME"
