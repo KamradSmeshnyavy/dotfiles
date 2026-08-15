@@ -2,6 +2,8 @@
 
 hl.unbind("SUPER + RETURN")
 o.bind("SUPER + RETURN", "Terminal", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)"')
+
+hl.unbind("SUPER + ALT + RETURN")
 o.bind(
 	"SUPER + ALT + RETURN",
 	"Tmux",
@@ -22,13 +24,6 @@ o.bind("SUPER + SHIFT + ALT + B", "Browser (private)", "omarchy-launch-browser -
 
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
-
-o.bind("SUPER + SHIFT + N", "Editor", "omarchy-launch-editor")
-o.bind("SUPER + SHIFT + D", "Docker", "omarchy-launch-tui lazydocker")
-o.bind("SUPER + SHIFT + G", "Signal", 'omarchy-launch-or-focus ^signal$ "uwsm-app -- signal-desktop"')
-o.bind("SUPER + SHIFT + O", "Obsidian", 'omarchy-launch-or-focus ^obsidian$ "uwsm-app -- obsidian"')
-o.bind("SUPER + SHIFT + W", "Typora", "uwsm-app -- typora --enable-wayland-ime")
-o.bind("SUPER + SHIFT + SLASH", "Passwords", "uwsm-app -- bw")
 
 -- Media Controls
 o.bind("Pause", "Play/Pause", "playerctl play-pause", { locked = true })
