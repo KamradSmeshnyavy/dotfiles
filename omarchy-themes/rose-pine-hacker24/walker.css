@@ -1,0 +1,13 @@
+@define-color selected-text #ebbcba;
+@define-color text #e0def4;
+@define-color base #191724;
+@define-color border #e0def4;
+@define-color foreground #e0def4;
+@define-color background #191724;
+
+.box-wrapper {
+  background: alpha(@base, 0.95);
+  padding: 20px;
+  border: 2px solid @border;
+  border-radius: 12px;
+}

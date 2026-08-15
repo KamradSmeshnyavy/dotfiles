@@ -1,1 +1,1 @@
-/home/kamradsmeshnyavy/.config/omarchy/current/theme/neovim.lua
+/home/kamradsmeshnyavy/.local/state/omarchy/current/theme/neovim.lua
