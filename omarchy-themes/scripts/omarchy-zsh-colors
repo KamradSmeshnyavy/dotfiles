@@ -5,7 +5,7 @@
 """
 import sys, os, tomllib  # Python ≥ 3.11
 
-THEME_DIR = os.path.expanduser("~/.config/omarchy/current/theme")
+THEME_DIR = os.path.expanduser("~/.local/state/omarchy/current/theme")
 COLORS_TOML = os.path.join(THEME_DIR, "colors.toml")
 OUTPUT = os.path.expanduser("~/dotfiles/omarchy/zsh-colors.zsh")
 

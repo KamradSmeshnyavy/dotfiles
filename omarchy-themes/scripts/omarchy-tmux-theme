@@ -5,7 +5,7 @@
 """
 import sys, os, tomllib
 
-THEME_TOML = os.path.expanduser("~/.config/omarchy/current/theme/colors.toml")
+THEME_TOML = os.path.expanduser("~/.local/state/omarchy/current/theme/colors.toml")
 OUTPUT     = os.path.expanduser("~/.config/tmux/om-theme.conf")
 
 def hex_to_tmux_colour(hex_str):
