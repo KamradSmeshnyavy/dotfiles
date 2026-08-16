@@ -4,6 +4,7 @@ source ./ffmpeg.nu
 source ./obsidian.nu
 source ./mpd.nu
 source ./eza.nu
+source ./sec-stuff.nu
 
 # My custom aliases 
 
@@ -11,6 +12,14 @@ source ./eza.nu
 def --env cx [path: path = "."] {
     cd $path
     ls
+}
+
+def "nu-complete apps" [] {
+    which | get command
+}
+
+def app [name: string@"nu-complete apps"] {
+    job spawn { ^$name o+e>| ignore }
 }
 
 # Интерактивный поиск папки через fzf и переход в неё
