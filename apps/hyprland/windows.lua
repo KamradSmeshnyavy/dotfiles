@@ -6,3 +6,5 @@ o.window("^yazi-folder$", { float = true, size = "800 600", center = true })
 
 -- Быстрый браузер-панель (WaveTerm style)
 o.window("^chrome-google.com__-Default$", { float = true })
+
+
