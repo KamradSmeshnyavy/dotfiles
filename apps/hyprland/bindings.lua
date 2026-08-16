@@ -117,6 +117,7 @@ o.bind(
 o.bind("SUPER + ALT + E", "Emojis", "omarchy menu emoji")
 
 -- Clipboard
+hl.unbind("SUPER+V")
 o.bind("SUPER + V", "Clipboard", "omarchy menu clipboard")
 
 -- Power Menu
