@@ -16,9 +16,6 @@
         {
           "id": "omarchy.clock",
           "format": "HH:mm"
-        },
-        {
-          "id": "omarchy.active-window"
         }
       ],
       "center": [
@@ -38,9 +35,6 @@
         },
         {
           "id": "omarchy.system-update"
-        },
-        {
-          "id": "omarchy.weather"
         },
         {
           "id": "omarchy.agents"
