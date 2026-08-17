@@ -7,7 +7,7 @@
 	url = https://github.com/0xhckr/ghostty-shaders.git
 [submodule "apps/ghostty/cursors"]
 	path = apps/ghostty/cursors
-	url = https://github.com/sahaj-b/ghostty-cursor-shaders.git
+	url = https://github.com/sahaj-b/ghostty-cursor-shaders
 [submodule "apps/sketchybar"]
 	path = apps/sketchybar
 	url = my:sketchybar
