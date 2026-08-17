@@ -4,12 +4,12 @@
 # window-command = super
 
 # Настройка вертикальной синхронизации для экрана ThinkPad (устраняет разрывы кадров)
-window-vsync = true
+# window-vsync = true
 
 # Оптимизация обновления экрана. "true" снижает задержку ввода,
 # заставляя терминал рендерить кадр сразу после изменения данных.
 # rendering-driver = opengl
-font-thicken = true
+# font-thicken = true
 
 # ---- Интеграция с Hyprland (Внешний вид) ----
 # Отключение системных декораций окна (Hyprland сам управляет границами и тенями)
@@ -24,8 +24,6 @@ clipboard-read = allow
 clipboard-write = allow
 mouse-hide-while-typing = true
 
-# ---- Оптимизация под экран ThinkPad (High DPI) ----
-# Автоматическое масштабирование шрифта под плотность пикселей экрана X1 Carbon
 adjust-cursor-thickness = 2
 
 # auto-update-channel = tip
@@ -39,7 +37,7 @@ window-save-state = always
 theme = theme.conf
 confirm-close-surface=false
 # font-family
-font-family = RecMonoCasual Nerd Font
+# font-family = RecMonoCasual Nerd Font
 font-family = Maple Mono NF CN
 # font-family = "RecMonoCasual Nerd Font"
 font-size = 12
@@ -69,7 +67,8 @@ quick-terminal-position = center
 # font-feature = -calt, -liga, -dlig
 
 # shaders
-# custom-shader = ./my_shaders/cursor_efter.glsl
+custom-shader = ./my_shaders/cursor_efter.glsl
+# custom-shader = ./cursors/warp.glsl
 # custom-shader = ./shaders/smear_cursor_blocks.glsl
 # custom-shader = ./my_shaders_new/cursor_warp.glsl
 # custom-shader = ./shader_git/cursor_warp.glsl
@@ -79,8 +78,6 @@ quick-terminal-position = center
 # custom-shader = ./shaders/retro-terminal.glsl
 cursor-style = block
 shell-integration-features = no-cursor
-# cursor-color = #7dcea0
-# cursor-text = #0d0e1a
 
 # keybinds
 # key-remap = super=alt
