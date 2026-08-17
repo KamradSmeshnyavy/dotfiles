@@ -5,6 +5,9 @@
 [submodule "apps/ghostty/shaders"]
 	path = apps/ghostty/shaders
 	url = https://github.com/0xhckr/ghostty-shaders.git
+[submodule "apps/ghostty/cursors"]
+	path = apps/ghostty/cursors
+	url = https://github.com/sahaj-b/ghostty-cursor-shaders.git
 [submodule "apps/sketchybar"]
 	path = apps/sketchybar
 	url = my:sketchybar
