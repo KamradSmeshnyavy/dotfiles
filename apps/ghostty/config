@@ -54,6 +54,7 @@ font-feature = "ss04"
 font-feature = "liga"
 # font-thicken = true
 font-thicken-strength = 255
+# font-feature = -calt, -liga, -dlig
 
 # background
 # background-opacity = 0.80
@@ -64,7 +65,6 @@ link-previews = true
 
 maximize = true
 quick-terminal-position = center
-# font-feature = -calt, -liga, -dlig
 
 # shaders
 custom-shader = ./my_shaders/cursor_efter.glsl
