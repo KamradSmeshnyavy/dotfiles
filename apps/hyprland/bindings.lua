@@ -117,8 +117,8 @@ o.bind(
 o.bind("SUPER + ALT + E", "Emojis", "omarchy menu emoji")
 
 -- Clipboard
-hl.unbind("SUPER+V")
-o.bind("SUPER + V", "Clipboard", "omarchy menu clipboard")
+hl.unbind("SUPER + SHIFT + V")
+o.bind("SUPER + SHIFT + V", "Clipboard", "omarchy menu clipboard")
 
 -- Power Menu
 -- hl.unbind("SUPER + ESCAPE")
@@ -131,4 +131,6 @@ o.bind("SUPER + SHIFT + CTRL + Z", "Reset zoom", "hyprctl keyword cursor:zoom_fa
 
 -- Disabled apps (left as documentation)
 -- o.bind("SUPER + I", "kbptr", "wl-kbptr -o modes=floating,click -o mode_floating.source=detect")
--- o.bind("SUPER + Q", "kbptr-wrapper", "~/.config/hypr/scripts/kbptr-wrapper.sh")
+-- o.bind("SUPER + Q", "kbptr-wrapper", click")
+-- Запуск wl-kbptr с автоматическим выбором режима (например, floating/click)
+hl.bind("SUPER + I", hl.dsp.exec_cmd("wl-kbptr -o modes=floating,click -o mode_floating.source=detect"))
