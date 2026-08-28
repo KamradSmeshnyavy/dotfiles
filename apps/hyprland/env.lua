@@ -4,3 +4,6 @@ hl.env("GHOSTTY_WAYLAND", "1")
 -- Оптимизация драйверов под встроенную графику Intel Arc (Lunar Lake)
 hl.env("MESA_LOADER_DRIVER_NAME", "iris")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "intel")
+
+hl.env("XCURSOR_THEME", "BreezeX-RosePine-Linux")
+hl.env("XCURSOR_SIZE", "24")
