@@ -110,7 +110,7 @@ $env.config = (
     $env.config | upsert keybindings (
         $env.config.keybindings
         | append {
-            name: atuin
+            name: atuin_up
             modifier: none
             keycode: char_k
             mode: [vi_normal]
