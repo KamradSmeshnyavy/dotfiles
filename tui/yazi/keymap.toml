@@ -706,7 +706,7 @@ keymap = [
 
 [[mgr.prepend_keymap]]
 on = "T"
-run = "plugin max-preview"
+run = "plugin zoom"
 desc = "Maximize or restore preview"
 
 [[mgr.prepend_keymap]]
@@ -787,7 +787,7 @@ desc = "Jump to a file via television zoxide"
 
 [[mgr.prepend_keymap]]
 on   = [ "<C-d>" ]
-run  = "shell 'ripdrag \"$@\" -x 2>/dev/null &' --confirm"
+run  = "shell 'ripdrag %s -x 2>/dev/null &' --confirm"
 desc = "Drag and drop (ripdrag)"
 
 # Mount plugin

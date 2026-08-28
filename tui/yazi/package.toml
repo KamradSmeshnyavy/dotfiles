@@ -1,47 +1,42 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "bb758e2"
-hash = "88e56a64b7ce7c4314427452343fef17"
-
-[[plugin.deps]]
-use = "yazi-rs/plugins:max-preview"
-rev = "bb758e2"
-hash = "9bc26d10d2f6e2aa93b10905b1b76979"
+rev = "c591a36"
+hash = "5bb0bfab901d3601c370eafdd66edd31"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "bb758e2"
+rev = "c591a36"
 hash = "187cc58ba7ac3befd49c342129e6f1b6"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mactag"
-rev = "1612f00"
-hash = "899fccc2e4caaebf4c2ce9a491cd2283"
+rev = "c591a36"
+hash = "34e3e12060f833cc21446f23a7ced8d1"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "1612f00"
-hash = "3996fc74044bc44144b323686f887e1"
+rev = "c591a36"
+hash = "f281261ff04ad7ec867c3f802a50835f"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:vcs-files"
-rev = "1612f00"
-hash = "4ee57085277d616acfa0ef1fef37dc00"
+rev = "c591a36"
+hash = "853240b2454c93a93fd03fc9fd7e06e8"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "1612f00"
-hash = "5b2eb0cc2050cec1e4de83cfa51a5b90"
+rev = "c591a36"
+hash = "87472b05a8c420100f6a2b9cde1e7746"
 
 [[plugin.deps]]
 use = "Ape/reflink"
-rev = "7ecd36b"
-hash = "555a412745356f7ce1fd4777917bbfbf"
+rev = "00f0fd0"
+hash = "4a64788e4802ad27c75a9977c29f0e55"
 
 [[plugin.deps]]
 use = "XYenon/clipboard"
-rev = "9089f90"
-hash = "e6efc609de1b617c7e8e98efd5286221"
+rev = "0f4982a"
+hash = "dcda5f179482ee8cc191ad679c9d72e0"
 
 [[plugin.deps]]
 use = "moxuze/television"
@@ -50,15 +45,20 @@ hash = "b82055b61933310ebfa7ccf5239d5c46"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "b9598e6"
-hash = "46cbdc05596a3ecd730b288e28c7079d"
+rev = "c591a36"
+hash = "b95f898e6dc60b52edbc415952e14395"
 
 [[plugin.deps]]
 use = "ndtoan96/ouch"
-rev = "406ce6c"
-hash = "f5afc904d5106ee368c8aa2ded43bd74"
+rev = "cfe4f50"
+hash = "eff5702573b6cfba61e4ac8b1969629a"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:zoom"
+rev = "c591a36"
+hash = "e8e279463ee99c940e6945a14cf4aa9e"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "ca61658"
-hash = "8eabb4e88096f10905a6df62cfaadbf4"
+rev = "20b47bf"
+hash = "ce320f877fe709b189433941aba747c4"
