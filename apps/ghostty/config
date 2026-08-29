@@ -16,8 +16,9 @@
 window-decoration = false
 
 # Размытие заднего плана (работает в паре с правилами Hyprland ниже)
-background-opacity = 0.85
-background-blur = true
+# background-opacity = 0.85
+# background-blur = false
+# background-blur-radius = 64
 
 # ---- Буфер обмена и Мышь ----
 clipboard-read = allow
@@ -67,16 +68,20 @@ maximize = true
 quick-terminal-position = center
 
 # shaders
-custom-shader = ./my_shaders/cursor_efter.glsl
+# custom-shader = ./my_shaders/cursor_efter.glsl
 # custom-shader = ./cursors/warp.glsl
-# custom-shader = ./shaders/smear_cursor_blocks.glsl
+custom-shader = ./shaders/smear_cursor_blocks.glsl
 # custom-shader = ./my_shaders_new/cursor_warp.glsl
 # custom-shader = ./shader_git/cursor_warp.glsl
 # custom-shader = ./my_shaders_new/cursor_warp_mauve_trail.glsl
 # custom-shader = ./shaders/glitchy.glsl
 # custom-shader = ./shaders/glitchy.glsl
 # custom-shader = ./shaders/retro-terminal.glsl
+# custom-shader-animation = false
+
 cursor-style = block
+cursor-style-blink = false
+shell-integration = detect
 shell-integration-features = no-cursor
 
 # keybinds
