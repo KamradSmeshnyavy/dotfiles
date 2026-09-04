@@ -70,3 +70,5 @@ if ('/usr/bin/dircolors' | path exists) {
     # $env.LS_COLORS = (($env.LS_COLORS? | default "") + ":ow=01;34:tw=01;34:")
 }
 
+# fix shell omarchy
+$env.OMARCHY_PATH = "/usr/share/omarchy"
