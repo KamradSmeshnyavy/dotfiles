@@ -1,4 +1,5 @@
 -- User Custom Bindings
+o.bind("F19", "Switch Language", "hyprctl switchxkblayout kanata next")
 
 hl.unbind("SUPER + RETURN")
 o.bind("SUPER + RETURN", "Terminal", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)"')
