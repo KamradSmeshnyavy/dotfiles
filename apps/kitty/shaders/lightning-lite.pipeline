@@ -1,6 +1,8 @@
-   startgroup
-       animation_start cursor-trail-move
-       animation_stop cursor-trail-stop
-       animation_step 66
-       shaders cursor-trail-lightning
-   endgroup
+startgroup
+    animation_start cursor-trail-move
+    animation_stop cursor-trail-stop
+    animation_step 33
+    var float3 BOLT_COLOR = float3(0.084, 0.078, 0.136)
+    var float3 GLOW_COLOR = float3(0.084, 0.078, 0.136)
+    shaders cursor-trail-lightning
+endgroup
