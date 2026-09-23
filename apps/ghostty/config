@@ -68,6 +68,7 @@ maximize = true
 quick-terminal-position = center
 
 # shaders
+custom-shader-animation = true
 # custom-shader = ./my_shaders/cursor_efter.glsl
 # custom-shader = ./cursors/warp.glsl
 custom-shader = ./shaders/smear_cursor_blocks.glsl
