@@ -2,12 +2,27 @@
 # and set `custom_shaders smear-blocks` (with `cursor_trail 1`) in kitty.conf.
 startgroup
     animation_start cursor-trail-move
-    # The smear is invisible after ~6 / TAIL_RATE seconds (0.75 s for TAIL_RATE 8).
-    # default is 800
-    animation_stop 500
+    # The trail is nearly invisible after ~6 / TAIL_RATE seconds (0.75 s for TAIL_RATE 8),
+    # and barely visible after ~0.4 s. Raise this if you lower TAIL_RATE.
+    animation_stop 800
+    # 33 ms = ~30 fps. Use 16 for smoother motion at the cost of more GPU work.
+    animation_step 16
 
-    # 16 ms: the first frames (the "chaos" phase) last only ~25 ms.
-    # default is 16
-    animation_step 33
+    # Colors: uncomment and edit. Values are sRGB, i.e. hex / 255.
+    # Comments must stay on their own lines, not after a value.
+    #
+    # rose #ebbcba
+    var float3 TRAIL_COLOR_HEAD = float3(0.922, 0.737, 0.729)
+    # iris #c4a7e7
+    var float3 TRAIL_COLOR_TAIL = float3(0.769, 0.655, 0.906)
+    # foam #9ccfd8
+    var float3 EDGE_COLOR = float3(0.612, 0.812, 0.847)
+    # var float EDGE_COLOR_MIX = 0.3
+    var float EDGE_COLOR_MIX = 0
+    # var bool HEAD_FROM_CURSOR = true
+    var bool HEAD_FROM_CURSOR = false
+    # var bool INVERT_BACKGROUND = true
+    var bool INVERT_BACKGROUND = false
+
     shaders smear-cursor-blocks
 endgroup
