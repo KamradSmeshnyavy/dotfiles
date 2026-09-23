@@ -7,6 +7,7 @@ startgroup
     animation_stop 500
 
     # 16 ms: the first frames (the "chaos" phase) last only ~25 ms.
+    # default is 16
     animation_step 33
     shaders smear-cursor-blocks
 endgroup
