@@ -15,12 +15,13 @@
         },
         {
           "id": "omarchy.clock",
-          "format": "HH:mm"
+          "format": "HH:mm",
+          "weekStartDay": "monday"
         }
       ],
       "center": [
         {
-          "id": "omarchy.menu"
+          "id": "kamradsmeshnyavy.menu"
         },
         {
           "id": "omarchy.workspaces"
@@ -50,9 +51,18 @@
         },
         {
           "id": "omarchy.power"
+        },
+        {
+          "id": "omarchy.tailscale"
         }
       ]
     }
   },
-  "plugins": []
+  "plugins": [],
+  "disabledPlugins": [
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "kamradsmeshnyavy.menu"
+  ]
 }
