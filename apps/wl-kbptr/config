@@ -9,6 +9,9 @@ modes=tile,bisect
 cancellation_status_code=0
 
 [mode_tile]
+# 28 symbols: the tile grid is ~690 cells on this display (wl-kbptr hardcodes
+# max 26*26 but rounds the cell size down, so it overshoots), and 26 symbols
+# would force 3-character labels. 28*28 = 784 keeps every label 2 characters.
 label_color=#ffffff
 label_select_color=#f38ba8
 unselectable_bg_color=#1e1e2ecc
@@ -16,7 +19,7 @@ selectable_bg_color=#313244ee
 selectable_border_color=#89b4fa
 label_font_family=sans-serif
 label_font_size=24 50% 100
-label_symbols=abcdefghijklmnopqrstuvwxyz
+label_symbols=abcdefghijklmnopqrstuvwxyz;,
 
 [mode_floating]
 source=stdin

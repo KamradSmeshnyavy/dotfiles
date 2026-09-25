@@ -1,5 +1,7 @@
 -- User Custom Bindings
-o.bind("F19", "Switch Language", "hyprctl switchxkblayout kanata next")
+-- "all", а не "kanata": между kanata и Hyprland стоит mouseless, и клавиши
+-- приходят от его устройства (mouseless-keyboard). "all" работает в обоих случаях.
+o.bind("F19", "Switch Language", "hyprctl switchxkblayout all next")
 
 hl.unbind("SUPER + RETURN")
 o.bind("SUPER + RETURN", "Terminal", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)"')
@@ -130,8 +132,12 @@ o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.
 hl.unbind("SUPER + SHIFT + ALT + Z")
 o.bind("SUPER + SHIFT + CTRL + Z", "Reset zoom", "hyprctl keyword cursor:zoom_factor 1")
 
--- Disabled apps (left as documentation)
--- o.bind("SUPER + I", "kbptr", "wl-kbptr -o modes=floating,click -o mode_floating.source=detect")
--- o.bind("SUPER + Q", "kbptr-wrapper", click")
--- Запуск wl-kbptr с автоматическим выбором режима (например, floating/click)
-hl.bind("SUPER + I", hl.dsp.exec_cmd("wl-kbptr -o modes=floating,click -o mode_floating.source=detect"))
+-- wl-kbptr через обёртку: она гасит mouseless на время выбора метки
+-- и возвращает его после выхода (в т.ч. по Esc).
+-- Из mouse-mode эти бинды доступны через правый Super (altgr в слое mouse).
+o.bind(
+	"SUPER + I",
+	"Mouse hints (wl-kbptr detect)",
+	"~/.config/hypr/scripts/kbptr-wrapper.sh -o modes=floating,click -o mode_floating.source=detect"
+)
+o.bind("SUPER + Q", "Mouse grid (wl-kbptr tile)", "~/.config/hypr/scripts/kbptr-wrapper.sh -o modes=tile,click")

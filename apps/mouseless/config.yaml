@@ -2,8 +2,9 @@
 # one can either specify the name or path of the device (preferably the name, as the path might change)
 # run `mouseless -l` to see all available devices
 devices:
-# - "Name of keyboard"
-# - "/dev/input/by-id/usb-1234_5678-event-kbd"
+  # Только виртуальный выход kanata: физическую клавиатуру kanata держит
+  # эксклюзивно, и mouseless должен стоять ниже по цепочке, а не рядом.
+  - "kanata"
 
 # one can also exclude specific devices with this option
 devicesExclude:
@@ -33,18 +34,18 @@ startMouseSpeed: 0.0
 mouseDecelerationTime: 300.0
 mouseDecelerationCurve: 3.0
 
-# enables auto-repeat of a tap key when pressed twice within this duration
-quickTapTime: 150
-# two keys must be pressed within this duration to activate a combo (e.g. f+d)
-comboTime: 25
+# quickTapTime / comboTime здесь не нужны: tap-hold и комбо делает kanata,
+# а пустой список комбо гарантирует, что mouseless ничего не буферизует.
 
 # the rest of the config defines the layers with their bindings
 layers:
   - name: initial
     passThrough: true
     bindings:
-      # Toggle mouse layer with f20 (sent by Kanata upon Super+M)
+      # f20 = включить (kanata: nav + '). f21 = выключить, здесь уже выключено —
+      # глотаем его, чтобы повторное нажатие было просто ничем, а не инверсией.
       f20: layer mouse
+      f21: nop
 
   - name: mouse
     passThrough: true
@@ -63,16 +64,24 @@ layers:
       # Slow movement (with Alt)
       leftalt: speed 0.3
 
-      # Clicks (matching user's Hyprland config)
-      s: button left
-      d: button middle
-      f: button right
+      # Модификаторы на домашнем ряду — та же раскладка, что у homerow mods в kanata,
+      # чтобы мышей можно было кликать с Ctrl / Shift / Alt / Super.
+      a: leftctrl
+      s: leftalt
+      d: leftshift
+      f: leftmeta
+
+      # Клики под правой рукой, рядом с движением
+      n: button left
+      m: button middle
+      comma: button right
 
       # Scroll by holding keys
       e: scroll up
       r: scroll down
 
-      # Exit mouse layer explicitly if needed (matches Hyprland escape)
-      esc: layer initial
-      # Exit with the same Kanata shortcut (Super+M -> F20)
-      f20: layer initial
+      # f21 = выключить (kanata: lmet в слое mouse). f20 здесь уже включено — глотаем.
+      # Отдельный esc здесь был бы рассинхроном: mouseless вышел бы,
+      # а kanata остался бы в своём слое mouse.
+      f20: nop
+      f21: layer initial
