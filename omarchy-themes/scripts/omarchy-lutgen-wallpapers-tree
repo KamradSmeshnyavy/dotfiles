@@ -1,0 +1,383 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Recolor a whole wallpaper *tree* with lutgen, mirroring the directory structure
+# and file names into a new root. Unlike omarchy-lutgen-wallpapers (flat, writes
+# into the theme's backgrounds/), this walks every subdirectory and is resumable:
+# a file already present in the output is skipped unless --force.
+#
+# Counters use `+= 1` rather than `++`: under `set -e` a post-increment that
+# returns 0 makes the arithmetic command "fail" and kills the script.
+# The source root is keyed as "." because bash rejects an empty array subscript.
+
+SRC_DEFAULT="${HOME}/Wallpapers-lutgen/Walls-dharmx"
+OUT_DEFAULT="${HOME}/Wallpapers-lutgen/walls-dharmx-rose-pine-hacker-24"
+
+# Extensions lutgen can recolor, and the ones we only ever copy or skip.
+RECOLOR_EXTS="jpg jpeg png webp gif"
+COPY_EXTS="md"
+SKIP_EXTS="mp4"
+
+THEME=""
+THEME_DIR=""
+ONLY=""
+LEVEL=10
+FORCE=false
+DRY_RUN=false
+ON_FAIL="copy"
+CHUNK=200
+
+usage() {
+  cat <<HELP
+Usage: $(basename "$0") [options] [source-dir] [output-dir]
+
+Recolor every image under source-dir with the theme's palette, writing the same
+directory structure and file names under output-dir.
+
+  source-dir   default: ${SRC_DEFAULT}
+  output-dir   default: ${OUT_DEFAULT}
+
+Options:
+  -t, --theme NAME       theme to take colors from
+                         (default: current theme from omarchy state)
+      --theme-dir DIR    directory containing colors.toml (overrides --theme)
+      --only REL         process only this subdirectory of source-dir
+  -l, --level 2-16       hald CLUT level (default: ${LEVEL})
+  -f, --force            redo files that already exist in the output
+  -n, --dry-run          report the work without running lutgen
+      --on-fail MODE     copy|skip an image lutgen could not write (default: ${ON_FAIL})
+  -h, --help             this text
+
+Recolored: ${RECOLOR_EXTS}
+Copied as-is: ${COPY_EXTS}
+Skipped: ${SKIP_EXTS}
+HELP
+}
+
+die() {
+  echo "Error: $*" >&2
+  exit 1
+}
+
+positional=()
+while (($# > 0)); do
+  case "$1" in
+    -t | --theme)
+      [[ -n ${2:-} ]] || die "--theme requires a value"
+      THEME="$2"
+      shift 2
+      ;;
+    --theme-dir)
+      [[ -n ${2:-} ]] || die "--theme-dir requires a value"
+      THEME_DIR="$2"
+      shift 2
+      ;;
+    --only)
+      [[ -n ${2:-} ]] || die "--only requires a value"
+      ONLY="${2%/}"
+      shift 2
+      ;;
+    -l | --level)
+      [[ -n ${2:-} ]] || die "--level requires a value"
+      LEVEL="$2"
+      shift 2
+      ;;
+    -f | --force)
+      FORCE=true
+      shift
+      ;;
+    -n | --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    --on-fail)
+      [[ ${2:-} == copy || ${2:-} == skip ]] || die "--on-fail takes 'copy' or 'skip'"
+      ON_FAIL="$2"
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -*)
+      die "unknown option: $1"
+      ;;
+    *)
+      positional+=("$1")
+      shift
+      ;;
+  esac
+done
+
+SRC="${positional[0]:-$SRC_DEFAULT}"
+OUT="${positional[1]:-$OUT_DEFAULT}"
+
+[[ -d $SRC ]] || die "source directory does not exist: $SRC"
+[[ $LEVEL =~ ^[0-9]+$ ]] || die "--level must be 2-16"
+((LEVEL >= 2 && LEVEL <= 16)) || die "--level must be 2-16"
+
+SRC="$(cd "$SRC" && pwd -P)"
+
+command -v lutgen >/dev/null 2>&1 ||
+  die "'lutgen' is not installed. Install it with: cargo install lutgen-cli"
+
+# Join a root and a relative dir, where "." means the root itself.
+joinp() {
+  if [[ $2 == "." ]]; then
+    printf '%s' "$1"
+  else
+    printf '%s/%s' "$1" "$2"
+  fi
+}
+
+# --- resolve the theme's colors.toml -----------------------------------------
+
+if [[ -z $THEME_DIR ]]; then
+  if [[ -z $THEME ]]; then
+    THEME="$(cat "$HOME/.local/state/omarchy/current/theme.name" 2>/dev/null || true)"
+    [[ -n $THEME ]] || die "could not read the current theme; pass --theme or --theme-dir"
+  fi
+
+  if command -v omarchy-theme-dir >/dev/null 2>&1; then
+    THEME_DIR="$(omarchy-theme-dir "$THEME" 2>/dev/null || true)"
+  fi
+  [[ -d ${THEME_DIR:-} ]] || THEME_DIR="$HOME/.config/omarchy/themes/$THEME"
+fi
+
+[[ -f "$THEME_DIR/colors.toml" ]] || die "no colors.toml in $THEME_DIR"
+THEME_LABEL="${THEME:-$(basename "$THEME_DIR")}"
+
+echo "Theme:  $THEME_LABEL ($THEME_DIR)" >&2
+echo "Source: $SRC" >&2
+echo "Output: $OUT" >&2
+
+# --- extract the palette ------------------------------------------------------
+
+COLORS=$(python3 -c "
+import tomllib
+with open('$THEME_DIR/colors.toml', 'rb') as f:
+    data = tomllib.load(f)
+colors = data.get('colors', data)
+seen = set()
+
+# Try to parse legacy numbered format
+for i in range(256):
+    key = f'color{i}'
+    if key in colors:
+        c = '#' + colors[key].strip().lstrip('#')
+        if c not in seen:
+            seen.add(c)
+            print(c)
+
+# If no numbered colors exist (e.g. new 24-color palettes), extract all valid hex colors
+if len(seen) == 0:
+    for key, val in colors.items():
+        if isinstance(val, str) and val.startswith('#'):
+            c = '#' + val.strip().lstrip('#')
+            if c not in seen:
+                seen.add(c)
+                print(c)
+")
+
+mapfile -t LUTGEN_COLORS <<<"$COLORS"
+((${#LUTGEN_COLORS[@]} > 0)) || die "no colors found in $THEME_DIR/colors.toml"
+
+echo "Palette: ${#LUTGEN_COLORS[@]} unique colors" >&2
+
+# --- generate the hald CLUT once ---------------------------------------------
+#
+# Every image is recolored through the same cached CLUT: far faster than letting
+# lutgen rebuild the mapping per invocation, and identical across all folders.
+
+CLUT_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-lutgen"
+mkdir -p "$CLUT_CACHE"
+palette_hash=$(printf '%s\n' "${LUTGEN_COLORS[@]}" | md5sum | cut -d' ' -f1)
+CLUT="$CLUT_CACHE/${THEME_LABEL}-l${LEVEL}-${palette_hash}.png"
+
+if [[ -f $CLUT ]]; then
+  echo "Using cached CLUT: $CLUT" >&2
+elif [[ $DRY_RUN == true ]]; then
+  echo "[dry-run] would generate CLUT: $CLUT" >&2
+else
+  echo "Generating hald CLUT (level $LEVEL)..." >&2
+  tmp_clut="$CLUT.$$.png"
+  lutgen generate -l "$LEVEL" -o "$tmp_clut" -- "${LUTGEN_COLORS[@]}" >/dev/null
+  mv -f "$tmp_clut" "$CLUT"
+fi
+
+# --- collect the work ---------------------------------------------------------
+
+ext_in() { # ext_in <ext> <space separated list>
+  local needle="$1" e
+  for e in $2; do
+    [[ $e == "$needle" ]] && return 0
+  done
+  return 1
+}
+
+declare -A DIR_IMAGES=() # relative dir -> newline separated basenames to recolor
+declare -A DIR_COPIES=() # relative dir -> newline separated basenames to copy
+total_images=0
+total_copies=0
+total_skipped=0
+total_unknown=0
+skipped_list=""
+unknown_list=""
+
+scan_root="$SRC"
+if [[ -n $ONLY ]]; then
+  [[ -d "$SRC/$ONLY" ]] || die "--only path does not exist: $SRC/$ONLY"
+  scan_root="$SRC/$ONLY"
+fi
+
+while IFS= read -r -d '' file; do
+  base="${file##*/}"
+  [[ $base == .* ]] && continue
+
+  rel_dir="${file%/*}"
+  rel_dir="${rel_dir#"$SRC"}"
+  rel_dir="${rel_dir#/}"
+  [[ -n $rel_dir ]] || rel_dir="."
+
+  ext="${base##*.}"
+  [[ $ext == "$base" ]] && ext=""
+  ext="${ext,,}"
+
+  if ext_in "$ext" "$RECOLOR_EXTS"; then
+    DIR_IMAGES["$rel_dir"]+="$base"$'\n'
+    total_images=$((total_images + 1))
+  elif ext_in "$ext" "$COPY_EXTS"; then
+    DIR_COPIES["$rel_dir"]+="$base"$'\n'
+    total_copies=$((total_copies + 1))
+  elif ext_in "$ext" "$SKIP_EXTS"; then
+    total_skipped=$((total_skipped + 1))
+    skipped_list+="$(joinp "$rel_dir" "$base")"$'\n'
+  else
+    total_unknown=$((total_unknown + 1))
+    unknown_list+="$(joinp "$rel_dir" "$base")"$'\n'
+  fi
+done < <(find -L "$scan_root" -type f -print0 2>/dev/null | sort -z)
+
+((total_images + total_copies > 0)) || die "nothing to do: no images found under $scan_root"
+
+# Every directory with work, so copies in an image-less directory still happen.
+mapfile -t WORK_DIRS < <(printf '%s\n' "${!DIR_IMAGES[@]}" "${!DIR_COPIES[@]}" | sort -u)
+
+echo >&2
+echo "Found ${#WORK_DIRS[@]} directories, $total_images image(s) to recolor, $total_copies file(s) to copy" >&2
+((total_skipped > 0)) && echo "Skipping $total_skipped file(s) lutgen cannot handle ($SKIP_EXTS)" >&2
+((total_unknown > 0)) && echo "Ignoring $total_unknown file(s) of unknown type" >&2
+echo >&2
+
+# --- process ------------------------------------------------------------------
+
+FAIL_LOG="$OUT/.lutgen-failed.txt"
+count_recolored=0
+count_present=0
+count_copied=0
+count_failed=0
+dir_index=0
+
+[[ $DRY_RUN == true ]] || mkdir -p "$OUT"
+
+for rel in "${WORK_DIRS[@]}"; do
+  dir_index=$((dir_index + 1))
+  src_dir="$(joinp "$SRC" "$rel")"
+  out_dir="$(joinp "$OUT" "$rel")"
+
+  mapfile -t images < <(printf '%s' "${DIR_IMAGES[$rel]:-}")
+  mapfile -t copies < <(printf '%s' "${DIR_COPIES[$rel]:-}")
+
+  # Resume: leave alone anything already written, unless --force.
+  todo=()
+  for base in "${images[@]}"; do
+    if [[ $FORCE == false && -f "$out_dir/$base" ]]; then
+      count_present=$((count_present + 1))
+      continue
+    fi
+    todo+=("$base")
+  done
+
+  printf '[%d/%d] %s — %d image(s)' "$dir_index" "${#WORK_DIRS[@]}" "$rel" "${#todo[@]}" >&2
+  done_already=$((${#images[@]} - ${#todo[@]}))
+  ((done_already > 0)) && printf ' (%d already done)' "$done_already" >&2
+  printf '\n' >&2
+
+  if [[ $DRY_RUN == true ]]; then
+    ((${#copies[@]} > 0)) && echo "        + ${#copies[@]} file(s) to copy" >&2
+    continue
+  fi
+
+  mkdir -p "$out_dir"
+
+  # Recolor in chunks: one lutgen call per chunk keeps the argument list sane
+  # while still amortizing process startup over many files. -d forces directory
+  # output so a single-file chunk cannot end up written *as* $out_dir.
+  i=0
+  while ((i < ${#todo[@]})); do
+    batch_paths=()
+    for base in "${todo[@]:i:CHUNK}"; do
+      batch_paths+=("$src_dir/$base")
+    done
+
+    lutgen apply -d --hald-clut "$CLUT" -o "$out_dir" "${batch_paths[@]}" >/dev/null 2>&1 || true
+    i=$((i + CHUNK))
+  done
+
+  # Anything lutgen did not write gets one lone retry (errors shown), then the
+  # configured fallback, so one unsupported encoder cannot derail the run.
+  for base in "${todo[@]}"; do
+    if [[ ! -f "$out_dir/$base" ]]; then
+      lutgen apply -d --hald-clut "$CLUT" -o "$out_dir" "$src_dir/$base" >/dev/null || true
+    fi
+
+    if [[ -f "$out_dir/$base" ]]; then
+      count_recolored=$((count_recolored + 1))
+      continue
+    fi
+
+    count_failed=$((count_failed + 1))
+    printf '%s\n' "$(joinp "$rel" "$base")" >>"$FAIL_LOG"
+    if [[ $ON_FAIL == copy ]]; then
+      cp -f "$src_dir/$base" "$out_dir/$base"
+      echo "        ! could not recolor $base — copied the original" >&2
+    else
+      echo "        ! could not recolor $base — skipped" >&2
+    fi
+  done
+
+  for base in "${copies[@]}"; do
+    if [[ $FORCE == false && -f "$out_dir/$base" ]]; then
+      count_present=$((count_present + 1))
+      continue
+    fi
+    cp -f "$src_dir/$base" "$out_dir/$base"
+    count_copied=$((count_copied + 1))
+  done
+done
+
+# --- summary ------------------------------------------------------------------
+
+echo >&2
+if [[ $DRY_RUN == true ]]; then
+  echo "Dry run — nothing was written." >&2
+  echo "Would recolor $total_images image(s) and copy $total_copies file(s) into $OUT" >&2
+else
+  echo "Done: $OUT" >&2
+  echo "  recolored:      $count_recolored" >&2
+  echo "  already there:  $count_present" >&2
+  echo "  copied as-is:   $count_copied" >&2
+  echo "  failed:         $count_failed" >&2
+fi
+
+if ((total_skipped > 0)); then
+  echo "  skipped ($SKIP_EXTS): $total_skipped" >&2
+  printf '%s' "$skipped_list" | sed 's/^/    /' >&2
+fi
+if ((total_unknown > 0)); then
+  echo "  ignored (unknown type): $total_unknown" >&2
+  printf '%s' "$unknown_list" | sed 's/^/    /' >&2
+fi
+((count_failed > 0)) && echo "  failures listed in $FAIL_LOG" >&2
+
+exit 0

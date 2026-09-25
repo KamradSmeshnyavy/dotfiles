@@ -52,4 +52,11 @@
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"list\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q list ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
+  // Folder-aware background picker. The whole row is restated, not just the
+  // action: menu entries are normalized before the merge, so any field left out
+  // here is blanked (label falls back to the raw id, and dropping the aliases
+  // breaks `omarchy-menu toggle background`, the SUPER+CTRL+SPACE binding).
+  // omarchy-bg-browser walks subfolders and hands leaf folders to the normal
+  // image grid, which the stock omarchy-theme-bg-switcher cannot do.
+  "style.background": {"icon":"","label":"Background","aliases":["background","wallpaper"],"action":"background=$(omarchy-bg-browser); [[ -n $background ]] && omarchy-theme-bg-set \"$background\""},
 }

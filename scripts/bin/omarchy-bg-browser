@@ -1,0 +1,243 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# omarchy:summary=Browse the current theme's backgrounds folder by folder
+#
+# A folder-aware replacement for omarchy-theme-bg-switcher. The stock switcher
+# hands omarchy-menu-images a flat directory (it only ever scans maxdepth 1), so
+# wallpapers organised into subfolders are invisible to it.
+#
+# Behaviour: while the current folder still has subfolders, show a text menu of
+# them (plus an "Images" row when loose images live there too). Drilling down
+# continues until a folder has no subfolders, where the normal preview grid opens
+# and Enter picks the wallpaper. Esc in the grid steps back up one level; Esc at
+# the top level closes the browser.
+#
+# Prints the chosen image path on stdout and nothing when cancelled — the same
+# contract as omarchy-theme-bg-switcher, so callers stay a one-liner:
+#   bg=$(omarchy-bg-browser); [[ -n $bg ]] && omarchy-theme-bg-set "$bg"
+# Everything else goes to stderr.
+
+GLYPH_FOLDER=$''
+GLYPH_IMAGES=$''
+GLYPH_BACK=$''
+
+LABEL_IMAGES="Images"
+LABEL_BACK=".."
+
+ROOT=""
+CACHE_ONLY=false
+
+usage() {
+  cat <<HELP
+Usage: $(basename "$0") [--root DIR] [--cache]
+
+  --root DIR   browse DIR instead of the current theme's background folder
+  --cache      generate preview thumbnails for every folder in the tree and exit
+  -h, --help   this text
+HELP
+}
+
+while (($# > 0)); do
+  case "$1" in
+    --root)
+      [[ -n ${2:-} ]] || {
+        echo "--root requires a value" >&2
+        exit 1
+      }
+      ROOT="${2%/}"
+      shift 2
+      ;;
+    --cache)
+      CACHE_ONLY=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+theme_name="$(cat "$HOME/.local/state/omarchy/current/theme.name" 2>/dev/null || true)"
+theme_backgrounds="$HOME/.local/state/omarchy/current/theme/backgrounds"
+current_background="$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null || true)"
+
+if [[ -z $ROOT ]]; then
+  [[ -n $theme_name ]] || {
+    echo "Could not read the current theme name" >&2
+    exit 1
+  }
+  ROOT="$HOME/.config/omarchy/backgrounds/$theme_name"
+fi
+
+# Same extensions omarchy-menu-images itself accepts.
+find_images() { # find_images <dir> <maxdepth|any>
+  local dir="$1" depth_args=()
+  [[ $2 != any ]] && depth_args=(-maxdepth "$2")
+
+  find -L "$dir" "${depth_args[@]}" -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \
+    -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
+    -not -name '.*' -print0 2>/dev/null
+}
+
+count_images() { # count_images <dir> <maxdepth|any>
+  find_images "$1" "$2" | tr -dc '\0' | wc -c
+}
+
+list_subdirs() { # list_subdirs <dir> -> null separated, sorted
+  find -L "$1" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -print0 2>/dev/null | sort -z
+}
+
+# --- thumbnail pre-caching ----------------------------------------------------
+
+if [[ $CACHE_ONLY == true ]]; then
+  cached=0
+  while IFS= read -r -d '' dir; do
+    (($(count_images "$dir" 1) > 0)) || continue
+    cached=$((cached + 1))
+    echo "Caching $dir" >&2
+    omarchy-menu-images --cache-only "$dir" || true
+  done < <({
+    printf '%s\0' "$ROOT"
+    find -L "$ROOT" -mindepth 1 -type d -not -name '.*' -print0 2>/dev/null | sort -z
+    [[ -d $theme_backgrounds ]] && printf '%s\0' "$theme_backgrounds"
+  })
+  echo "Cached thumbnails for $cached folder(s)" >&2
+  exit 0
+fi
+
+# --- the preview grid ---------------------------------------------------------
+
+# Opening the grid on the root also offers the theme's own backgrounds, so a
+# theme without subfolders behaves exactly like the stock switcher.
+grid_dirs_for() { # grid_dirs_for <dir> <at_root>
+  printf '%s\0' "$1"
+  if [[ $2 == true && -d $theme_backgrounds && $(readlink -f "$theme_backgrounds") != "$(readlink -f "$1" 2>/dev/null)" ]]; then
+    printf '%s\0' "$theme_backgrounds"
+  fi
+}
+
+# Prints the picked image, or nothing when the grid was dismissed.
+open_grid() { # open_grid <dir> <at_root>
+  local -a dirs=()
+  while IFS= read -r -d '' d; do dirs+=("$d"); done < <(grid_dirs_for "$1" "$2")
+
+  omarchy-menu-images --selected "$current_background" "${dirs[@]}"
+}
+
+# --- walk the tree ------------------------------------------------------------
+
+if [[ ! -d $ROOT ]]; then
+  # No per-theme folder yet: fall back to the theme's own backgrounds.
+  [[ -d $theme_backgrounds ]] || {
+    echo "No backgrounds found for theme '${theme_name:-unknown}'" >&2
+    exit 1
+  }
+  omarchy-menu-images --selected "$current_background" "$theme_backgrounds"
+  exit 0
+fi
+
+stack=("$ROOT")
+
+while ((${#stack[@]} > 0)); do
+  dir="${stack[${#stack[@]} - 1]}"
+  at_root=false
+  ((${#stack[@]} == 1)) && at_root=true
+
+  # Only subfolders that actually hold wallpapers are worth entering.
+  subdirs=()
+  subdir_counts=()
+  while IFS= read -r -d '' sub; do
+    n=$(count_images "$sub" any)
+    n=$((n))
+    ((n > 0)) || continue
+    subdirs+=("$sub")
+    subdir_counts+=("$n")
+  done < <(list_subdirs "$dir")
+
+  images_here=$(count_images "$dir" 1)
+  images_here=$((images_here))
+
+  # A leaf folder goes straight to the previews.
+  if ((${#subdirs[@]} == 0)); then
+    if ((images_here == 0)) && [[ $at_root == true && -d $theme_backgrounds ]]; then
+      : # the root itself is empty, but the theme's own backgrounds still show
+    elif ((images_here == 0)); then
+      echo "No wallpapers in $dir" >&2
+      stack=("${stack[@]:0:${#stack[@]} - 1}")
+      continue
+    fi
+
+    if selection=$(open_grid "$dir" "$at_root") && [[ -n $selection ]]; then
+      printf '%s\n' "$selection"
+      exit 0
+    fi
+
+    # Dismissed: step back up, or leave when there is nowhere to go.
+    stack=("${stack[@]:0:${#stack[@]} - 1}")
+    continue
+  fi
+
+  # Folder rows are the only ones carrying a subtext, so a returned value that
+  # contains a tab is always a folder — even one named "Images" or "..".
+  options=()
+  for i in "${!subdirs[@]}"; do
+    name="${subdirs[i]##*/}"
+    count="${subdir_counts[i]}"
+    if ((count == 1)); then
+      options+=("$GLYPH_FOLDER"$'\t'"$name"$'\t'"1 wallpaper")
+    else
+      options+=("$GLYPH_FOLDER"$'\t'"$name"$'\t'"$count wallpapers")
+    fi
+  done
+
+  if ((images_here > 0)) || [[ $at_root == true && -d $theme_backgrounds ]]; then
+    options+=("$GLYPH_IMAGES"$'\t'"$LABEL_IMAGES")
+  fi
+
+  [[ $at_root == true ]] || options+=("$GLYPH_BACK"$'\t'"$LABEL_BACK")
+
+  if [[ $at_root == true ]]; then
+    prompt="Backgrounds"
+  else
+    prompt="${dir#"$ROOT"/}"
+  fi
+
+  if ! selection=$(omarchy-menu-select "$prompt" "${options[@]}" -- --width 520 --maxheight 520); then
+    stack=("${stack[@]:0:${#stack[@]} - 1}")
+    continue
+  fi
+
+  if [[ $selection == *$'\t'* ]]; then
+    name="${selection%%$'\t'*}"
+    if [[ -d "$dir/$name" ]]; then
+      stack+=("$dir/$name")
+      continue
+    fi
+  fi
+
+  case "$selection" in
+    "$LABEL_BACK")
+      stack=("${stack[@]:0:${#stack[@]} - 1}")
+      ;;
+    "$LABEL_IMAGES")
+      if image=$(open_grid "$dir" "$at_root") && [[ -n $image ]]; then
+        printf '%s\n' "$image"
+        exit 0
+      fi
+      # Dismissing the grid returns to this same folder list.
+      ;;
+    *)
+      echo "Unexpected selection: $selection" >&2
+      ;;
+  esac
+done
+
+exit 0

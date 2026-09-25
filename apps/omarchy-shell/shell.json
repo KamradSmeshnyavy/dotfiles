@@ -50,7 +50,8 @@
           "id": "omarchy.audio"
         },
         {
-          "id": "omarchy.power"
+          "id": "omarchy.power",
+          "showPercentage": false
         },
         {
           "id": "omarchy.tailscale"
