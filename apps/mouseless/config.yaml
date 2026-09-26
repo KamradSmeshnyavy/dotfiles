@@ -71,14 +71,14 @@ layers:
       d: leftshift
       f: leftmeta
 
-      # Клики под правой рукой, рядом с движением
-      n: button left
-      m: button middle
-      comma: button right
+      # Клики под левую рукую в противоположность движениям
+      w: button left
+      e: button middle
+      r: button right
 
       # Scroll by holding keys
-      e: scroll up
-      r: scroll down
+      m: scroll up
+      u: scroll down
 
       # f21 = выключить (kanata: lmet в слое mouse). f20 здесь уже включено — глотаем.
       # Отдельный esc здесь был бы рассинхроном: mouseless вышел бы,
