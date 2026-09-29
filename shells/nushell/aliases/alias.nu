@@ -150,6 +150,8 @@ alias pyenv = overlay use .venv/bin/activate.nu
 alias scene = adb shell sh /storage/emulated/0/Android/data/com.omarea.vtools/up.sh
 alias shizuku = adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh
 alias zo = zoxide
+alias cc = claude
+alias oc = opencode
 # Jump directory
 alias music = yazi ~/OneDrive/Music
 alias vluv = cd ~/vluv
