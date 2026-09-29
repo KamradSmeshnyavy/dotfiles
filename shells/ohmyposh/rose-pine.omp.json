@@ -1,0 +1,5792 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "type": "object",
+  "title": "The Oh My Posh theme definition",
+  "description": "A theme file defines the prompt layout, palette, blocks, and segments Oh My Posh renders in a shell.",
+  "definitions": {
+    "color": {
+      "title": "Color",
+      "description": "The color to use. Accepts a hex color, a named ANSI color, a palette reference (p:<key>), a linear-gradient(...), or a darken(...)/lighten(...) shade.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/color_string"
+        },
+        {
+          "$ref": "#/definitions/palette_reference"
+        },
+        {
+          "$ref": "#/definitions/gradient"
+        },
+        {
+          "$ref": "#/definitions/shade"
+        }
+      ]
+    },
+    "color_string": {
+      "type": "string",
+      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground|accent)$",
+      "title": "Color string",
+      "description": "A hex color (e.g. #3465A4), a named ANSI color (e.g. red, lightBlue), or a special keyword such as transparent, background, or foreground.",
+      "format": "color"
+    },
+    "palette_reference": {
+      "type": "string",
+      "pattern": "^p:.*$",
+      "title": "Palette reference",
+      "description": "A reference to a named color defined in the palette, in the form p:<palette key>."
+    },
+    "gradient": {
+      "type": "string",
+      "pattern": "^(linear|dark|light)-gradient\\(\\s*[^,()]+(\\s*,\\s*[^,()]+)*\\s*\\)$",
+      "title": "Gradient color",
+      "description": "A linear-gradient(...) value that blends two or more comma-separated color stops across the segment."
+    },
+    "shade": {
+      "type": "string",
+      "pattern": "^(darken|lighten)\\(\\s*[^,()]+\\s*,\\s*[^,()]+\\s*\\)$",
+      "title": "Shade color",
+      "description": "A darken(color, percent) or lighten(color, percent) value that shifts a single color toward black or white."
+    },
+    "palette_color": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/color"
+        },
+        {
+          "type": "string",
+          "pattern": "\\{\\{.*\\}\\}",
+          "title": "Color template",
+          "description": "A template that resolves to a color at render time based on the current context."
+        }
+      ]
+    },
+    "templates": {
+      "type": "array",
+      "title": "An array of templates",
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/segment/properties/template"
+      }
+    },
+    "home_enabled": {
+      "type": "boolean",
+      "title": "Enable in the HOME folder",
+      "description": "Display the segment in the HOME folder.",
+      "default": false
+    },
+    "http_timeout": {
+      "type": "integer",
+      "title": "Http request timeout",
+      "description": "Milliseconds to use for http request timeouts.",
+      "default": 20
+    },
+    "expires_in": {
+      "type": "integer",
+      "title": "Expires in",
+      "description": "Access token expiration time in seconds.",
+      "default": 0
+    },
+    "access_token": {
+      "type": "string",
+      "title": "Access token",
+      "description": "The initial access token.",
+      "default": ""
+    },
+    "refresh_token": {
+      "type": "string",
+      "title": "Refresh token",
+      "description": "The initial refresh token.",
+      "default": ""
+    },
+    "display_mode": {
+      "type": "string",
+      "title": "Display Mode",
+      "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder.",
+      "enum": [
+        "always",
+        "files",
+        "environment",
+        "context"
+      ],
+      "default": "context"
+    },
+    "missing_command_text": {
+      "type": "string",
+      "title": "Missing command text",
+      "description": "The string to display when the command is not available.",
+      "default": ""
+    },
+    "status_formats": {
+      "type": "object",
+      "title": "Status string formats",
+      "description": "Override the status format for a specific change. Example: {\"Added\": \"Added: %d\"}.",
+      "default": {}
+    },
+    "native_fallback": {
+      "type": "boolean",
+      "title": "Native Fallback",
+      "description": "Try to use the WSL 2 native command in a shared Windows drive if the Windows executable is not found.",
+      "default": false
+    },
+    "branch_template": {
+      "type": "string",
+      "title": "Branch template",
+      "description": "The template used for the branch name, supports {{ .Branch }} for the branch name.",
+      "default": ""
+    },
+    "mapped_branches": {
+      "type": "object",
+      "title": "Mapped Branches",
+      "description": "Custom glyph/text for specific branches.",
+      "default": {}
+    },
+    "cache_duration": {
+      "type": "string",
+      "title": "Cache duration",
+      "description": "The duration for which the segment is cached, parsed using Go's time.ParseDuration format (e.g. 5m, 1h30m).",
+      "pattern": "^(none|infinite|([0-9]+(h|m|s))+)$"
+    },
+    "language_options": {
+      "type": "object",
+      "title": "Language segment options",
+      "description": "Common options for language segments.",
+      "properties": {
+        "home_enabled": {
+          "$ref": "#/definitions/home_enabled"
+        },
+        "cache_duration": {
+          "$ref": "#/definitions/cache_duration"
+        },
+        "missing_command_text": {
+          "$ref": "#/definitions/missing_command_text"
+        },
+        "display_mode": {
+          "$ref": "#/definitions/display_mode"
+        },
+        "version_url_template": {
+          "type": "string",
+          "title": "Version Url Template",
+          "description": "Template that creates the URL of the version info / release notes.",
+          "default": ""
+        },
+        "tooling": {
+          "type": "array",
+          "title": "Tooling",
+          "description": "The tooling to use for fetching the version.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "title": "Extensions",
+          "description": "The extensions to look for when determining if the current directory is a project.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "project_files": {
+          "type": "array",
+          "title": "Project Files",
+          "description": "The files to look for in a parent directory when determining if the current directory is part of a project.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "folders": {
+          "type": "array",
+          "title": "Folders",
+          "description": "The folders to look for when determining if a folder is a workspace.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "filler": {
+      "type": "string",
+      "title": "Filler",
+      "description": "Right aligned filler text, will span the remaining width."
+    },
+    "aliases": {
+      "type": "object",
+      "title": "Aliases",
+      "description": "Custom value replacement for template parts.",
+      "default": {}
+    },
+    "extra_prompt": {
+      "type": "object",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template",
+          "description": "The template used to render this prompt segment; supports the same Go template syntax and functions as regular segment templates."
+        },
+        "foreground": {
+          "$ref": "#/definitions/color"
+        },
+        "foreground_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "A list of templates evaluated in order; the first one that resolves to a non-empty string sets the foreground color."
+        },
+        "background": {
+          "$ref": "#/definitions/color"
+        },
+        "background_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "A list of templates evaluated in order; the first one that resolves to a non-empty string sets the background color."
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "description": "A horizontal section of the prompt that groups one or more segments together on a single line.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "prompt"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "type",
+              "alignment",
+              "segments"
+            ],
+            "title": "Prompt definition, contains 1 or more segments to render"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rprompt"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "type",
+              "segments"
+            ],
+            "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "prompt"
+              },
+              "alignment": {
+                "const": "right"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "overflow": {
+                "type": "string",
+                "title": "Block overflow",
+                "description": "How to handle this block when it no longer fits the terminal width: break moves it to a new line, hide removes it.",
+                "enum": [
+                  "break",
+                  "hide"
+                ],
+                "default": ""
+              },
+              "filler": {
+                "$ref": "#/definitions/filler",
+                "description": "The character(s) repeated to fill the gap between this left-aligned and a right-aligned block."
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Block type",
+          "description": "Whether this block renders as the main prompt or the right-aligned prompt (rprompt).",
+          "enum": [
+            "prompt",
+            "rprompt"
+          ],
+          "default": "prompt"
+        },
+        "alignment": {
+          "type": "string",
+          "title": "Block alignment",
+          "description": "Whether the block is aligned to the left or right edge of the terminal.",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "default": "left"
+        },
+        "newline": {
+          "type": "boolean",
+          "title": "Newline",
+          "description": "Start the block on a new line before rendering its segments.",
+          "default": false
+        },
+        "filler": {
+          "type": "string",
+          "title": "Filler",
+          "description": "The character(s) repeated to fill the gap between a left-aligned and right-aligned block.",
+          "default": ""
+        },
+        "overflow": {
+          "type": "string",
+          "title": "Overflow",
+          "description": "How to handle this block when it no longer fits the terminal width: break moves it to a new line, hide removes it.",
+          "default": ""
+        },
+        "leading_diamond": {
+          "type": "string",
+          "title": "Leading diamond",
+          "description": "The character used to start the first segment of the block when you want it to always begin with a diamond shape.",
+          "default": ""
+        },
+        "trailing_diamond": {
+          "type": "string",
+          "title": "Trailing diamond",
+          "description": "The character used to end the last segment of the block when you want it to always finish with a diamond shape.",
+          "default": ""
+        },
+        "segments": {
+          "type": "array",
+          "title": "Segments list, prompt elements to display based on context",
+          "description": "The list of segments rendered in this block, in order.",
+          "default": [],
+          "items": {
+            "$ref": "#/definitions/segment"
+          }
+        },
+        "force": {
+          "type": "boolean",
+          "title": "Force",
+          "description": "Always render the block, even when every one of its segments is empty.",
+          "default": false
+        },
+        "restart_cycle": {
+          "type": "boolean",
+          "title": "Restart cycle",
+          "description": "Restart the shared color cycle from its first color at the start of this block instead of continuing where the previous block left off.",
+          "default": false
+        },
+        "index": {
+          "type": "integer",
+          "title": "Index",
+          "description": "The position of this block in the configuration, used to target it when overriding a specific block in a base configuration."
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "title": "Segment",
+      "description": "A single element of the prompt, such as the current path, git status, or a language version.",
+      "default": {},
+      "required": [
+        "type",
+        "style"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Segment Type",
+          "description": "The segment type, which determines what information is displayed and which options are available.",
+          "enum": [
+            "angular",
+            "antigravity",
+            "argocd",
+            "aspire",
+            "aurelia",
+            "aws",
+            "az",
+            "azd",
+            "azfunc",
+            "battery",
+            "bazel",
+            "brewfather",
+            "buf",
+            "bun",
+            "carbonintensity",
+            "cds",
+            "cf",
+            "cftarget",
+            "claude",
+            "clojure",
+            "cmake",
+            "copilot",
+            "copilot_cli",
+            "connection",
+            "crystal",
+            "dart",
+            "deno",
+            "docker",
+            "dotnet",
+            "dvc",
+            "elixir",
+            "executiontime",
+            "firebase",
+            "flutter",
+            "fortran",
+            "fossil",
+            "gcp",
+            "git",
+            "gitversion",
+            "go",
+            "gradle",
+            "haskell",
+            "helm",
+            "http",
+            "ipify",
+            "java",
+            "jujutsu",
+            "julia",
+            "kotlin",
+            "kubectl",
+            "language",
+            "lastfm",
+            "lua",
+            "mercurial",
+            "mojo",
+            "mvn",
+            "nba",
+            "nbgv",
+            "nightscout",
+            "nim",
+            "nix-shell",
+            "node",
+            "npm",
+            "nx",
+            "ocaml",
+            "orthodoxcal",
+            "os",
+            "owm",
+            "path",
+            "pear",
+            "perl",
+            "php",
+            "plastic",
+            "pnpm",
+            "project",
+            "pulumi",
+            "python",
+            "quasar",
+            "r",
+            "ramadan",
+            "react",
+            "root",
+            "ruby",
+            "rust",
+            "sapling",
+            "session",
+            "shell",
+            "sitecore",
+            "spotify",
+            "status",
+            "strava",
+            "svelte",
+            "svn",
+            "swift",
+            "sysinfo",
+            "talosctl",
+            "taskwarrior",
+            "tauri",
+            "terraform",
+            "text",
+            "time",
+            "todoist",
+            "ui5tooling",
+            "umbraco",
+            "uno",
+            "unity",
+            "upgrade",
+            "v",
+            "vala",
+            "vimode",
+            "wakatime",
+            "winget",
+            "winreg",
+            "withings",
+            "xmake",
+            "yarn",
+            "ytm",
+            "zig",
+            "zvm"
+          ]
+        },
+        "style": {
+          "title": "Segment Style",
+          "description": "How the segment is rendered relative to its neighbors: powerline, plain, diamond, or accordion.",
+          "anyOf": [
+            {
+              "enum": [
+                "plain",
+                "powerline",
+                "diamond",
+                "accordion"
+              ]
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "foreground": {
+          "$ref": "#/definitions/color"
+        },
+        "foreground_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "A list of templates evaluated in order; the first one that resolves to a non-empty string sets the foreground color."
+        },
+        "background": {
+          "$ref": "#/definitions/color"
+        },
+        "background_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "A list of templates evaluated in order; the first one that resolves to a non-empty string sets the background color."
+        },
+        "template": {
+          "type": "string",
+          "title": "Template text",
+          "description": "A Go text/template string used to render the segment's text.",
+          "default": ""
+        },
+        "templates_logic": {
+          "type": "string",
+          "title": "Templates Logic",
+          "description": "How multiple templates are combined: first_match keeps only the first non-empty result, join combines every non-empty result.",
+          "enum": [
+            "first_match",
+            "join"
+          ]
+        },
+        "max_width": {
+          "type": "integer",
+          "title": "if the terminal width exceeds this value, the segment will be hidden",
+          "description": "Hide the segment once the terminal width goes above this value. Set to 0 to disable.",
+          "default": 0
+        },
+        "min_width": {
+          "type": "integer",
+          "title": "if the terminal width is inferior than this value, the segment will be hidden",
+          "description": "Hide the segment while the terminal width stays below this value. Set to 0 to disable.",
+          "default": 0
+        },
+        "options": {
+          "type": "object",
+          "title": "Segment options, used to change behavior/displaying",
+          "description": "Segment-specific settings that customize its behavior and appearance beyond the shared segment properties.",
+          "default": {}
+        },
+        "properties": {
+          "type": "object",
+          "title": "Segment Properties (DEPRECATED)",
+          "description": "Deprecated: use options instead. This field only exists for backward compatibility with version 3 configs and will be removed in a future version.",
+          "default": {},
+          "deprecated": true,
+          "deprecationMessage": "The 'properties' field is deprecated. Please rename it to 'options' in your configuration."
+        },
+        "interactive": {
+          "type": "boolean",
+          "title": "Allow the use of interactive prompt escape sequences",
+          "description": "Stop escaping the segment's text so Bash/Zsh interactive prompt escape sequences inside it are interpreted rather than shown literally.",
+          "default": false
+        },
+        "alias": {
+          "type": "string",
+          "title": "Give the segment an alias for use in templates",
+          "description": "A name for this segment so its data can be referenced from other segments' templates.",
+          "default": ""
+        },
+        "include_folders": {
+          "type": "array",
+          "title": "If specified, segment will only render in these folders",
+          "description": "Only render the segment when the current path is inside one of these folders.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclude_folders": {
+          "type": "array",
+          "title": "Exclude rendering in these folders",
+          "description": "Never render the segment while the current path is inside one of these folders.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "cache": {
+          "type": "object",
+          "title": "Cache settings",
+          "description": "Controls how long the segment's rendered output is reused before it's refreshed again, useful when the segment is slow to compute.",
+          "default": {},
+          "properties": {
+            "duration": {
+              "$ref": "#/definitions/cache_duration"
+            },
+            "strategy": {
+              "type": "string",
+              "title": "Cache strategy",
+              "description": "Choose how cache entries are matched, such as by folder, shell session, or device.",
+              "default": "folder",
+              "enum": [
+                "folder",
+                "session",
+                "device"
+              ]
+            }
+          }
+        },
+        "placeholder": {
+          "type": "string",
+          "title": "Placeholder text",
+          "description": "The text to display while the segment is loading in streaming mode.",
+          "default": "..."
+        },
+        "fallback_template": {
+          "type": "string",
+          "title": "Fallback template text",
+          "description": "A template rendered instead of hiding the segment when it has no data to show. Since the segment isn't fully loaded at that point, stick to static text and global template variables here. Leave empty to hide the segment as usual.",
+          "default": ""
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "angular"
+              }
+            }
+          },
+          "then": {
+            "title": "Angular CLI Segment",
+            "description": "Display the currently active Angular CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "angular.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "angular"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "antigravity"
+              }
+            }
+          },
+          "then": {
+            "title": "Antigravity CLI Segment",
+            "description": "Display Antigravity CLI session information including the current AI model, token usage, and workspace details. Shows a visual gauge of context window usage and formatted token information for monitoring your Antigravity session.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge.",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge.",
+                    "default": "▱"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "argocd"
+              }
+            }
+          },
+          "then": {
+            "title": "ArgoCD Segment",
+            "description": "Display the current ArgoCD context name, user and/or server."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "aspire"
+              }
+            }
+          },
+          "then": {
+            "title": "Aspire Segment",
+            "description": "Status of your Aspire AppHost in the current repo and whether it is running. The segment uses the Aspire CLI to resolve the AppHost with aspire extension get-apphosts and checks running instances with aspire ps --format json.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "fetch_running": {
+                    "type": "boolean",
+                    "title": "Fetch Running",
+                    "description": "Query aspire ps to determine whether the resolved AppHost is running.",
+                    "default": true
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "aurelia"
+              }
+            }
+          },
+          "then": {
+            "title": "Aurelia Segment",
+            "description": "Display the currently active Aurelia version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "package.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "aurelia"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "aws"
+              }
+            }
+          },
+          "then": {
+            "title": "AWS Segment",
+            "description": "Display the currently active AWS profile and region.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default User Profile",
+                    "description": "Display the segment when default user or not.",
+                    "default": true
+                  },
+                  "display_access_key_id": {
+                    "type": "boolean",
+                    "title": "Display Access Key ID",
+                    "description": "Populate .AccessKeyID from AWS_ACCESS_KEY_ID, the AWS credentials file, or the AWS config file.",
+                    "default": false
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "az"
+              }
+            }
+          },
+          "then": {
+            "title": "Azure Segment",
+            "description": "Display the currently active Azure subscription information.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "title": "Source",
+                    "description": "Sources to get subscription information from. Can be any of the following values, joined by | to loop multiple sources for context. cli: fetch the information from the CLI config; pwsh: fetch the information from the PowerShell Module config.",
+                    "default": "first_match",
+                    "enum": [
+                      "cli",
+                      "pwsh"
+                    ]
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "azd"
+              }
+            }
+          },
+          "then": {
+            "title": "Azure Developer CLI Segment",
+            "description": "Display the currently active environment in the Azure Developer CLI."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "azfunc"
+              }
+            }
+          },
+          "then": {
+            "title": "Azure Function Segment",
+            "description": "Display the currently active Azure Functions CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "host.json",
+                      "local.settings.json",
+                      "function.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "func"
+                    ]
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "battery"
+              }
+            }
+          },
+          "then": {
+            "title": "Battery Segment",
+            "description": ":::caution The segment is not supported and automatically disabled on Windows when WSL 1 is detected. Works fine with WSL 2. :::.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error context when failing to retrieve the battery information.",
+                    "default": false
+                  },
+                  "charging_icon": {
+                    "type": "string",
+                    "title": "Charging Icon",
+                    "description": "Text/icon to display when charging.",
+                    "default": ""
+                  },
+                  "discharging_icon": {
+                    "type": "string",
+                    "title": "discharging Dcon",
+                    "description": "Text/icon to display when discharging.",
+                    "default": ""
+                  },
+                  "charged_icon": {
+                    "type": "string",
+                    "title": "Charged Icon",
+                    "description": "Text/icon to display when fully charged.",
+                    "default": ""
+                  },
+                  "not_charging_icon": {
+                    "type": "string",
+                    "title": "Not Charging Icon",
+                    "description": "Text/icon to display when on AC power.",
+                    "default": ""
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "bazel"
+              }
+            }
+          },
+          "then": {
+            "title": "Bazel Segment",
+            "description": "Display the currently active Bazel version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.bazel",
+                      "*.bzl",
+                      "BUILD",
+                      "WORKSPACE",
+                      ".bazelrc",
+                      ".bazelversion"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      "bazel-bin",
+                      "bazel-out",
+                      "bazel-testlogs"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "bazel"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string",
+                    "title": "Icon",
+                    "description": "The icon representing Bazel's logo.",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "brewfather"
+              }
+            }
+          },
+          "then": {
+            "title": "Brewfather Batch Status",
+            "description": "Calling all brewers! Keep up-to-date with the status of your Brewfather batch directly in your commandline prompt using the brewfather segment!",
+            "properties": {
+              "options": {
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "title": "Brewfather UserID (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option.",
+                    "default": ""
+                  },
+                  "api_key": {
+                    "type": "string",
+                    "title": "Brewfather API Key (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option.",
+                    "default": ""
+                  },
+                  "batch_id": {
+                    "type": "string",
+                    "title": "ID of the batch in Brewfather (required)",
+                    "description": "At the end of the URL when viewing the batch on the Brewfather site.",
+                    "default": ""
+                  },
+                  "day_icon": {
+                    "type": "string",
+                    "title": "Icon to use to indicate days",
+                    "description": "Appended to a number to indicate days, e.g. 25d.",
+                    "default": "d"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "doubleup_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, very high positive change",
+                    "description": "Delta between this and prior temperature reading is very high (> 4C by default), available in template as .TemperatureTrend.",
+                    "default": "↑↑"
+                  },
+                  "singleup_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, high positive change",
+                    "description": "Delta between this and prior temperature reading is high (2C < delta < 4C by default), available in template as .TemperatureTrend.",
+                    "default": "↑"
+                  },
+                  "fortyfiveup_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, positive change",
+                    "description": "Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available in template as .TemperatureTrend.",
+                    "default": "↗"
+                  },
+                  "flat_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, flat/small change",
+                    "description": "Delta between this and prior temperature and this temperature reading (< +-0.5C change), available in template as .TemperatureTrend.",
+                    "default": "→"
+                  },
+                  "fortyfivedown_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, v. negative change",
+                    "description": "Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available in template as .TemperatureTrend.",
+                    "default": "↘"
+                  },
+                  "singledown_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, high negative change",
+                    "description": "Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available in template as .TemperatureTrend.",
+                    "default": "↓"
+                  },
+                  "doubledown_icon": {
+                    "type": "string",
+                    "title": "Temperature trend icon, very high negative change",
+                    "description": "Delta between this and prior temperature reading is very large negative (> -4C by default), available in template as .TemperatureTrend.",
+                    "default": "↓↓"
+                  },
+                  "planning_status_icon": {
+                    "type": "string",
+                    "title": "Icon for batch in planning",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  },
+                  "brewing_status_icon": {
+                    "type": "string",
+                    "title": "Icon for batch being brewed",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  },
+                  "fermenting_status_icon": {
+                    "type": "string",
+                    "title": "Icon for batch fermenting",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  },
+                  "conditioning_status_icon": {
+                    "type": "string",
+                    "title": "Icon for batch conditioning",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  },
+                  "completed_status_icon": {
+                    "type": "string",
+                    "title": "Icon for completed batch",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  },
+                  "archived_status_icon": {
+                    "type": "string",
+                    "title": "Icon for archived batch",
+                    "description": "Available in template as .StatusIcon.",
+                    "default": ""
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "buf"
+              }
+            }
+          },
+          "then": {
+            "title": "Buf Segment",
+            "description": "Display the currently active Buf CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "buf.yaml",
+                      "buf.gen.yaml",
+                      "buf.work.yaml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "buf"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "bun"
+              }
+            }
+          },
+          "then": {
+            "title": "Bun CLI Segment",
+            "description": "Display the currently active Bun CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "bun.lockb",
+                      "bun.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "bun"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "carbonintensity"
+              }
+            }
+          },
+          "then": {
+            "title": "Carbon Intensity Segment",
+            "description": "Shows the actual and forecast carbon intensity in gCO2/kWh using data from the Carbon Intensity API.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cds"
+              }
+            }
+          },
+          "then": {
+            "title": "CDS (SAP CAP) segment",
+            "description": "Display the active CDS CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      ".cdsrc.json",
+                      ".cdsrc-private.json",
+                      "*.cds"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cds"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cf"
+              }
+            }
+          },
+          "then": {
+            "title": "Clound Foundry CLI segment",
+            "description": "Display the active Cloud Foundry CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "manifest.yml",
+                      "mta.yaml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cf"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cftarget"
+              }
+            }
+          },
+          "then": {
+            "title": "Clound Foundry Target segment",
+            "description": "Display the details of the logged Cloud Foundry endpoint (cf target details).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode",
+                    "enum": [
+                      "always",
+                      "files"
+                    ],
+                    "default": "always"
+                  },
+                  "files": {
+                    "type": "array",
+                    "title": "Files",
+                    "description": "The files to display in the segment.",
+                    "default": [
+                      "manifest.yml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "clojure"
+              }
+            }
+          },
+          "then": {
+            "title": "Clojure Segment",
+            "description": "Display the currently active Clojure version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "project.clj",
+                      "deps.edn",
+                      "build.boot",
+                      "bb.edn",
+                      "*.clj",
+                      "*.cljc",
+                      "*.cljs"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "clojure",
+                      "lein"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cmake"
+              }
+            }
+          },
+          "then": {
+            "title": "Cmake Segment",
+            "description": "Display the currently active Cmake version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.cmake",
+                      "CMakeLists.txt"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cmake"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "claude"
+              }
+            }
+          },
+          "then": {
+            "title": "Claude Code Segment",
+            "description": "Display Claude Code session information including the current AI model, token usage, costs, and workspace details. Shows a visual gauge of context window usage and formatted cost/token information for monitoring your Claude usage.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge.",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge.",
+                    "default": "▱"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "copilot"
+              }
+            }
+          },
+          "then": {
+            "title": "GitHub Copilot Segment",
+            "description": "Display your GitHub Copilot usage statistics and quota information including premium interactions, inline completions, and chat usage. This segment was inspired by Elio Struyf's GitHub Copilot Usage Tauri application.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "copilot_cli"
+              }
+            }
+          },
+          "then": {
+            "title": "Copilot CLI Segment",
+            "description": "Display GitHub Copilot CLI session information including the current AI model, token usage, and workspace details. Shows a visual gauge of context window usage and formatted token/duration information for monitoring your Copilot CLI session.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge.",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge.",
+                    "default": "▱"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "connection"
+              }
+            }
+          },
+          "then": {
+            "title": "Connection Segment",
+            "description": "Show details about the currently connected network, such as Wi-Fi or Ethernet (Windows only).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "title": "Connection type",
+                    "description": "The connection type to display.",
+                    "enum": [
+                      "ethernet",
+                      "wifi",
+                      "cellular",
+                      "bluetooth"
+                    ],
+                    "default": "wifi|ethernet"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "crystal"
+              }
+            }
+          },
+          "then": {
+            "title": "Crystal Segment",
+            "description": "Display the currently active crystal version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.cr",
+                      "shard.yml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "crystal"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dart"
+              }
+            }
+          },
+          "then": {
+            "title": "Dart Segment",
+            "description": "Display the currently active Dart version. Supports fvm.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.dart",
+                      "pubspec.yaml",
+                      "pubspec.yml",
+                      "pubspec.lock"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      ".dart_tool"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "fvm",
+                      "dart"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "deno"
+              }
+            }
+          },
+          "then": {
+            "title": "Deno CLI Segment",
+            "description": "Display the currently active Deno CLI version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.js",
+                      "*.ts",
+                      "deno.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "deno"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "style": {
+                "const": "diamond"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leading_diamond": {
+                "type": "string",
+                "title": "Leading diamond",
+                "description": "The character used to start this segment when you want it to always begin with a diamond shape.",
+                "default": ""
+              },
+              "trailing_diamond": {
+                "type": "string",
+                "title": "Trailing diamond",
+                "description": "The character used to end this segment when you want it to always finish with a diamond shape.",
+                "default": ""
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "docker"
+              }
+            }
+          },
+          "then": {
+            "title": "Docker Segment",
+            "description": "Display the current Docker context, or a list of running containers when display_mode is set to environment.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode",
+                    "enum": [
+                      "files",
+                      "context",
+                      "environment"
+                    ]
+                  },
+                  "extensions": {
+                    "default": [
+                      "compose.yml",
+                      "compose.yaml",
+                      "docker-compose.yml",
+                      "docker-compose.yaml",
+                      "Dockerfile"
+                    ]
+                  },
+                  "fetch_context": {
+                    "type": "boolean",
+                    "title": "Fetch Context",
+                    "description": "Fetch the Docker context.",
+                    "default": true
+                  },
+                  "docker_command": {
+                    "type": "string",
+                    "title": "Docker Command",
+                    "description": "Command used to call Docker.",
+                    "default": "docker"
+                  },
+                  "filter": {
+                    "type": "string",
+                    "title": "Filter",
+                    "description": "A filter expression passed to docker ps, using the same syntax as the Docker CLI's --filter flag.",
+                    "default": ""
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dotnet"
+              }
+            }
+          },
+          "then": {
+            "title": "Dotnet Segment",
+            "description": "Display the currently active .NET SDK version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.cs",
+                      "*.csx",
+                      "*.vb",
+                      "*.fs",
+                      "*.fsx",
+                      "*.sln",
+                      "*.slnf",
+                      "*.slnx",
+                      "*.csproj",
+                      "*.fsproj",
+                      "*.vbproj",
+                      "global.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "dotnet"
+                    ]
+                  },
+                  "fetch_sdk_version": {
+                    "type": "boolean",
+                    "title": "Fetch SDK Version",
+                    "description": "Fetch the .NET SDK version used in global.json.",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dvc"
+              }
+            }
+          },
+          "then": {
+            "title": "DVC Segment",
+            "description": "Display Data Version Control (DVC) information when the current or a parent directory contains a .dvc folder and the dvc executable is available.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "elixir"
+              }
+            }
+          },
+          "then": {
+            "title": "Elixir Segment",
+            "description": "Display the currently active Elixir version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.ex",
+                      "*.exs"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "asdf",
+                      "elixir"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "executiontime"
+              }
+            }
+          },
+          "then": {
+            "title": "Displays the execution time of the previously executed command",
+            "description": "Displays the execution time of the previously executed command.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Always show the duration.",
+                    "default": false
+                  },
+                  "threshold": {
+                    "type": "integer",
+                    "title": "Threshold",
+                    "description": "Minimum duration (milliseconds) required to enable this segment.",
+                    "default": 500
+                  },
+                  "style": {
+                    "type": "string",
+                    "title": "Style",
+                    "description": "The style in which the time will be displayed.",
+                    "enum": [
+                      "austin",
+                      "roundrock",
+                      "dallas",
+                      "galveston",
+                      "galvestonms",
+                      "houston",
+                      "amarillo",
+                      "round",
+                      "lucky7",
+                      "iso8601",
+                      "iso8601ms"
+                    ],
+                    "default": "austin"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "firebase"
+              }
+            }
+          },
+          "then": {
+            "title": "Firebase Segment",
+            "description": "Display the currently active Firebase project, based on the firebase-tools.json file generated by the Firebase CLI."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "flutter"
+              }
+            }
+          },
+          "then": {
+            "title": "Flutter Segment",
+            "description": "Display the currently active flutter version. Supports fvm.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.dart",
+                      "pubspec.yaml",
+                      "pubspec.yml",
+                      "pubspec.lock"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      ".dart_tool"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "fvm",
+                      "flutter"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "fortran"
+              }
+            }
+          },
+          "then": {
+            "title": "Fortran Segment",
+            "description": "Display the currently active fortran compiler version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "fpm.toml",
+                      "*.f",
+                      "*.for",
+                      "*.fpp",
+                      "*.f77",
+                      "*.f90",
+                      "*.f95",
+                      "*.f03",
+                      "*.f08",
+                      "*.F",
+                      "*.FOR",
+                      "*.FPP",
+                      "*.F77",
+                      "*.F90",
+                      "*.F95",
+                      "*.F03",
+                      "*.F08"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gfortran"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "fossil"
+              }
+            }
+          },
+          "then": {
+            "title": "Fossil Segment",
+            "description": "Display Fossil version control information when the current directory is inside a Fossil repository.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gcp"
+              }
+            }
+          },
+          "then": {
+            "title": "GCP Segment",
+            "description": "Display the currently active GCP project, region and account."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "git"
+              }
+            }
+          },
+          "then": {
+            "title": "Git Segment",
+            "description": "Display git information when in a Git repository. Also works for subfolders. For maximum compatibility, make sure your git executable is up-to-date (when branch or status information is incorrect for example).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "native_status": {
+                    "type": "boolean",
+                    "title": "Use the Native Status Engine",
+                    "description": "Fetch the status information using the built-in engine instead of the git CLI (experimental, falls back to git automatically).",
+                    "default": false
+                  },
+                  "disable_with_jj": {
+                    "type": "boolean",
+                    "title": "Disable with Jujutsu",
+                    "description": "Disable the git segment when there's a .jj directory in the parent file path.",
+                    "default": false
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the git branch name.",
+                    "default": " "
+                  },
+                  "branch_identical_icon": {
+                    "type": "string",
+                    "title": "Branch Identical Icon",
+                    "description": "The icon to display when remote and local are identical.",
+                    "default": "≡"
+                  },
+                  "branch_ahead_icon": {
+                    "type": "string",
+                    "title": "Branch Ahead Icon",
+                    "description": "The icon to display when the local branch is ahead of its remote.",
+                    "default": "↑"
+                  },
+                  "branch_behind_icon": {
+                    "type": "string",
+                    "title": "Branch Behind Icon",
+                    "description": "The icon to display when the local branch is behind its remote.",
+                    "default": "↓"
+                  },
+                  "branch_gone_icon": {
+                    "type": "string",
+                    "title": "Branch Gone Icon",
+                    "description": "The icon to display when there's no remote branch.",
+                    "default": "≢"
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the commit context (detached HEAD)",
+                    "default": ""
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the tag context.",
+                    "default": ""
+                  },
+                  "rebase_icon": {
+                    "type": "string",
+                    "title": "Rebase Icon",
+                    "description": "Icon/text to display before the context when in a rebase.",
+                    "default": ""
+                  },
+                  "cherry_pick_icon": {
+                    "type": "string",
+                    "title": "Cherry-pick Icon",
+                    "description": "Icon/text to display before the context when doing a cherry-pick.",
+                    "default": ""
+                  },
+                  "revert_icon": {
+                    "type": "string",
+                    "title": "Revert Icon",
+                    "description": "Icon/text to display before the context when doing a revert.",
+                    "default": ""
+                  },
+                  "merge_icon": {
+                    "type": "string",
+                    "title": "Merge Icon",
+                    "description": "Icon/text to display before the merge context.",
+                    "default": ""
+                  },
+                  "no_commits_icon": {
+                    "type": "string",
+                    "title": "No Commits Icon",
+                    "description": "Icon/text to display when there are no commits in the repo.",
+                    "default": ""
+                  },
+                  "github_icon": {
+                    "type": "string",
+                    "title": "GitHub Icon",
+                    "description": "Icon/text to display when the upstream is GitHub.",
+                    "default": ""
+                  },
+                  "gitlab_icon": {
+                    "type": "string",
+                    "title": "GitLab Icon",
+                    "description": "Icon/text to display when the upstream is GitLab.",
+                    "default": ""
+                  },
+                  "bitbucket_icon": {
+                    "type": "string",
+                    "title": "Bitbucket Icon",
+                    "description": "Icon/text to display when the upstream is Bitbucket.",
+                    "default": ""
+                  },
+                  "azure_devops_icon": {
+                    "type": "string",
+                    "title": "Azure DevOps Icon",
+                    "description": "Icon/text to display when the upstream is Azure DevOps.",
+                    "default": ""
+                  },
+                  "codecommit_icon": {
+                    "type": "string",
+                    "title": "CodeCommit Icon",
+                    "description": "Icon/text to display when the upstream is CodeCommit.",
+                    "default": ""
+                  },
+                  "codeberg_icon": {
+                    "type": "string",
+                    "title": "Codeberg Icon",
+                    "description": "Icon/text to display when the upstream is Codeberg.",
+                    "default": ""
+                  },
+                  "git_icon": {
+                    "type": "string",
+                    "title": "Git Icon",
+                    "description": "Icon/text to display when the upstream is not known/mapped.",
+                    "default": ""
+                  },
+                  "upstream_icons": {
+                    "type": "object",
+                    "title": "Status string formats",
+                    "description": "A key, value map representing the remote URL (or a part of that URL) and icon to use in case the upstream URL contains the key. These get precedence over the standard icons.",
+                    "default": {}
+                  },
+                  "untracked_modes": {
+                    "type": "object",
+                    "title": "Untracked files mode",
+                    "description": "Set the untracked files mode for a repository.",
+                    "default": {}
+                  },
+                  "ignore_submodules": {
+                    "type": "object",
+                    "title": "Ignore submodules",
+                    "description": "Ignore changes to submodules when looking for changes.",
+                    "default": {}
+                  },
+                  "ignore_status": {
+                    "type": "array",
+                    "title": "Ignore fetching status in these repo's",
+                    "description": "Skip fetching status for repositories matching these patterns, using the same matching logic as exclude_folders.",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "mapped_branches": {
+                    "$ref": "#/definitions/mapped_branches"
+                  },
+                  "branch_template": {
+                    "$ref": "#/definitions/branch_template"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gitversion"
+              }
+            }
+          },
+          "then": {
+            "title": "Display GitVersion segment",
+            "description": "Display the version reported by GitVersion for the current repository."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "go"
+              }
+            }
+          },
+          "then": {
+            "title": "Golang Segment",
+            "description": "Display the currently active Golang version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
+                  },
+                  "parse_go_work_file": {
+                    "type": "boolean",
+                    "title": "Parse go.work file",
+                    "description": "Parse go.work file instead of calling out to go to improve performance.",
+                    "default": false
+                  },
+                  "extensions": {
+                    "default": [
+                      "*.go",
+                      "go.mod",
+                      "go.work",
+                      "go.sum",
+                      "go.work.sum"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mod",
+                      "go"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gradle"
+              }
+            }
+          },
+          "then": {
+            "title": "Gradle Segment",
+            "description": "Display the currently active Gradle version, along with the versions of its bundled components (Kotlin, Groovy, Ant, JVM).",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.gradle",
+                      "*.gradle.kts"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gradle"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "haskell"
+              }
+            }
+          },
+          "then": {
+            "title": "Haskell Segment",
+            "description": "Display the currently active Glasgow Haskell Compiler (GHC) version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "stack_ghc_mode": {
+                    "type": "string",
+                    "title": "Use Stack GHC",
+                    "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc.",
+                    "enum": [
+                      "always",
+                      "package",
+                      "never"
+                    ],
+                    "default": "never"
+                  },
+                  "extensions": {
+                    "default": [
+                      "*.hs",
+                      "*.lhs",
+                      "stack.yaml",
+                      "package.yaml",
+                      "*.cabal",
+                      "cabal.project"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ghc"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "helm"
+              }
+            }
+          },
+          "then": {
+            "title": "Helm segment",
+            "description": "Display the currently installed Helm version.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode",
+                    "enum": [
+                      "always",
+                      "files"
+                    ],
+                    "default": "always"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "http"
+              }
+            }
+          },
+          "then": {
+            "title": "HTTP segment",
+            "description": "HTTP Request is a simple segment to return any json data from any HTTP call.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The HTTP URL you want to call, supports templates.",
+                    "default": ""
+                  },
+                  "method": {
+                    "type": "string",
+                    "title": "HTTP Method",
+                    "description": "The HTTP method to use.",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "default": "GET"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ipify"
+              }
+            }
+          },
+          "then": {
+            "title": "Display your external IP Address",
+            "description": "Ipify is a simple Public IP Address API, it returns your public IP Address in plain text.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The Ipify API URL.",
+                    "default": "https://api.ipify.org"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "24h"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "java"
+              }
+            }
+          },
+          "then": {
+            "title": "Java Segment",
+            "description": "Display the currently active Java version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "pom.xml",
+                      "build.gradle.kts",
+                      "build.sbt",
+                      ".java-version",
+                      ".deps.edn",
+                      "project.clj",
+                      "build.boot",
+                      "*.java",
+                      "*.class",
+                      "*.gradle",
+                      "*.jar",
+                      "*.clj",
+                      "*.cljc"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "java"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "jujutsu"
+              }
+            }
+          },
+          "then": {
+            "title": "Jujutsu Segment",
+            "description": "Display Jujutsu information when in a Jujutsu repository.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "change_id_min_len": {
+                    "type": "integer",
+                    "title": "Change ID Minimum Length",
+                    "description": "Minimum length of the change ID to display.",
+                    "default": 0
+                  },
+                  "ignore_working_copy": {
+                    "type": "boolean",
+                    "title": "Ignore Working Copy",
+                    "description": "Don't snapshot the working copy, and don't update it.",
+                    "default": true
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "julia"
+              }
+            }
+          },
+          "then": {
+            "title": "Julia Segment",
+            "description": "Display the currently active Julia version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.jl"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "julia"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "kotlin"
+              }
+            }
+          },
+          "then": {
+            "title": "Kotlin Segment",
+            "description": "Display the currently active Kotlin version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.kt",
+                      "*.kts",
+                      "*.ktm"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "kotlin"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "kubectl"
+              }
+            }
+          },
+          "then": {
+            "title": "Kubectl Segment",
+            "description": "Display the currently active Kubernetes context name and namespace name.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error context when failing to retrieve the kubectl information.",
+                    "default": false
+                  },
+                  "parse_kubeconfig": {
+                    "type": "boolean",
+                    "title": "Parse kubeconfig",
+                    "description": "Parse kubeconfig files instead of calling out to kubectl to improve performance.",
+                    "default": true
+                  },
+                  "context_aliases": {
+                    "type": "object",
+                    "title": "Context aliases",
+                    "description": "Custom context names.",
+                    "default": {}
+                  },
+                  "cluster_aliases": {
+                    "type": "object",
+                    "title": "Cluster aliases",
+                    "description": "Custom cluster names.",
+                    "default": {}
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "language"
+              }
+            }
+          },
+          "then": {
+            "title": "Language Segment",
+            "description": "A generic, fully configurable language/tool version segment. Use it to display the version of any executable without writing a dedicated segment: point it at one or more tools, a regex to parse their version output, and the files or folders that should trigger it.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Unique identifier for the segment, used as its version cache key.",
+                    "default": ""
+                  },
+                  "tools": {
+                    "type": "array",
+                    "title": "Tools",
+                    "description": "The executables that can report this language's version, tried in order until one succeeds.",
+                    "default": [],
+                    "items": {
+                      "type": "object",
+                      "title": "Tool",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "title": "Name",
+                          "description": "Unique identifier for this tool."
+                        },
+                        "executable": {
+                          "type": "string",
+                          "title": "Executable",
+                          "description": "The executable to run to fetch the version."
+                        },
+                        "args": {
+                          "type": "array",
+                          "title": "Arguments",
+                          "description": "The arguments to pass to the executable.",
+                          "default": [],
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "regex": {
+                          "type": "string",
+                          "title": "Regex",
+                          "description": "The regex used to parse the version from the executable's output; must contain a named `version` capture group, and may include `major`, `minor`, `patch`, `prerelease` and `buildmetadata` groups."
+                        },
+                        "version_url_template": {
+                          "type": "string",
+                          "title": "Version Url Template",
+                          "description": "Template that creates the URL of the version info / release notes for this tool."
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "executable",
+                        "regex"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lastfm"
+              }
+            }
+          },
+          "then": {
+            "title": "LastFM Segment",
+            "description": "Show the currently playing song from a LastFM user.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing.",
+                    "default": " "
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "Stopped Icon",
+                    "description": "Text/icon to show when stopped.",
+                    "default": " "
+                  },
+                  "api_key": {
+                    "type": "string",
+                    "title": "API key",
+                    "description": "The API key used for the API call (Required)",
+                    "default": "."
+                  },
+                  "username": {
+                    "type": "string",
+                    "title": "username",
+                    "description": "The username used for the API call (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lua"
+              }
+            }
+          },
+          "then": {
+            "title": "Lua Segment",
+            "description": "Display the currently active Lua or LuaJIT version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.lua",
+                      "*.rockspec"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      "lua"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "lua",
+                      "luajit"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mercurial"
+              }
+            }
+          },
+          "then": {
+            "title": "Mercurial Segment",
+            "description": "Display Mercurial information when in a Mercurial repository. For maximum compatibility, make sure your hg executable is up-to-date (when branch or status information is incorrect for example).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mojo"
+              }
+            }
+          },
+          "then": {
+            "title": "Mojo Segment",
+            "description": "Display the currently active version of Mojo and the name of the Magic virtual environment.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "fetch_virtual_env": {
+                    "type": "boolean",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not.",
+                    "default": true
+                  },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Show the name of the virtualenv when it's default.",
+                    "default": true
+                  },
+                  "extensions": {
+                    "default": [
+                      "*.🔥",
+                      "*.mojo",
+                      "mojoproject.toml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mojo"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mvn"
+              }
+            }
+          },
+          "then": {
+            "title": "Maven Segment",
+            "description": "Display the currently active Maven version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "pom.xml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mvn"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nbgv"
+              }
+            }
+          },
+          "then": {
+            "title": "Nerdbank.GitVersion Segment",
+            "description": "Display the version reported by Nerdbank.GitVersioning for the current repository."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nightscout"
+              }
+            }
+          },
+          "then": {
+            "title": "Display Nightscout segment",
+            "description": "Nightscout (CGM in the Cloud) is an open source, DIY project that allows real time access to a CGM data via an HTTP REST API. It is used for secure remote viewing of blood sugar data from anywhere...including Oh My Posh segments on the command line!",
+            "properties": {
+              "options": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The URL to the Nightscout API.",
+                    "default": ""
+                  },
+                  "http_timeout": {
+                    "type": "integer",
+                    "title": "Http request timeout",
+                    "description": "Milliseconds to use for http request timeouts.",
+                    "default": 20
+                  },
+                  "headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "A key, value map of Headers to send with the request.",
+                    "default": {}
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ramadan"
+              }
+            }
+          },
+          "then": {
+            "title": "Ramadan Segment",
+            "description": "Displays Sehar (Fajr) and Iftar (Maghrib) prayer times along with a countdown to the next event during Ramadan. Powered by the free Aladhan Prayer Times API. The segment auto-hides when it is not Ramadan (configurable via hide_outside_ramadan).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "latitude": {
+                    "type": "number",
+                    "title": "Latitude",
+                    "description": "Latitude for prayer time calculation.",
+                    "default": 0
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "title": "Longitude",
+                    "description": "Longitude for prayer time calculation.",
+                    "default": 0
+                  },
+                  "city": {
+                    "type": "string",
+                    "title": "City",
+                    "description": "City name for location lookup (takes precedence over latitude/longitude)",
+                    "default": ""
+                  },
+                  "country": {
+                    "type": "string",
+                    "title": "Country",
+                    "description": "Country name or ISO 3166 alpha-2 code (required when using city)",
+                    "default": ""
+                  },
+                  "method": {
+                    "type": "integer",
+                    "title": "Calculation Method",
+                    "description": "The prayer time calculation method, identified by a numeric ID from 0 to 23. Each ID corresponds to a different regional authority's calculation rules.",
+                    "default": 3
+                  },
+                  "school": {
+                    "type": "integer",
+                    "title": "Madhab School",
+                    "description": "0 = Shafi (standard), 1 = Hanafi.",
+                    "default": 0
+                  },
+                  "hide_outside_ramadan": {
+                    "type": "boolean",
+                    "title": "Hide Outside Ramadan",
+                    "description": "Hide the segment when not in Ramadan.",
+                    "default": true
+                  },
+                  "first_roza_date": {
+                    "type": "string",
+                    "title": "First Roza Date",
+                    "description": "Override first day of Ramadan as YYYY-MM-DD for local moon sighting.",
+                    "default": ""
+                  },
+                  "http_timeout": {
+                    "type": "integer",
+                    "title": "HTTP request timeout",
+                    "description": "Milliseconds to use for HTTP request timeouts.",
+                    "default": 20
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nba"
+              }
+            }
+          },
+          "then": {
+            "title": "NBA Segment",
+            "description": "The NBA segment allows you to display the scheduling and score information for your favorite NBA team!",
+            "properties": {
+              "options": {
+                "properties": {
+                  "team": {
+                    "type": "string",
+                    "title": "Team",
+                    "description": "Tri-code for the NBA team you want to get data for.",
+                    "default": ""
+                  },
+                  "days_offset": {
+                    "type": "integer",
+                    "title": "Days Offset",
+                    "description": "How many days in advance you wish to see game information for.",
+                    "default": 8
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nim"
+              }
+            }
+          },
+          "then": {
+            "title": "Nim Segment",
+            "description": "Display the currently active Nim version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.nim",
+                      "*.nims"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "nim"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nix-shell"
+              }
+            }
+          },
+          "then": {
+            "title": "Nix Shell",
+            "description": "Display the nix-shell status when the current shell is inside a Nix shell environment."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "node"
+              }
+            }
+          },
+          "then": {
+            "title": "Node Segment",
+            "description": "Display the currently active Node.js version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "fetch_package_manager": {
+                    "type": "boolean",
+                    "title": "Fetch Display Package Manager",
+                    "description": "Assigns the Yarn or NPM icon to .PackageManagerIcon.",
+                    "default": false
+                  },
+                  "pnpm_icon": {
+                    "type": "string",
+                    "title": "PNPM Icon",
+                    "description": "Icon/text to use for PNPM.",
+                    "default": ""
+                  },
+                  "yarn_icon": {
+                    "type": "string",
+                    "title": "Yarn Icon",
+                    "description": "Icon/text to use for Yarn.",
+                    "default": ""
+                  },
+                  "npm_icon": {
+                    "type": "string",
+                    "title": "NPM Icon",
+                    "description": "Icon/text to use for NPM.",
+                    "default": ""
+                  },
+                  "bun_icon": {
+                    "type": "string",
+                    "title": "Bun Icon",
+                    "description": "Icon/text to use for Bun.",
+                    "default": ""
+                  },
+                  "extensions": {
+                    "default": [
+                      "*.js",
+                      "*.ts",
+                      "package.json",
+                      ".nvmrc",
+                      "pnpm-workspace.yaml",
+                      ".pnpmfile.cjs",
+                      ".vue"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "node"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "npm"
+              }
+            }
+          },
+          "then": {
+            "title": "NPM Segment",
+            "description": "Display the currently active npm version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "package.json",
+                      "package-lock.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "npm"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nx"
+              }
+            }
+          },
+          "then": {
+            "title": "Nx Segment",
+            "description": "Display the currently active Nx version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "workspace.json",
+                      "nx.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "nx"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ocaml"
+              }
+            }
+          },
+          "then": {
+            "title": "OCaml Segment",
+            "description": "Display the currently active OCaml version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.ml",
+                      "*.mli",
+                      "dune",
+                      "dune-project",
+                      "dune-workspace"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ocaml"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "os"
+              }
+            }
+          },
+          "then": {
+            "title": "Operating System Segment",
+            "description": "Display OS specific info - defaults to Icon.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "macos": {
+                    "type": "string",
+                    "title": "MacOS Icon",
+                    "description": "Icon/text to use for macOS.",
+                    "default": ""
+                  },
+                  "linux": {
+                    "type": "string",
+                    "title": "Linux Icon",
+                    "description": "Icon/text to use for Linux.",
+                    "default": ""
+                  },
+                  "windows": {
+                    "type": "string",
+                    "title": "Windows Icon",
+                    "description": "Icon/text to use for Windows.",
+                    "default": ""
+                  },
+                  "display_distro_name": {
+                    "type": "boolean",
+                    "title": "Display Distro Name",
+                    "description": "Display the distro name or icon or not.",
+                    "default": false
+                  },
+                  "alma": {
+                    "type": "string",
+                    "title": "Alma Icon",
+                    "description": "The icon to use for Alma.",
+                    "default": ""
+                  },
+                  "almalinux": {
+                    "type": "string",
+                    "title": "AlmaLinux Icon",
+                    "description": "The icon to use for AlmaLinux.",
+                    "default": ""
+                  },
+                  "almalinux9": {
+                    "type": "string",
+                    "title": "AlmaLinux9 Icon",
+                    "description": "The icon to use for AlmaLinux9.",
+                    "default": ""
+                  },
+                  "alpine": {
+                    "type": "string",
+                    "title": "Alpine Icon",
+                    "description": "The icon to use for Alpine.",
+                    "default": ""
+                  },
+                  "android": {
+                    "type": "string",
+                    "title": "Android Icon",
+                    "description": "The icon to use for Android.",
+                    "default": ""
+                  },
+                  "aosc": {
+                    "type": "string",
+                    "title": "Aosc Icon",
+                    "description": "The icon to use for Aosc.",
+                    "default": ""
+                  },
+                  "arch": {
+                    "type": "string",
+                    "title": "Arch Icon",
+                    "description": "The icon to use for Arch.",
+                    "default": ""
+                  },
+                  "centos": {
+                    "type": "string",
+                    "title": "Centos Icon",
+                    "description": "The icon to use for Centos.",
+                    "default": ""
+                  },
+                  "coreos": {
+                    "type": "string",
+                    "title": "Coreos Icon",
+                    "description": "The icon to use for Coreos.",
+                    "default": ""
+                  },
+                  "debian": {
+                    "type": "string",
+                    "title": "Debian Icon",
+                    "description": "The icon to use for Debian.",
+                    "default": ""
+                  },
+                  "deepin": {
+                    "type": "string",
+                    "title": "Deepin Icon",
+                    "description": "The icon to use for Deepin.",
+                    "default": ""
+                  },
+                  "devuan": {
+                    "type": "string",
+                    "title": "Devuan Icon",
+                    "description": "The icon to use for Devuan.",
+                    "default": ""
+                  },
+                  "elementary": {
+                    "type": "string",
+                    "title": "Elementary Icon",
+                    "description": "The icon to use for Elementary.",
+                    "default": ""
+                  },
+                  "endeavouros": {
+                    "type": "string",
+                    "title": "EndeavourOS Icon",
+                    "description": "The icon to use for EndeavourOS.",
+                    "default": ""
+                  },
+                  "fedora": {
+                    "type": "string",
+                    "title": "Fedora Icon",
+                    "description": "The icon to use for Fedora.",
+                    "default": ""
+                  },
+                  "freebsd": {
+                    "type": "string",
+                    "title": "FreeBSD Icon",
+                    "description": "The icon to use for FreeBSD.",
+                    "default": "󰣠"
+                  },
+                  "gentoo": {
+                    "type": "string",
+                    "title": "Gentoo Icon",
+                    "description": "The icon to use for Gentoo.",
+                    "default": ""
+                  },
+                  "kali": {
+                    "type": "string",
+                    "title": "Kali Icon",
+                    "description": "The icon to use for Kali.",
+                    "default": ""
+                  },
+                  "mageia": {
+                    "type": "string",
+                    "title": "Mageia Icon",
+                    "description": "The icon to use for Mageia.",
+                    "default": ""
+                  },
+                  "manjaro": {
+                    "type": "string",
+                    "title": "Manjaro Icon",
+                    "description": "The icon to use for Manjaro.",
+                    "default": ""
+                  },
+                  "mint": {
+                    "type": "string",
+                    "title": "Mint Icon",
+                    "description": "The icon to use for Mint.",
+                    "default": "󰣭"
+                  },
+                  "neon": {
+                    "type": "string",
+                    "title": "Neon Icon",
+                    "description": "The icon to use for Neon.",
+                    "default": ""
+                  },
+                  "nixos": {
+                    "type": "string",
+                    "title": "Nixos Icon",
+                    "description": "The icon to use for Nixos.",
+                    "default": ""
+                  },
+                  "opensuse": {
+                    "type": "string",
+                    "title": "Opensuse Icon",
+                    "description": "The icon to use for Opensuse.",
+                    "default": ""
+                  },
+                  "opensuse-tumbleweed": {
+                    "type": "string",
+                    "title": "OpenSUSE Tumbleweed Icon",
+                    "description": "The icon to use for OpenSUSE Tumbleweed.",
+                    "default": ""
+                  },
+                  "raspbian": {
+                    "type": "string",
+                    "title": "Raspbian Icon",
+                    "description": "The icon to use for Raspbian.",
+                    "default": ""
+                  },
+                  "redhat": {
+                    "type": "string",
+                    "title": "Redhat Icon",
+                    "description": "The icon to use for Redhat.",
+                    "default": ""
+                  },
+                  "rocky": {
+                    "type": "string",
+                    "title": "Rocky Icon",
+                    "description": "The icon to use for Rocky.",
+                    "default": ""
+                  },
+                  "sabayon": {
+                    "type": "string",
+                    "title": "Sabayon Icon",
+                    "description": "The icon to use for Sabayon.",
+                    "default": ""
+                  },
+                  "slackware": {
+                    "type": "string",
+                    "title": "Slackware Icon",
+                    "description": "The icon to use for Slackware.",
+                    "default": ""
+                  },
+                  "ubuntu": {
+                    "type": "string",
+                    "title": "Ubuntu Icon",
+                    "description": "The icon to use for Ubuntu.",
+                    "default": ""
+                  },
+                  "void": {
+                    "type": "string",
+                    "title": "Void Icon",
+                    "description": "The icon to use for Void.",
+                    "default": ""
+                  },
+                  "zorin": {
+                    "type": "string",
+                    "title": "Zorin Icon",
+                    "description": "The icon to use for Zorin OS.",
+                    "default": ""
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "orthodoxcal"
+              }
+            }
+          },
+          "then": {
+            "title": "Orthodox Calendar Segment",
+            "description": "Displays the Orthodox fasting level and feast information for the current day. Data comes from the orthocal.info API, which follows OCA rubrics. This is the same data source used by meatandright.com.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "calendar": {
+                    "type": "string",
+                    "title": "Calendar Type",
+                    "description": "Calendar type: gregorian or julian.",
+                    "enum": [
+                      "gregorian",
+                      "julian"
+                    ],
+                    "default": "gregorian"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "owm"
+              }
+            }
+          },
+          "then": {
+            "title": "Open Weather Map Segment",
+            "description": "Shows the current weather of a given location with Open Weather Map.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "api_key": {
+                    "type": "string",
+                    "title": "API key",
+                    "description": "The API key used for the API call. Required.",
+                    "default": "."
+                  },
+                  "location": {
+                    "type": "string",
+                    "title": "location",
+                    "description": "The location to use for the API call, only used if valid coordinates aren't given. Format as <City>,<STATE>,<COUNTRY_CODE>, using the ISO 3166 state or country code.",
+                    "default": "De Bilt,NL"
+                  },
+                  "units": {
+                    "type": "string",
+                    "title": "units",
+                    "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard.",
+                    "default": "standard",
+                    "enum": [
+                      "standard",
+                      "metric",
+                      "imperial"
+                    ]
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "path"
+              }
+            }
+          },
+          "then": {
+            "title": "Path Segment",
+            "description": "Display the current path.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "folder_separator_icon": {
+                    "type": "string",
+                    "title": "Folder Separator Icon",
+                    "description": "The symbol to use as a separator between folders.",
+                    "default": "/"
+                  },
+                  "folder_separator_template": {
+                    "type": "string",
+                    "title": "Folder Separator Template",
+                    "description": "The path which is split will be separated by this template.",
+                    "pattern": ""
+                  },
+                  "home_icon": {
+                    "type": "string",
+                    "title": "Home Icon",
+                    "description": "The icon to display when at $HOME.",
+                    "default": "~"
+                  },
+                  "folder_icon": {
+                    "type": "string",
+                    "title": "Folder Icon",
+                    "description": "The icon to use as a folder indication.",
+                    "default": ".."
+                  },
+                  "windows_registry_icon": {
+                    "type": "string",
+                    "title": "Windows Registry Icon",
+                    "description": "The icon to display when in the Windows registry.",
+                    "default": ""
+                  },
+                  "style": {
+                    "type": "string",
+                    "title": "The Path Style",
+                    "description": "How to display the current path.",
+                    "enum": [
+                      "agnoster",
+                      "agnoster_full",
+                      "agnoster_short",
+                      "agnoster_left",
+                      "short",
+                      "full",
+                      "folder",
+                      "mixed",
+                      "letter",
+                      "unique",
+                      "powerlevel",
+                      "fish"
+                    ],
+                    "default": "agnoster"
+                  },
+                  "mapped_locations": {
+                    "type": "object",
+                    "title": "Mapped Locations",
+                    "description": "Custom glyph/text for specific paths.",
+                    "default": {}
+                  },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
+                  },
+                  "mapped_locations_regex_expand": {
+                    "type": "boolean",
+                    "title": "Expand regex capture groups in Mapped Locations",
+                    "description": "When a mapped_locations key uses the re: prefix, expand $1, ${name}, etc. in the replacement value using the full regex match instead of only substituting the first capture group.",
+                    "default": false
+                  },
+                  "max_depth": {
+                    "type": "integer",
+                    "title": "Maximum Depth",
+                    "description": "Maximum path depth to display without shortening.",
+                    "default": 1
+                  },
+                  "max_width": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ],
+                    "title": "Maximum Width",
+                    "description": "Maximum path width to display for powerlevel style.",
+                    "default": 0
+                  },
+                  "mixed_threshold": {
+                    "type": "integer",
+                    "title": "Mixed threshold",
+                    "description": "The maximum length of a path segment that will be displayed when using mixed style.",
+                    "default": 4
+                  },
+                  "hide_root_location": {
+                    "type": "boolean",
+                    "title": "Hide the root location",
+                    "description": "Hides the root location, when using agnoster_short style, if it doesn't fit in the last max_depth folders.",
+                    "default": false
+                  },
+                  "cycle": {
+                    "type": "array",
+                    "title": "Color overrides to use to cycle through and color the path per folder",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "cycle_folder_separator": {
+                    "type": "boolean",
+                    "title": "Cycle the folder_separator_icon",
+                    "description": "Colorize the folder_separator_icon as well when using a cycle.",
+                    "default": false
+                  },
+                  "folder_format": {
+                    "type": "string",
+                    "title": "The folder format",
+                    "description": "Golang string format to apply to the folder name.",
+                    "pattern": "%s"
+                  },
+                  "edge_format": {
+                    "type": "string",
+                    "title": "The format to use on the start and end folder",
+                    "description": "Golang string format to apply to the start and end folder.",
+                    "pattern": "%s"
+                  },
+                  "left_format": {
+                    "type": "string",
+                    "title": "The format to use on first folder of the path",
+                    "description": "Will default to whatever edge_format is set to.",
+                    "pattern": "%s"
+                  },
+                  "right_format": {
+                    "type": "string",
+                    "title": "The format to use on the last folder of the path",
+                    "description": "Will default to whatever edge_format is set to.",
+                    "pattern": "%s"
+                  },
+                  "gitdir_format": {
+                    "type": "string",
+                    "title": "The format to use on a git root directory",
+                    "description": "Golang string format to apply to the .git folder.",
+                    "default": ""
+                  },
+                  "display_cygpath": {
+                    "type": "boolean",
+                    "title": "Display the Cygwin (Linux) style path",
+                    "description": "Display the Cygwin (Linux) style path using cygpath -u $PWD.",
+                    "default": false
+                  },
+                  "display_root": {
+                    "type": "boolean",
+                    "title": "Display the root directory (/) on Unix systems",
+                    "description": "Display the root directory (/) on Unix systems.",
+                    "default": false
+                  },
+                  "dir_length": {
+                    "type": "integer",
+                    "title": "Directory Length",
+                    "description": "The length of the directory name to display in fish style.",
+                    "default": 1
+                  },
+                  "full_length_dirs": {
+                    "type": "integer",
+                    "title": "Full Length Dirs",
+                    "description": "Indicates how many full length directory names should be displayed in fish style.",
+                    "default": 1
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pear"
+              }
+            }
+          },
+          "then": {
+            "title": "Pear Desktop Segment",
+            "description": "Shows the currently playing song in Pear Desktop.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "port": {
+                    "type": "integer",
+                    "title": "Port",
+                    "description": "The port of the Pear Desktop API Server.",
+                    "default": 26538
+                  },
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing.",
+                    "default": " "
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "Paused Icon",
+                    "description": "Text/icon to show when paused.",
+                    "default": " "
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "perl"
+              }
+            }
+          },
+          "then": {
+            "title": "Perl Segment",
+            "description": "Display the currently active Perl version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      ".perl-version",
+                      "*.pl",
+                      "*.pm",
+                      "*.t"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "perl"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "php"
+              }
+            }
+          },
+          "then": {
+            "title": "PHP Segment",
+            "description": "Display the currently active PHP version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.php",
+                      "composer.json",
+                      "composer.lock",
+                      ".php-version",
+                      "blade.php"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "php"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "plastic"
+              }
+            }
+          },
+          "then": {
+            "title": "Plastic SCM Segment",
+            "description": "Display Plastic SCM information when in a plastic repository. Also works for subfolders. For maximum compatibility, make sure your cm executable is up-to-date (when branch or status information is incorrect for example).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the selector branch name.",
+                    "default": " "
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the selector changeset.",
+                    "default": ""
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the selector label.",
+                    "default": ""
+                  },
+                  "branch_template": {
+                    "$ref": "#/definitions/branch_template"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  },
+                  "mapped_branches": {
+                    "$ref": "#/definitions/mapped_branches"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pnpm"
+              }
+            }
+          },
+          "then": {
+            "title": "PNPM Segment",
+            "description": "Display the currently active pnpm version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "package.json",
+                      "pnpm-lock.yaml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "pnpm"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "style": {
+                "const": "powerline"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "powerline_symbol": {
+                "type": "string",
+                "title": "Powerline Symbol",
+                "description": "The symbol used to separate this segment from its neighbor in a powerline-style prompt.",
+                "default": ""
+              },
+              "leading_powerline_symbol": {
+                "type": "string",
+                "title": "Leading Powerline Symbol",
+                "description": "A symbol placed before the segment's own powerline symbol, used when this is the first segment in the block.",
+                "default": ""
+              },
+              "invert_powerline": {
+                "type": "boolean",
+                "title": "Flip the Powerline symbol vertically",
+                "description": "Swap the direction the powerline symbol points, useful when this segment sits at the start of a right-aligned block.",
+                "default": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "project"
+              }
+            }
+          },
+          "then": {
+            "title": "Project Segment",
+            "description": "Display the current version of your project defined in the package file.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Always show the segment.",
+                    "default": false
+                  },
+                  "priority": {
+                    "type": "array",
+                    "title": "Priority",
+                    "description": "Reorder the project types to check first, using the .Type values (e.g. node, php, cargo)",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "resolve_target_from_solution": {
+                    "type": "boolean",
+                    "title": "Resolve Target from Solution",
+                    "description": "When a .sln/.slnx is matched, scan subdirectories for project files to extract TargetFramework.",
+                    "default": true
+                  },
+                  "solution_search_depth": {
+                    "type": "integer",
+                    "title": "Solution Search Depth",
+                    "description": "Maximum directory depth to scan for project files when resolving from a solution.",
+                    "default": 2,
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pulumi"
+              }
+            }
+          },
+          "then": {
+            "title": "Pulumi Segment",
+            "description": "Display the currently active Pulumi logged-in user, url and stack.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "fetch_stack": {
+                    "type": "boolean",
+                    "title": "Fetch Stack",
+                    "description": "Fetch the current pulumi stack or not.",
+                    "default": false
+                  },
+                  "fetch_about": {
+                    "type": "boolean",
+                    "title": "Fetch About",
+                    "description": "Fetch the URL and user for the current stack.",
+                    "default": false
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "python"
+              }
+            }
+          },
+          "then": {
+            "title": "Python Segment",
+            "description": "Display the currently active Python version and virtualenv. Supports conda, virtualenv and pyenv (if python points to pyenv shim).",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "fetch_virtual_env": {
+                    "type": "boolean",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not.",
+                    "default": true
+                  },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Show the name of the virtualenv when it's default.",
+                    "default": true
+                  },
+                  "extensions": {
+                    "default": [
+                      "*.py",
+                      "*.ipynb",
+                      "pyproject.toml",
+                      "venv.bak"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      ".venv",
+                      "venv",
+                      "virtualenv",
+                      "venv-win",
+                      "pyenv-win"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "pyenv",
+                      "python",
+                      "python3",
+                      "py"
+                    ]
+                  },
+                  "folder_name_fallback": {
+                    "type": "boolean",
+                    "title": "Folder Name Fallback",
+                    "description": "Replace virtual environment names in default_venv_names list with parent folder name.",
+                    "default": "true"
+                  },
+                  "default_venv_names": {
+                    "type": "array",
+                    "title": "Default Venv Names",
+                    "description": "Names to replace when folder_name_fallback is true.",
+                    "default": [
+                      ".venv",
+                      "venv"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "quasar"
+              }
+            }
+          },
+          "then": {
+            "title": "Quasar Segment",
+            "description": "Display the currently active Quasar CLI version. Only rendered when the current or parent folder contains a quasar.config or quasar.config.js file.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "fetch_dependencies": {
+                    "type": "boolean",
+                    "title": "Fetch Dependencies",
+                    "description": "Fetch the vite and @quasar/app-vite dependency information or not.",
+                    "default": false
+                  },
+                  "extensions": {
+                    "default": [
+                      "quasar.config",
+                      "quasar.config.js"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "quasar"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "r"
+              }
+            }
+          },
+          "then": {
+            "title": "R Segment",
+            "description": "Display the currently active R version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.R",
+                      "*.Rmd",
+                      "*.Rsx",
+                      "*.Rda",
+                      "*.Rd",
+                      "*.Rproj",
+                      ".Rproj.user"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "Rscript",
+                      "R",
+                      "R.exe"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "react"
+              }
+            }
+          },
+          "then": {
+            "title": "React Segment",
+            "description": "Display the currently active React version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "package.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "react"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "root"
+              }
+            }
+          },
+          "then": {
+            "title": "Root Segment",
+            "description": "Show an indicator when the current user is root, or when running in an elevated shell on Windows."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ruby"
+              }
+            }
+          },
+          "then": {
+            "title": "Ruby Segment",
+            "description": "Display the currently active Ruby version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.rb",
+                      "Rakefile",
+                      "Gemfile"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "rbenv",
+                      "rvm-prompt",
+                      "chruby",
+                      "asdf",
+                      "ruby"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rust"
+              }
+            }
+          },
+          "then": {
+            "title": "Rust Segment",
+            "description": "Display the currently active Rust version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.rs",
+                      "Cargo.toml",
+                      "Cargo.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "rustc"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sapling"
+              }
+            }
+          },
+          "then": {
+            "title": "Sapling Segment",
+            "description": "Display Sapling information when in a sapling repository.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "session"
+              }
+            }
+          },
+          "then": {
+            "title": "Session Segment",
+            "description": "Show the current user name and host name."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "shell"
+              }
+            }
+          },
+          "then": {
+            "title": "Shell Segment",
+            "description": "Show the current shell name (zsh, PowerShell, bash, ...).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "mapped_shell_names": {
+                    "type": "object",
+                    "description": "Mapping of shell identifiers to the glyph/string used for that shell (e.g. bash, zsh, pwsh).",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "example": {
+                      "bash": "󱆃",
+                      "zsh": "",
+                      "pwsh": "",
+                      "shell": "$"
+                    }
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sitecore"
+              }
+            }
+          },
+          "then": {
+            "title": "Sitecore Segment",
+            "description": "Display current Sitecore environment. Will not be active when sitecore.json and user.json don't exist.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Display the segment or not when the Sitecore environment name matches `default`",
+                    "default": true
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "spotify"
+              }
+            }
+          },
+          "then": {
+            "title": "Spotify Segment",
+            "description": "Show the currently playing song in the Spotify client.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing.",
+                    "default": " "
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "Paused Icon",
+                    "description": "Text/icon to show when paused.",
+                    "default": " "
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "Stopped Icon",
+                    "description": "Text/icon to show when stopped.",
+                    "default": " "
+                  },
+                  "ad_icon": {
+                    "type": "string",
+                    "title": "Advertisement Icon",
+                    "description": "Text/icon to show when an advertisement is playing (Windows/WSL)",
+                    "default": " "
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "status"
+              }
+            }
+          },
+          "then": {
+            "title": "Status Segment",
+            "description": "Displays the last known status code and/or the reason that the last command failed.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Always show the status.",
+                    "default": false
+                  },
+                  "status_template": {
+                    "type": "string",
+                    "title": "Status Template",
+                    "description": "The template to use for the status segment.",
+                    "default": "{{ .Code }}"
+                  },
+                  "status_separator": {
+                    "type": "string",
+                    "title": "Status Separator",
+                    "description": "The separator to use between the status segments.",
+                    "default": "|"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "strava"
+              }
+            }
+          },
+          "then": {
+            "title": "Display training data from Strava",
+            "description": "Strava is a popular activity tracker for bike, run or any other training. To keep up with your training goals it is important to be reminded about it. An Oh My Posh Strava segment shows your last activity, and can also indicate by a color if it is time to get away from your computer and get active.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "ride_icon": {
+                    "type": "string",
+                    "title": "Ride icon",
+                    "description": "Alternative icon for this activity type.",
+                    "default": ""
+                  },
+                  "run_icon": {
+                    "type": "string",
+                    "title": "Run icon",
+                    "description": "Alternative icon for this activity type.",
+                    "default": ""
+                  },
+                  "skiing_icon": {
+                    "type": "string",
+                    "title": "Skiing icon",
+                    "description": "Alternative icon for this activity type.",
+                    "default": ""
+                  },
+                  "workout_icon": {
+                    "type": "string",
+                    "title": "Workout icon",
+                    "description": "Alternative icon for this activity type.",
+                    "default": ""
+                  },
+                  "unknown_activity_icon": {
+                    "type": "string",
+                    "title": "Fallback icon",
+                    "description": "Fallback icon for other activity types.",
+                    "default": ""
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "access_token": {
+                    "$ref": "#/definitions/access_token"
+                  },
+                  "refresh_token": {
+                    "$ref": "#/definitions/refresh_token"
+                  },
+                  "expires_in": {
+                    "$ref": "#/definitions/expires_in"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "svelte"
+              }
+            }
+          },
+          "then": {
+            "title": "Svelte Segment",
+            "description": "Display the currently active Svelte version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "svelte.config.js"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "svelte"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "svn"
+              }
+            }
+          },
+          "then": {
+            "title": "SVN Segment",
+            "description": "Display Subversion information when in a subversion repository. Also works for subfolders. For maximum compatibility, make sure your svn executable is up-to-date (when branch or status information is incorrect for example).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "swift"
+              }
+            }
+          },
+          "then": {
+            "title": "Swift Segment",
+            "description": "Display the currently active Swift version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.swift",
+                      "*.SWIFT",
+                      "Podfile"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "swift"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sysinfo"
+              }
+            }
+          },
+          "then": {
+            "title": "Get sysinfo",
+            "description": "Display SysInfo.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "precision": {
+                    "type": "integer",
+                    "title": "Precision",
+                    "description": "Number of decimal places to show.",
+                    "default": 2
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "talosctl"
+              }
+            }
+          },
+          "then": {
+            "title": "Talosctl Segment",
+            "description": "Display the currently active Talosctl context name, based on the .talos/config file."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tauri"
+              }
+            }
+          },
+          "then": {
+            "title": "Tauri Segment",
+            "description": "Display the currently active Tauri version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "tauri.conf.json"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      "src-tauri"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "tauri"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "taskwarrior"
+              }
+            }
+          },
+          "then": {
+            "title": "Taskwarrior Segment",
+            "description": "Display Taskwarrior task data for configurable commands. Each named command runs task with the specified arguments and exposes the raw output in the template.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "title": "Taskwarrior Command",
+                    "description": "The taskwarrior command to use.",
+                    "default": "task"
+                  },
+                  "commands": {
+                    "type": "object",
+                    "title": "Commands",
+                    "description": "Map of name to Taskwarrior arguments; the trimmed stdout of each invocation is exposed as .Commands.<Name> in the template.",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "due": "+PENDING due.before:tomorrow count",
+                      "scheduled": "+PENDING scheduled.before:tomorrow count",
+                      "waiting": "+WAITING count",
+                      "context": "_get rc.context"
+                    }
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "terraform"
+              }
+            }
+          },
+          "then": {
+            "title": "Terraform Segment",
+            "description": "Display the currently active Terraform Workspace name.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "title": "Terraform Command",
+                    "description": "The terraform command to use.",
+                    "default": "terraform"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            }
+          },
+          "then": {
+            "title": "Text Segment",
+            "description": "Display static text you define, without querying any external state."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "time"
+              }
+            }
+          },
+          "then": {
+            "title": "Time Segment",
+            "description": "Show the current timestamp.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "time_format": {
+                    "type": "string",
+                    "title": "Time Format",
+                    "description": "The Go time layout string used to format the time, such as 15:04:05 or Mon Jan 2 15:04:05 2006.",
+                    "default": "15:04:05"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "todoist"
+              }
+            }
+          },
+          "then": {
+            "title": "Todoist Segment",
+            "description": "Displays your daily tasks from Todoist.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "api_key": {
+                    "type": "string",
+                    "title": "API Key",
+                    "description": "API Key (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ui5tooling"
+              }
+            }
+          },
+          "then": {
+            "title": "UI5 tooling CLI segment",
+            "description": "Display the active UI5 tooling version (global or local if present - see the documentation).",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*ui5*.y*ml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ui5"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "umbraco"
+              }
+            }
+          },
+          "then": {
+            "title": "Umbraco Segment",
+            "description": "Display the currently installed Umbraco CMS version when the current directory is part of an Umbraco project."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "uno"
+              }
+            }
+          },
+          "then": {
+            "title": "Uno Platform Segment",
+            "description": "Display the currently active Uno Platform SDK version."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "unity"
+              }
+            }
+          },
+          "then": {
+            "title": "Unity Segment",
+            "description": "Display the currently active Unity and C# versions.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "upgrade"
+              }
+            }
+          },
+          "then": {
+            "title": "Upgrade Segment",
+            "description": "Displays when there's an update available for Oh My Posh.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "v"
+              }
+            }
+          },
+          "then": {
+            "title": "V Segment",
+            "description": "Display the currently active V version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.v"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "v"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "vala"
+              }
+            }
+          },
+          "then": {
+            "title": "Vala Segment",
+            "description": "Display the currently active Vala version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.vala"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "vala"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "vimode"
+              }
+            }
+          },
+          "then": {
+            "title": "Vi mode",
+            "description": "Display the current Vi mode (insert / normal / visual …) in the prompt. Useful when using ZSH keymaps via bindkey -v, PowerShell PSReadLine -EditMode Vi, or fish vi key bindings so you can tell at a glance which mode you are in."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "wakatime"
+              }
+            }
+          },
+          "then": {
+            "title": "Wakatime",
+            "description": "Shows the tracked time on wakatime of the current day.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The URL used for the API call. Required.",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "winget"
+              }
+            }
+          },
+          "then": {
+            "title": "WinGet",
+            "description": "Displays the number of available WinGet package updates. This segment only appears when there are updates available."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "winreg"
+              }
+            }
+          },
+          "then": {
+            "title": "Windows Registry Query",
+            "description": "Display the content of the requested Windows registry key.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "title": "Registry Path",
+                    "description": "The path to the registry key (case insensitive, must use backslashes).  Ending with \\ will retrieve \"(Default)\" key in that path.",
+                    "default": ""
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "title": "Fallback value",
+                    "description": "Value to display if registry value cannot be retrieved.",
+                    "default": ""
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "withings"
+              }
+            }
+          },
+          "then": {
+            "title": "Display activity data from Withings",
+            "description": "The Withings health ecosystem of connected devices & apps is designed to improve daily wellbeing and long-term health.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "access_token": {
+                    "$ref": "#/definitions/access_token"
+                  },
+                  "refresh_token": {
+                    "$ref": "#/definitions/refresh_token"
+                  },
+                  "expires_in": {
+                    "$ref": "#/definitions/expires_in"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "xmake"
+              }
+            }
+          },
+          "then": {
+            "title": "XMake Segment",
+            "description": "Display the currently active Xmake version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "xmake.lua"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "xmake"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "yarn"
+              }
+            }
+          },
+          "then": {
+            "title": "Yarn Segment",
+            "description": "Display the currently active yarn version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "package.json",
+                      "yarn.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "yarn"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ytm"
+              }
+            }
+          },
+          "then": {
+            "title": "YouTube Music Desktop App Segment",
+            "description": "Shows the currently playing song in the YouTube Music Desktop App.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing.",
+                    "default": " "
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "Paused Icon",
+                    "description": "Text/icon to show when paused.",
+                    "default": " "
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "Stopped Icon",
+                    "description": "Text/icon to show when stopped.",
+                    "default": " "
+                  },
+                  "ad_icon": {
+                    "type": "string",
+                    "title": "Advertisement Icon",
+                    "description": "Text/icon to show when an advertisement is playing.",
+                    "default": " "
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "zig"
+              }
+            }
+          },
+          "then": {
+            "title": "Zig Segment",
+            "description": "Display the currently active Zig version.",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.zig",
+                      "*.zon"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "zig"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "zvm"
+              }
+            }
+          },
+          "then": {
+            "title": "ZVM Segment",
+            "description": "Display the active Zig version reported by ZVM (Zig Version Manager).",
+            "properties": {
+              "options": {
+                "properties": {
+                  "zigicon": {
+                    "type": "string",
+                    "title": "Zig Icon",
+                    "description": "Icon to display before the version.",
+                    "default": "ZVM"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "blocks"
+  ],
+  "properties": {
+    "final_space": {
+      "type": "boolean",
+      "title": "Final Space",
+      "description": "Add a trailing space to the end of the prompt.",
+      "default": true
+    },
+    "cursor_style": {
+      "type": "string",
+      "title": "Cursor Style",
+      "description": "Set the terminal cursor's shape/blink state via a DECSCUSR sequence at the start of the prompt.",
+      "enum": [
+        "blinking_block",
+        "steady_block",
+        "blinking_underline",
+        "steady_underline",
+        "blinking_bar",
+        "steady_bar",
+        "default_steady",
+        "default_blinking"
+      ]
+    },
+    "enable_cursor_positioning": {
+      "type": "boolean",
+      "title": "Enable Cursor Positioning",
+      "description": "Fetch the cursor position so the prompt can avoid leaving a leading blank line at the top of the terminal.",
+      "default": false
+    },
+    "shell_integration": {
+      "type": "boolean",
+      "title": "FTCS command marks for shell integration",
+      "description": "Wrap the prompt and command output in FTCS (Final Term Control Sequences) markers so supported terminals can identify command boundaries, enabling features like command status in the scrollbar and jump-to-previous-command.",
+      "default": false
+    },
+    "pwd": {
+      "anyOf": [
+        {
+          "enum": [
+            "osc99",
+            "osc7",
+            "osc51"
+          ]
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Enable OSC99/7/51",
+      "description": "Report the current working directory to the terminal using OSC 99, 7, or 51 sequences.",
+      "default": ""
+    },
+    "upgrade": {
+      "type": "object",
+      "title": "Enable Upgrade Notice",
+      "description": "Enable the upgrade notice or automatic updates for Oh My Posh.",
+      "default": {
+        "source": "cdn",
+        "auto": false,
+        "notice": false
+      },
+      "properties": {
+        "interval": {
+          "$ref": "#/definitions/cache_duration"
+        },
+        "source": {
+          "type": "string",
+          "description": "Where to check for and download new releases from. \"cdn\" uses the Oh My Posh CDN; \"github\" queries the GitHub releases API directly.",
+          "enum": [
+            "cdn",
+            "github"
+          ],
+          "default": "cdn"
+        },
+        "auto": {
+          "type": "boolean",
+          "description": "Automatically download and install new releases in the background instead of only notifying that one is available.",
+          "default": false
+        },
+        "notice": {
+          "type": "boolean",
+          "description": "Show a one-time notice in the prompt when a new release is available.",
+          "default": false
+        }
+      }
+    },
+    "patch_pwsh_bleed": {
+      "type": "boolean",
+      "title": "Patch PowerShell Color Bleed",
+      "description": "Work around a PowerShell color-bleed issue that can leave stray background colors at the end of the buffer.",
+      "default": false
+    },
+    "console_title_template": {
+      "type": "string",
+      "title": "Console Title Template",
+      "description": "Template used to render the terminal's window title.",
+      "default": "{{ .Shell }} in {{ .Folder }}"
+    },
+    "terminal_background": {
+      "$ref": "#/definitions/color"
+    },
+    "streaming": {
+      "type": "integer",
+      "title": "Streaming Mode",
+      "description": "Enable streaming mode with a timeout in milliseconds for segments that are still resolving.",
+      "default": 100
+    },
+    "blocks": {
+      "type": "array",
+      "title": "Block array",
+      "default": [],
+      "description": "A list of blocks that define the prompt layout and the segments each block renders.",
+      "items": {
+        "$ref": "#/definitions/block"
+      }
+    },
+    "tooltips": {
+      "type": "array",
+      "title": "Tooltip list, prompt elements to display based on context",
+      "description": "A list of tooltip segments that appear when you type matching commands.",
+      "default": [],
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/segment"
+          }
+        ],
+        "properties": {
+          "tips": {
+            "type": "array",
+            "title": "The commands for which you want the segment to show",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "tips"
+        ]
+      }
+    },
+    "transient_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Transient Prompt Setting",
+      "description": "Configure the prompt that replaces the primary prompt after a command is executed.",
+      "anyOf": [
+        {
+          "properties": {
+            "filler": {
+              "$ref": "#/definitions/filler"
+            },
+            "newline": {
+              "type": "boolean",
+              "title": "Newline",
+              "description": "Add a newline before the prompt.",
+              "default": false
+            },
+            "right_template": {
+              "type": "string",
+              "title": "Right Template",
+              "description": "The right-aligned template to render next to the transient prompt, supported in zsh and PowerShell only."
+            }
+          }
+        }
+      ]
+    },
+    "valid_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Valid Line Setting (for PowerShell only)",
+      "description": "Render a custom prompt when the current PowerShell input line is valid."
+    },
+    "error_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Error Line Setting (for PowerShell only)",
+      "description": "Render a custom prompt when the current PowerShell input line contains an error."
+    },
+    "secondary_prompt": {
+      "title": "Secondary Prompt Setting",
+      "description": "Configure the prompt shown for multi-line commands.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extra_prompt"
+        },
+        {
+          "properties": {
+            "multiline_keepprompt": {
+              "type": "boolean",
+              "title": "Multiline Keep Prompt",
+              "description": "Treat multi-line commands as a single block to support transient prompts correctly.",
+              "default": false
+            }
+          }
+        }
+      ]
+    },
+    "debug_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Debug Prompt Setting (for PowerShell only)",
+      "description": "Configure the prompt shown while debugging a PowerShell script."
+    },
+    "palette": {
+      "type": "object",
+      "title": "Palette",
+      "description": "A map of named colors that can be reused throughout the theme.",
+      "default": {},
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/palette_color"
+        }
+      }
+    },
+    "palettes": {
+      "type": "object",
+      "title": "Palettes",
+      "description": "A set of alternate palettes that can be selected dynamically at runtime.",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template",
+          "description": "A template that resolves to the key of the palette (in \"list\") to activate; leave empty or unresolved to use the default palette."
+        },
+        "list": {
+          "type": "object",
+          "title": "List of palettes",
+          "description": "A map of palette name to palette definition; each named palette can be activated at runtime via the \"template\" above.",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/properties/palette"
+            }
+          }
+        }
+      }
+    },
+    "cycle": {
+      "type": "array",
+      "title": "List of settings to cycle through segment by segment",
+      "description": "A list of foreground and background colors to rotate through as segments render.",
+      "default": [],
+      "items": {
+        "properties": {
+          "foreground": {
+            "$ref": "#/definitions/color"
+          },
+          "background": {
+            "$ref": "#/definitions/color"
+          }
+        }
+      }
+    },
+    "accent_color": {
+      "title": "Accent color",
+      "$ref": "#/definitions/color"
+    },
+    "iterm_features": {
+      "type": "array",
+      "title": "The iTerm2 features to enable",
+      "description": "iTerm2-specific shell integration features to enable. \"prompt_mark\" marks the prompt line so iTerm2 can jump between commands, \"current_dir\" reports the working directory for the title bar and new tabs/panes, and \"remote_host\" reports the hostname/username for badges and session restore.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "prompt_mark",
+          "current_dir",
+          "remote_host"
+        ]
+      }
+    },
+    "terminal_features": {
+      "type": "object",
+      "title": "Terminal features configuration",
+      "description": "Map terminal features to the terminals that support them.",
+      "properties": {
+        "progress": {
+          "type": "array",
+          "title": "Progress terminals",
+          "description": "Terminal programs supporting OSC 9;4 progress sequences, matched case-insensitively against $TERM_PROGRAM. Defaults to Windows Terminal.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "var": {
+      "type": "object",
+      "title": "Config variables to use in templates (can be any value)",
+      "description": "Custom variables that can be referenced from templates.",
+      "default": {}
+    },
+    "maps": {
+      "type": "object",
+      "title": "Custom text mappings",
+      "description": "Custom replacements for user, host, and shell names used in templates.",
+      "default": {},
+      "items": {
+        "properties": {
+          "user_name": {
+            "$ref": "#/definitions/aliases"
+          },
+          "host_name": {
+            "$ref": "#/definitions/aliases"
+          },
+          "shell_name": {
+            "$ref": "#/definitions/aliases"
+          }
+        }
+      }
+    },
+    "async": {
+      "type": "boolean",
+      "title": "Async loading",
+      "description": "Render segments as their data becomes available instead of waiting for every segment to finish, so the prompt appears faster while slow segments (e.g. network- or git-heavy ones) update in place once ready.",
+      "default": false
+    },
+    "tooltips_action": {
+      "type": "string",
+      "title": "Tooltips action",
+      "description": "Choose whether tooltips replace, extend, or prepend the current right prompt.",
+      "enum": [
+        "replace",
+        "extend",
+        "prepend"
+      ],
+      "default": "replace"
+    },
+    "version": {
+      "type": "integer",
+      "title": "Version",
+      "description": "The schema version for the configuration file.",
+      "default": 4
+    },
+    "extends": {
+      "type": "string",
+      "title": "Extends",
+      "description": "Path to another configuration file to inherit from.",
+      "default": ""
+    }
+  }
+}
