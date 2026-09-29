@@ -102,9 +102,9 @@
 ;;  Plaintext
 ;;
 ;;  [ --- ][ --- ][    ][    ][    ][    ]   [ --- ][ --- ][ --- ][ --- ][ --- ][ --- ]
-;;  [ q  ][ w  ][Scr↑][Scr↓][ t  ]       [ y  ][ u  ][ i  ][ o  ][ p  ][ [  ][ ]  ][ \  ]
+;;  [ q  ][ w  ][Scr↑][Scr↓][ t  ]       [ y  ][ u  ][ i  ][ o  ][bspc][ [  ][ ]  ][ \  ]
 ;;  [Ctrl][Alt ][Shft][Supr][ g  ]       [ ←  ][ ↓  ][ ↑  ][ →  ][ ;  ][ '  ]
-;;  [ z  ][ x  ][ c  ][ v  ][ b  ]       [ЛКМ ][СКМ ][ПКМ ][ .  ][ /  ]
+;;  [ z  ][ x  ][ c  ][ v  ][ b  ]       [ЛКМ ][СКМ ][ПКМ ][ .  ][del ]
 ;;             [Медл ][Выход]       [  Быстро   ][Super]
 ;;
 ;;  (Сам kanata здесь отдаёт только голые буквы без homerow mods — всё остальное делает mouseless.
@@ -440,9 +440,9 @@
 ;; Голые буквы без homerow-модов — именно их ждёт mouseless.
 ;; lalt = speed 0.3, spc = speed 4.0, lmet = выход, altgr = Super для биндов Hyprland.
   _  _  _  _  _  _  _  _  _  _  _  _
-  q w e r t     y u i o p [ ] \
+  q w e r t     y u i o bspc [ ] \
   a s d f g     h j k l ; '
-  z x c v b     n m , . /
+  z x c v b     n m , . del
        lalt @mouse-off spc rmet
 )
 
