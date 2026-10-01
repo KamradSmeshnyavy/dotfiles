@@ -17,6 +17,6 @@
 
 # Аппаратное декодирование видео (VA-API)
 --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,BatterySaverModeAvailable,BatterySaverOnBattery
---ignore-gpu-blocklist
+#--ignore-gpu-blocklist
 
 --disable-smooth-scrolling
