@@ -1,0 +1,34 @@
+/*
+ * Rosé Pine accents for Dark Reader (dynamic mode), mirroring the
+ * "Rosé Pine for Github" Stylus style: accent = love, borders = overlay.
+ *
+ * Dark Reader ignores theme.stylesheet in dynamic mode, so this can't live
+ * in the settings JSON. Paste it at the end of the CSS section of the "*"
+ * block: Dark Reader → Dev tools → Dynamic mode editor → Apply.
+ * Colors are literal on purpose (no ${...}), so Dark Reader won't remap them.
+ */
+:root {
+    accent-color: #eb6f92 !important;
+    caret-color: #e0def4;
+}
+a:link,
+a:visited {
+    color: #eb6f92 !important;
+}
+a:hover {
+    color: #ebbcba !important;
+}
+:focus-visible {
+    outline-color: #eb6f92 !important;
+}
+::placeholder {
+    color: #908caa !important;
+    opacity: 1 !important;
+}
+hr {
+    border-color: #26233a !important;
+}
+mark {
+    background-color: rgba(246, 193, 119, 0.3) !important;
+    color: #e0def4 !important;
+}

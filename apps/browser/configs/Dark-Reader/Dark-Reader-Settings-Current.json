@@ -1,0 +1,259 @@
+{
+    "schemeVersion": 2,
+    "enabled": true,
+    "fetchNews": true,
+    "theme": {
+        "mode": 1,
+        "brightness": 100,
+        "contrast": 100,
+        "grayscale": 0,
+        "sepia": 0,
+        "useFont": true,
+        "fontFamily": "Maple Mono NF CN",
+        "textStroke": 0,
+        "engine": "dynamicTheme",
+        "stylesheet": "",
+        "darkSchemeBackgroundColor": "#1f1d2e",
+        "darkSchemeTextColor": "#e0def4",
+        "lightSchemeBackgroundColor": "#dcdad7",
+        "lightSchemeTextColor": "#181a1b",
+        "scrollbarColor": "#6e6a86",
+        "selectionColor": "#583145",
+        "styleSystemControls": true,
+        "lightColorScheme": "Default",
+        "darkColorScheme": "Rosé Pine",
+        "immediateModify": false
+    },
+    "presets": [],
+    "customThemes": [
+        {
+            "builtIn": true,
+            "theme": {
+                "mode": 1,
+                "brightness": 100,
+                "contrast": 100,
+                "grayscale": 0,
+                "sepia": 0,
+                "useFont": false,
+                "fontFamily": "Segoe UI",
+                "textStroke": 0,
+                "engine": "cssFilter",
+                "stylesheet": "",
+                "darkSchemeBackgroundColor": "#181a1b",
+                "darkSchemeTextColor": "#e8e6e3",
+                "lightSchemeBackgroundColor": "#dcdad7",
+                "lightSchemeTextColor": "#181a1b",
+                "scrollbarColor": "",
+                "selectionColor": "auto",
+                "styleSystemControls": false,
+                "lightColorScheme": "Default",
+                "darkColorScheme": "Default",
+                "immediateModify": false
+            },
+            "url": [
+                "*.officeapps.live.com"
+            ]
+        },
+        {
+            "builtIn": true,
+            "theme": {
+                "mode": 1,
+                "brightness": 100,
+                "contrast": 100,
+                "grayscale": 0,
+                "sepia": 0,
+                "useFont": false,
+                "fontFamily": "Segoe UI",
+                "textStroke": 0,
+                "engine": "cssFilter",
+                "stylesheet": "",
+                "darkSchemeBackgroundColor": "#181a1b",
+                "darkSchemeTextColor": "#e8e6e3",
+                "lightSchemeBackgroundColor": "#dcdad7",
+                "lightSchemeTextColor": "#181a1b",
+                "scrollbarColor": "",
+                "selectionColor": "auto",
+                "styleSystemControls": false,
+                "lightColorScheme": "Default",
+                "darkColorScheme": "Default",
+                "immediateModify": false
+            },
+            "url": [
+                "*.sharepoint.com"
+            ]
+        },
+        {
+            "builtIn": true,
+            "theme": {
+                "mode": 1,
+                "brightness": 100,
+                "contrast": 100,
+                "grayscale": 0,
+                "sepia": 0,
+                "useFont": false,
+                "fontFamily": "Segoe UI",
+                "textStroke": 0,
+                "engine": "cssFilter",
+                "stylesheet": "",
+                "darkSchemeBackgroundColor": "#181a1b",
+                "darkSchemeTextColor": "#e8e6e3",
+                "lightSchemeBackgroundColor": "#dcdad7",
+                "lightSchemeTextColor": "#181a1b",
+                "scrollbarColor": "",
+                "selectionColor": "auto",
+                "styleSystemControls": false,
+                "lightColorScheme": "Default",
+                "darkColorScheme": "Default",
+                "immediateModify": false
+            },
+            "url": [
+                "docs.google.com"
+            ]
+        },
+        {
+            "builtIn": true,
+            "theme": {
+                "mode": 1,
+                "brightness": 100,
+                "contrast": 100,
+                "grayscale": 0,
+                "sepia": 0,
+                "useFont": false,
+                "fontFamily": "Segoe UI",
+                "textStroke": 0,
+                "engine": "cssFilter",
+                "stylesheet": "",
+                "darkSchemeBackgroundColor": "#181a1b",
+                "darkSchemeTextColor": "#e8e6e3",
+                "lightSchemeBackgroundColor": "#dcdad7",
+                "lightSchemeTextColor": "#181a1b",
+                "scrollbarColor": "",
+                "selectionColor": "auto",
+                "styleSystemControls": false,
+                "lightColorScheme": "Default",
+                "darkColorScheme": "Default",
+                "immediateModify": false
+            },
+            "url": [
+                "onedrive.live.com"
+            ]
+        },
+        {
+            "url": [
+                "www.google.com"
+            ],
+            "theme": {
+                "mode": 1,
+                "brightness": 100,
+                "contrast": 100,
+                "grayscale": 0,
+                "sepia": 0,
+                "useFont": false,
+                "fontFamily": "Maple Mono NF CN",
+                "textStroke": 0,
+                "engine": "dynamicTheme",
+                "stylesheet": "",
+                "darkSchemeBackgroundColor": "#1f1d2e",
+                "darkSchemeTextColor": "#e0def4",
+                "lightSchemeBackgroundColor": "#dcdad7",
+                "lightSchemeTextColor": "#181a1b",
+                "scrollbarColor": "#6e6a86",
+                "selectionColor": "#583145",
+                "styleSystemControls": true,
+                "lightColorScheme": "Default",
+                "darkColorScheme": "Rosé Pine",
+                "immediateModify": false
+            }
+        }
+    ],
+    "enabledByDefault": true,
+    "enabledFor": [],
+    "disabledFor": [
+        "efterklang.github.io",
+        "127.0.0.1:8000",
+        "onedrive.live.com",
+        "www2.tkn.tu-berlin.de",
+        "localhost:5000",
+        "www.imaegoo.com",
+        "localhost:4000",
+        "karobben.github.io",
+        "efterklang.vercel.app",
+        "drhig.github.io",
+        "www.pygame.org",
+        "apolloscape.auto",
+        "www.figma.com",
+        "m3.material.io",
+        "funnnny.fun",
+        "apc.delve.office.com",
+        "accounts.google.com",
+        "bbs.uestc.edu.cn",
+        "datatracker.ietf.org",
+        "wangyurui.com",
+        "docs.qq.com",
+        "cloud.mongodb.com",
+        "blog.tangwudi.com",
+        "www.lincol29.cn",
+        "www.stylus-lang.cn",
+        "uynad.github.io",
+        "arthals.ink",
+        "blog.lyh543.cn",
+        "3c9ab17a.efterklang-github-io.pages.dev",
+        "efterklang-github-io.pages.dev",
+        "gemini.google.com",
+        "www.ol4three.com",
+        "neumorphism.io",
+        "getcssscan.com",
+        "baike.baidu.com",
+        "nic.eu.org",
+        "www.material-tailwind.com",
+        "www.redblobgames.com",
+        "blog.pj568.sbs",
+        "www.foundertype.com",
+        "yscoder.github.io",
+        "roadmap.sh",
+        "labs.google",
+        "vluv.space",
+        "stackoverflow.com",
+        "www.keybr.com",
+        "www.kinopoisk.ru",
+        "github.com"
+    ],
+    "changeBrowserTheme": false,
+    "syncSettings": true,
+    "syncSitesFixes": true,
+    "automation": {
+        "behavior": "OnOff",
+        "enabled": false,
+        "mode": "system"
+    },
+    "time": {
+        "activation": "18:00",
+        "deactivation": "9:00"
+    },
+    "location": {
+        "latitude": null,
+        "longitude": null
+    },
+    "previewNewDesign": true,
+    "previewNewestDesign": false,
+    "enableForPDF": false,
+    "enableForProtectedPages": true,
+    "enableContextMenus": true,
+    "detectDarkTheme": false,
+    "applyToListedOnly": false,
+    "automationBehaviour": "OnOff",
+    "displayedNews": [
+        "thanks-2023"
+    ],
+    "installation": {
+        "date": 1726134228423,
+        "reason": "update",
+        "version": "4.9.90"
+    },
+    "notifyOfNews": false,
+    "readNews": [
+        "thanks-2023"
+    ],
+    "siteList": [],
+    "siteListEnabled": []
+}
