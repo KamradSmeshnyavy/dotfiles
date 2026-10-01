@@ -5,13 +5,13 @@ user_pref("gfx.webrender.compositor", true);
 user_pref("layout.frame_rate", 60);
 // ------------------------------------------------------------
 // --- Own settings
-user_pref("browser.newtab.preload", false)
-user_pref("gfx.webrender.all", true)
-user_pref("ui.prefersReducedMotion", 1)
-user_pref("accessibility.force_disabled", 1)
-user_pref("extensions.pocket.enabled", false)
-user_pref("dom.ipc.processCount", 4)
-user_pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true)
+user_pref("browser.newtab.preload", false);
+user_pref("gfx.webrender.all", true);
+user_pref("ui.prefersReducedMotion", 1);
+user_pref("accessibility.force_disabled", 1);
+user_pref("extensions.pocket.enabled", false);
+user_pref("dom.ipc.processCount", 4);
+user_pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true);
 // user_pref("browser.sessionstore.interval", 60000)
 user_pref("browser.sessionstore.interval", 300000);
 //dom.ipc.processPriorityManager.backgroundUsesEcoQoS ➔ true
