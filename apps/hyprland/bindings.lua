@@ -116,6 +116,10 @@ o.bind(
 	"uwsm-app -- xdg-terminal-exec -- bash -c '~/.local/bin/omarchy-customizer'"
 )
 
+-- Screen shaders (CRT etc.): toggle / next, damage_tracking switches with them
+o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/hypr/shaders/crt-toggle.sh")
+o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/hypr/shaders/crt-toggle.sh next")
+
 -- Emojis
 o.bind("SUPER + ALT + E", "Emojis", "omarchy menu emoji")
 
