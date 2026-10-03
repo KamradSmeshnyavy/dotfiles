@@ -5,7 +5,7 @@ export SHELL=$(which bash)
 
 mkdir -p ~/dotfiles/apps/hyprland/
 
-MENU_OPTIONS="1. 🎨 Hyprland Animations\n2. 📊 Shell Layouts\n3. 🖌️ Omarchy Themes\n4. 🖼️ Theme Wallpaper (No Recolor)\n5. 🖼️ Recolor Wallpaper (Lutgen)\n6. ❌ Exit"
+MENU_OPTIONS="1. 🎨 Hyprland Animations\n2. 📊 Shell Layouts\n3. 🖌️ Omarchy Themes\n4. 🖼️ Theme Wallpaper (No Recolor)\n5. 🖼️ Recolor Wallpaper (Lutgen)\n6. 📺 Screen Shaders\n7. ❌ Exit"
 CHOICE=$(echo -e "$MENU_OPTIONS" | fzf --prompt="Select Category: " --height=15 --border=rounded)
 
 if [[ "$CHOICE" == *"Hyprland Animations"* ]]; then
@@ -98,4 +98,31 @@ elif [[ "$CHOICE" == *"Recolor Wallpaper"* ]]; then
         omarchy theme bg set "$THEME_DIR/backgrounds/$(basename "$SELECTED_WP")"
         notify-send -t 3000 "Wallpaper" "Applied $(basename "$SELECTED_WP")!"
     fi
+
+elif [[ "$CHOICE" == *"Screen Shaders"* ]]; then
+    SHADER_DIR="$HOME/.config/hypr/shaders"
+    TOGGLE="$SHADER_DIR/crt-toggle.sh"
+    CURRENT=$(hyprctl getoption decoration:screen_shader -j | jq -r .str)
+    CURRENT_NAME=$(basename "$CURRENT" .frag)
+    [[ "$CURRENT" == "[[EMPTY]]" || -z "$CURRENT" ]] && CURRENT_NAME="off"
+
+    # Toggle entries first, then every shader (current one marked with ●).
+    SHADER_LIST=$(
+        echo "⏻ Toggle shader (now: $CURRENT_NAME)"
+        echo "⏭ Next shader"
+        for f in "$SHADER_DIR"/*.frag; do
+            n=$(basename "$f" .frag)
+            [[ "$n" == "$CURRENT_NAME" ]] && echo "● $n" || echo "  $n"
+        done
+    )
+    # Preview: the shader's header comment (what it does / what it costs).
+    PREVIEW_CMD="f=\"$SHADER_DIR/\$(echo {} | sed 's/^[●  ]*//').frag\"; [ -f \"\$f\" ] && sed -n '/^\/\//p;/^const/p' \"\$f\" || echo 'Toggle: on/off (last used shader) / next shader in the list'"
+    SELECTED=$(echo "$SHADER_LIST" | fzf --prompt="Select Shader: " --preview "$PREVIEW_CMD" --preview-window="right:60%:wrap" --height=80% --border=rounded)
+
+    case "$SELECTED" in
+    "") ;;
+    *"Toggle shader"*) "$TOGGLE" ;;
+    *"Next shader"*) "$TOGGLE" next ;;
+    *) "$TOGGLE" on "$(echo "$SELECTED" | sed 's/^[●  ]*//')" ;;
+    esac
 fi
