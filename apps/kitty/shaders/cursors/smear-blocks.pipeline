@@ -4,11 +4,11 @@ startgroup
     animation_start cursor-trail-move
     # The smear is invisible after ~6 / TAIL_RATE seconds (0.75 s for TAIL_RATE 8).
     # default is 800
-    animation_stop 300
+    animation_stop 800
 
     # 16 ms: the first frames (the "chaos" phase) last only ~25 ms.
     # default is 16
-    animation_step 33
+    animation_step 8
     shaders smear-cursor-blocks
     var float TAIL_RATE = 12
 

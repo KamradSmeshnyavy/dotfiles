@@ -1,0 +1,22 @@
+# Block cursor smear. Put this file and smear-cursor-blocks.slang in ~/.config/kitty/shaders/
+# and set `custom_shaders smear-blocks` (with `cursor_trail 1`) in kitty.conf.
+startgroup
+    animation_start cursor-trail-move
+    # The trail is nearly invisible after ~6 / TAIL_RATE seconds (0.75 s for TAIL_RATE 8),
+    # and barely visible after ~0.4 s. Raise this if you lower TAIL_RATE.
+    animation_stop 800
+    # 33 ms = ~30 fps. Use 16 for smoother motion at the cost of more GPU work.
+    animation_step 16
+var bool HEAD_FROM_CURSOR = true
+    
+    # Сердцевина хвоста светится цветом Gold (#f6c177)
+    var float3 TRAIL_COLOR_TAIL = float3(0.965, 0.757, 0.467)
+    
+    # Рваные края следа подкрашиваются в Rose (#ebbcba)
+    var float3 EDGE_COLOR = float3(0.922, 0.737, 0.729)
+    
+    # Усиливаем смешивание, чтобы розовые края были заметнее
+    var float EDGE_COLOR_MIX = 0.4
+    var bool INVERT_BACKGROUND = false
+    shaders smear-cursor-blocks-colored
+endgroup
