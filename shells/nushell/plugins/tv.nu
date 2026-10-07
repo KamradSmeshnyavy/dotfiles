@@ -47,7 +47,7 @@ $env.config = (
           {
               name: tv_history,
               modifier: Control,
-              keycode: char_h,
+              keycode: char_n,
               mode: [vi_normal, vi_insert, emacs],
               event: {
                   send: executehostcommand,
