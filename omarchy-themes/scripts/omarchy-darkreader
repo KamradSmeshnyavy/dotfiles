@@ -1,0 +1,327 @@
+#!/usr/bin/python3 -I
+"""
+Синхронизирует Dark Reader в Helium с текущей темой Omarchy.
+
+Если в теме есть dark-reader.json, применяется он. Иначе файл генерируется из
+настроек Dark Reader Efterklang (browser-templates/efterklang/Dark-Reader-Settings.json),
+в которых меняются только цвета под colors.toml темы, и сохраняется в каталог
+темы (если это не git-клон и есть права на запись), иначе в
+~/.local/state/omarchy/darkreader/generated/.
+
+Файл темы бывает двух видов:
+  * полный экспорт Dark Reader (как у Efterklang) — применяется целиком;
+  * {"theme": {...}} — меняется только тема, остальные настройки браузера остаются.
+
+У Dark Reader нет внешнего API, настройки он читает только при старте, поэтому
+они пишутся прямо в хранилище расширения, пока Helium закрыт. Если Helium открыт,
+в фоне ждём его закрытия и применяем после.
+
+Использование:
+  omarchy-darkreader sync               # из хука theme-set
+  omarchy-darkreader apply              # применить отложенные настройки, если Helium закрыт
+  omarchy-darkreader generate [colors]  # напечатать сгенерированный файл
+  omarchy-darkreader wait helium        # (внутреннее) дождаться закрытия и применить
+"""
+import fcntl
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+HOME = Path.home()
+CURRENT = HOME / ".local/state/omarchy/current"
+THEME_DIR = CURRENT / "theme"
+STATE = HOME / ".local/state/omarchy/darkreader"
+PENDING = STATE / "pending.json"
+APPLIED = STATE / "applied.json"
+LOG = STATE / "log.txt"
+USER_THEMES = HOME / ".config/omarchy/themes"
+THEME_FILE = "dark-reader.json"
+TEMPLATE = Path(__file__).resolve().parent.parent / "browser-templates/efterklang/Dark-Reader-Settings.json"
+
+# Метка сгенерированного файла: такой файл пересоздаётся при каждой смене темы,
+# чтобы следовать за шаблоном. Файл без метки считается написанным руками.
+GENERATED_MARK = "omarchyGenerated"
+# Шрифт на всех страницах во всех темах.
+FONT = {"useFont": True, "fontFamily": "Maple Mono NF CN"}
+# Служебные данные установки расширения не переносим.
+SKIP_KEYS = {"installation", GENERATED_MARK}
+
+HELIUM_PROFILE = HOME / ".config/net.imput.helium/Default"
+HELIUM_EXT_ID = "eimadpbcbfnmbkopoojfekhnkhdbieeh"
+BROWSERS = {"helium": {"name": "Helium", "processes": ["helium"]}}
+
+
+def log(msg):
+    STATE.mkdir(parents=True, exist_ok=True)
+    line = f"{time.strftime('%F %T')} {msg}"
+    with open(LOG, "a") as f:
+        f.write(line + "\n")
+    print(line, file=sys.stderr)
+
+
+def notify(headline, body=""):
+    cmd = ["omarchy-notification-send", headline] + ([body] if body else [])
+    try:
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        pass
+
+
+def load_json(path, default):
+    try:
+        return json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return default
+
+
+# --- генерация из настроек Efterklang ---------------------------------------
+
+def load_colors(path):
+    with open(path, "rb") as f:
+        data = tomllib.load(f)
+    return data, data.get("colors", data)
+
+
+def pick(col, *keys, default):
+    for k in keys:
+        v = col.get(k)
+        if isinstance(v, str) and v.startswith("#") and len(v) == 7:
+            return v.lower()
+    return default
+
+
+def generate(colors_path):
+    data, col = load_colors(colors_path)
+    bg = pick(col, "background", default="#1e1e2e")
+    fg = pick(col, "foreground", default="#cdd6f4")
+    blue = pick(col, "blue", "color4", "accent", default=fg)
+    light = str(col.get("mode", data.get("mode", "dark"))).lower() == "light"
+
+    settings = json.loads(TEMPLATE.read_text())
+    theme = settings["theme"]
+    # Меняются только цвета; у Efterklang выделение — синий палитры.
+    theme["mode"] = 0 if light else 1
+    theme["darkSchemeBackgroundColor"] = bg
+    theme["darkSchemeTextColor"] = fg
+    theme["selectionColor"] = blue
+    theme["darkColorScheme"] = "Default"
+    if light:
+        theme["lightSchemeBackgroundColor"] = bg
+        theme["lightSchemeTextColor"] = fg
+        theme["lightColorScheme"] = "Default"
+    settings[GENERATED_MARK] = True
+    return settings
+
+
+# --- выбор файла темы -------------------------------------------------------
+
+def theme_name():
+    try:
+        return (CURRENT / "theme.name").read_text().strip()
+    except OSError:
+        return ""
+
+
+def save_generated(name, doc):
+    text = json.dumps(doc, indent=4, ensure_ascii=False) + "\n"
+    source = USER_THEMES / name
+    if name and source.is_dir():
+        real = source.resolve()
+        if not (real / ".git").exists() and os.access(real, os.W_OK):
+            target = real / THEME_FILE
+            target.write_text(text)
+            return target
+    target = STATE / "generated" / f"{name or 'unknown'}.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(text)
+    return target
+
+
+def resolve():
+    name = theme_name()
+    staged = THEME_DIR / THEME_FILE
+    doc = load_json(staged, None) if staged.is_file() else None
+    if isinstance(doc, dict) and not doc.get(GENERATED_MARK):
+        source = f"{staged} (из темы)"
+    else:
+        doc = generate(THEME_DIR / "colors.toml")
+        source = f"{save_generated(name, doc)} (сгенерирован)"
+    if not isinstance(doc.get("theme"), dict):
+        raise SystemExit(f"{source}: нет объекта \"theme\"")
+    full = "schemeVersion" in doc or len(doc) > 1
+    settings = {k: v for k, v in doc.items() if k not in SKIP_KEYS}
+    settings["theme"] = {**settings["theme"], **FONT}
+    digest = hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest()[:16]
+    pending = {"theme_name": name, "source": source, "full": full, "digest": digest, "settings": settings}
+    STATE.mkdir(parents=True, exist_ok=True)
+    PENDING.write_text(json.dumps(pending, indent=2, ensure_ascii=False) + "\n")
+    log(f"тема '{name}': {source}, {'все настройки' if full else 'только theme'}")
+    return pending
+
+
+# --- Helium: LevelDB Sync/Local Extension Settings --------------------------
+
+def backup_dir(label):
+    """Новый каталог бэкапа на каждое применение; старые не удаляются."""
+    path = STATE / "backups" / f"{time.strftime('%Y%m%d-%H%M%S')}-{label}"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def updates_for(db, settings, full, is_sync):
+    """Какие ключи записать в это хранилище."""
+    out = {}
+    for key, value in settings.items():
+        raw = db.get(key.encode())
+        if key == "theme":
+            if raw is None:
+                continue
+            value = value if full else {**json.loads(raw), **value}
+        elif not full:
+            continue
+        elif raw is None and not is_sync:
+            # В Local Dark Reader держит лишь часть ключей (списки сайтов и т.п.)
+            continue
+        out[key] = value
+    return out
+
+
+def apply_helium(pending):
+    import plyvel  # из пакета python-plyvel
+
+    stores = [(HELIUM_PROFILE / d / HELIUM_EXT_ID, d.startswith("Sync"))
+              for d in ("Sync Extension Settings", "Local Extension Settings")]
+    written = []
+    for store, is_sync in stores:
+        if not (store / "CURRENT").is_file():
+            continue
+        try:
+            db = plyvel.DB(str(store), create_if_missing=False)
+        except plyvel.IOError as e:
+            log(f"helium: хранилище занято ({e})")
+            return False
+        try:
+            updates = updates_for(db, pending["settings"], pending["full"], is_sync)
+            if not updates:
+                continue
+            db.close()
+            shutil.copytree(store, backup_dir(f"helium-{'sync' if is_sync else 'local'}"),
+                            ignore=shutil.ignore_patterns("LOCK"))
+            db = plyvel.DB(str(store), create_if_missing=False)
+            with db.write_batch() as batch:
+                for key, value in updates.items():
+                    batch.put(key.encode(), json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode())
+            written.append(f"{'sync' if is_sync else 'local'}: {len(updates)} ключей")
+        finally:
+            db.close()
+    if not written:
+        log("helium: настройки Dark Reader не найдены, пропуск")
+    else:
+        log(f"helium: применено ({'; '.join(written)})")
+    return True
+
+
+APPLY = {"helium": apply_helium}
+
+
+# --- команды ----------------------------------------------------------------
+
+def is_running(browser):
+    for proc in BROWSERS[browser]["processes"]:
+        r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", proc],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if r.returncode == 0:
+            return True
+    return False
+
+
+def mark_applied(browser, digest):
+    applied = load_json(APPLIED, {})
+    applied[browser] = digest
+    APPLIED.write_text(json.dumps(applied, indent=2) + "\n")
+
+
+def apply_one(browser, pending):
+    if load_json(APPLIED, {}).get(browser) == pending["digest"]:
+        return "done"
+    if is_running(browser):
+        return "running"
+    if APPLY[browser](pending):
+        mark_applied(browser, pending["digest"])
+        return "done"
+    return "failed"
+
+
+def spawn_waiter(browser):
+    subprocess.Popen(["/usr/bin/python3", "-I", os.path.abspath(__file__), "wait", browser],
+                     stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+
+
+def cmd_sync():
+    pending = resolve()
+    waiting = []
+    for browser in APPLY:
+        if apply_one(browser, pending) == "running":
+            spawn_waiter(browser)
+            waiting.append(BROWSERS[browser]["name"])
+    if waiting:
+        notify("Dark Reader", f"Тема применится после перезапуска: {', '.join(waiting)}")
+
+
+def cmd_apply():
+    pending = load_json(PENDING, None)
+    if not pending or "settings" not in pending:
+        return
+    for browser in APPLY:
+        if apply_one(browser, pending) == "running":
+            spawn_waiter(browser)
+
+
+def cmd_wait(browser):
+    STATE.mkdir(parents=True, exist_ok=True)
+    with open(STATE / f"{browser}.lock", "w") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return  # уже ждёт другой процесс; он возьмёт свежий pending.json
+        while True:
+            while is_running(browser):
+                time.sleep(1)
+            for _ in range(15):
+                pending = load_json(PENDING, None)
+                if not pending or "settings" not in pending:
+                    return
+                state = apply_one(browser, pending)
+                if state in ("done", "running"):
+                    break
+                time.sleep(2)  # LevelDB ещё может быть заблокирован
+            if state != "running":  # браузер успели открыть снова — ждём дальше
+                return
+
+
+def main(argv):
+    cmd = argv[1] if len(argv) > 1 else "sync"
+    if cmd == "sync":
+        cmd_sync()
+    elif cmd == "apply":
+        cmd_apply()
+    elif cmd == "wait" and len(argv) == 3 and argv[2] in APPLY:
+        cmd_wait(argv[2])
+    elif cmd == "generate":
+        path = Path(argv[2]) if len(argv) > 2 else THEME_DIR / "colors.toml"
+        print(json.dumps(generate(path), indent=4, ensure_ascii=False))
+    else:
+        print(__doc__.strip(), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

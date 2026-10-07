@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+omarchy-theme-sync
+~/dotfiles/omarchy-themes/scripts/omarchy-tmux-theme 2>/dev/null || true
+~/dotfiles/omarchy-themes/scripts/omarchy-zsh-colors 2>/dev/null || true
+~/dotfiles/omarchy-themes/scripts/omarchy-darkreader sync 2>/dev/null || true
+~/dotfiles/omarchy-themes/scripts/omarchy-stylus sync 2>/dev/null || true

@@ -1,0 +1,24 @@
+{
+  "theme": {
+    "brightness": 100,
+    "contrast": 100,
+    "darkColorScheme": "Default",
+    "darkSchemeBackgroundColor": "#191724",
+    "darkSchemeTextColor": "#e0def4",
+    "engine": "dynamicTheme",
+    "fontFamily": "Helvetica Neue",
+    "grayscale": 0,
+    "immediateModify": false,
+    "lightColorScheme": "Default",
+    "lightSchemeBackgroundColor": "#faf4ed",
+    "lightSchemeTextColor": "#575279",
+    "mode": 1,
+    "scrollbarColor": "auto",
+    "selectionColor": "#c4a7e7",
+    "sepia": 0,
+    "styleSystemControls": true,
+    "stylesheet": "html,\nbody,\n:not([style*=\"background-color:\"]) {\n    background-color: rgb(35, 33, 54) !important;\n}\nhtml,\nbody,\n:not([style*=\"color:\"]),\n.sr-reader *:not([class*='sr-pivot']) {\n    color: rgb(224, 222, 244) !important;\n}\nh1:not([style*=\"color:\"]),\nh2:not([style*=\"color:\"]),\nh3:not([style*=\"color:\"]),\nh4:not([style*=\"color:\"]),\nh5:not([style*=\"color:\"]),\nh6:not([style*=\"color:\"]) {\n    color: rgb(234, 154, 151) !important;\n}\ncite:not([style*=\"color:\"]) {\n    color: rgb(156, 207, 216) !important;\n}\ninput:not([style*=\"background-color:\"]),\ntextarea:not([style*=\"background-color:\"]),\nbutton:not([style*=\"background-color:\"]),\n[role=\"button\"] {\n    background-color: rgb(42, 39, 63) !important;\n}\ninput:not([style*=\"background-color:\"]):hover,\ntextarea:not([style*=\"background-color:\"]):hover,\nbutton:not([style*=\"background-color:\"]):hover,\n[role=\"button\"]:hover {\n    background-color: rgb(57, 53, 82) !important;\n}\ninput:not([style*=\"background-color:\"]):active, input:not([style*=\"background-color:\"]):focus,\ntextarea:not([style*=\"background-color:\"]):active, textarea:not([style*=\"background-color:\"]):focus,\nbutton:not([style*=\"background-color:\"]):active, button:not([style*=\"background-color:\"]):focus,\n[role=\"button\"]:active, [role=\"button\"]:focus {\n    background-color: rgb(57, 53, 82) !important;\n}\na:not([style*=\"color:\"]) {\n    color: rgb(62, 143, 176) !important;\n}\na:not([style*=\"color:\"]):hover {\n    color: rgb(156, 207, 216) !important;\n}\na:not([style*=\"color:\"]):active, a:not([style*=\"color:\"]):focus {\n    color: rgb(156, 207, 216) !important;\n}\n:not([style*=\"border-color:\"]),\n::before,\n::after {\n    border-color: rgb(57, 53, 82) !important;\n}\ndiv:empty,\n.sr-reader *,\n.sr-backdrop {\n    background-color: rgba(35, 33, 54, 0.5) !important;\n}\ninput::placeholder,\ntextarea::placeholder {\n    color: rgba(196, 167, 231, 0.5) !important;\n}\ninput:not([style*=\"background-image:\"]),\ntextarea:not([style*=\"background-image:\"]) {\n    background-image: none !important;\n}\n",
+    "textStroke": 0,
+    "useFont": false
+  }
+}

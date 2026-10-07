@@ -1,0 +1,39 @@
+#!/usr/bin/python3 -I
+"""
+Отдаёт ~/.local/state/omarchy/stylus/www на 127.0.0.1, порты 47860–47875.
+
+Stylus делает паузу в 1 с между запросами к одному хосту, а хост для него — это
+адрес вместе с портом. omarchy-stylus раскладывает стили по 16 портам, поэтому
+проверка всех стилей занимает секунды, а не минуты.
+"""
+import functools
+import sys
+import threading
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+ROOT = Path.home() / ".local/state/omarchy/stylus/www"
+HOST = "127.0.0.1"
+FIRST_PORT, PORTS = 47860, 16
+
+
+class Handler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-cache")
+        super().end_headers()
+
+    def log_message(self, fmt, *args):
+        sys.stderr.write(f"{self.server.server_address[1]} {fmt % args}\n")
+
+
+def main():
+    ROOT.mkdir(parents=True, exist_ok=True)
+    handler = functools.partial(Handler, directory=str(ROOT))
+    servers = [ThreadingHTTPServer((HOST, FIRST_PORT + i), handler) for i in range(PORTS)]
+    for srv in servers[1:]:
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+    servers[0].serve_forever()
+
+
+if __name__ == "__main__":
+    main()

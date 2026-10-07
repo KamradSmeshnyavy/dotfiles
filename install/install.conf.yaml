@@ -88,5 +88,21 @@
     ~/.config/Code/User/snippets:
       path: apps/vscode/snippets
       if: "[ `uname` = Linux ]"
+    # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
+    ~/.config/omarchy/hooks/theme-set:
+      path: omarchy-themes/hooks/theme-set
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/hooks/post-boot.d/darkreader-sync:
+      path: omarchy-themes/hooks/post-boot.d/darkreader-sync
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/helium-browser:
+      path: omarchy-themes/scripts/helium-browser
+      if: "[ `uname` = Linux ]"
+    ~/.config/systemd/user/omarchy-stylus-server.service:
+      path: omarchy-themes/systemd/omarchy-stylus-server.service
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/catppuccin-mocha-lavender:
+      path: omarchy-themes/catppuccin-mocha-lavender
+      if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]

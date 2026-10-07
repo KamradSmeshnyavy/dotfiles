@@ -1,0 +1,453 @@
+#!/usr/bin/python3 -I
+"""
+Стили Stylus (официальные userstyles Catppuccin) в цветах текущей темы Omarchy.
+
+Шаблон — browser-templates/catppuccin/stylus-import.json (экспорт с сайта Catppuccin).
+Для темы меняются только цвета: в каждом стиле после подключения библиотеки
+userstyles.catppuccin.com/lib/std/v1.less палитра всех вариантов (latte, frappe,
+macchiato, mocha) переопределяется цветами colors.toml, вместе с CSS-фильтрами для
+иконок, а акцентом становится accent темы.
+
+Готовые стили лежат в ~/.local/state/omarchy/stylus/www/<slug>.user.css, их отдаёт
+omarchy-stylus-server.service на http://127.0.0.1:47860–47875. У каждого стиля @updateURL
+указывает туда; для localhost Stylus подтягивает изменённый код без смены версии.
+Автопроверка Stylus стоит раз в год, а после смены темы обёртка helium-browser
+вызывает `prime`, и Stylus один раз забирает новые стили через минуту после запуска.
+Стили, которые раньше отдавались, а в текущем наборе их нет, заменяются пустой
+заглушкой и перестают действовать.
+
+Один раз: импортировать www/import.json в Stylus (Управление → Импорт).
+
+Использование:
+  omarchy-stylus sync              # из хука theme-set: пересобрать стили под тему
+  omarchy-stylus prime             # перед запуском Helium: одна проверка обновлений Stylus
+  omarchy-stylus palette [colors]  # напечатать палитру Catppuccin для colors.toml
+"""
+import copy
+import hashlib
+import json
+import math
+import os
+import random
+import re
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+HOME = Path.home()
+THEME_DIR = HOME / ".local/state/omarchy/current/theme"
+STATE = HOME / ".local/state/omarchy/stylus"
+WWW = STATE / "www"
+LOG = STATE / "log.txt"
+SERVED = STATE / "served.json"
+FILTER_CACHE = STATE / "filters.json"
+TEMPLATE = Path(__file__).resolve().parent.parent / "browser-templates/catppuccin/stylus-import.json"
+# Библиотека userstyles.catppuccin.com/lib/std/v1.less встраивается в каждый стиль: воркер
+# Stylus в Helium не загружает удалённый @import, и сборка давала «Style is empty».
+LIB = TEMPLATE.with_name("lib-std-v1.less")
+# Порты omarchy-stylus-serve: Stylus выдерживает 1 с между запросами к одному host:port,
+# поэтому стили разложены по 16 портам (порт стиля постоянен — от хэша имени).
+FIRST_PORT, PORTS = 47860, 16
+# Автопроверка Stylus фактически выключена (раз в год): стили обновляются один раз
+# после смены темы — `prime` перед запуском Helium сбрасывает дату последней проверки.
+UPDATE_INTERVAL_HOURS = 8760
+BUILD = STATE / "build.json"
+PRIMED = STATE / "primed.json"
+HELIUM_STYLUS_STORE = HOME / ".config/net.imput.helium/Default/Local Extension Settings/clngdbkpkpeebahjckkjfobafhncgmne"
+
+ROLES = ["rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach", "yellow", "green",
+         "teal", "sky", "sapphire", "blue", "lavender", "text", "subtext1", "subtext0", "overlay2",
+         "overlay1", "overlay0", "surface2", "surface1", "surface0", "base", "mantle", "crust"]
+FLAVORS = ["latte", "frappe", "macchiato", "mocha"]
+RX_LIB = re.compile(r'^@import\s+"https://userstyles\.catppuccin\.com/lib/[^"]+";[^\n]*\n', re.M)
+RX_META = re.compile(r"/\*\s*==UserStyle==.*?==/UserStyle==\s*\*/", re.S)
+MARK = "/* omarchy palette */"
+
+
+def log(msg):
+    STATE.mkdir(parents=True, exist_ok=True)
+    line = f"{time.strftime('%F %T')} {msg}"
+    with open(LOG, "a") as f:
+        f.write(line + "\n")
+    print(line, file=sys.stderr)
+
+
+def load_json(path, default):
+    try:
+        return json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return default
+
+
+def write_atomic(path, text):
+    tmp = path.with_name(f".{path.name}.tmp")
+    tmp.write_text(text)
+    os.replace(tmp, path)
+
+
+# --- палитра ----------------------------------------------------------------
+
+def hex_rgb(value):
+    h = value.strip().lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def mix(a, b, amount):
+    ra, rb = hex_rgb(a), hex_rgb(b)
+    return "#" + "".join(f"{round(x * (1 - amount) + y * amount):02x}" for x, y in zip(ra, rb))
+
+
+def palette(colors_path):
+    """Роли Catppuccin из colors.toml темы Omarchy."""
+    with open(colors_path, "rb") as f:
+        data = tomllib.load(f)
+    col = data.get("colors", data)
+
+    def pick(*keys, default):
+        for k in keys:
+            v = col.get(k)
+            if isinstance(v, str) and v.startswith("#") and len(v) == 7:
+                return v.lower()
+        return default
+
+    bg = pick("background", default="#1e1e2e")
+    fg = pick("foreground", default="#cdd6f4")
+    red = pick("red", "color1", default="#f38ba8")
+    green = pick("green", "color2", default="#a6e3a1")
+    yellow = pick("yellow", "color3", default="#f9e2af")
+    blue = pick("blue", "color4", default="#89b4fa")
+    magenta = pick("magenta", "color5", default="#cba6f7")
+    cyan = pick("cyan", "color6", default="#94e2d5")
+    accent = pick("accent", default=blue)
+    return {
+        "rosewater": pick("cursor", default=mix(fg, red, 0.25)),
+        "flamingo": pick("brown", default=mix(fg, red, 0.4)),
+        "pink": pick("bright_magenta", "color13", default=mix(magenta, fg, 0.3)),
+        "mauve": magenta,
+        "red": red,
+        "maroon": pick("bright_red", "color9", default=mix(red, fg, 0.2)),
+        "peach": pick("orange", default=mix(red, yellow, 0.5)),
+        "yellow": yellow,
+        "green": green,
+        "teal": cyan,
+        "sky": mix(cyan, blue, 0.4),
+        "sapphire": mix(cyan, blue, 0.7),
+        "blue": blue,
+        "lavender": accent,
+        "text": fg,
+        "subtext1": pick("light_foreground", default=mix(bg, fg, 0.85)),
+        "subtext0": mix(bg, fg, 0.72),
+        "overlay2": mix(bg, fg, 0.60),
+        "overlay1": mix(bg, fg, 0.50),
+        "overlay0": pick("dark_foreground", default=mix(bg, fg, 0.40)),
+        "surface2": pick("muted", default=mix(bg, fg, 0.28)),
+        "surface1": pick("selection", default=mix(bg, fg, 0.20)),
+        "surface0": pick("lighter_background", default=mix(bg, fg, 0.12)),
+        "base": bg,
+        "mantle": pick("dark_background", default=mix(bg, "#000000", 0.15)),
+        "crust": pick("darker_background", default=mix(bg, "#000000", 0.30)),
+    }
+
+
+# --- CSS-фильтр «чёрный → цвет» для иконок (как @catppuccin-filters) ---------
+# Порт известного решателя SPSA (codepen.io/sosuke/pen/Pjoqqp).
+
+class _Color:
+    def __init__(self, r, g, b):
+        self.r, self.g, self.b = r, g, b
+
+    def clamp(self):
+        self.r, self.g, self.b = (min(255, max(0, v)) for v in (self.r, self.g, self.b))
+
+    def _multiply(self, m):
+        r, g, b = self.r, self.g, self.b
+        self.r = r * m[0] + g * m[1] + b * m[2]
+        self.g = r * m[3] + g * m[4] + b * m[5]
+        self.b = r * m[6] + g * m[7] + b * m[8]
+        self.clamp()
+
+    def hue_rotate(self, angle):
+        a = angle / 180 * math.pi
+        s, c = math.sin(a), math.cos(a)
+        self._multiply([
+            0.213 + c * 0.787 - s * 0.213, 0.715 - c * 0.715 - s * 0.715, 0.072 - c * 0.072 + s * 0.928,
+            0.213 - c * 0.213 + s * 0.143, 0.715 + c * 0.285 + s * 0.140, 0.072 - c * 0.072 - s * 0.283,
+            0.213 - c * 0.213 - s * 0.787, 0.715 - c * 0.715 + s * 0.715, 0.072 + c * 0.928 + s * 0.072])
+
+    def sepia(self, v):
+        self._multiply([
+            0.393 + 0.607 * (1 - v), 0.769 - 0.769 * (1 - v), 0.189 - 0.189 * (1 - v),
+            0.349 - 0.349 * (1 - v), 0.686 + 0.314 * (1 - v), 0.168 - 0.168 * (1 - v),
+            0.272 - 0.272 * (1 - v), 0.534 - 0.534 * (1 - v), 0.131 + 0.869 * (1 - v)])
+
+    def saturate(self, v):
+        self._multiply([
+            0.213 + 0.787 * v, 0.715 - 0.715 * v, 0.072 - 0.072 * v,
+            0.213 - 0.213 * v, 0.715 + 0.285 * v, 0.072 - 0.072 * v,
+            0.213 - 0.213 * v, 0.715 - 0.715 * v, 0.072 + 0.928 * v])
+
+    def _linear(self, slope, intercept=0.0):
+        self.r = self.r * slope + intercept * 255
+        self.g = self.g * slope + intercept * 255
+        self.b = self.b * slope + intercept * 255
+        self.clamp()
+
+    def brightness(self, v):
+        self._linear(v)
+
+    def contrast(self, v):
+        self._linear(v, -(0.5 * v) + 0.5)
+
+    def invert(self, v):
+        self.r = (v + self.r / 255 * (1 - 2 * v)) * 255
+        self.g = (v + self.g / 255 * (1 - 2 * v)) * 255
+        self.b = (v + self.b / 255 * (1 - 2 * v)) * 255
+        self.clamp()
+
+    def hsl(self):
+        r, g, b = self.r / 255, self.g / 255, self.b / 255
+        mx, mn = max(r, g, b), min(r, g, b)
+        h = s = 0.0
+        l = (mx + mn) / 2
+        if mx != mn:
+            d = mx - mn
+            s = d / (2 - mx - mn) if l > 0.5 else d / (mx + mn)
+            if mx == r:
+                h = (g - b) / d + (6 if g < b else 0)
+            elif mx == g:
+                h = (b - r) / d + 2
+            else:
+                h = (r - g) / d + 4
+            h /= 6
+        return h * 100, s * 100, l * 100
+
+
+def _apply(f):
+    c = _Color(0, 0, 0)
+    c.invert(f[0] / 100)
+    c.sepia(f[1] / 100)
+    c.saturate(f[2] / 100)
+    c.hue_rotate(f[3] * 3.6)
+    c.brightness(f[4] / 100)
+    c.contrast(f[5] / 100)
+    return c
+
+
+def _loss(f, target, target_hsl):
+    c = _apply(f)
+    h, s, l = c.hsl()
+    return (abs(c.r - target.r) + abs(c.g - target.g) + abs(c.b - target.b)
+            + abs(h - target_hsl[0]) + abs(s - target_hsl[1]) + abs(l - target_hsl[2]))
+
+
+def _spsa(A, a, c, values, iters, target, target_hsl, rnd):
+    alpha, gamma = 1, 1 / 6
+    best, best_loss = None, math.inf
+    values = list(values)
+    for k in range(iters):
+        ck = c / (k + 1) ** gamma
+        deltas = [1 if rnd.random() > 0.5 else -1 for _ in range(6)]
+        high = [v + ck * d for v, d in zip(values, deltas)]
+        low = [v - ck * d for v, d in zip(values, deltas)]
+        diff = _loss(high, target, target_hsl) - _loss(low, target, target_hsl)
+        for i in range(6):
+            g = diff / (2 * ck) * deltas[i]
+            ak = a[i] / (A + k + 1) ** alpha
+            v = values[i] - ak * g
+            mx = 7500 if i == 2 else 200 if i in (4, 5) else 100
+            if i == 3:
+                v = v % mx if v > mx else (v % mx + mx if v < 0 else v)
+            else:
+                v = min(mx, max(0, v))
+            values[i] = v
+        cur = _loss(values, target, target_hsl)
+        if cur < best_loss:
+            best, best_loss = list(values), cur
+    return best, best_loss
+
+
+def css_filter(hex_color):
+    rnd = random.Random(int(hashlib.sha1(hex_color.encode()).hexdigest()[:8], 16))
+    target = _Color(*hex_rgb(hex_color))
+    thsl = target.hsl()
+    best, best_loss = None, math.inf
+    for _ in range(30):
+        vals, loss = _spsa(5, [60, 180, 18000, 600, 1.2, 1.2], 15, [50, 20, 3750, 50, 100, 100],
+                           1000, target, thsl, rnd)
+        if loss < best_loss:
+            best, best_loss = vals, loss
+        if best_loss <= 25:
+            break
+    A = best_loss
+    c = 2 + A / 10
+    a = [0.25 * A, 0.25 * A, A, 0.25 * A, 0.2 * A, 0.2 * A]
+    vals, loss = _spsa(A, a, c, best, 500, target, thsl, rnd)
+    if loss < best_loss:
+        best = vals
+    f = best
+    return (f"brightness(0) saturate(100%) invert({round(f[0])}%) sepia({round(f[1])}%) "
+            f"saturate({round(f[2])}%) hue-rotate({round(f[3] * 3.6)}deg) "
+            f"brightness({round(f[4])}%) contrast({round(f[5])}%)")
+
+
+def filters(pal):
+    cache = load_json(FILTER_CACHE, {})
+    out = {}
+    for role in ROLES:
+        color = pal[role]
+        if color not in cache:
+            cache[color] = css_filter(color)
+        out[role] = cache[color]
+    STATE.mkdir(parents=True, exist_ok=True)
+    write_atomic(FILTER_CACHE, json.dumps(cache, indent=1) + "\n")
+    return out
+
+
+# --- стили ------------------------------------------------------------------
+
+def style_url(name):
+    port = FIRST_PORT + int(hashlib.sha1(name.encode()).hexdigest(), 16) % PORTS
+    return f"http://127.0.0.1:{port}/{name}.user.css"
+
+
+def slug(name):
+    s = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    return s or "style"
+
+
+def set_update_url(code, url):
+    """Ставит @updateURL в мета-блоке usercss (заменяет или добавляет)."""
+    m = RX_META.search(code)
+    if not m:
+        return code
+    meta = m.group(0)
+    if re.search(r"^@updateURL\s", meta, re.M):
+        meta = re.sub(r"^@updateURL\s.*$", f"@updateURL {url}", meta, flags=re.M)
+    else:
+        meta = meta.replace("==/UserStyle==", f"@updateURL {url}\n==/UserStyle==", 1)
+    return code[:m.start()] + meta + code[m.end():]
+
+
+def override_block(pal, flt):
+    colors = " ".join(f"@{r}: {pal[r]};" for r in ROLES)
+    filt = " ".join(f"@{r}: {flt[r]};" for r in ROLES)
+    lines = [MARK, "@catppuccin: {"]
+    lines += [f"  @{fl}: {{ {colors} }};" for fl in FLAVORS]
+    lines += ["};", "@catppuccin-filters: {"]
+    lines += [f"  @{fl}: {{ {filt} }};" for fl in FLAVORS]
+    lines += ["};", "@accentColor: lavender;", ""]
+    return "\n".join(lines)
+
+
+def stub(name, url):
+    return (f"/* ==UserStyle==\n@name {name}\n@namespace omarchy/stylus/{slug(name)}\n@version 0.0.0\n"
+            f"@description Removed by omarchy-stylus: not in the current style set\n"
+            f"@updateURL {url}\n==/UserStyle== */\n\n"
+            f"@-moz-document domain(\"omarchy-stylus.invalid\") {{\n}}\n")
+
+
+def build():
+    pal = palette(THEME_DIR / "colors.toml")
+    block = override_block(pal, filters(pal))
+    lib = LIB.read_text().rstrip("\n")
+    backup = json.loads(TEMPLATE.read_text())
+
+    WWW.mkdir(parents=True, exist_ok=True)
+    styles, used, skipped = [], {}, []
+    for item in backup:
+        if not isinstance(item, dict) or not isinstance(item.get("sourceCode"), str):
+            continue
+        code = item["sourceCode"]
+        m = RX_LIB.search(code)
+        if not m:
+            skipped.append(item.get("name"))
+            continue
+        name = slug(item.get("name", ""))
+        while name in used:
+            name += "-1"
+        url = style_url(name)
+        code = code[:m.start()] + lib + "\n" + block + code[m.end():]
+        code = set_update_url(code, url)
+        write_atomic(WWW / f"{name}.user.css", code)
+        used[name] = item.get("name", name)
+
+        style = copy.deepcopy(item)
+        style.update(sourceCode=code, updateUrl=url, updatable=True, enabled=True)
+        style.setdefault("usercssData", {})["updateURL"] = url
+        for key in ("originalMd5", "etag", "id"):
+            style.pop(key, None)
+        # Stylus считает usercss неизменённым, если originalDigest = SHA-1 исходника;
+        # без него стиль помечается «may be locally edited» и не обновляется.
+        style["originalDigest"] = hashlib.sha1(code.encode()).hexdigest()
+        styles.append(style)
+
+    # Стили из прошлых наборов, которых сейчас нет: пустая заглушка вместо кода.
+    served = load_json(SERVED, None)
+    if served is None:  # первый запуск: всё, что уже лежит в www, отдавалось раньше
+        served = {p.name[:-len(".user.css")]: p.name[:-len(".user.css")] for p in WWW.glob("*.user.css")}
+    for name in sorted(set(served) - set(used)):
+        write_atomic(WWW / f"{name}.user.css", stub(served[name], style_url(name)))
+    served.update(used)
+    write_atomic(SERVED, json.dumps(served, indent=1, ensure_ascii=False) + "\n")
+
+    settings = dict(backup[0].get("settings", {})) if backup and "settings" in backup[0] else {}
+    settings["updateInterval"] = UPDATE_INTERVAL_HOURS
+    imp = [{"settings": settings}] + styles
+    write_atomic(WWW / "import.json", json.dumps(imp, ensure_ascii=False) + "\n")
+    digest = hashlib.sha256("".join(s["sourceCode"] for s in styles).encode()).hexdigest()[:16]
+    write_atomic(BUILD, json.dumps({"digest": digest}) + "\n")
+    stubs = len(set(served) - set(used))
+    theme = (THEME_DIR.parent / "theme.name").read_text().strip() if (THEME_DIR.parent / "theme.name").is_file() else "?"
+    log(f"тема '{theme}': {len(styles)} стилей, заглушек {stubs}"
+        + (f", без библиотеки Catppuccin (пропущены): {skipped}" if skipped else ""))
+
+
+def helium_running():
+    import subprocess
+    r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", "helium"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return r.returncode == 0
+
+
+def prime():
+    """Если набор стилей изменился с прошлого запуска Helium, просит Stylus проверить
+    обновления сразу после старта: lastUpdateTime = 1 мс от эпохи, и Stylus ставит
+    проверку через минуту (MIN_INTERVAL_MS). Только пока Helium закрыт."""
+    build = load_json(BUILD, {}).get("digest")
+    if not build or load_json(PRIMED, {}).get("digest") == build:
+        return
+    if helium_running():
+        log("prime: Helium запущен, пропуск")
+        return
+    import plyvel  # из пакета python-plyvel
+    try:
+        db = plyvel.DB(str(HELIUM_STYLUS_STORE), create_if_missing=False)
+    except plyvel.Error as e:
+        log(f"prime: хранилище Stylus недоступно ({e})")
+        return
+    try:
+        db.put(b"lastUpdateTime", b"1")
+    finally:
+        db.close()
+    write_atomic(PRIMED, json.dumps({"digest": build}) + "\n")
+    log("prime: Stylus проверит обновления через минуту после запуска Helium")
+
+
+def main(argv):
+    cmd = argv[1] if len(argv) > 1 else "sync"
+    if cmd == "sync":
+        build()
+    elif cmd == "prime":
+        prime()
+    elif cmd == "palette":
+        path = Path(argv[2]) if len(argv) > 2 else THEME_DIR / "colors.toml"
+        print(json.dumps(palette(path), indent=2))
+    else:
+        print(__doc__.strip(), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

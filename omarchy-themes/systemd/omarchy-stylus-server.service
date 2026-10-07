@@ -1,0 +1,10 @@
+[Unit]
+Description=Serve Omarchy-themed Stylus userstyles on 127.0.0.1:47860-47875
+Documentation=file://%h/dotfiles/omarchy-themes/scripts/omarchy-stylus
+
+[Service]
+ExecStart=/usr/bin/python3 -I %h/dotfiles/omarchy-themes/scripts/omarchy-stylus-serve
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

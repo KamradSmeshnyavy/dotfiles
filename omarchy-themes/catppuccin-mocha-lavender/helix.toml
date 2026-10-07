@@ -1,0 +1,7 @@
+# Efterklang/dotfiles uses Helix's bundled catppuccin_mocha; lavender cursor/selection on top
+inherits = "catppuccin_mocha"
+
+"ui.cursor.primary" = { fg = "base", bg = "lavender" }
+"ui.cursor.primary.normal" = { fg = "base", bg = "lavender" }
+"ui.selection.primary" = { bg = "surface1" }
+"ui.statusline.normal" = { fg = "base", bg = "lavender", modifiers = ["bold"] }

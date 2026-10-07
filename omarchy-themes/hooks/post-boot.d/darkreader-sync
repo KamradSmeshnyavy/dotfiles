@@ -1,0 +1,3 @@
+#!/bin/bash
+# Apply a Dark Reader theme still pending from a theme change made while a browser was open.
+~/dotfiles/omarchy-themes/scripts/omarchy-darkreader apply 2>/dev/null || true
