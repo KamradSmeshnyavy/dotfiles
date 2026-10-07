@@ -1,0 +1,249 @@
+#!/usr/bin/python3 -I
+"""
+Тема Surfingkeys в Helium в цветах текущей темы Omarchy.
+
+Тема Surfingkeys — блок конфига от `const hintsCss` до конца `settings.theme = `...`;`.
+Если в теме Omarchy есть surfingkeys.js без метки omarchyGenerated, берётся он как есть.
+Иначе он генерируется из browser-templates/surfingkeys/rose-pine.js: меняются только
+цвета под colors.toml, и сохраняется в каталог темы (если это не git-клон и есть права
+на запись), иначе в ~/.local/state/omarchy/surfingkeys/generated/. Шрифт при применении
+всегда Maple Mono NF CN.
+
+Surfingkeys хранит весь конфиг строкой `snippets` в chrome.storage.local и читает его
+только при загрузке, поэтому блок темы заменяется прямо в хранилище, пока Helium закрыт
+(обёртка helium-browser вызывает `apply` перед запуском). Остальной конфиг — биндинги и
+правки из интерфейса Surfingkeys — не меняется.
+
+Использование:
+  omarchy-surfingkeys sync               # из хука theme-set
+  omarchy-surfingkeys apply              # перед запуском Helium
+  omarchy-surfingkeys generate [colors]  # напечатать сгенерированный блок темы
+"""
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+HOME = Path.home()
+CURRENT = HOME / ".local/state/omarchy/current"
+THEME_DIR = CURRENT / "theme"
+STATE = HOME / ".local/state/omarchy/surfingkeys"
+PENDING = STATE / "pending.js"
+APPLIED = STATE / "applied.json"
+LOG = STATE / "log.txt"
+USER_THEMES = HOME / ".config/omarchy/themes"
+THEME_FILE = "surfingkeys.js"
+TEMPLATE = Path(__file__).resolve().parent.parent / "browser-templates/surfingkeys/rose-pine.js"
+STORE = HOME / ".config/net.imput.helium/Default/Local Extension Settings/gfbliohnnapiefjpjlpjnehglfpaknnc"
+
+GENERATED_MARK = "// omarchyGenerated"
+BEGIN = "// >>> omarchy surfingkeys theme"
+END = "// <<< omarchy surfingkeys theme"
+FONT = ("JetBrains Mono NL", "Maple Mono NF CN")
+
+# Цвета шаблона Rosé Pine → роль в colors.toml (или смесь фона и текста).
+ROSE_PINE = {
+    "#191724": "base", "#1f1d2e": "surface", "#26233a": "overlay",
+    "#21202e": "highlight_low", "#403d52": "highlight_med", "#524f67": "highlight_high",
+    "#e0def4": "text", "#c4a7e7": "iris", "#ebbcba": "rose", "#9ccfd8": "foam", "#f6c177": "gold",
+}
+
+
+def log(msg):
+    STATE.mkdir(parents=True, exist_ok=True)
+    line = f"{time.strftime('%F %T')} {msg}"
+    with open(LOG, "a") as f:
+        f.write(line + "\n")
+    print(line, file=sys.stderr)
+
+
+def load_json(path, default):
+    try:
+        return json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return default
+
+
+def hex_rgb(value):
+    h = value.strip().lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def mix(a, b, amount):
+    ra, rb = hex_rgb(a), hex_rgb(b)
+    return "#" + "".join(f"{round(x * (1 - amount) + y * amount):02x}" for x, y in zip(ra, rb))
+
+
+# --- генерация --------------------------------------------------------------
+
+def roles(colors_path):
+    with open(colors_path, "rb") as f:
+        data = tomllib.load(f)
+    col = data.get("colors", data)
+
+    def pick(*keys, default):
+        for k in keys:
+            v = col.get(k)
+            if isinstance(v, str) and v.startswith("#") and len(v) == 7:
+                return v.lower()
+        return default
+
+    bg = pick("background", default="#191724")
+    fg = pick("foreground", default="#e0def4")
+    return {
+        "base": bg,
+        "surface": mix(bg, fg, 0.05),
+        "overlay": pick("lighter_background", "color0", default=mix(bg, fg, 0.10)),
+        "highlight_low": mix(bg, fg, 0.04),
+        "highlight_med": mix(bg, fg, 0.18),
+        "highlight_high": pick("selection", "selection_background", default=mix(bg, fg, 0.28)),
+        "text": fg,
+        "iris": pick("magenta", "color5", default=fg),
+        "rose": pick("accent", "color4", default=fg),
+        "foam": pick("cyan", "color6", default=fg),
+        "gold": pick("yellow", "color3", default=fg),
+    }
+
+
+def generate(colors_path):
+    r = roles(colors_path)
+    text = TEMPLATE.read_text()
+    for old, role in ROSE_PINE.items():
+        text = text.replace(old, r[role])
+    return f"{GENERATED_MARK}\n{text}"
+
+
+# --- выбор файла темы -------------------------------------------------------
+
+def theme_name():
+    try:
+        return (CURRENT / "theme.name").read_text().strip()
+    except OSError:
+        return ""
+
+
+def hand_written(path):
+    """Файл темы, написанный руками (без метки генерации)."""
+    return path.is_file() and not path.read_text().startswith(GENERATED_MARK)
+
+
+def save_generated(name, text):
+    source = USER_THEMES / name
+    if name and source.is_dir():
+        real = source.resolve()
+        target = real / THEME_FILE
+        # Файл без метки никогда не перезаписывается.
+        if not (real / ".git").exists() and os.access(real, os.W_OK) and not hand_written(target):
+            target.write_text(text)
+            return target
+    target = STATE / "generated" / f"{name or 'unknown'}.js"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(text)
+    return target
+
+
+def resolve():
+    name = theme_name()
+    # Рабочая копия темы бывает старше исходной (файл добавили после omarchy theme set),
+    # поэтому смотрим и в каталог самой темы.
+    candidates = [THEME_DIR / THEME_FILE] + ([USER_THEMES / name / THEME_FILE] if name else [])
+    own = next((p for p in candidates if hand_written(p)), None)
+    if own:
+        text, source = own.read_text(), f"{own} (из темы)"
+    else:
+        text = generate(THEME_DIR / "colors.toml")
+        source = f"{save_generated(name, text)} (сгенерирован)"
+    block = text.removeprefix(GENERATED_MARK + "\n").replace(*FONT).rstrip("\n")
+    STATE.mkdir(parents=True, exist_ok=True)
+    PENDING.write_text(block + "\n")
+    log(f"тема '{name}': {source}")
+
+
+# --- Helium: LevelDB Local Extension Settings -------------------------------
+
+def helium_running():
+    r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", "helium"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return r.returncode == 0
+
+
+def replace_theme(snippets, block):
+    """Заменяет блок темы в конфиге. None — если блок не найден."""
+    wrapped = f"{BEGIN}\n{block}\n{END}"
+    if BEGIN in snippets and END in snippets:
+        start = snippets.index(BEGIN)
+        end = snippets.index(END, start) + len(END)
+    else:
+        try:
+            start = snippets.index("const hintsCss")
+            theme = snippets.index("settings.theme = `", start)
+            end = snippets.index("\n`;", theme) + len("\n`;")
+        except ValueError:
+            return None
+    return snippets[:start] + wrapped + snippets[end:]
+
+
+def apply():
+    if not PENDING.is_file():
+        return
+    block = PENDING.read_text().rstrip("\n")
+    digest = hashlib.sha256(block.encode()).hexdigest()[:16]
+    if load_json(APPLIED, {}).get("digest") == digest:
+        return
+    if helium_running():
+        log("helium запущен, применится при следующем запуске")
+        return
+    import plyvel  # из пакета python-plyvel
+
+    try:
+        db = plyvel.DB(str(STORE), create_if_missing=False)
+    except plyvel.Error as e:
+        log(f"хранилище Surfingkeys недоступно ({e})")
+        return
+    try:
+        raw = db.get(b"snippets")
+        if raw is None:
+            log("в Surfingkeys нет snippets, пропуск")
+            return
+        old = json.loads(raw)
+        new = replace_theme(old, block)
+        if new is None:
+            log("в snippets не найден блок темы (const hintsCss … settings.theme), пропуск")
+            return
+        if new != old:
+            db.close()
+            stamp = f"{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns() // 1000 % 1_000_000:06d}"
+            backup = STATE / "backups" / f"{stamp}-surfingkeys"
+            backup.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(STORE, backup, ignore=shutil.ignore_patterns("LOCK"))
+            db = plyvel.DB(str(STORE), create_if_missing=False)
+            db.put(b"snippets", json.dumps(new, ensure_ascii=False).encode())
+    finally:
+        db.close()
+    APPLIED.write_text(json.dumps({"digest": digest}) + "\n")
+    log("применено")
+
+
+def main(argv):
+    cmd = argv[1] if len(argv) > 1 else "sync"
+    if cmd == "sync":
+        resolve()
+        apply()
+    elif cmd == "apply":
+        apply()
+    elif cmd == "generate":
+        path = Path(argv[2]) if len(argv) > 2 else THEME_DIR / "colors.toml"
+        print(generate(path), end="")
+    else:
+        print(__doc__.strip(), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

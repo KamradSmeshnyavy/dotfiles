@@ -128,13 +128,21 @@ def theme_name():
         return ""
 
 
+def hand_written(path):
+    """Файл темы, написанный руками (без метки генерации)."""
+    doc = load_json(path, None) if path.is_file() else None
+    return doc if isinstance(doc, dict) and not doc.get(GENERATED_MARK) else None
+
+
 def save_generated(name, doc):
     text = json.dumps(doc, indent=4, ensure_ascii=False) + "\n"
     source = USER_THEMES / name
     if name and source.is_dir():
         real = source.resolve()
-        if not (real / ".git").exists() and os.access(real, os.W_OK):
-            target = real / THEME_FILE
+        target = real / THEME_FILE
+        # Файл без метки (или нечитаемый) никогда не перезаписывается.
+        writable = not (real / ".git").exists() and os.access(real, os.W_OK)
+        if writable and (not target.exists() or load_json(target, {}).get(GENERATED_MARK)):
             target.write_text(text)
             return target
     target = STATE / "generated" / f"{name or 'unknown'}.json"
@@ -145,10 +153,12 @@ def save_generated(name, doc):
 
 def resolve():
     name = theme_name()
-    staged = THEME_DIR / THEME_FILE
-    doc = load_json(staged, None) if staged.is_file() else None
-    if isinstance(doc, dict) and not doc.get(GENERATED_MARK):
-        source = f"{staged} (из темы)"
+    # Рабочая копия темы бывает старше исходной (файл добавили после omarchy theme set),
+    # поэтому смотрим и в каталог самой темы.
+    candidates = [THEME_DIR / THEME_FILE] + ([USER_THEMES / name / THEME_FILE] if name else [])
+    own = next((p for p in candidates if hand_written(p)), None)
+    if own:
+        doc, source = hand_written(own), f"{own} (из темы)"
     else:
         doc = generate(THEME_DIR / "colors.toml")
         source = f"{save_generated(name, doc)} (сгенерирован)"

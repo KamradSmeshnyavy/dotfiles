@@ -4,3 +4,4 @@ omarchy-theme-sync
 ~/dotfiles/omarchy-themes/scripts/omarchy-zsh-colors 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-darkreader sync 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-stylus sync 2>/dev/null || true
+~/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys sync 2>/dev/null || true

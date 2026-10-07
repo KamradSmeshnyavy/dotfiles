@@ -8,6 +8,7 @@ if ! pgrep -u "$UID" -x helium >/dev/null; then
   "$HOME/dotfiles/omarchy-themes/scripts/omarchy-darkreader" apply >/dev/null 2>&1 || true
   # Stylus: one update check right after start if the theme changed since the last launch.
   "$HOME/dotfiles/omarchy-themes/scripts/omarchy-stylus" prime >/dev/null 2>&1 || true
+  "$HOME/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys" apply >/dev/null 2>&1 || true
 fi
 
 exec /usr/bin/helium-browser "$@"
