@@ -11,7 +11,8 @@ set -euo pipefail
 # The source root is keyed as "." because bash rejects an empty array subscript.
 
 SRC_DEFAULT="${HOME}/Wallpapers-lutgen/Walls-dharmx"
-OUT_DEFAULT="${HOME}/Wallpapers-lutgen/walls-dharmx-rose-pine-hacker-24"
+# The output root is suffixed with the theme name once the theme is resolved.
+OUT_PREFIX="${HOME}/Wallpapers-lutgen/walls-dharmx-"
 
 # Extensions lutgen can recolor, and the ones we only ever copy or skip.
 RECOLOR_EXTS="jpg jpeg png webp gif"
@@ -35,7 +36,7 @@ Recolor every image under source-dir with the theme's palette, writing the same
 directory structure and file names under output-dir.
 
   source-dir   default: ${SRC_DEFAULT}
-  output-dir   default: ${OUT_DEFAULT}
+  output-dir   default: ${OUT_PREFIX}<theme>
 
 Options:
   -t, --theme NAME       theme to take colors from
@@ -110,7 +111,6 @@ while (($# > 0)); do
 done
 
 SRC="${positional[0]:-$SRC_DEFAULT}"
-OUT="${positional[1]:-$OUT_DEFAULT}"
 
 [[ -d $SRC ]] || die "source directory does not exist: $SRC"
 [[ $LEVEL =~ ^[0-9]+$ ]] || die "--level must be 2-16"
@@ -146,6 +146,7 @@ fi
 
 [[ -f "$THEME_DIR/colors.toml" ]] || die "no colors.toml in $THEME_DIR"
 THEME_LABEL="${THEME:-$(basename "$THEME_DIR")}"
+OUT="${positional[1]:-${OUT_PREFIX}${THEME_LABEL}}"
 
 echo "Theme:  $THEME_LABEL ($THEME_DIR)" >&2
 echo "Source: $SRC" >&2
