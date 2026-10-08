@@ -4,25 +4,9 @@ import qs.Commons
 // Every menu drawn as a star map: one star per row, placed on a golden-angle
 // spiral so density stays even at any row count, and linked to its nearest
 // neighbours so the field reads as a constellation rather than a scatter plot.
-Item {
+SkinBase {
   id: root
 
-  property var rowModel: null
-  property var iconResolver: null
-  property int selectedIndex: 0
-  property bool cursorActive: true
-  property string title: ""
-  property string subtitle: ""
-  property string query: ""
-  property color foreground: "white"
-  property color accent: "white"
-  property string fontFamily: "sans-serif"
-  // A menu change earns the full fly-out from the centre; a keystroke while
-  // filtering only re-settles, or the field would explode on every letter.
-  property bool burst: true
-  property real backdrop: 0.94
-
-  readonly property int count: root.rowModel ? root.rowModel.count : 0
   // Past this many stars the names collide more than they help, so only the
   // star under the cursor keeps its label.
   readonly property bool labelsVisible: root.count <= 64
@@ -30,9 +14,6 @@ Item {
   // and the stars into a texture.
   readonly property bool dense: root.count > 80
   readonly property real starSize: root.dense ? Style.space(36) : Style.space(46)
-
-  signal activated(int index)
-  signal selectRequested(int index)
 
   property var points: []
   property var edges: []

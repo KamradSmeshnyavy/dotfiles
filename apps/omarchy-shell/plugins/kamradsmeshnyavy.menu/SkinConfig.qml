@@ -9,7 +9,35 @@ Item {
   id: root
 
   readonly property string path: Quickshell.env("HOME") + "/.config/omarchy/extensions/menu-skin.json"
-  readonly property var known: ["constellation", "terminal", "list"]
+  // Skin name → the view that draws it. "list" has no view: it is the stock
+  // card. The ported ones come from hamzaabde-langjk/omlauch and
+  // bjarneo/omarchy-quickapps, recoloured from the active theme.
+  readonly property var files: ({
+    "constellation": "ConstellationView.qml",
+    "terminal": "TerminalView.qml",
+    "forge": "ForgeView.qml",
+    "aurora": "AuroraView.qml",
+    "arcade": "ArcadeView.qml",
+    "stark": "StarkView.qml",
+    "redroom": "RedRoomView.qml",
+    "lofi": "LofiView.qml",
+    "board": "BoardView.qml",
+    "candy": "CandyView.qml",
+    "outrun": "OutrunView.qml",
+    "hexgrid": "HexgridView.qml",
+    "coffee": "CoffeeView.qml",
+    "zen": "ZenView.qml",
+    "vaporwave": "VaporwaveView.qml",
+    "tron": "TronView.qml",
+    "stargate": "StargateView.qml",
+    "medieval": "MedievalView.qml",
+    "ironman": "IronmanView.qml"
+  })
+  readonly property var known: Object.keys(root.files).concat(["list"])
+
+  function fileFor(name) {
+    return root.files[name] || root.files["constellation"]
+  }
   property string skin: "constellation"
   // How opaque the backdrop behind a skin is. Left tunable because how much
   // desktop should show through is taste, not a value worth guessing.

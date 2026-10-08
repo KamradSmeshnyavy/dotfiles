@@ -4,23 +4,9 @@ import qs.Commons
 
 // The same menu, dressed as a CRT in the active theme's colours: scanlines, a
 // drifting refresh band, a blinking block cursor and a power-on snap.
-Item {
+SkinBase {
   id: root
 
-  property var rowModel: null
-  property var iconResolver: null
-  property int selectedIndex: 0
-  property bool cursorActive: true
-  property string title: ""
-  property string subtitle: ""
-  property string query: ""
-  property bool burst: true
-  property real backdrop: 0.94
-  property color foreground: "#cacccc"
-  property color accent: "#41f38c"
-  property color background: "#04100a"
-
-  readonly property int count: root.rowModel ? root.rowModel.count : 0
   readonly property string hostLabel: Quickshell.env("USER") + "@" + "omarchy"
   readonly property string promptPath: root.subtitle.length > 0
     ? ("~/" + root.subtitle.replace(/\s*›\s*/g, "/").toLowerCase())
@@ -36,10 +22,6 @@ Item {
   readonly property color inverse: (0.299 * root.accent.r + 0.587 * root.accent.g + 0.114 * root.accent.b) > 0.5
     ? root.background
     : root.foreground
-  readonly property string mono: Style.font.family
-
-  signal activated(int index)
-  signal selectRequested(int index)
 
   function revealSelected() {
     if (root.count === 0) return

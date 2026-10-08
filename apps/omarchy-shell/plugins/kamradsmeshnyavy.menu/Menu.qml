@@ -117,6 +117,8 @@ Item {
   readonly property bool skinActive: !root.dmenuActive && root.rowsLoaded && root.skin !== "list"
   readonly property bool constellationActive: root.skinActive && root.skin === "constellation"
   readonly property bool terminalActive: root.skinActive && root.skin === "terminal"
+  // Skins that lay rows out in space take the arrows for themselves.
+  readonly property bool spatialSkin: root.skinActive && !!skinLoader.item && typeof skinLoader.item.navigate === "function"
   // A menu change earns the full entrance animation; a keystroke while
   // filtering only re-settles the rows that are already on screen.
   property bool burst: true
@@ -795,6 +797,35 @@ Item {
     }
   }
 
+  // Skins may hold a launch for a beat to show it (a burst, a flash). Only
+  // leaves get the delay: drilling into a submenu should never feel slow.
+  function activateFromSkin(index) {
+    if (launchHold.running) return
+    var view = skinLoader.item
+    var row = index >= 0 && index < displayModel.count ? displayModel.get(index) : null
+    var leaf = row && row.kind !== "menu" && row.kind !== "link"
+    var delay = view && leaf && view.launchDelay ? Number(view.launchDelay) : 0
+    if (delay <= 0 || typeof view.playLaunch !== "function") {
+      root.activateIndex(index, true)
+      return
+    }
+    view.playLaunch(index)
+    launchHold.index = index
+    launchHold.serial = root.requestSerial
+    launchHold.interval = Math.min(700, delay)
+    launchHold.restart()
+  }
+
+  Timer {
+    id: launchHold
+    property int index: -1
+    property int serial: -1
+    onTriggered: {
+      // The menu may have closed or moved on while the effect played.
+      if (root.opened && serial === root.requestSerial) root.activateIndex(index, true)
+    }
+  }
+
   function requestDeleteSelected() {
     if (!root.cursorActive || root.selectedIndex < 0 || root.selectedIndex >= displayModel.count) return
     var row = displayModel.get(root.selectedIndex)
@@ -858,7 +889,9 @@ Item {
     cursorActive = true
     root.disarmPointer()
     root.evaluateGuards()
+    themePalette.reload()
     opened = true
+    if (skinLoader.item) skinLoader.item.wake()
     rebuildDisplay()
     invalidateVolatileProvider(activeMenu)
     loadProviderForMenu(activeMenu)
@@ -906,6 +939,8 @@ Item {
   }
 
   SkinConfig { id: skinConfig }
+
+  ThemePalette { id: themePalette }
 
   // ----------------------------------------------------------- route surface
   //
@@ -1118,7 +1153,9 @@ Item {
 
     Rectangle {
       anchors.fill: parent
-      color: root.terminalActive ? "transparent" : (root.skinActive ? Util.alpha(Color.background, skinConfig.backdrop) : root.scrim)
+      // The constellation floats on this wash; every other skin paints its own
+      // scene and reads the backdrop setting itself.
+      color: root.skinActive ? (root.constellationActive ? Util.alpha(Color.background, skinConfig.backdrop) : "transparent") : root.scrim
       Behavior on color { ColorAnimation { duration: 180 } }
     }
 
@@ -1177,7 +1214,10 @@ Item {
           ListView {
             id: resultList
             anchors.fill: parent
-            model: displayModel
+            // Detached while a skin draws: its rows would load app icons on
+            // the image thread while the skin loads the same icons on the GUI
+            // thread, and that race aborts Quickshell inside QIcon::pixmap.
+            model: root.skinActive ? null : displayModel
             clip: true
             spacing: root.rowSpacing
             boundsBehavior: Flickable.StopAtBounds
@@ -1429,69 +1469,45 @@ Item {
       }
     }
 
-    // Only the active skin is instantiated. Keeping both alive meant two sets
+    // Only the active skin is instantiated. Keeping two alive meant two sets
     // of themed-icon loads racing on the image thread, which aborts Quickshell
     // inside QIcon::pixmap.
     Loader {
       id: skinLoader
       anchors.fill: parent
       active: root.skinActive
-      sourceComponent: root.terminalActive ? terminalComponent : constellationComponent
-    }
+      source: root.skinActive ? skinConfig.fileFor(root.skin) : ""
 
-    Component {
-      id: constellationComponent
-
-      ConstellationView {
-        rowModel: displayModel
-        iconResolver: function(icon) { return root.appIconSource(icon) }
-        selectedIndex: root.selectedIndex
-        cursorActive: root.cursorActive
-        burst: root.burst
-        title: root.skinTitle
-        subtitle: root.skinSubtitle
-        query: root.filterText
-        backdrop: skinConfig.backdrop
-        foreground: root.foreground
-        accent: Color.accent
-        fontFamily: root.fontFamily
-        onSelectRequested: function(index) {
+      // Every skin extends SkinBase, so one wiring serves them all.
+      onLoaded: {
+        var view = skinLoader.item
+        view.theme = themePalette
+        view.rowModel = displayModel
+        view.iconResolver = function(icon) { return root.appIconSource(icon) }
+        view.selectedIndex = Qt.binding(function() { return root.selectedIndex })
+        view.cursorActive = Qt.binding(function() { return root.cursorActive })
+        view.burst = Qt.binding(function() { return root.burst })
+        view.title = Qt.binding(function() { return root.skinTitle })
+        view.subtitle = Qt.binding(function() { return root.skinSubtitle })
+        view.query = Qt.binding(function() { return root.filterText })
+        view.backdrop = Qt.binding(function() { return skinConfig.backdrop })
+        view.foreground = Qt.binding(function() { return root.foreground })
+        view.accent = Qt.binding(function() { return Color.accent })
+        view.background = Qt.binding(function() { return Color.background })
+        view.fontFamily = Qt.binding(function() { return root.fontFamily })
+        view.revision = Qt.binding(function() { return root.layoutSerial })
+        view.live = Qt.binding(function() { return root.opened })
+        view.selectRequested.connect(function(index) {
           root.cursorActive = true
           root.selectedIndex = index
-        }
-        onActivated: function(index) {
+        })
+        view.activated.connect(function(index) {
           root.cursorActive = true
           root.selectedIndex = index
-          root.activateIndex(index, true)
-        }
-      }
-    }
-
-    Component {
-      id: terminalComponent
-
-      TerminalView {
-        rowModel: displayModel
-        iconResolver: function(icon) { return root.appIconSource(icon) }
-        selectedIndex: root.selectedIndex
-        cursorActive: root.cursorActive
-        burst: root.burst
-        title: root.skinTitle
-        subtitle: root.skinSubtitle
-        query: root.filterText
-        backdrop: skinConfig.backdrop
-        foreground: root.foreground
-        accent: Color.accent
-        background: Color.background
-        onSelectRequested: function(index) {
-          root.cursorActive = true
-          root.selectedIndex = index
-        }
-        onActivated: function(index) {
-          root.cursorActive = true
-          root.selectedIndex = index
-          root.activateIndex(index, true)
-        }
+          root.activateFromSkin(index)
+        })
+        view.dismissRequested.connect(function() { root.cancel() })
+        view.backRequested.connect(function() { if (!root.goBack()) root.cancel() })
       }
     }
 
@@ -1518,18 +1534,17 @@ Item {
         } else if (Util.editsFilter(event, root.filterText)) {
           root.setFilter(Util.editedFilter(event, root.filterText))
           event.accepted = true
-        } else if ((event.key === Qt.Key_Backspace || (event.key === Qt.Key_Left && !root.constellationActive)) && !root.filterText) {
+        } else if ((event.key === Qt.Key_Backspace || (event.key === Qt.Key_Left && !root.spatialSkin)) && !root.filterText) {
           root.goBack()
           event.accepted = true
         } else if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
           root.select((event.modifiers & Qt.ShiftModifier) ? -1 : 1)
           event.accepted = true
-        } else if (root.constellationActive && (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right)) {
-          // There is no "row above" in a star field, so arrows travel by
-          // direction instead of by list order.
+        } else if (root.spatialSkin && (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right)) {
+          // There is no "row above" in a star field or a tile board, so arrows
+          // travel by direction instead of by list order.
           root.cursorActive = true
-          if (skinLoader.item && skinLoader.item.navigate)
-            skinLoader.item.navigate(event.key === Qt.Key_Left ? -1 : (event.key === Qt.Key_Right ? 1 : 0),
+          skinLoader.item.navigate(event.key === Qt.Key_Left ? -1 : (event.key === Qt.Key_Right ? 1 : 0),
                                      event.key === Qt.Key_Up ? -1 : (event.key === Qt.Key_Down ? 1 : 0))
           event.accepted = true
         } else if (event.key === Qt.Key_Up) {
@@ -1538,13 +1553,15 @@ Item {
         } else if (event.key === Qt.Key_Down) {
           root.select(1)
           event.accepted = true
-        } else if (root.terminalActive && (event.modifiers & Qt.AltModifier) && event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
-          // The CRT numbers its rows, so the numbers may as well be live.
-          var slot = event.key - Qt.Key_1
+        } else if (root.skinActive && (event.modifiers & Qt.AltModifier) && event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
+          // Skins number their rows (the CRT's ordinals, the quickapps ring
+          // slots), so the numbers may as well be live. Paged skins count
+          // from the first row on screen.
+          var slot = event.key - Qt.Key_1 + (skinLoader.item && skinLoader.item.pageStart ? skinLoader.item.pageStart : 0)
           if (slot < displayModel.count) {
             root.cursorActive = true
             root.selectedIndex = slot
-            root.activateIndex(slot)
+            root.activateFromSkin(slot)
           }
           event.accepted = true
         } else if (event.key === Qt.Key_PageUp) {
@@ -1557,8 +1574,10 @@ Item {
           if (root.dmenuActive) {
             if (root.mode === "input") root.applyDmenuSelection(root.filterText)
             else if (displayModel.count > 0) root.activateIndex(root.cursorActive ? root.selectedIndex : 0)
-          } else if (root.cursorActive) root.activateIndex(root.selectedIndex)
-          else if (displayModel.count > 0) root.cursorActive = true
+          } else if (root.cursorActive) {
+            if (root.skinActive) root.activateFromSkin(root.selectedIndex)
+            else root.activateIndex(root.selectedIndex)
+          } else if (displayModel.count > 0) root.cursorActive = true
           event.accepted = true
         } else if (event.text && event.text.length === 1 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127 && (event.modifiers === Qt.NoModifier || event.modifiers === Qt.ShiftModifier)) {
           root.setFilter(root.filterText + event.text)
