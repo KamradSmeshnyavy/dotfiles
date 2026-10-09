@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Commons as Commons
 
 // The full colour set of the active Omarchy theme. Color.qml only keeps
 // foreground, background, accent, urgent and muted, but the ported launcher
@@ -18,9 +19,9 @@ Item {
 
   property var values: ({})
 
-  readonly property color foreground: Color.foreground
-  readonly property color background: Color.background
-  readonly property color accent: Color.accent
+  readonly property color foreground: Commons.Color.foreground
+  readonly property color background: Commons.Color.background
+  readonly property color accent: Commons.Color.accent
   readonly property bool light: root.pickString("mode", "") === "light"
     || root.luma(root.background) > 0.55
 
@@ -31,7 +32,7 @@ Item {
   readonly property color dim: root.pick(["dark_foreground", "muted", "color8"], Util.alpha(root.foreground, 0.55))
   readonly property color bright: root.pick(["bright_foreground", "color15"], root.foreground)
 
-  readonly property color red: root.pick(["red", "color1"], Color.urgent)
+  readonly property color red: root.pick(["red", "color1"], Commons.Color.urgent)
   readonly property color green: root.pick(["green", "color2"], root.accent)
   readonly property color yellow: root.pick(["yellow", "color3"], root.accent)
   readonly property color blue: root.pick(["blue", "color4"], root.accent)

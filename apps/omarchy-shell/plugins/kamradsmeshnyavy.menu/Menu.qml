@@ -3,6 +3,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 import "MenuModel.js" as MenuModel
 
@@ -84,14 +85,14 @@ Item {
   // Bound to the central [menu] section in shell.toml via Color.qml.
   // Each color already includes its alpha companion (composed in the
   // singleton), so consumers can drop them straight into a Rectangle.
-  property color background: Color.menu.background
-  property color foreground: Color.menu.text
-  property color border: Color.menu.border
+  property color background: Commons.Color.menu.background
+  property color foreground: Commons.Color.menu.text
+  property color border: Commons.Color.menu.border
   property var borderSpec: Border.surfaceSpec("menu", "border", border, Math.max(1, Style.space(2)))
-  property color scrim: Color.menu.scrim
-  property color selectedBackground: Color.menu.selectedBackground
-  property color selectedText: Color.menu.selectedText
-  property color selectedBorder: Color.menu.selectedBorder
+  property color scrim: Commons.Color.menu.scrim
+  property color selectedBackground: Commons.Color.menu.selectedBackground
+  property color selectedText: Commons.Color.menu.selectedText
+  property color selectedBorder: Commons.Color.menu.selectedBorder
   property var selectedBorderSpec: Border.surfaceSpec("menu", "selected-border", selectedBorder, 0)
   readonly property real rowReservedBorderLeft: Border.left(selectedBorderSpec)
   readonly property real rowReservedBorderRight: Border.right(selectedBorderSpec)
@@ -1155,7 +1156,7 @@ Item {
       anchors.fill: parent
       // The constellation floats on this wash; every other skin paints its own
       // scene and reads the backdrop setting itself.
-      color: root.skinActive ? (root.constellationActive ? Util.alpha(Color.background, skinConfig.backdrop) : "transparent") : root.scrim
+      color: root.skinActive ? (root.constellationActive ? Util.alpha(Commons.Color.background, skinConfig.backdrop) : "transparent") : root.scrim
       Behavior on color { ColorAnimation { duration: 180 } }
     }
 
@@ -1492,8 +1493,8 @@ Item {
         view.query = Qt.binding(function() { return root.filterText })
         view.backdrop = Qt.binding(function() { return skinConfig.backdrop })
         view.foreground = Qt.binding(function() { return root.foreground })
-        view.accent = Qt.binding(function() { return Color.accent })
-        view.background = Qt.binding(function() { return Color.background })
+        view.accent = Qt.binding(function() { return Commons.Color.accent })
+        view.background = Qt.binding(function() { return Commons.Color.background })
         view.fontFamily = Qt.binding(function() { return root.fontFamily })
         view.revision = Qt.binding(function() { return root.layoutSerial })
         view.live = Qt.binding(function() { return root.opened })
