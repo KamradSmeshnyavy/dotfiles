@@ -4,5 +4,13 @@
 startgroup
     animation_start cursor-trail-move
     animation_stop 900
+
+    # Colour: 0 = theme cursor, 1 = the two colours below, 2 = rainbow.
+    # Colours are sRGB 0..1 (hex / 255): #ebbcba -> float3(0.92, 0.74, 0.73)
+    var int COLOR_MODE = 0
+    # var float3 PRIMARY_COLOR = float3(0.92, 0.74, 0.73)
+    # var float3 SECONDARY_COLOR = float3(0.77, 0.65, 0.91)
+    # var float3 HOT_COLOR = float3(1.0, 0.97, 0.92)
+
     shaders sparkle-trail
 endgroup

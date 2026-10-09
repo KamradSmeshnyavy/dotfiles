@@ -10,9 +10,13 @@
 //   var float SPARK_SPEED = 14
 // without editing this file.
 //
-// USE_CURSOR_COLOR  true = take the colour from the theme's cursor, false = SPARK_COLOR.
-// SPARK_COLOR       Trail/spark colour (linear RGB) when USE_CURSOR_COLOR is false.
-// HOT_COLOR         Colour of freshly emitted sparks before they cool down.
+// COLORS (sRGB 0..1, i.e. hex / 255: #ebbcba -> float3(0.92, 0.74, 0.73))
+// COLOR_MODE        0 = theme cursor colour, 1 = PRIMARY_COLOR/SECONDARY_COLOR, 2 = rainbow
+// PRIMARY_COLOR     Comet colour and half of the sparks (COLOR_MODE 1).
+// SECONDARY_COLOR   The other half of the sparks (COLOR_MODE 1).
+// HOT_COLOR         Colour of freshly emitted sparks before they cool down (all modes).
+// RAINBOW_SPEED     Hue cycles per second in COLOR_MODE 2. Range: 0.0-1.0
+// RAINBOW_SATURATION  0 = white, 1 = fully saturated rainbow. Range: 0.3-1.0
 // SPARK_COUNT       Sparks thrown along the path (long jumps use all of them,
 //                   single-cell moves about a quarter). Range: 8-64
 // BURST_COUNT       Sparks in the landing burst at the new cursor position. Range: 0-24
@@ -31,9 +35,12 @@
 
 import kitty_custom_shader_types;
 
-static const bool USE_CURSOR_COLOR = true;
-static const float3 SPARK_COLOR = float3(1.0, 0.55, 0.15);
-static const float3 HOT_COLOR = float3(1.0, 0.95, 0.85);
+static const int COLOR_MODE = 0;
+static const float3 PRIMARY_COLOR = float3(1.0, 0.75, 0.45);
+static const float3 SECONDARY_COLOR = float3(1.0, 0.45, 0.25);
+static const float3 HOT_COLOR = float3(1.0, 0.97, 0.92);
+static const float RAINBOW_SPEED = 0.25;
+static const float RAINBOW_SATURATION = 0.75;
 static const int SPARK_COUNT = 40;
 static const int BURST_COUNT = 12;
 static const float SPARK_SPEED = 12.0;
@@ -58,6 +65,17 @@ hash11(float p) {
     p *= p + 33.33;
     p *= p + p;
     return frac(p);
+}
+
+static float3
+srgbToLinear(float3 c) {
+    return pow(saturate(c), float3(2.2));
+}
+
+static float3
+hueColor(float h) {
+    float3 rgb = saturate(abs(frac(h + float3(0.0, 2.0 / 3.0, 1.0 / 3.0)) * 6.0 - 3.0) - 1.0);
+    return srgbToLinear(lerp(float3(1.0), rgb, RAINBOW_SATURATION));
 }
 
 static float
@@ -102,8 +120,19 @@ fragment_main(float4 color, KittyTextures t, KittyCustomShaderData d) {
     // The cursor rectangle is thin for beam/underline shapes; size sparks from its larger side.
     float cellH = max(max(cellSize.x, cellSize.y), 1.0);
 
-    float3 baseColor = USE_CURSOR_COLOR ? d.cursor_color.rgb : SPARK_COLOR;
-    if (USE_CURSOR_COLOR && dot(baseColor, baseColor) < 1e-4) baseColor = d.foreground.rgb;
+    float3 baseColor, altColor;
+    if (COLOR_MODE == 1) {
+        baseColor = srgbToLinear(PRIMARY_COLOR);
+        altColor = srgbToLinear(SECONDARY_COLOR);
+    } else if (COLOR_MODE == 2) {
+        baseColor = hueColor(d.timestamp * RAINBOW_SPEED);
+        altColor = hueColor(d.timestamp * RAINBOW_SPEED + 0.35);
+    } else {
+        baseColor = d.cursor_color.rgb;
+        if (dot(baseColor, baseColor) < 1e-4) baseColor = d.foreground.rgb;
+        altColor = baseColor;
+    }
+    float3 hot = srgbToLinear(HOT_COLOR);
 
     float3 light = float3(0.0);
 
@@ -117,7 +146,7 @@ fragment_main(float4 color, KittyTextures t, KittyCustomShaderData d) {
         float sd = sdQuad(px, c0, c1, c2, c3);
         float body = 1.0 - smoothstep(-1.0, 1.0, sd);
         float glow = exp(-max(sd, 0.0) / COMET_GLOW);
-        float3 cometColor = lerp(baseColor, HOT_COLOR, 0.35 * body);
+        float3 cometColor = lerp(baseColor, hot, 0.35 * body);
         light += cometColor * (body * 0.6 + glow * 0.5) * trailAlpha * COMET_INTENSITY;
     }
 
@@ -196,7 +225,8 @@ fragment_main(float4 color, KittyTextures t, KittyCustomShaderData d) {
                     float twinkle = 0.45 + 0.55 * tw * tw;
                     float flare = step(1.0 - FLARE_CHANCE, h5) * pow(max(tw, 0.0), 4.0) * 0.9;
 
-                    float3 sparkColor = lerp(HOT_COLOR, baseColor, smoothstep(0.0, 0.6, lifeFrac));
+                    float3 sparkBase = COLOR_MODE == 2 ? hueColor(h3 + d.timestamp * RAINBOW_SPEED) : lerp(baseColor, altColor, h3);
+                    float3 sparkColor = lerp(hot, sparkBase, smoothstep(0.0, 0.6, lifeFrac));
                     light += sparkColor * sparkLight(delta, size, flare) * fade * twinkle * SPARK_INTENSITY;
                 }
             }

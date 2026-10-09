@@ -3,9 +3,15 @@
 startgroup
     animation_start cursor-trail-move
     # Everything is over by EMBER_LIFE + 0.15 s; stopping here ends redraws.
-    animation_stop 650
+    # defaul is animation_stop 650
     # 33 ms = 30 fps. 50 (kitty's default, 20 fps) saves more but sparks look choppier.
     animation_step 33
+
+    # for more animations
+    animation_stop 1150
+    var float EMBER_LIFE = 1.0
+    var int EMBER_COUNT = 14;
+    var int SPARK_COUNT = 30
 
     # Colour: 0 = theme cursor, 1 = the two colours below, 2 = rainbow.
     # Colours are sRGB 0..1 (hex / 255): #ebbcba -> float3(0.92, 0.74, 0.73)
