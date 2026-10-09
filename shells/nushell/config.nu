@@ -23,7 +23,7 @@ $env.config = {
 
   cursor_shape: {
     emacs: block
-    vi_insert: blink_block
+    vi_insert: line
     vi_normal: blink_underscore
   }
 
