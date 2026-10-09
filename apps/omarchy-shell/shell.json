@@ -59,7 +59,11 @@
       ]
     }
   },
-  "plugins": [],
+  "plugins": [
+    {
+      "id": "kamradsmeshnyavy.customizer"
+    }
+  ],
   "disabledPlugins": [
     "omarchy.menu"
   ],

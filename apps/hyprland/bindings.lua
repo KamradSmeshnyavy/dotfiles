@@ -109,12 +109,9 @@ hl.unbind("SUPER + CTRL + W")
 hl.unbind("SUPER + ALT + W")
 o.bind("SUPER + ALT + W", "Toggle Shell Layout", "~/.config/omarchy/hooks/shell-layout-toggle")
 
--- Customizer on SHIFT T
-o.bind(
-	"SUPER + SHIFT + T",
-	"Omarchy Customizer",
-	"uwsm-app -- xdg-terminal-exec -- bash -c '~/.local/bin/omarchy-customizer'"
-)
+-- Customizer on SHIFT T: Quickshell overlay (plugin kamradsmeshnyavy.customizer).
+-- The old fzf version is still at ~/.local/bin/omarchy-customizer.
+o.bind("SUPER + SHIFT + T", "Omarchy Customizer", "omarchy-shell shell toggle kamradsmeshnyavy.customizer")
 
 -- Screen shaders (CRT etc.): toggle / next, damage_tracking switches with them
 o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/hypr/shaders/crt-toggle.sh")
