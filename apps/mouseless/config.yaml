@@ -77,8 +77,8 @@ layers:
       r: button right
 
       # Scroll by holding keys
-      m: scroll up
-      u: scroll down
+      u: scroll up
+      m: scroll down
 
       # f21 = выключить (kanata: lmet в слое mouse). f20 здесь уже включено — глотаем.
       # Отдельный esc здесь был бы рассинхроном: mouseless вышел бы,
