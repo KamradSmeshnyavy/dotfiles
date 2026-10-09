@@ -1,0 +1,11 @@
+# sparkle-plus with your own two colours (sRGB 0..1, hex / 255).
+# Example: rose-pine rose (#ebbcba) head, iris (#c4a7e7) tail, gold-white hot sparks.
+startgroup
+    animation_start cursor-trail-move
+    animation_stop 3300
+    var int COLOR_MODE = 1
+    var float3 PRIMARY_COLOR = float3(0.92, 0.74, 0.73)
+    var float3 SECONDARY_COLOR = float3(0.77, 0.65, 0.91)
+    var float3 HOT_COLOR = float3(1.0, 0.92, 0.75)
+    shaders sparkle-plus
+endgroup

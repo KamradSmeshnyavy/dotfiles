@@ -1,0 +1,8 @@
+# Sparkle cursor trail: comet glow + sparks + landing burst.
+# Needs `cursor_trail 1` in kitty.conf. The duration stop (ms) lets sparks
+# outlive kitty's own trail; keep it above SPARK_LIFE + 0.1 s.
+startgroup
+    animation_start cursor-trail-move
+    animation_stop 900
+    shaders sparkle-trail
+endgroup

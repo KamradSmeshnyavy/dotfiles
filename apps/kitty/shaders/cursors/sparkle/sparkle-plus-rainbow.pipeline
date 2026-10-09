@@ -1,0 +1,9 @@
+# sparkle-plus with rainbow colours. See sparkle-plus.pipeline for the options.
+startgroup
+    animation_start cursor-trail-move
+    animation_stop 3300
+    var int COLOR_MODE = 2
+    var float RAINBOW_SPEED = 0.3
+    var float RAINBOW_SATURATION = 0.7
+    shaders sparkle-plus
+endgroup

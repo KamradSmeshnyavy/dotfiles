@@ -1,0 +1,21 @@
+# Sparkle cursor, extended: comet + glitter, streaking sparks, embers,
+# landing burst + shockwave ring, typing pulse and a settling aura.
+# Needs `cursor_trail 1` in kitty.conf. All parameters are listed in
+# sparkle-plus.slang; set any *_INTENSITY to 0 to turn that effect off.
+startgroup
+    animation_start cursor-trail-move
+    # Must stay ~300 ms above AURA_DURATION (3 s) so the last frame is clean.
+    animation_stop 3300
+    # Colour: 0 = theme cursor, 1 = the two colours below, 2 = rainbow.
+    # Colours are sRGB 0..1 (hex / 255): #ebbcba -> float3(0.92, 0.74, 0.73)
+    var int COLOR_MODE = 0
+    # var float3 PRIMARY_COLOR = float3(0.92, 0.74, 0.73)
+    # var float3 SECONDARY_COLOR = float3(0.77, 0.65, 0.91)
+
+    # Examples:
+    # var float SPARK_GRAVITY = -3     # sparks float up instead of falling
+    # var float RING_INTENSITY = 0     # no shockwave ring
+    # var float AURA_INTENSITY = 0     # no orbiting motes after the cursor stops
+
+    shaders sparkle-plus
+endgroup

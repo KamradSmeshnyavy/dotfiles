@@ -1,0 +1,17 @@
+# Sparkle cursor, power-saving edition. Needs `cursor_trail 1` in kitty.conf.
+# All parameters are listed in sparkle-lite.slang; *_INTENSITY = 0 turns an effect off.
+startgroup
+    animation_start cursor-trail-move
+    # Everything is over by EMBER_LIFE + 0.15 s; stopping here ends redraws.
+    animation_stop 650
+    # 33 ms = 30 fps. 50 (kitty's default, 20 fps) saves more but sparks look choppier.
+    animation_step 33
+
+    # Colour: 0 = theme cursor, 1 = the two colours below, 2 = rainbow.
+    # Colours are sRGB 0..1 (hex / 255): #ebbcba -> float3(0.92, 0.74, 0.73)
+    var int COLOR_MODE = 0
+    # var float3 PRIMARY_COLOR = float3(0.92, 0.74, 0.73)
+    # var float3 SECONDARY_COLOR = float3(0.77, 0.65, 0.91)
+
+    shaders sparkle-lite
+endgroup
