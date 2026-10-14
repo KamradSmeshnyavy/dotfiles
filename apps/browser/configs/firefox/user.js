@@ -1,20 +1,21 @@
-// --- Added by Opencode for Wayland & Battery Optimization ---
+// Замер 2026-10-14 (RAPL): layout.frame_rate=60 игнорируется при аппаратном vsync,
+// compositor.force-enabled даёт −0.2 Вт (шум), webrender.all уже по умолчанию,
+// backgroundUsesEcoQoS работает только в Windows, Pocket удалён из Firefox — всё убрано.
+
+// -- for 60 fps
+//user_pref("widget.wayland.vsync.enabled", false); // кадры по своему таймеру, а не по сигналам композитора
+//user_pref("layout.frame_rate", 60);
+// --
+// --- Wayland
 user_pref("widget.wayland.opaque-region.enabled", true);
 user_pref("gfx.webrender.compositor", true);
-// user_pref("gfx.webrender.compositor.force-enabled", true);
-user_pref("layout.frame_rate", 60);
 // ------------------------------------------------------------
 // --- Own settings
 user_pref("browser.newtab.preload", false);
-user_pref("gfx.webrender.all", true);
 user_pref("ui.prefersReducedMotion", 1);
 user_pref("accessibility.force_disabled", 1);
-user_pref("extensions.pocket.enabled", false);
 user_pref("dom.ipc.processCount", 4);
-user_pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true);
-// user_pref("browser.sessionstore.interval", 60000)
 user_pref("browser.sessionstore.interval", 300000);
-//dom.ipc.processPriorityManager.backgroundUsesEcoQoS ➔ true
 // ------------------------------------------------------------
 
 // --- Hardware Video Acceleration (VA-API) ---
