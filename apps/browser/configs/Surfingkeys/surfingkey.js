@@ -1,6 +1,71 @@
 settings.smoothScroll = false;
 //settings.scrollStepSize = 140;
 
+api.mapkey('gi', '#1Go to the first edit box (Monaco)', function() {
+    const ed = document.querySelector(
+        '.monaco-editor textarea.inputarea, .monaco-editor .native-edit-context, .monaco-editor textarea'
+    );
+    if (ed) {
+        ed.enableAutoFocus = true;   // иначе Surfingkeys сам снимет фокус (stealFocusOnLoad)
+        ed.focus();
+    }
+}, {domain: /contest\.yandex\.(ru|com)/i});
+
+(function() {
+    const monacoInput = () => document.querySelector(
+        '.monaco-editor textarea.inputarea, .monaco-editor .native-edit-context, .monaco-editor textarea'
+    );
+    // Ctrl+A для Monaco: он смотрит на keyCode, а Surfingkeys на key —
+    // key='Unidentified', чтобы Surfingkeys не принял это за свой <Ctrl-a> в Insert mode
+    function monacoSelectAll(el) {
+        const init = {bubbles: true, cancelable: true, ctrlKey: true,
+                      keyCode: 65, which: 65, code: 'KeyA', key: 'Unidentified'};
+        el.dispatchEvent(new KeyboardEvent('keydown', init));
+        el.dispatchEvent(new KeyboardEvent('keyup', init));
+    }
+    function monacoClipboard(el, type, text) {
+        const dt = new DataTransfer();
+        if (text !== undefined) dt.setData('text/plain', text);
+        el.dispatchEvent(new ClipboardEvent(type, {bubbles: true, cancelable: true, clipboardData: dt}));
+        return dt.getData('text/plain');
+    }
+    function monacoFocus(el) {
+        el.enableAutoFocus = true;   // иначе Surfingkeys снимет фокус (stealFocusOnLoad)
+        el.focus();
+    }
+
+        function writeClipboard(text) {
+        return navigator.clipboard.writeText(text).catch(function() {
+            const t = document.createElement('textarea');
+            t.value = text;
+            document.body.appendChild(t);
+            t.enableAutoFocus = true;
+            t.focus();
+            t.select();
+            document.execCommand('copy');
+            t.remove();
+        });
+    }
+
+    api.imapkey('<Ctrl-i>', '#15Open vim editor for Monaco', function() {
+        const el = monacoInput();
+        if (!el) return;
+        monacoFocus(el);
+        monacoSelectAll(el);
+        document.execCommand('copy');            // Monaco кладёт весь код в буфер
+        api.Clipboard.read(function(resp) {
+            api.Front.showEditor(resp.data, function(data) {
+                monacoFocus(el);                 // фокус обратно в страницу, иначе запись в буфер отклонят
+                writeClipboard(data).then(function() {
+                    monacoFocus(el);
+                    monacoSelectAll(el);
+                    document.execCommand('paste');   // Monaco заменяет выделение
+                });
+            }, 'textarea');
+        });
+    }, {domain: /contest\.yandex\.(ru|com)/i});
+})();
+    
 //settings.useLocalMarkdownAPI = false;
 
 api.mapkey('<Space>', 'Choose a tab with omnibar', function() {
