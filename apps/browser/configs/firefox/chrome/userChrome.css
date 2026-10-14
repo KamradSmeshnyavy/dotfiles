@@ -127,3 +127,20 @@
   color: var(--mff-icon-color)  !important;
 
 }
+
+/* Autohide toolbox: tabs + nav-bar collapse into a thin strip at the top edge
+   and expand on hover, pushing the page down like Firefox's own fullscreen mode.
+   Stays open while the urlbar is focused or a toolbar button's menu is open.
+   `*|*` because the @namespace above stops plain :root from matching. */
+*|*:root:not([sizemode="fullscreen"], [customizing]) #navigator-toolbox {
+  max-height: 4px;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 150ms ease, opacity 150ms ease !important;
+  transition-delay: 300ms !important;
+}
+*|*:root:not([sizemode="fullscreen"], [customizing]) #navigator-toolbox:is(:hover, :focus-within, :has([open="true"])) {
+  max-height: 200px;
+  opacity: 1;
+  transition-delay: 0ms !important;
+}
