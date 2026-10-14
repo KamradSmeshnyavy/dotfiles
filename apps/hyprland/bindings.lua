@@ -117,6 +117,14 @@ o.bind("SUPER + SHIFT + T", "Omarchy Customizer", "omarchy-shell shell toggle ka
 o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/hypr/shaders/crt-toggle.sh")
 o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/hypr/shaders/crt-toggle.sh next")
 
+-- System transparency presets: cycle forward / back (also in the customizer)
+o.bind("SUPER + ALT + O", "Next transparency preset", "~/.config/hypr/opacity.sh next")
+o.bind("SUPER + ALT + SHIFT + O", "Previous transparency preset", "~/.config/hypr/opacity.sh prev")
+
+-- Background blur presets behind translucent windows: forward / back
+o.bind("SUPER + ALT + U", "Next blur preset", "~/.config/hypr/blur.sh next")
+o.bind("SUPER + ALT + SHIFT + U", "Previous blur preset", "~/.config/hypr/blur.sh prev")
+
 -- Emojis
 o.bind("SUPER + ALT + E", "Emojis", "omarchy menu emoji")
 

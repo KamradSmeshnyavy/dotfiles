@@ -7,8 +7,14 @@
 #   customizer.sh anim-preview <file>      load an animation set without committing
 #   customizer.sh anim-restore             undo previews (back to what `list anims` saw)
 #   customizer.sh apply <category> <value>
+#   customizer.sh thumbs <category>        fill the thumbnail cache for an image category
+#   customizer.sh status                   TSV: key, value (header chips)
+#   customizer.sh opacity-preview <name>   apply a transparency preset without saving
+#   customizer.sh opacity-restore          back to the saved preset
+#   customizer.sh blur-preview <name>      same pair for the blur presets
+#   customizer.sh blur-restore
 #
-# Categories: anims layouts themes theme-walls walls shaders
+# Categories: anims layouts themes theme-walls walls shaders opacity blur
 set -uo pipefail
 
 ANIM_DIR="$HOME/dotfiles/apps/hyprland/animations_lua"
@@ -16,8 +22,12 @@ ANIM_ACTIVE="$HOME/dotfiles/apps/hyprland/active_animations.lua"
 LAYOUT_DIR="$HOME/.config/omarchy"
 SHADER_DIR="$HOME/.config/hypr/shaders"
 TOGGLE="$SHADER_DIR/crt-toggle.sh"
+OPACITY="$HOME/.config/hypr/opacity.sh"
+BLUR="$HOME/.config/hypr/blur.sh"
 RUN_DIR="${XDG_RUNTIME_DIR:-/tmp}/omarchy-customizer"
 ANIM_BACKUP="$RUN_DIR/active_animations.lua"
+# Thumbnails are named md5(<source path>).jpg, the same Qt.md5() the overlay uses.
+THUMB_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-customizer/thumbs"
 
 theme_name() { cat "$HOME/.local/state/omarchy/current/theme.name" 2>/dev/null || echo default; }
 
@@ -33,6 +43,14 @@ theme_preview() {
     [[ -f $p ]] && { echo "$p"; break; }
   done
   shopt -u nullglob nocaseglob
+}
+
+# Swatches for the overlay: background foreground accent + five hues.
+theme_palette() {
+  [[ -f $1/colors.toml ]] || return 0
+  awk -F'"' '/^(background|foreground|accent|red|yellow|green|blue|magenta) *=/ { sub(/ .*/, "", $1); c[$1] = $2 }
+    END { n = split("background foreground accent red yellow green blue magenta", k, " ")
+          for (i = 1; i <= n; i++) if (c[k[i]] != "") printf "%s%s", (o++ ? " " : ""), c[k[i]] }' "$1/colors.toml"
 }
 
 walls_dir() {
@@ -115,7 +133,7 @@ list() {
       dir="$HOME/.config/omarchy/themes/$slug"
       [[ -d $dir ]] || dir="$OMARCHY_PATH/themes/$slug"
       label=$(sed -E 's/(^|-)([a-z])/\1\u\2/g; s/-/ /g' <<<"$slug")
-      printf '%s\t%s\t%s\t%s\n' "$label" "$slug" "$(theme_preview "$dir")" "$([[ $slug == "$current" ]] && echo 1 || echo 0)"
+      printf '%s\t%s\t%s\t%s\t%s\n' "$label" "$slug" "$(theme_preview "$dir")" "$([[ $slug == "$current" ]] && echo 1 || echo 0)" "$(theme_palette "$dir")"
     done
     ;;
   theme-walls)
@@ -148,6 +166,23 @@ list() {
       local n
       n=$(basename "$f" .frag)
       printf '%s\t%s\t%s\t%s\n' "$n" "$n" "$f" "$([[ $n == "$cur" ]] && echo 1 || echo 0)"
+    done
+    ;;
+  opacity)
+    local n a i cur
+    "$OPACITY" list | while read -r n a i cur; do
+      printf '%s\t%s\t\t%s\t%s\n' "$n  ($a / $i)" "$n" "$cur" \
+        "active_opacity = $a · inactive_opacity = $i"
+    done
+    ;;
+  blur)
+    local n sz ps v no cur
+    "$BLUR" list | while read -r n sz ps v no cur; do
+      if ((sz == 0)); then
+        printf '%s\t%s\t\t%s\t%s\n' "$n  (no blur)" "$n" "$cur" "size 0 passes 0 vibrancy 0 noise 0"
+      else
+        printf '%s\t%s\t\t%s\t%s\n' "$n  ($sz × $ps)" "$n" "$cur" "size $sz passes $ps vibrancy $v noise $no"
+      fi
     done
     ;;
   esac
@@ -202,12 +237,51 @@ apply() {
     *) "$TOGGLE" on "$value" ;;
     esac
     ;;
+  opacity) "$OPACITY" set "$value" ;;
+  blur) "$BLUR" set "$value" ;;
   esac
+}
+
+# One worker per source: $1 = image path. Skips thumbs newer than the source.
+thumb_one() {
+  local t
+  t="$THUMB_DIR/$(printf %s "$1" | md5sum | cut -d' ' -f1).jpg"
+  [[ -f $t && ! $1 -nt $t ]] && return 0
+  vipsthumbnail "$1" --size 320x200 -o "$t[Q=82]" 2>/dev/null
+}
+
+thumbs() {
+  mkdir -p "$THUMB_DIR"
+  export THUMB_DIR
+  export -f thumb_one
+  list "$1" | cut -f3 | grep -v '^$' | xargs -d '\n' -P "$(nproc)" -I{} bash -c 'thumb_one "$1"' _ {}
+}
+
+status() {
+  local anim=custom f
+  for f in "$ANIM_DIR"/*.lua; do
+    [[ -f $f ]] && cmp -s "$f" "$ANIM_ACTIVE" && { anim=$(basename "$f" .lua); break; }
+  done
+  printf 'theme\t%s\n' "$(theme_name)"
+  printf 'wallpaper\t%s\n' "$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null)"
+  printf 'anims\t%s\n' "$anim"
+  printf 'shader\t%s\n' "$(current_shader)"
+  printf 'opacity\t%s\n' "$("$OPACITY" current 2>/dev/null)"
+  printf 'blur\t%s\n' "$("$BLUR" current 2>/dev/null)"
+  # Numbers for the preview stage: "active inactive" / "size passes vibrancy noise".
+  printf 'opacity-values\t%s\n' "$("$OPACITY" list 2>/dev/null | awk '$4 == 1 { print $2, $3 }')"
+  printf 'blur-values\t%s\n' "$("$BLUR" list 2>/dev/null | awk '$6 == 1 { print $2, $3, $4, $5 }')"
 }
 
 mkdir -p "$RUN_DIR"
 case "${1:-}" in
 list) list "${2:-}" ;;
+status) status ;;
+thumbs) thumbs "${2:-}" ;;
+opacity-preview) "$OPACITY" preview "$2" ;;
+opacity-restore) "$OPACITY" restore ;;
+blur-preview) "$BLUR" preview "$2" ;;
+blur-restore) "$BLUR" restore ;;
 anim-preview)
   cp "$2" "$ANIM_ACTIVE"
   hyprctl reload >/dev/null 2>&1
@@ -221,7 +295,7 @@ anim-restore)
   ;;
 apply) apply "$2" "$3" ;;
 *)
-  echo "usage: $0 list|anim-preview|anim-restore|apply ..." >&2
+  echo "usage: $0 list|status|thumbs|anim-preview|anim-restore|opacity-preview|opacity-restore|blur-preview|blur-restore|apply ..." >&2
   exit 1
   ;;
 esac
