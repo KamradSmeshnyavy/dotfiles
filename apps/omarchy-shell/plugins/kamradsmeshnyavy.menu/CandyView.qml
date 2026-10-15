@@ -15,10 +15,8 @@ SkinBase {
   readonly property real pitchY: 132 * u
   readonly property int cols: Math.max(4, Math.min(8, Math.floor((width - 100 * u) / pitchX)))
   readonly property int visibleRows: Math.max(1, Math.floor((height - 170 * u - 200 * u) / pitchY))
-  readonly property int perPage: root.cols * root.visibleRows
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.perPage)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.perPage))
-  readonly property int pageStart: root.page * root.perPage
+  pageSize: root.cols * root.visibleRows
+  readonly property int perPage: root.pageSize
   readonly property real ox: (width - (cols * pitchX - 12 * u)) / 2
   readonly property real oy: 170 * u
 
@@ -229,10 +227,10 @@ SkinBase {
         ctx.moveTo(bx, by + 26)
         ctx.quadraticCurveTo(bx + Math.sin(t / 700 + i) * 6, by + 50, bx, by + 70)
         ctx.stroke()
-        ctx.beginPath(); ctx.ellipse(bx, by, 20, 25, 0, 0, 6.2832)
+        ctx.beginPath(); ctx.ellipse(bx - 20, by - 25, 2 * 20, 2 * 25)
         ctx.fillStyle = th.rgba(root.candy[i % root.candy.length], 0.8)
         ctx.fill()
-        ctx.beginPath(); ctx.ellipse(bx - 7, by - 9, 5, 8, -0.5, 0, 6.2832)
+        ctx.beginPath(); ctx.ellipse(bx - 7 - 5, by - 9 - 8, 2 * 5, 2 * 8)
         ctx.fillStyle = "rgba(255,255,255,0.5)"
         ctx.fill()
       }
@@ -264,8 +262,8 @@ SkinBase {
       ctx.lineWidth = 2
       ctx.stroke()
       ctx.fillStyle = th.rgba(th.magenta, 0.55)
-      ctx.beginPath(); ctx.ellipse(-26, 12, 9, 6, 0, 0, 6.2832); ctx.fill()
-      ctx.beginPath(); ctx.ellipse(26, 12, 9, 6, 0, 0, 6.2832); ctx.fill()
+      ctx.beginPath(); ctx.ellipse(-26 - 9, 12 - 6, 2 * 9, 2 * 6); ctx.fill()
+      ctx.beginPath(); ctx.ellipse(26 - 9, 12 - 6, 2 * 9, 2 * 6); ctx.fill()
       var face = th.rgba(th.mix(root.background, "#000000", 0.3), 1)
       if (jump > 4) {
         ctx.strokeStyle = face; ctx.lineWidth = 3
@@ -277,8 +275,8 @@ SkinBase {
         ctx.beginPath(); ctx.moveTo(8, -6); ctx.lineTo(22, -6); ctx.stroke()
       } else {
         ctx.fillStyle = "#ffffff"
-        ctx.beginPath(); ctx.ellipse(-15, -6, 9, 10, 0, 0, 6.2832); ctx.fill()
-        ctx.beginPath(); ctx.ellipse(15, -6, 9, 10, 0, 0, 6.2832); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(-15 - 9, -6 - 10, 2 * 9, 2 * 10); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(15 - 9, -6 - 10, 2 * 9, 2 * 10); ctx.fill()
         ctx.fillStyle = face
         ctx.beginPath(); ctx.arc(-15 + lx, -6 + ly, 4.5, 0, 6.2832); ctx.fill()
         ctx.beginPath(); ctx.arc(15 + lx, -6 + ly, 4.5, 0, 6.2832); ctx.fill()

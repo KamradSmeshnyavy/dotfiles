@@ -10,11 +10,8 @@ SkinBase {
 
   launchDelay: 0
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
 
   readonly property color paper: root.background
   readonly property color ink: root.foreground
@@ -27,7 +24,7 @@ SkinBase {
   function indexKanji(n) { return n >= 0 && n <= 10 ? root.kanjiNum[n] : String(n) }
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -92,6 +89,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 720 * u; height: 720 * u
 
@@ -240,7 +239,7 @@ SkinBase {
     anchors.bottom: parent.bottom; anchors.bottomMargin: 60 * u
     spacing: 18 * u
     Repeater {
-      model: [["← →", "navigate", false], ["↵", "open", true], ["⌫", "return", false], ["esc", "dismiss", false]]
+      model: [["↑ ↓", "around", false], ["← →", "page", false], ["↵", "open", true], ["⌫", "return", false], ["esc", "dismiss", false]]
       Row {
         required property var modelData
         required property int index

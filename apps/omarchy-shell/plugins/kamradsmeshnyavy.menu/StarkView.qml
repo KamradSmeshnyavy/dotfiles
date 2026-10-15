@@ -16,11 +16,8 @@ SkinBase {
   readonly property real ring2: ring1 + 110 * u
   // Two rings hold this many chips before they start to overlap; longer
   // menus orbit a page at a time.
-  readonly property int perPage: 46
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.perPage)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.perPage))
-  readonly property int pageStart: root.page * root.perPage
-  readonly property int pageCount: Math.max(0, Math.min(root.perPage, root.count - root.pageStart))
+  pageSize: 46
+  radial: true
 
   readonly property color hud: root.accent
   readonly property color ice: root.theme ? root.theme.bright : root.foreground
@@ -44,9 +41,9 @@ SkinBase {
   function slotAngle(slot) {
     var n = root.pageCount
     var cap1 = Math.min(n, 16)
-    if (slot < cap1) return { a: (slot / cap1) * 6.283 - 1.5708, ring: root.ring1 }
+    if (slot < cap1) return { a: (slot / cap1) * 6.283 - 1.5708 + root.ringPhase, ring: root.ring1 }
     var j = slot - cap1, m = n - cap1
-    return { a: (j / Math.max(1, m)) * 6.283 - 1.5708 + 0.2, ring: root.ring2 }
+    return { a: (j / Math.max(1, m)) * 6.283 - 1.5708 + 0.2 - root.ringPhase, ring: root.ring2 }
   }
 
   function chipPos(slot) {
@@ -488,7 +485,7 @@ SkinBase {
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     y: root.height - 34 * u
-    text: "DRAG = SPIN ORBIT · WHEEL/ARROWS = CYCLE · HOVER = LOCK · CLICK/↵ = REPULSOR LAUNCH · ⌫ = BACK · ESC = POWER DOWN"
+    text: "DRAG = SPIN ORBIT · ↑↓ ^J ^K = CYCLE · ←→ ^H ^L = BANK · HOVER = LOCK · CLICK/↵ = REPULSOR LAUNCH · ⌫ = BACK · ESC = POWER DOWN"
     color: root.dim
     font.family: root.mono; font.pixelSize: 10 * u
     opacity: 0.9

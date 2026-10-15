@@ -30,148 +30,302 @@
 
   // How the menu draws itself. Read by the kamradsmeshnyavy.menu plugin from
   // ~/.config/omarchy/extensions/menu-skin.json; it hot-reloads on write.
-  // The omlauch and quickapps rows are ports of hamzaabde-langjk/omlauch and
-  // bjarneo/omarchy-quickapps, recoloured from the active theme.
+  // Pick a category, then a skin. *-hack skins are the originals redrawn as
+  // minimal terminal-style twins. Generated; edit the lists, not each row.
   "style.launcher": {"icon":"\udb80\udc3d","label":"Launcher skin","aliases":["skin","launcher"]},
-  "style.launcher.constellation": {
+  "style.launcher.space": {
+    "icon":"\udb83\ude1b",
+    "label":"Space & Sci-fi",
+    "description":"Constellation, Stark, Forge, Ironman, Stargate\u2026",
+    "aliases":["skin-space"],
+    "checked":"grep -qE '\"skin\":\"(constellation|stark|forge|ironman|stargate|tron|orrery)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null || [ ! -e ~/.config/omarchy/extensions/menu-skin.json ]"
+  },
+  "style.launcher.space.constellation": {
     "icon":"\udb80\udc3d",
     "label":"Constellation",
     "description":"Star map",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"constellation\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"constellation\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null || [ ! -e ~/.config/omarchy/extensions/menu-skin.json ]"
   },
-  "style.launcher.terminal": {
-    "icon":"\ue795",
-    "label":"Terminal",
-    "description":"Theme-tinted CRT",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"terminal\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"terminal\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.aurora": {
-    "icon":"\udb83\ude2e",
-    "label":"Aurora",
-    "description":"Glass coverflow \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"aurora\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"aurora\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.outrun": {
-    "icon":"\udb81\udd99",
-    "label":"Outrun",
-    "description":"Synthwave coverflow \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"outrun\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"outrun\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.board": {
-    "icon":"\udb81\udd70",
-    "label":"Board",
-    "description":"Tile dashboard \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"board\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"board\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.arcade": {
-    "icon":"\udb80\ude97",
-    "label":"Arcade",
-    "description":"Pixel cartridges \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"arcade\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"arcade\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.lofi": {
-    "icon":"\udb81\udf5a",
-    "label":"Lo-Fi",
-    "description":"Turntable tracklist \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"lofi\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"lofi\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.redroom": {
-    "icon":"\udb81\ude70",
-    "label":"Red Room",
-    "description":"Kill list \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"redroom\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"redroom\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.candy": {
-    "icon":"\udb83\udc08",
-    "label":"Candy",
-    "description":"Party bubbles \u00b7 omlauch",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"candy\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"candy\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.stark": {
+  "style.launcher.space.stark": {
     "icon":"\udb81\udcc5",
     "label":"Stark",
     "description":"Arc reactor orbit \u00b7 omlauch",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"stark\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"stark\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
-  "style.launcher.forge": {
+  "style.launcher.space.forge": {
     "icon":"\udb82\udef2",
     "label":"Forge",
     "description":"3D orbit galaxy \u00b7 omlauch",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"forge\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"forge\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
-  "style.launcher.hexgrid": {
-    "icon":"\udb80\uded8",
-    "label":"Hexgrid",
-    "description":"Honeycomb ring \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"hexgrid\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"hexgrid\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.coffee": {
-    "icon":"\udb80\udd76",
-    "label":"Coffee",
-    "description":"Latte ring \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"coffee\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"coffee\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.zen": {
-    "icon":"\udb82\uded5",
-    "label":"Zen",
-    "description":"Ink circles \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"zen\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"zen\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.vaporwave": {
-    "icon":"\udb81\udd99",
-    "label":"Vaporwave",
-    "description":"Sunset halo \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"vaporwave\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"vaporwave\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.tron": {
-    "icon":"\udb83\ude30",
-    "label":"Tron",
-    "description":"Neon grid \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"tron\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"tron\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.stargate": {
-    "icon":"\udb83\ude9e",
-    "label":"Stargate",
-    "description":"Gate ring \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"stargate\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"stargate\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.medieval": {
-    "icon":"\udb83\udf0d",
-    "label":"Medieval",
-    "description":"Wax seals \u00b7 quickapps",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"medieval\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"medieval\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
-  },
-  "style.launcher.ironman": {
+  "style.launcher.space.ironman": {
     "icon":"\udb81\udcc5",
     "label":"Ironman",
     "description":"HUD cogs \u00b7 quickapps",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"ironman\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"ironman\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
-  "style.launcher.list": {
+  "style.launcher.space.stargate": {
+    "icon":"\udb83\ude9e",
+    "label":"Stargate",
+    "description":"Gate ring \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"stargate\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"stargate\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.space.tron": {
+    "icon":"\udb83\ude30",
+    "label":"Tron",
+    "description":"Neon grid \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"tron\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"tron\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.space.orrery": {
+    "icon":"\udb83\ude1b",
+    "label":"Orrery",
+    "description":"Planets in orbit \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"orrery\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"orrery\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.retro": {
+    "icon":"\udb81\udd99",
+    "label":"Retro & Neon",
+    "description":"Outrun, Arcade, Vaporwave, Aurora",
+    "aliases":["skin-retro"],
+    "checked":"grep -qE '\"skin\":\"(outrun|arcade|vaporwave|aurora)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.retro.outrun": {
+    "icon":"\udb81\udd99",
+    "label":"Outrun",
+    "description":"Synthwave coverflow \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"outrun\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"outrun\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.retro.arcade": {
+    "icon":"\udb80\ude97",
+    "label":"Arcade",
+    "description":"Pixel cartridges \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"arcade\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"arcade\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.retro.vaporwave": {
+    "icon":"\udb81\udd99",
+    "label":"Vaporwave",
+    "description":"Sunset halo \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"vaporwave\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"vaporwave\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.retro.aurora": {
+    "icon":"\udb83\ude2e",
+    "label":"Aurora",
+    "description":"Glass coverflow \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"aurora\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"aurora\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy": {
+    "icon":"\udb80\udd76",
+    "label":"Cozy & Paper",
+    "description":"Lo-Fi, Coffee, Zen, Medieval, Bookshelf\u2026",
+    "aliases":["skin-cozy"],
+    "checked":"grep -qE '\"skin\":\"(lofi|coffee|zen|medieval|bookshelf|lanterns|tarot)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.lofi": {
+    "icon":"\udb81\udf5a",
+    "label":"Lo-Fi",
+    "description":"Turntable tracklist \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"lofi\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"lofi\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.coffee": {
+    "icon":"\udb80\udd76",
+    "label":"Coffee",
+    "description":"Latte ring \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"coffee\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"coffee\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.zen": {
+    "icon":"\udb82\uded5",
+    "label":"Zen",
+    "description":"Ink circles \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"zen\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"zen\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.medieval": {
+    "icon":"\udb83\udf0d",
+    "label":"Medieval",
+    "description":"Wax seals \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"medieval\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"medieval\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.bookshelf": {
+    "icon":"\udb80\udcba",
+    "label":"Bookshelf",
+    "description":"Spines on shelves \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"bookshelf\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"bookshelf\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.lanterns": {
+    "icon":"\udb80\udf35",
+    "label":"Lanterns",
+    "description":"Night sky lanterns \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"lanterns\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"lanterns\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.cozy.tarot": {
+    "icon":"\udb83\udc43",
+    "label":"Tarot",
+    "description":"Fanned cards \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"tarot\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"tarot\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.playful": {
+    "icon":"\udb83\udc08",
+    "label":"Playful",
+    "description":"Candy, Aquarium, Red Room",
+    "aliases":["skin-playful"],
+    "checked":"grep -qE '\"skin\":\"(candy|aquarium|redroom)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.playful.candy": {
+    "icon":"\udb83\udc08",
+    "label":"Candy",
+    "description":"Party bubbles \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"candy\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"candy\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.playful.aquarium": {
+    "icon":"\udb80\ude3a",
+    "label":"Aquarium",
+    "description":"Fish tank \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"aquarium\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"aquarium\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.playful.redroom": {
+    "icon":"\udb81\ude70",
+    "label":"Red Room",
+    "description":"Kill list \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"redroom\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"redroom\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal": {
+    "icon":"\udb81\udd70",
+    "label":"Minimal",
+    "description":"List, Board, Hexgrid, Drum, Metro",
+    "aliases":["skin-minimal"],
+    "checked":"grep -qE '\"skin\":\"(list|board|hexgrid|drum|metro)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.list": {
     "icon":"\uf03a",
     "label":"List",
     "description":"Stock Omarchy card",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"list\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"list\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.board": {
+    "icon":"\udb81\udd70",
+    "label":"Board",
+    "description":"Tile dashboard \u00b7 omlauch",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"board\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"board\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.hexgrid": {
+    "icon":"\udb80\uded8",
+    "label":"Hexgrid",
+    "description":"Honeycomb ring \u00b7 quickapps",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"hexgrid\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"hexgrid\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.drum": {
+    "icon":"\udb83\ude6b",
+    "label":"Drum",
+    "description":"3D picker wheel \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"drum\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"drum\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.metro": {
+    "icon":"\udb81\udd2c",
+    "label":"Metro",
+    "description":"Transit map \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"metro\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"metro\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker": {
+    "icon":"\ue795",
+    "label":"Hacker",
+    "description":"Terminal, Matrix + 8 minimal twins",
+    "aliases":["skin-hacker"],
+    "checked":"grep -qE '\"skin\":\"(terminal|matrix|drum\\-hack|tarot\\-hack|metro\\-hack|orrery\\-hack|matrix\\-hack|bookshelf\\-hack|lanterns\\-hack|aquarium\\-hack)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.terminal": {
+    "icon":"\ue795",
+    "label":"Terminal",
+    "description":"Theme-tinted CRT",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"terminal\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"terminal\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.matrix": {
+    "icon":"\udb81\ude14",
+    "label":"Matrix",
+    "description":"Digital rain \u00b7 original",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"matrix\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"matrix\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.drum-hack": {
+    "icon":"\udb83\ude6b",
+    "label":"drum // tty",
+    "description":"Picker as a hex listing \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"drum-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"drum-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.tarot-hack": {
+    "icon":"\udb83\udc43",
+    "label":"tarot // deck.bin",
+    "description":"Wireframe cards, hexdump \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"tarot-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"tarot-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.metro-hack": {
+    "icon":"\udb81\udd2c",
+    "label":"metro // netmap",
+    "description":"Network map, packet train \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"metro-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"metro-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.orrery-hack": {
+    "icon":"\udb83\ude1b",
+    "label":"orrery // radar",
+    "description":"Radar sweep with blips \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"orrery-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"orrery-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.matrix-hack": {
+    "icon":"\udb81\ude14",
+    "label":"matrix // shell",
+    "description":"Plain prompt, ls -l rows \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"matrix-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"matrix-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.bookshelf-hack": {
+    "icon":"\udb80\udcba",
+    "label":"bookshelf // fs",
+    "description":"Bars on shelves, stat \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"bookshelf-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"bookshelf-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.lanterns-hack": {
+    "icon":"\udb80\udf35",
+    "label":"lanterns // procs",
+    "description":"Drifting process boxes \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"lanterns-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"lanterns-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.aquarium-hack": {
+    "icon":"\udb80\ude3a",
+    "label":"aquarium // packets",
+    "description":"ASCII fish on lanes \u00b7 hacker",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"aquarium-hack\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"aquarium-hack\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   // Folder-aware background picker. The whole row is restated, not just the
   // action: menu entries are normalized before the merge, so any field left out

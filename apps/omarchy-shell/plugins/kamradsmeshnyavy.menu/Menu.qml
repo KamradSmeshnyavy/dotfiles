@@ -120,6 +120,9 @@ Item {
   readonly property bool terminalActive: root.skinActive && root.skin === "terminal"
   // Skins that lay rows out in space take the arrows for themselves.
   readonly property bool spatialSkin: root.skinActive && !!skinLoader.item && typeof skinLoader.item.navigate === "function"
+  // Ring skins take the arrows as "round the ring" and "next page".
+  readonly property bool radialSkin: root.skinActive && !!skinLoader.item && skinLoader.item.radial === true
+  readonly property bool pagedSkin: root.skinActive && !!skinLoader.item && skinLoader.item.pageSize > 0
   // A menu change earns the full entrance animation; a keystroke while
   // filtering only re-settles the rows that are already on screen.
   property bool burst: true
@@ -800,6 +803,30 @@ Item {
 
   // Skins may hold a launch for a beat to show it (a burst, a flash). Only
   // leaves get the delay: drilling into a submenu should never feel slow.
+  function vimKey(key) {
+    if (displayModel.count === 0) {
+      if (key === Qt.Key_H) root.goBack()
+      return
+    }
+    var view = root.skinActive ? skinLoader.item : null
+    var along = key === Qt.Key_J ? 1 : (key === Qt.Key_K ? -1 : 0)
+    var across = key === Qt.Key_L ? 1 : (key === Qt.Key_H ? -1 : 0)
+    root.cursorActive = true
+    if (along !== 0) {
+      if (root.radialSkin) view.ringStep(along)
+      else if (root.spatialSkin) view.navigate(0, along)
+      else root.select(along)
+      return
+    }
+    if (root.pagedSkin && view.pageStep(across)) return
+    if (root.radialSkin) view.ringStep(across)
+    else if (root.spatialSkin) view.navigate(across, 0)
+    else if (across < 0) root.goBack()
+    else if (root.dmenuActive) root.activateIndex(root.selectedIndex)
+    else if (root.skinActive) root.activateFromSkin(root.selectedIndex)
+    else root.activateIndex(root.selectedIndex)
+  }
+
   function activateFromSkin(index) {
     if (launchHold.running) return
     var view = skinLoader.item
@@ -1483,6 +1510,7 @@ Item {
       onLoaded: {
         var view = skinLoader.item
         view.theme = themePalette
+        view.variant = Qt.binding(function() { return skinConfig.variantFor(root.skin) })
         view.rowModel = displayModel
         view.iconResolver = function(icon) { return root.appIconSource(icon) }
         view.selectedIndex = Qt.binding(function() { return root.selectedIndex })
@@ -1540,6 +1568,31 @@ Item {
           event.accepted = true
         } else if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
           root.select((event.modifiers & Qt.ShiftModifier) ? -1 : 1)
+          event.accepted = true
+        } else if ((event.modifiers & Qt.ControlModifier) && !(event.modifiers & (Qt.AltModifier | Qt.MetaModifier))
+                   && (event.key === Qt.Key_H || event.key === Qt.Key_J || event.key === Qt.Key_K || event.key === Qt.Key_L)) {
+          // Vim keys on Ctrl, so bare letters stay the search: J/K go along
+          // (round the ring on radial skins), H/L go across (pages, or back
+          // and into a submenu on plain lists).
+          root.vimKey(event.key)
+          event.accepted = true
+        } else if (root.radialSkin && (event.key === Qt.Key_Up || event.key === Qt.Key_Down)) {
+          root.cursorActive = true
+          skinLoader.item.ringStep(event.key === Qt.Key_Up ? -1 : 1)
+          event.accepted = true
+        } else if (root.radialSkin && (event.key === Qt.Key_Left || event.key === Qt.Key_Right)) {
+          root.cursorActive = true
+          var across = event.key === Qt.Key_Left ? -1 : 1
+          if (!skinLoader.item.pageStep(across)) skinLoader.item.ringStep(across)
+          event.accepted = true
+        } else if (root.pagedSkin && (event.key === Qt.Key_PageUp || event.key === Qt.Key_PageDown)) {
+          root.cursorActive = true
+          skinLoader.item.pageStep(event.key === Qt.Key_PageUp ? -1 : 1)
+          event.accepted = true
+        } else if ((event.key === Qt.Key_Home || event.key === Qt.Key_End) && displayModel.count > 0 && !root.dmenuActive) {
+          root.cursorActive = true
+          root.selectedIndex = event.key === Qt.Key_Home ? 0 : displayModel.count - 1
+          root.revealCursor()
           event.accepted = true
         } else if (root.spatialSkin && (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right)) {
           // There is no "row above" in a star field or a tile board, so arrows

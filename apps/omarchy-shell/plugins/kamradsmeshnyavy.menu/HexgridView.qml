@@ -11,17 +11,14 @@ SkinBase {
 
   launchDelay: 180
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
   readonly property var hues: root.theme ? root.theme.hues : [root.accent]
   readonly property color dim: root.theme ? root.theme.muted : Util.alpha(root.foreground, 0.55)
   readonly property color glow: root.current ? root.hues[root.selectedIndex % root.hues.length] : root.accent
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -77,6 +74,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 780 * u; height: 780 * u
 
@@ -207,9 +206,19 @@ SkinBase {
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom; anchors.bottomMargin: 40 * u
-    text: (root.pages > 1 ? "ring " + (root.page + 1) + "/" + root.pages + "  ·  " : "")
-      + "tab cycle  ·  enter launch  ·  alt+1-9 jump  ·  ⌫ back  ·  esc quit"
+    text: "↑↓ ^j ^k around  ·  ←→ ^h ^l ring  ·  enter launch  ·  alt+1-9 jump  ·  ⌫ back  ·  esc quit"
     color: root.dim
     font.family: root.fontFamily; font.pixelSize: 11 * u; font.letterSpacing: 3
+  }
+
+  PageDots {
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.bottom: parent.bottom; anchors.bottomMargin: 70 * u
+    page: root.page
+    pages: root.pages
+    color: root.dim
+    activeColor: root.glow
+    dot: 6 * u
+    fontFamily: root.mono
   }
 }

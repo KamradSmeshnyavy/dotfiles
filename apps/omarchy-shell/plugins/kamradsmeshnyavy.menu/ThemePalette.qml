@@ -63,6 +63,10 @@ Item {
 
   // Straight blend of two colours; t = 0 is a, t = 1 is b.
   function mix(a, b, t) {
+    // Skins read hues by index before the palette lands; an absent colour
+    // blends as the other one rather than as an error.
+    if (a === undefined || a === null) a = b === undefined || b === null ? root.foreground : b
+    if (b === undefined || b === null) b = a
     var ca = Qt.color(a)
     var cb = Qt.color(b)
     return Qt.rgba(ca.r + (cb.r - ca.r) * t,

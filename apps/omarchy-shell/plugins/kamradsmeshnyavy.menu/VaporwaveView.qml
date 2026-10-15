@@ -10,11 +10,8 @@ SkinBase {
 
   launchDelay: 0
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
 
   readonly property color hotPink: root.theme ? root.theme.magenta : "#ff71ce"
   readonly property color cyan: root.theme ? root.theme.cyan : "#01cdfe"
@@ -25,7 +22,7 @@ SkinBase {
   readonly property string serif: "serif"
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -132,6 +129,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 880 * u; height: 880 * u
 
@@ -277,7 +276,7 @@ SkinBase {
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom; anchors.bottomMargin: 40 * u
-    text: "◄ ►  cycle    ↵  launch    ⌫  back    ESC  exit"
+    text: "▲ ▼  cycle    ◄ ►  page    ↵  launch    ⌫  back    ESC  exit"
     color: root.white
     font.family: root.mono; font.pixelSize: 12 * u; font.letterSpacing: 3
     style: Text.Outline; styleColor: root.hotPink

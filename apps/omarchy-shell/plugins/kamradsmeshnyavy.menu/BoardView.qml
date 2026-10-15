@@ -17,10 +17,8 @@ SkinBase {
   readonly property real ox: (width - (cols * pitch - gap)) / 2
   readonly property real oy: (height - (rows * pitch - gap)) / 2 + 8 * u
   property var slots: []
-  readonly property int perPage: Math.max(1, root.slots.length - 2)
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.perPage)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.perPage))
-  readonly property int pageStart: root.page * root.perPage
+  pageSize: Math.max(1, root.slots.length - 2)
+  readonly property int perPage: root.pageSize
 
   readonly property color tile: root.theme ? root.theme.surface : Util.alpha(root.foreground, 0.08)
   readonly property color line: root.theme ? root.theme.mix(root.tile, root.foreground, 0.16) : Util.alpha(root.foreground, 0.2)

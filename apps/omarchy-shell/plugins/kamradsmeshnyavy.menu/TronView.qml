@@ -11,11 +11,8 @@ SkinBase {
 
   launchDelay: 0
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
 
   readonly property color neon: root.accent
   readonly property var hues: root.theme ? root.theme.hues : [root.accent]
@@ -26,7 +23,7 @@ SkinBase {
   readonly property color white: root.theme ? root.theme.bright : "#ffffff"
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -94,6 +91,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 760 * u; height: 760 * u
 
@@ -241,7 +240,7 @@ SkinBase {
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom; anchors.bottomMargin: 50 * u
-    text: "[ < > ] CYCLE   [ ENTER ] DERESOLUTION   [ ⌫ ] RETURN   [ ESC ] ESCAPE"
+    text: "[ ↑ ↓ ] CYCLE   [ < > ] SECTOR   [ ENTER ] DERESOLUTION   [ ⌫ ] RETURN   [ ESC ] ESCAPE"
     color: root.dimNeon
     font.family: root.mono; font.pixelSize: 10 * u; font.letterSpacing: 4; font.weight: Font.Bold
   }

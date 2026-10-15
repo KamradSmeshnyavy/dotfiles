@@ -12,11 +12,8 @@ SkinBase {
 
   launchDelay: 420
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
   readonly property int slotSel: Math.max(0, root.selectedIndex - root.pageStart)
 
   readonly property color stoneDark: root.theme ? root.theme.mix(root.background, root.theme.brown, 0.18) : "#1d1812"
@@ -37,7 +34,7 @@ SkinBase {
   NumberAnimation { id: splashAnim; target: root; property: "splashPhase"; from: 0; to: 1; duration: 700; easing.type: Easing.OutCubic }
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -102,6 +99,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 820 * u; height: 820 * u
 

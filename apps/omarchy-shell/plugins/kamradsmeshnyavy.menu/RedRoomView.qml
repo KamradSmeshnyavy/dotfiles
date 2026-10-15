@@ -14,10 +14,8 @@ SkinBase {
   readonly property real pitchY: 118 * u
   readonly property int cols: Math.max(4, Math.min(8, Math.floor((width - 80 * u) / pitchX)))
   readonly property int visibleRows: Math.max(1, Math.floor((height - 150 * u - 120 * u) / pitchY))
-  readonly property int perPage: root.cols * root.visibleRows
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.perPage)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.perPage))
-  readonly property int pageStart: root.page * root.perPage
+  pageSize: root.cols * root.visibleRows
+  readonly property int perPage: root.pageSize
   readonly property real ox: (width - (cols * pitchX - 14 * u)) / 2
   readonly property real oy: 150 * u
 

@@ -11,11 +11,8 @@ SkinBase {
 
   launchDelay: 200
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
 
   readonly property bool light: root.theme ? root.theme.light : false
   readonly property color cream: root.theme ? root.theme.mix(root.background, root.theme.brown, 0.08) : "#f5e6d3"
@@ -27,7 +24,7 @@ SkinBase {
   readonly property string serif: "serif"
 
   function angleFor(slot) {
-    return root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2
+    return (root.pageCount ? (2 * Math.PI * slot) / root.pageCount - Math.PI / 2 : -Math.PI / 2) + root.ringPhase
   }
 
   function navigate(dx, dy) {
@@ -106,6 +103,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 800 * u; height: 800 * u
 
@@ -270,7 +269,7 @@ SkinBase {
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom; anchors.bottomMargin: 50 * u
-    text: "tab to taste · enter to sip · type to order · backspace for the last cup · esc when full"
+    text: "↑↓ ^j ^k to taste · ←→ ^h ^l next batch · enter to sip · type to order · backspace for the last cup · esc when full"
     color: root.crema
     font.family: root.serif; font.pixelSize: 12 * u; font.italic: true; font.letterSpacing: 2
   }

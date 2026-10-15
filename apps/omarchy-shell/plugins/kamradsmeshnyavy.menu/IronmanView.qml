@@ -14,11 +14,8 @@ SkinBase {
 
   launchDelay: 0
 
-  readonly property int ringMax: 12
-  readonly property int page: Math.floor(Math.max(0, root.selectedIndex) / root.ringMax)
-  readonly property int pages: Math.max(1, Math.ceil(root.count / root.ringMax))
-  readonly property int pageStart: root.page * root.ringMax
-  readonly property int pageCount: Math.max(0, Math.min(root.ringMax, root.count - root.pageStart))
+  pageSize: 12
+  radial: true
 
   readonly property var hues: root.theme ? root.theme.hues : [root.accent]
   readonly property color glow: root.current ? (root.hues[root.selectedIndex % root.hues.length] || root.accent) : root.accent
@@ -36,7 +33,7 @@ SkinBase {
   property string dateStr: ""
 
   function angleDegFor(slot) {
-    return root.pageCount ? (360 * slot) / root.pageCount - 90 : -90
+    return (root.pageCount ? (360 * slot) / root.pageCount - 90 : -90) + root.ringPhase * 180 / Math.PI
   }
 
   function navigate(dx, dy) {
@@ -147,6 +144,8 @@ SkinBase {
 
   Item {
     id: stage
+    // Fades while a page change turns the ring in.
+    opacity: 1 - Math.min(0.8, Math.abs(root.ringPhase))
     anchors.centerIn: parent
     width: 820 * u; height: 820 * u
 
@@ -443,7 +442,7 @@ SkinBase {
       anchors.verticalCenter: parent.verticalCenter
       spacing: 18 * u
       Repeater {
-        model: [["← →", "CYCLE"], ["↵", "LAUNCH"], ["ALT 1-9", "JUMP"], ["⌫", "BACK"], ["ESC", "EXIT"]]
+        model: [["↑ ↓", "CYCLE"], ["← →", "BANK"], ["↵", "LAUNCH"], ["ALT 1-9", "JUMP"], ["⌫", "BACK"], ["ESC", "EXIT"]]
         Row {
           required property var modelData
           spacing: 8 * u

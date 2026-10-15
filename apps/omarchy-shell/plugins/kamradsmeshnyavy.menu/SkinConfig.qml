@@ -31,8 +31,30 @@ Item {
     "tron": "TronView.qml",
     "stargate": "StargateView.qml",
     "medieval": "MedievalView.qml",
-    "ironman": "IronmanView.qml"
+    "ironman": "IronmanView.qml",
+    // Originals.
+    "drum": "DrumView.qml",
+    "tarot": "TarotView.qml",
+    "metro": "MetroView.qml",
+    "orrery": "OrreryView.qml",
+    "matrix": "MatrixView.qml",
+    "bookshelf": "BookshelfView.qml",
+    "lanterns": "LanternsView.qml",
+    "aquarium": "AquariumView.qml",
+    // Minimal terminal-style twins: same file, drawn with variant "hack".
+    "drum-hack": "DrumView.qml",
+    "tarot-hack": "TarotView.qml",
+    "metro-hack": "MetroView.qml",
+    "orrery-hack": "OrreryView.qml",
+    "matrix-hack": "MatrixView.qml",
+    "bookshelf-hack": "BookshelfView.qml",
+    "lanterns-hack": "LanternsView.qml",
+    "aquarium-hack": "AquariumView.qml"
   })
+
+  function variantFor(name) {
+    return /-hack$/.test(String(name || "")) ? "hack" : ""
+  }
   readonly property var known: Object.keys(root.files).concat(["list"])
 
   function fileFor(name) {

@@ -176,7 +176,7 @@ SkinBase {
       var sillY = root.wy + root.wh + 4
       var cx2 = root.wx + root.ww * 0.68
       ctx.fillStyle = shadow
-      ctx.beginPath(); ctx.ellipse(cx2, sillY - 12, 30, 14, 0, 0, 6.2832); ctx.fill()
+      ctx.beginPath(); ctx.ellipse(cx2 - 30, sillY - 12 - 14, 2 * 30, 2 * 14); ctx.fill()
       ctx.beginPath(); ctx.arc(cx2 + 24, sillY - 22, 12, 0, 6.2832); ctx.fill()
       ctx.beginPath()
       ctx.moveTo(cx2 + 16, sillY - 30); ctx.lineTo(cx2 + 20, sillY - 40); ctx.lineTo(cx2 + 25, sillY - 31)
