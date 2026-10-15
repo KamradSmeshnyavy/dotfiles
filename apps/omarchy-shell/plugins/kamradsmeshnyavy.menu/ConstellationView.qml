@@ -19,7 +19,6 @@ SkinBase {
   property var edges: []
   property var specks: []
   property real drift: 0
-  readonly property int paintPhase: Math.round(root.drift * 80)
 
   function layout() {
     var count = root.count
@@ -44,6 +43,7 @@ SkinBase {
     root.edges = root.buildEdges(pts, root.dense ? 1 : 2)
     root.specks = root.buildSpecks(w, h)
     sky.requestPaint()
+    links.requestPaint()
   }
 
   // Each star reaches for its two closest neighbours; shared links are drawn
@@ -151,15 +151,16 @@ SkinBase {
   onWidthChanged: layout()
   onHeightChanged: layout()
   onCountChanged: layout()
-  onPaintPhaseChanged: sky.requestPaint()
+  // Links light up with the selection; that is the only time they repaint.
+  onSelectedIndexChanged: links.requestPaint()
+  onCursorActiveChanged: links.requestPaint()
   Component.onCompleted: layout()
 
-  NumberAnimation on drift {
-    from: 0
-    to: Math.PI * 2
-    duration: 38000
-    loops: Animation.Infinite
-    running: root.visible
+  // The stars wobble a few pixels over half a minute: 15 steps a second is
+  // plenty, and every step re-places every star, so 60 was mostly waste.
+  Timer {
+    interval: 66; repeat: true; running: root.live
+    onTriggered: root.drift = (root.drift + Math.PI * 2 * 0.066 / 38) % (Math.PI * 2)
   }
 
   Column {
@@ -239,35 +240,54 @@ SkinBase {
       onExited: { field.parallaxX = 0; field.parallaxY = 0 }
     }
 
+    // Background specks: painted once per layout, twinkling as a layer.
     Canvas {
       id: sky
       anchors.fill: parent
-
+      property color tint: root.foreground
+      onTintChanged: requestPaint()
       onPaint: {
         var ctx = getContext("2d")
         ctx.clearRect(0, 0, width, height)
-
         for (var s = 0; s < root.specks.length; s++) {
           var speck = root.specks[s]
-          var twinkle = 0.65 + 0.35 * Math.sin(root.drift * 6 + speck.phase)
-          ctx.fillStyle = Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, speck.a * twinkle)
+          ctx.fillStyle = Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, speck.a)
           ctx.beginPath()
           ctx.arc(speck.x, speck.y, speck.r, 0, Math.PI * 2)
           ctx.fill()
         }
+      }
+      SequentialAnimation on opacity {
+        loops: Animation.Infinite
+        running: root.live
+        NumberAnimation { from: 1; to: 0.7; duration: 2600; easing.type: Easing.InOutSine }
+        NumberAnimation { from: 0.7; to: 1; duration: 2600; easing.type: Easing.InOutSine }
+      }
+    }
 
+    // Links between stars, drawn at their resting places. The drift is a
+    // few pixels, which the star discs cover; repainting the whole web on
+    // every drift step was the costliest thing on screen.
+    Canvas {
+      id: links
+      anchors.fill: parent
+      property var key: [root.accent, root.foreground, root.dense]
+      onKeyChanged: requestPaint()
+      onPaint: {
+        var ctx = getContext("2d")
+        ctx.clearRect(0, 0, width, height)
         ctx.lineWidth = 1
         for (var i = 0; i < root.edges.length; i++) {
           var edge = root.edges[i]
-          if (!root.points[edge[0]] || !root.points[edge[1]]) continue
-
+          var a = root.points[edge[0]], b = root.points[edge[1]]
+          if (!a || !b) continue
           var lit = root.cursorActive && (edge[0] === root.selectedIndex || edge[1] === root.selectedIndex)
           ctx.strokeStyle = lit
             ? Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.7)
             : Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, root.dense ? 0.07 : 0.16)
           ctx.beginPath()
-          ctx.moveTo(root.driftedX(edge[0]), root.driftedY(edge[0]))
-          ctx.lineTo(root.driftedX(edge[1]), root.driftedY(edge[1]))
+          ctx.moveTo(a.x, a.y)
+          ctx.lineTo(b.x, b.y)
           ctx.stroke()
         }
       }
