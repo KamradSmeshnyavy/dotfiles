@@ -78,13 +78,17 @@ do
 
 	local b = values("blur")
 	if #b == 4 then
-		hl.config({ decoration = { blur = {
-			enabled = b[1] > 0,
-			size = math.max(1, b[1]),
-			passes = b[2],
-			vibrancy = b[3],
-			noise = b[4],
-		} } })
+		hl.config({
+			decoration = {
+				blur = {
+					enabled = b[1] > 0,
+					size = math.max(1, b[1]),
+					passes = b[2],
+					vibrancy = b[3],
+					noise = b[4],
+				},
+			},
+		})
 	end
 end
 
