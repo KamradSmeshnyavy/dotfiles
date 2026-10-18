@@ -1,2 +1,0 @@
-return { "github/copilot.vim" }
-
