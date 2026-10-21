@@ -1,4 +1,4 @@
-{ "workbench.colorTheme": "Rosé Pine",                                                
+{ "workbench.colorTheme": "Rosé Pine",
   // * ╭───────────────────────────────────────────────────────╮
   // * │               VSCode Workbench                        │
   // * ╰───────────────────────────────────────────────────────╯
@@ -36,7 +36,7 @@
   },
   "workbench.navigationControl.enabled": false,
 
-  "workbench.preferredDarkColorTheme": "Dobri Next -A01- Dark",
+  "workbench.preferredDarkColorTheme": "Rosé Pine",
   "workbench.preferredLightColorTheme": "Rosé Pine Dawn",
   "workbench.iconTheme": "catppuccin noctis icons",
   "workbench.editor.editorActionsLocation": "hidden",
