@@ -1,0 +1,855 @@
+{
+  "__add__": {
+    "prefix": [
+      "__add__",
+      "add"
+    ],
+    "body": [
+      "def __add__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__add__ magic method"
+  },
+  "__radd__": {
+    "prefix": [
+      "__radd__",
+      "radd"
+    ],
+    "body": [
+      "def __radd__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__radd__ magic method"
+  },
+  "__iadd__": {
+    "prefix": [
+      "__iadd__",
+      "iadd"
+    ],
+    "body": [
+      "def __iadd__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__iadd__ magic method"
+  },
+  "__sub__": {
+    "prefix": [
+      "__sub__",
+      "sub"
+    ],
+    "body": [
+      "def __sub__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__sub__ magic method"
+  },
+  "__rsub__": {
+    "prefix": [
+      "__rsub__",
+      "rsub"
+    ],
+    "body": [
+      "def __rsub__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rsub__ magic method"
+  },
+  "__isub__": {
+    "prefix": [
+      "__isub__",
+      "isub"
+    ],
+    "body": [
+      "def __isub__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__isub__ magic method"
+  },
+  "__mul__": {
+    "prefix": [
+      "__mul__",
+      "mul"
+    ],
+    "body": [
+      "def __mul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__mul__ magic method"
+  },
+  "__rmul__": {
+    "prefix": [
+      "__rmul__",
+      "rmul"
+    ],
+    "body": [
+      "def __rmul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rmul__ magic method"
+  },
+  "__imul__": {
+    "prefix": [
+      "__imul__",
+      "imul"
+    ],
+    "body": [
+      "def __imul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__imul__ magic method"
+  },
+  "__matmul__": {
+    "prefix": [
+      "__matmul__",
+      "matmul"
+    ],
+    "body": [
+      "def __matmul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__matmul__ magic method"
+  },
+  "__rmatmul__": {
+    "prefix": [
+      "__rmatmul__",
+      "rmatmul"
+    ],
+    "body": [
+      "def __rmatmul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rmatmul__ magic method"
+  },
+  "__imatmul__": {
+    "prefix": [
+      "__imatmul__",
+      "imatmul"
+    ],
+    "body": [
+      "def __imatmul__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__imatmul__ magic method"
+  },
+  "__truediv__": {
+    "prefix": [
+      "__truediv__",
+      "truediv"
+    ],
+    "body": [
+      "def __truediv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__truediv__ magic method"
+  },
+  "__rtruediv__": {
+    "prefix": [
+      "__rtruediv__",
+      "rtruediv"
+    ],
+    "body": [
+      "def __rtruediv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rtruediv__ magic method"
+  },
+  "__itruediv__": {
+    "prefix": [
+      "__itruediv__",
+      "itruediv"
+    ],
+    "body": [
+      "def __itruediv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__itruediv__ magic method"
+  },
+  "__floordiv__": {
+    "prefix": [
+      "__floordiv__",
+      "floordiv"
+    ],
+    "body": [
+      "def __floordiv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__floordiv__ magic method"
+  },
+  "__rfloordiv__": {
+    "prefix": [
+      "__rfloordiv__",
+      "rfloordiv"
+    ],
+    "body": [
+      "def __rfloordiv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rfloordiv__ magic method"
+  },
+  "__ifloordiv__": {
+    "prefix": [
+      "__ifloordiv__",
+      "ifloordiv"
+    ],
+    "body": [
+      "def __ifloordiv__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ifloordiv__ magic method"
+  },
+  "__mod__": {
+    "prefix": [
+      "__mod__",
+      "mod"
+    ],
+    "body": [
+      "def __mod__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__mod__ magic method"
+  },
+  "__rmod__": {
+    "prefix": [
+      "__rmod__",
+      "rmod"
+    ],
+    "body": [
+      "def __rmod__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rmod__ magic method"
+  },
+  "__imod__": {
+    "prefix": [
+      "__imod__",
+      "imod"
+    ],
+    "body": [
+      "def __imod__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__imod__ magic method"
+  },
+  "__pow__": {
+    "prefix": [
+      "__pow__",
+      "pow"
+    ],
+    "body": [
+      "def __pow__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__pow__ magic method"
+  },
+  "__rpow__": {
+    "prefix": [
+      "__rpow__",
+      "rpow"
+    ],
+    "body": [
+      "def __rpow__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rpow__ magic method"
+  },
+  "__ipow__": {
+    "prefix": [
+      "__ipow__",
+      "ipow"
+    ],
+    "body": [
+      "def __ipow__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ipow__ magic method"
+  },
+  "__lshift__": {
+    "prefix": [
+      "__lshift__",
+      "lshift"
+    ],
+    "body": [
+      "def __lshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__lshift__ magic method"
+  },
+  "__rlshift__": {
+    "prefix": [
+      "__rlshift__",
+      "rlshift"
+    ],
+    "body": [
+      "def __rlshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rlshift__ magic method"
+  },
+  "__ilshift__": {
+    "prefix": [
+      "__ilshift__",
+      "ilshift"
+    ],
+    "body": [
+      "def __ilshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ilshift__ magic method"
+  },
+  "__rshift__": {
+    "prefix": [
+      "__rshift__",
+      "rshift"
+    ],
+    "body": [
+      "def __rshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rshift__ magic method"
+  },
+  "__rrshift__": {
+    "prefix": [
+      "__rrshift__",
+      "rrshift"
+    ],
+    "body": [
+      "def __rrshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rrshift__ magic method"
+  },
+  "__irshift__": {
+    "prefix": [
+      "__irshift__",
+      "irshift"
+    ],
+    "body": [
+      "def __irshift__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__irshift__ magic method"
+  },
+  "__and__": {
+    "prefix": [
+      "__and__",
+      "and"
+    ],
+    "body": [
+      "def __and__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__and__ magic method"
+  },
+  "__rand__": {
+    "prefix": [
+      "__rand__",
+      "rand"
+    ],
+    "body": [
+      "def __rand__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rand__ magic method"
+  },
+  "__iand__": {
+    "prefix": [
+      "__iand__",
+      "iand"
+    ],
+    "body": [
+      "def __iand__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__iand__ magic method"
+  },
+  "__or__": {
+    "prefix": [
+      "__or__",
+      "or"
+    ],
+    "body": [
+      "def __or__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__or__ magic method"
+  },
+  "__ror__": {
+    "prefix": [
+      "__ror__",
+      "ror"
+    ],
+    "body": [
+      "def __ror__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ror__ magic method"
+  },
+  "__ior__": {
+    "prefix": [
+      "__ior__",
+      "ior"
+    ],
+    "body": [
+      "def __ior__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ior__ magic method"
+  },
+  "__xor__": {
+    "prefix": [
+      "__xor__",
+      "xor"
+    ],
+    "body": [
+      "def __xor__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__xor__ magic method"
+  },
+  "__rxor__": {
+    "prefix": [
+      "__rxor__",
+      "rxor"
+    ],
+    "body": [
+      "def __rxor__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__rxor__ magic method"
+  },
+  "__ixor__": {
+    "prefix": [
+      "__ixor__",
+      "ixor"
+    ],
+    "body": [
+      "def __ixor__(self, other: ${1:Self}) -> ${2:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__ixor__ magic method"
+  },
+  "__divmod__": {
+    "prefix": [
+      "__divmod__",
+      "divmod"
+    ],
+    "body": [
+      "def __divmod__(self, other: ${1:Self}) -> ${2:tuple[Self, Self]}:",
+      "\t${0:pass}"
+    ],
+    "description": "__divmod__ magic method"
+  },
+  "__neg__": {
+    "prefix": [
+      "__neg__",
+      "neg"
+    ],
+    "body": [
+      "def __neg__(self) -> ${1:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__neg__ magic method"
+  },
+  "__pos__": {
+    "prefix": [
+      "__pos__",
+      "pos"
+    ],
+    "body": [
+      "def __pos__(self) -> ${1:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__pos__ magic method"
+  },
+  "__abs__": {
+    "prefix": [
+      "__abs__",
+      "abs"
+    ],
+    "body": [
+      "def __abs__(self) -> ${1:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__abs__ magic method"
+  },
+  "__invert__": {
+    "prefix": [
+      "__invert__",
+      "invert"
+    ],
+    "body": [
+      "def __invert__(self) -> ${1:Self}:",
+      "\t${0:pass}"
+    ],
+    "description": "__invert__ magic method"
+  },
+  "__eq__": {
+    "prefix": [
+      "__eq__",
+      "eq"
+    ],
+    "body": [
+      "def __eq__(self, other: ${1:object}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__eq__ magic method"
+  },
+  "__ne__": {
+    "prefix": [
+      "__ne__",
+      "ne"
+    ],
+    "body": [
+      "def __ne__(self, other: ${1:object}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__ne__ magic method"
+  },
+  "__lt__": {
+    "prefix": [
+      "__lt__",
+      "lt"
+    ],
+    "body": [
+      "def __lt__(self, other: ${1:Self}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__lt__ magic method"
+  },
+  "__le__": {
+    "prefix": [
+      "__le__",
+      "le"
+    ],
+    "body": [
+      "def __le__(self, other: ${1:Self}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__le__ magic method"
+  },
+  "__gt__": {
+    "prefix": [
+      "__gt__",
+      "gt"
+    ],
+    "body": [
+      "def __gt__(self, other: ${1:Self}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__gt__ magic method"
+  },
+  "__ge__": {
+    "prefix": [
+      "__ge__",
+      "ge"
+    ],
+    "body": [
+      "def __ge__(self, other: ${1:Self}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__ge__ magic method"
+  },
+  "__hash__": {
+    "prefix": [
+      "__hash__",
+      "hash"
+    ],
+    "body": [
+      "def __hash__(self) -> int:",
+      "\t${0:pass}"
+    ],
+    "description": "__hash__ magic method"
+  },
+  "__bool__": {
+    "prefix": [
+      "__bool__",
+      "bool"
+    ],
+    "body": [
+      "def __bool__(self) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__bool__ magic method"
+  },
+  "__str__": {
+    "prefix": [
+      "__str__",
+      "str"
+    ],
+    "body": [
+      "def __str__(self) -> str:",
+      "\treturn f\"${0}\""
+    ],
+    "description": "__str__ magic method"
+  },
+  "__repr__": {
+    "prefix": [
+      "__repr__",
+      "repr"
+    ],
+    "body": [
+      "def __repr__(self) -> str:",
+      "\treturn f\"${1:{type(self).__name__}}(${0})\""
+    ],
+    "description": "__repr__ magic method"
+  },
+  "__format__": {
+    "prefix": [
+      "__format__",
+      "format"
+    ],
+    "body": [
+      "def __format__(self, format_spec: str) -> str:",
+      "\t${0:pass}"
+    ],
+    "description": "__format__ magic method"
+  },
+  "__int__": {
+    "prefix": [
+      "__int__",
+      "int"
+    ],
+    "body": [
+      "def __int__(self) -> int:",
+      "\t${0:pass}"
+    ],
+    "description": "__int__ magic method"
+  },
+  "__float__": {
+    "prefix": [
+      "__float__",
+      "float"
+    ],
+    "body": [
+      "def __float__(self) -> float:",
+      "\t${0:pass}"
+    ],
+    "description": "__float__ magic method"
+  },
+  "__index__": {
+    "prefix": [
+      "__index__",
+      "index"
+    ],
+    "body": [
+      "def __index__(self) -> int:",
+      "\t${0:pass}"
+    ],
+    "description": "__index__ magic method"
+  },
+  "__init__": {
+    "prefix": [
+      "__init__",
+      "init"
+    ],
+    "body": [
+      "def __init__(self${1:, arg}) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__init__"
+  },
+  "__new__": {
+    "prefix": [
+      "__new__",
+      "new"
+    ],
+    "body": [
+      "def __new__(cls${1:, *args, **kwargs}) -> Self:",
+      "\t${0:return super().__new__(cls)}"
+    ],
+    "description": "__new__"
+  },
+  "__del__": {
+    "prefix": [
+      "__del__",
+      "del"
+    ],
+    "body": [
+      "def __del__(self) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__del__ magic method"
+  },
+  "__call__": {
+    "prefix": [
+      "__call__",
+      "call"
+    ],
+    "body": [
+      "def __call__(self, ${1:*args, **kwargs}) -> ${2:None}:",
+      "\t${0:pass}"
+    ],
+    "description": "__call__ magic method"
+  },
+  "__len__": {
+    "prefix": [
+      "__len__",
+      "len"
+    ],
+    "body": [
+      "def __len__(self) -> int:",
+      "\t${0:pass}"
+    ],
+    "description": "__len__ magic method"
+  },
+  "__getitem__": {
+    "prefix": [
+      "__getitem__",
+      "getitem"
+    ],
+    "body": [
+      "def __getitem__(self, key: ${1:int}) -> ${2:object}:",
+      "\t${0:pass}"
+    ],
+    "description": "__getitem__ magic method"
+  },
+  "__setitem__": {
+    "prefix": [
+      "__setitem__",
+      "setitem"
+    ],
+    "body": [
+      "def __setitem__(self, key: ${1:int}, value: ${2:object}) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__setitem__ magic method"
+  },
+  "__delitem__": {
+    "prefix": [
+      "__delitem__",
+      "delitem"
+    ],
+    "body": [
+      "def __delitem__(self, key: ${1:int}) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__delitem__ magic method"
+  },
+  "__contains__": {
+    "prefix": [
+      "__contains__",
+      "contains"
+    ],
+    "body": [
+      "def __contains__(self, item: ${1:object}) -> bool:",
+      "\t${0:pass}"
+    ],
+    "description": "__contains__ magic method"
+  },
+  "__iter__": {
+    "prefix": [
+      "__iter__",
+      "iter"
+    ],
+    "body": [
+      "def __iter__(self) -> ${1:Iterator[object]}:",
+      "\t${0:pass}"
+    ],
+    "description": "__iter__ magic method"
+  },
+  "__next__": {
+    "prefix": [
+      "__next__",
+      "next"
+    ],
+    "body": [
+      "def __next__(self) -> ${1:object}:",
+      "\t${0:pass}"
+    ],
+    "description": "__next__ magic method"
+  },
+  "__reversed__": {
+    "prefix": [
+      "__reversed__",
+      "reversed"
+    ],
+    "body": [
+      "def __reversed__(self) -> ${1:Iterator[object]}:",
+      "\t${0:pass}"
+    ],
+    "description": "__reversed__ magic method"
+  },
+  "__missing__": {
+    "prefix": [
+      "__missing__",
+      "missing"
+    ],
+    "body": [
+      "def __missing__(self, key: ${1:object}) -> ${2:object}:",
+      "\t${0:pass}"
+    ],
+    "description": "__missing__ magic method"
+  },
+  "__enter__": {
+    "prefix": [
+      "__enter__",
+      "enter"
+    ],
+    "body": [
+      "def __enter__(self) -> ${1:Self}:",
+      "\t${0:return self}"
+    ],
+    "description": "__enter__ magic method"
+  },
+  "__exit__": {
+    "prefix": [
+      "__exit__",
+      "exit"
+    ],
+    "body": [
+      "def __exit__(self, exc_type: type[BaseException] | None, exc: BaseException | None, tb: TracebackType | None) -> ${1:bool | None}:",
+      "\t${0:pass}"
+    ],
+    "description": "__exit__ magic method"
+  },
+  "__getattr__": {
+    "prefix": [
+      "__getattr__",
+      "getattr"
+    ],
+    "body": [
+      "def __getattr__(self, name: str) -> ${1:object}:",
+      "\t${0:pass}"
+    ],
+    "description": "__getattr__ magic method"
+  },
+  "__setattr__": {
+    "prefix": [
+      "__setattr__",
+      "setattr"
+    ],
+    "body": [
+      "def __setattr__(self, name: str, value: object) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__setattr__ magic method"
+  },
+  "__delattr__": {
+    "prefix": [
+      "__delattr__",
+      "delattr"
+    ],
+    "body": [
+      "def __delattr__(self, name: str) -> None:",
+      "\t${0:pass}"
+    ],
+    "description": "__delattr__ magic method"
+  },
+  "Google-style Method Docstring": {
+    "prefix": "docstring",
+    "body": [
+      "\"\"\"${1:Short method description.}",
+      "",
+      "Args:",
+      "    ${2:param_name} (${3:type}): ${4:Parameter description.}",
+      "",
+      "Returns:",
+      "    ${5:type}: ${6:Return value description.}",
+      "",
+      "Note:",
+      "    ${7:Additional notes or important details.}",
+      "\"\"\"${0}"
+    ],
+    "description": "Generate a Google-style method docstring"
+  }
+}
