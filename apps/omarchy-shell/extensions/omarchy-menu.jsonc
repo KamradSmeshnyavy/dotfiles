@@ -253,9 +253,9 @@
   "style.launcher.hacker": {
     "icon":"\ue795",
     "label":"Hacker",
-    "description":"Terminal, Matrix + 8 minimal twins",
+    "description":"Terminal, Matrix, Matrix term + 8 minimal twins",
     "aliases":["skin-hacker"],
-    "checked":"grep -qE '\"skin\":\"(terminal|matrix|drum\\-hack|tarot\\-hack|metro\\-hack|orrery\\-hack|matrix\\-hack|bookshelf\\-hack|lanterns\\-hack|aquarium\\-hack)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+    "checked":"grep -qE '\"skin\":\"(terminal|matrix|matrix\\-term|drum\\-hack|tarot\\-hack|metro\\-hack|orrery\\-hack|matrix\\-hack|bookshelf\\-hack|lanterns\\-hack|aquarium\\-hack)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.hacker.terminal": {
     "icon":"\ue795",
@@ -270,6 +270,13 @@
     "description":"Digital rain \u00b7 original",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"matrix\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"matrix\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.hacker.matrix-term": {
+    "icon":"\udb81\ude14",
+    "label":"Matrix // term",
+    "description":"Digital rain in Terminal colours",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"matrix-term\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"matrix-term\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.hacker.drum-hack": {
     "icon":"\udb83\ude6b",

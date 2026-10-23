@@ -10,11 +10,13 @@ SkinBase {
 
   launchDelay: 480
 
-  // matrix-hack takes the Terminal palette instead of the green rain.
-  readonly property color rain: root.hack ? root.hackInk : (root.theme ? root.theme.green : "#41f38c")
-  readonly property color glow: root.hack ? root.hackText : (root.theme ? root.theme.mix(root.rain, "#ffffff", 0.55) : "#c8ffd8")
-  readonly property color dark: root.hack ? root.hackBg : (root.theme ? root.theme.mix(root.background, "#000000", 0.72) : "#010603")
-  readonly property color dim: root.hack ? root.hackDim : (root.theme ? root.theme.mix(root.rain, root.dark, 0.55) : "#1c6b3a")
+  // matrix-hack and matrix-term take the Terminal palette instead of the
+  // green rain; matrix-term keeps everything else as designed.
+  readonly property bool termPalette: root.hack || root.variant === "term"
+  readonly property color rain: root.termPalette ? root.hackInk : (root.theme ? root.theme.green : "#41f38c")
+  readonly property color glow: root.termPalette ? root.hackText : (root.theme ? root.theme.mix(root.rain, "#ffffff", 0.55) : "#c8ffd8")
+  readonly property color dark: root.termPalette ? root.hackBg : (root.theme ? root.theme.mix(root.background, "#000000", 0.72) : "#010603")
+  readonly property color dim: root.termPalette ? root.hackDim : (root.theme ? root.theme.mix(root.rain, root.dark, 0.55) : "#1c6b3a")
   // matrix-hack (shell): a plain prompt, sparse binary columns instead of
   // the rain, inverted selection.
   readonly property string glyphs: root.hack ? "01" : "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789:=*+-<>¦|"

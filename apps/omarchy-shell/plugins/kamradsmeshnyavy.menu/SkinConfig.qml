@@ -49,11 +49,16 @@ Item {
     "matrix-hack": "MatrixView.qml",
     "bookshelf-hack": "BookshelfView.qml",
     "lanterns-hack": "LanternsView.qml",
-    "aquarium-hack": "AquariumView.qml"
+    "aquarium-hack": "AquariumView.qml",
+    // Same skin, recoloured with the Terminal palette: variant "term".
+    "matrix-term": "MatrixView.qml"
   })
 
   function variantFor(name) {
-    return /-hack$/.test(String(name || "")) ? "hack" : ""
+    var n = String(name || "")
+    if (/-hack$/.test(n)) return "hack"
+    if (/-term$/.test(n)) return "term"
+    return ""
   }
   readonly property var known: Object.keys(root.files).concat(["list"])
 
