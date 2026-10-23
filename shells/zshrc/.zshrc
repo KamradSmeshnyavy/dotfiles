@@ -266,6 +266,9 @@ fi
 
 # Nix!
 export NIX_CONF_DIR=$HOME/.config/nix
+export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
+# Переменные темы Omarchy (omarchy-app-themes)
+[[ -f ~/.local/state/omarchy/app-theme.zsh ]] && source ~/.local/state/omarchy/app-theme.zsh
 export PATH=/run/current-system/sw/bin:$PATH
 export PATH=$HOME/.nix-profile/bin:$PATH
 

@@ -104,5 +104,8 @@
     ~/.config/omarchy/themes/catppuccin-mocha-lavender:
       path: omarchy-themes/catppuccin-mocha-lavender
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/catppuccin-mocha-efter:
+      path: omarchy-themes/catppuccin-mocha-efter
+      if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]

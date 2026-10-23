@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Темы CLI/TUI-приложений, которые Omarchy сам не перекрашивает.
+# Каждый слот — симлинк на apps/<файл> текущей темы, а если его нет — на app-defaults/<файл>.
+# apps/env (KEY=VALUE, {theme} → путь к текущей теме) превращается в app-theme.zsh и app-theme.json (nushell).
+set -u
+
+THEME=${OMARCHY_APP_THEME_DIR:-$HOME/.local/state/omarchy/current/theme}
+STATE=$HOME/.local/state/omarchy
+DEFAULTS=$(cd "$(dirname "$(readlink -f "$0")")/../app-defaults" && pwd) || exit 1
+
+declare -A SLOTS=(
+  [yazi.toml]=$HOME/.config/yazi/theme.toml
+  [lazygit.yml]=$HOME/.config/lazygit/theme.yml
+  [atuin.toml]=$HOME/.config/atuin/themes/omarchy.toml
+  [lla.toml]=$HOME/.config/lla/themes/omarchy.toml
+  [television.toml]=$HOME/.config/television/themes/omarchy.toml
+  [gitui.ron]=$HOME/.config/gitui/theme.ron
+  [rmpc.ron]=$HOME/.config/rmpc/themes/omarchy.ron
+  [nushell.nu]=$HOME/.config/nushell/themes/omarchy.nu
+  [tmux.conf]=$HOME/.config/tmux/om-app-theme.conf
+)
+
+link_slots() {
+  local name slot src rel
+  for name in "${!SLOTS[@]}"; do
+    slot=${SLOTS[$name]}
+    # ~/.config/<app> нет — приложение не настроено, слот не нужен
+    rel=${slot#"$HOME/.config/"}
+    [[ -e $HOME/.config/${rel%%/*} ]] || continue
+
+    src=$THEME/apps/$name
+    [[ -e $src ]] || src=$DEFAULTS/$name
+
+    if [[ -e $slot && ! -L $slot ]]; then
+      echo "omarchy-app-themes: $slot — обычный файл, не трогаю" >&2
+      continue
+    fi
+    mkdir -p "$(dirname "$slot")"
+    ln -sfn "$src" "$slot"
+  done
+}
+
+write_env() {
+  local env_file=$THEME/apps/env
+  [[ -f $env_file ]] || env_file=$DEFAULTS/env
+
+  local tmp_dir
+  tmp_dir=$(mktemp -d "$STATE/.app-theme.XXXXXX") || return
+  python3 -I - "$env_file" "$THEME" "$tmp_dir" <<'PY'
+import json, shlex, sys
+env_file, theme, out = sys.argv[1:]
+env = {}
+for line in open(env_file, encoding="utf-8"):
+    line = line.strip()
+    if not line or line.startswith("#") or "=" not in line:
+        continue
+    key, value = line.split("=", 1)
+    env[key.strip()] = value.strip().replace("{theme}", theme)
+with open(f"{out}/app-theme.json", "w") as f:
+    json.dump(env, f, indent=2)
+with open(f"{out}/app-theme.zsh", "w") as f:
+    f.write("# Сгенерировано omarchy-app-themes\n")
+    f.writelines(f"export {k}={shlex.quote(v)}\n" for k, v in env.items())
+PY
+  mv -f "$tmp_dir/app-theme.json" "$STATE/app-theme.json"
+  mv -f "$tmp_dir/app-theme.zsh" "$STATE/app-theme.zsh"
+  rmdir "$tmp_dir"
+}
+
+reload_tmux() {
+  tmux list-sessions >/dev/null 2>&1 || return 0
+  local conf
+  for conf in "$HOME/.config/tmux/om-theme.conf" "$HOME/.config/tmux/om-app-theme.conf"; do
+    [[ -e $conf ]] && tmux source-file "$conf"
+  done
+  tmux refresh-client -S 2>/dev/null || true
+}
+
+link_slots
+write_env
+reload_tmux

@@ -224,5 +224,7 @@ source $mac_module
 source ./plugins/plugins.nu
 source ./aliases/alias.nu
 source ./completions/completions.nu
-# source ./themes/catppuccin-mocha.nu
+# Цвета от темы Omarchy (слот omarchy-app-themes)
+const omarchy_theme = if ("~/.config/nushell/themes/omarchy.nu" | path expand | path exists) { "./themes/omarchy.nu" } else { null }
+source $omarchy_theme
 # source $"($nu.home-path)/.cargo/env.nu"

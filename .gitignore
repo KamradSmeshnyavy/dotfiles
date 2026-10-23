@@ -22,3 +22,14 @@ fzf
 history.txt
 tui/lla/jump.json
 tui/cliamp/**
+
+# omarchy-app-themes: слоты тем приложений (симлинки)
+tui/yazi/theme.toml
+tui/lazygit/theme.yml
+tui/atuin/themes/omarchy.toml
+tui/lla/themes/omarchy.toml
+tui/television/themes/omarchy.toml
+tui/gitui/theme.ron
+tui/rmpc/themes/omarchy.ron
+shells/nushell/themes/omarchy.nu
+tui/tmux/om-app-theme.conf

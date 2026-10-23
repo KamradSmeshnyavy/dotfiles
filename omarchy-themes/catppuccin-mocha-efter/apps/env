@@ -1,0 +1,3 @@
+# Переменные окружения темы (KEY=VALUE, {theme} — путь к текущей теме)
+BAT_THEME=Catppuccin Mocha
+GLAMOUR_STYLE={theme}/apps/glow.json

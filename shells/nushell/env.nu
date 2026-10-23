@@ -29,6 +29,10 @@ $env.MOZ_ENABLE_WAYLAND = "1"
 $env._JAVA_OPTIONS = "-Dsun.java2d.uiScale=2"
 $env.OMARCHY_PATH = $"($env.HOME)/.local/share/omarchy"
 $env.BAT_THEME = "ansi"
+$env.LG_CONFIG_FILE = $"($env.HOME)/.config/lazygit/config.yml,($env.HOME)/.config/lazygit/theme.yml"
+# Переменные темы Omarchy (omarchy-app-themes)
+let omarchy_app_env = $"($env.HOME)/.local/state/omarchy/app-theme.json"
+if ($omarchy_app_env | path exists) { load-env (open $omarchy_app_env) }
 $env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
 $env.KUBECONFIG = $"($env.HOME)/.kube/config"
 $env.EZA_CONFIG_DIR = $"($env.HOME)/.config/eza"
