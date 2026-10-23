@@ -1,3 +1,7 @@
-# Тема без своего atuin.toml: цвета atuin по умолчанию
+# Тема без своего atuin.toml: встроенная тема "default" (parent по умолчанию).
+# [colors] обязателен — без него atuin не разбирает файл и показывает тему "(none)" без цветов.
 [theme]
 name = "omarchy"
+
+[colors]
+AlertError = "@dark_red"
