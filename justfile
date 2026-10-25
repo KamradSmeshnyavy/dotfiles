@@ -1,28 +1,63 @@
 flake_dir := "~/dotfiles/packages/nix-darwin"
 hostname  := "MacBook-Pro-Denis"
 
+# Список рецептов для текущей ОС
+default:
+    @just --list
+
+# ── macOS (nix-darwin) ─────────────────────────────────────────
+
 # Применить изменения конфигурации (switch)
+[macos]
 switch:
     sudo darwin-rebuild switch --flake {{flake_dir}}#{{hostname}}
 
+[macos]
 switch-lix:
     sudo -H nix run nix-darwin -- switch --flake {{flake_dir}}#{{hostname}}
 
 # Собрать и проверить конфигурацию без применения (check)
+[macos]
 build:
     sudo darwin-rebuild build --flake {{flake_dir}}#{{hostname}}
 
 # Обновить flake.lock и применить изменения
+[macos]
 update:
     sudo nix flake update --flake {{flake_dir}}
     sudo darwin-rebuild switch --flake {{flake_dir}}#{{hostname}}
 
 # Очистка старых поколений и мусора
+[macos]
 gc:
     sudo nix-collect-garbage -d
     sudo nix-store --optimise
 
+# ── Linux (Omarchy) ────────────────────────────────────────────
 
-# AI-скиллы из skills/ (карта: skills/linux_install_map.json); --copy — копировать, --dry-run — показать
+# Разложить ссылки конфигов (install/install.conf.yaml) и поставить AI-скиллы
+[linux]
+link:
+    python3 {{justfile_directory()}}/install/install.py
+    @just install-skill
+
+# Применить тему Omarchy (без имени — показать список)
+[linux]
+theme name="":
+    @if [ -z "{{name}}" ]; then omarchy theme list; else omarchy theme set "{{name}}"; fi
+
+# Перенаправить слоты тем приложений на текущую тему (без смены темы)
+[linux]
+app-themes:
+    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
+
+# Плагины yazi из tui/yazi/package.toml
+[linux]
+yazi-plugins:
+    ya pkg install
+
+# ── Общее ──────────────────────────────────────────────────────
+
+# AI-скиллы из skills/ (карта по ОС: skills/*_install_map.json); --copy — копировать, --dry-run — показать
 install-skill *args:
     @nu {{justfile_directory()}}/scripts/install-skill.nu {{args}}
