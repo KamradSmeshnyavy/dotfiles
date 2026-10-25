@@ -33,3 +33,5 @@ tui/gitui/theme.ron
 tui/rmpc/themes/omarchy.ron
 shells/nushell/themes/omarchy.nu
 tui/tmux/om-app-theme.conf
+# генерируется omarchy-tmux-theme при каждой смене темы
+tui/tmux/om-theme.conf
