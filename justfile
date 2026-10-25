@@ -22,3 +22,7 @@ gc:
     sudo nix-collect-garbage -d
     sudo nix-store --optimise
 
+
+# AI-скиллы из skills/ (карта: skills/linux_install_map.json); --copy — копировать, --dry-run — показать
+install-skill *args:
+    @nu {{justfile_directory()}}/scripts/install-skill.nu {{args}}

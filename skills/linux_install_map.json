@@ -1,0 +1,8 @@
+{
+	"gum-nushell": ["claude", "codex", "opencode"],
+	"obsidian-markdown": ["opencode"],
+	"obsidian-bases": ["opencode"],
+	"json-canvas": ["opencode"],
+	"markdown-codeblock": ["opencode"],
+	"skill-creator": ["opencode"]
+}
