@@ -253,6 +253,10 @@ export alias gp = git push
 export alias gpd = git push --dry-run
 export alias gpf = git push --force-with-lease
 export alias gpf! = git push --force
+# git push all branches and tags (to origin)
+export def gpa [] {
+    git push origin --all; git push origin --tags
+}
 export alias gpl = git pull
 export def gpoat [] {
     git push origin --all; git push origin --tags

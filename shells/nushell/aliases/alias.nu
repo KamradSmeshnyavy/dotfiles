@@ -5,6 +5,7 @@ source ./obsidian.nu
 source ./mpd.nu
 source ./eza.nu
 source ./sec-stuff.nu
+source ./media.nu
 
 # My custom aliases 
 
@@ -162,3 +163,25 @@ alias lzd = lazydocker
 alias wifi = impala
 alias btui = bluetui
 alias nm = nmap -sC -sV -oN nmap
+
+# Из Efterklang/dotfiles
+alias ffd = commandline edit --insert (fd --type directory | fzf --preview 'eza --all --git --long --no-time --color=always --icons {}')
+alias icat = kitten icat
+alias vr = nvim ./README.md
+alias vp = nvim ./package.json
+alias vj = just --edit
+
+# Локальный IP (у Efterklang — ipconfig getifaddr en0 на macOS), с портом — host:port
+def ip_public [port?: int] {
+  let ip = (^ip -4 route get 1.1.1.1 | parse --regex 'src (?<ip>\S+)' | get ip.0)
+  if $port == null {
+    $ip
+  } else {
+    $"($ip):($port)"
+  }
+}
+
+# glow не читает GLAMOUR_STYLE — стиль темы Omarchy (omarchy-app-themes → apps/env) передаём флагом
+def --wrapped glow [...rest] {
+  ^glow -s ($env.GLAMOUR_STYLE? | default "auto") ...$rest
+}

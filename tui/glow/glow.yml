@@ -1,0 +1,7 @@
+# Как у Efterklang (tui_cli/glow/glow.yml). Стиль от темы Omarchy задаёт обёртка glow
+# в shells/nushell/aliases/alias.nu (-s $env.GLAMOUR_STYLE): сам glow GLAMOUR_STYLE не читает.
+style: "auto"
+mouse: false
+pager: false
+width: 80
+all: false

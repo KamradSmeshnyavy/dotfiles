@@ -222,6 +222,7 @@ source $window_module
 source $mac_module
 
 source ./plugins/plugins.nu
+source ./platform/kitty.nu
 source ./aliases/alias.nu
 source ./completions/completions.nu
 # Цвета от темы Omarchy (слот omarchy-app-themes)

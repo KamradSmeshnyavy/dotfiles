@@ -21,6 +21,7 @@
       if: "[ `uname` = Darwin ]"
     ~/.config/btop: tui/btop
     ~/.config/carapace: tui/carapace
+    ~/.config/glow: tui/glow
     ~/.config/cava: tui/cava
     ~/.config/chromium: apps/chromium
     ~/.config/dust: tui/dust

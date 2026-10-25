@@ -1,5 +1,5 @@
 alias cat = bat
-alias cd = z
+# cd = z с дополнением локальных папок + zoxide — completions/cd.nu
 alias curl = curlie
 alias du = dust
 alias dig = doggo
