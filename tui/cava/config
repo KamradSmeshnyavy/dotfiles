@@ -214,7 +214,7 @@ higher_cutoff_freq = 8000
 # gradient_color_7 = '#eba0ac'
 # gradient_color_8 = '#f38ba8'
 
-theme = black-arch
+theme = cava_theme
 [smoothing]
 
 # Percentage value for integral smoothing. Takes values from 0 - 100.

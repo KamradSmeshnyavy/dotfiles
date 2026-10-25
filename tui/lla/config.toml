@@ -24,13 +24,13 @@ default_format = "default"
 # Whether to show icons by default
 # When true, file and directory icons will be displayed in all views
 # Default: false
-show_icons = false
+show_icons = true
 
 # Whether to include directory sizes in file listings
 # When true, directory sizes will be calculated recursively
 # This may impact performance for large directories; some views skip this when size is not used
 # Default: false
-include_dirs = false
+include_dirs = true
 
 # Format for displaying file permissions
 # Possible values:
@@ -57,7 +57,7 @@ enabled_plugins = []
 
 # Directory where plugins are stored
 # Default: ~/.config/lla/plugins
-plugins_dir = "/tmp/.tmpM8PSOc"
+plugins_dir = "~/.config/lla/plugins"
 
 # Paths to exclude from listings (tilde is supported)
 # Examples:
@@ -132,11 +132,11 @@ max_width = 200
 [formatters.long]
 # Hide the group column in long format
 # Default: false
-hide_group = false
+hide_group = true
 
 # Show relative dates (e.g., "2h ago") in long format
 # Default: false
-relative_dates = false
+relative_dates = true
 
 # Date/time format for absolute dates in long format
 # Uses chrono strftime syntax (e.g., "%Y-%m-%d %H:%M" to show the year)

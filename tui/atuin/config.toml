@@ -49,7 +49,7 @@ search_mode = "skim"
 
 ## which style to use
 ## possible values: auto, full, compact
-# style = "auto"
+style = "full"
 
 ## the maximum number of lines the interface should take up
 ## set it to 0 to always go full screen
@@ -109,7 +109,7 @@ search_mode = "skim"
 ## Configure whether or not to show the help row, which includes the current Atuin
 ## version (and whether an update is available), a keymap hint, and the total
 ## amount of commands in your history.
-# show_help = true
+show_help = false
 
 ## Configure whether or not to show tabs for search and inspect
 # show_tabs = true
@@ -245,3 +245,7 @@ name = "omarchy"
 ## The "workspace" mode is skipped when not in a workspace or workspaces = false.
 ## Default filter mode can be overridden with the filter_mode setting.
 # filters = [ "global", "host", "session", "workspace", "directory" ]
+
+# Как у Efterklang: длительность + команда
+[ui]
+columns = ["duration", "command"]
