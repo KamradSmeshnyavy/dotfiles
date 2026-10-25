@@ -279,7 +279,7 @@
     "Tabs": 200
   },
   "custom-ui-style.external.imports": [
-    "file://${env:HOME}/Projects/dotfiles/apps/vscode/custom.css",
+    "file://${env:HOME}/dotfiles/apps/vscode/custom.css",
     "file://${env:HOME}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js"
   ],
   // "custom-ui-style.external.loadStrategy": "cache",
