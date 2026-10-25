@@ -33,7 +33,7 @@
     minus-style = syntax "#3F2E40"  # background color for removed lines
     plus-emph-style = syntax bold "#475A52"
     plus-style = syntax "#323B40"  # background color for added lines
-    syntax-theme = Catppuccin Mocha 
+    # syntax-theme не задан: delta берёт BAT_THEME текущей темы Omarchy (omarchy-app-themes → apps/env)
     whitespace-error-style = black reverse
     zero-style = syntax
     blame-format = "{author:<18} ({commit:>7}) ┊{timestamp:^16}┊ "

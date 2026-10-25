@@ -30,6 +30,8 @@ $env._JAVA_OPTIONS = "-Dsun.java2d.uiScale=2"
 $env.OMARCHY_PATH = $"($env.HOME)/.local/share/omarchy"
 $env.BAT_THEME = "ansi"
 $env.LG_CONFIG_FILE = $"($env.HOME)/.config/lazygit/config.yml,($env.HOME)/.config/lazygit/theme.yml"
+# Цвета fzf от темы Omarchy (omarchy-app-themes → слот fzf)
+$env.FZF_DEFAULT_OPTS_FILE = $"($env.HOME)/.local/state/omarchy/app-themes/fzf.opts"
 # Переменные темы Omarchy (omarchy-app-themes)
 let omarchy_app_env = $"($env.HOME)/.local/state/omarchy/app-theme.json"
 if ($omarchy_app_env | path exists) { load-env (open $omarchy_app_env) }

@@ -21,10 +21,13 @@
 | `rmpc.ron` | `~/.config/rmpc/themes/omarchy.ron` | `theme: "omarchy"` |
 | `nushell.nu` | `~/.config/nushell/themes/omarchy.nu` | `source` в `config.nu` |
 | `tmux.conf` | `~/.config/tmux/om-app-theme.conf` | `tmux.conf` после `om-theme.conf`; перечитывается сразу |
+| `fzf.opts` | `~/.local/state/omarchy/app-themes/fzf.opts` | `FZF_DEFAULT_OPTS_FILE` в `env.nu` / `.zshrc` |
 
-Если у темы нет `apps/yatline.lua`, скрипт генерирует его из её `colors.toml`
-(`scripts/omarchy-yatline-theme` → `~/.local/state/omarchy/app-themes/yatline.lua`);
+Если у темы нет `apps/yatline.lua` или `apps/fzf.opts`, скрипт генерирует их из её `colors.toml`
+(`scripts/omarchy-yatline-theme`, `scripts/omarchy-fzf-theme` → `~/.local/state/omarchy/app-themes/generated-*`);
 `apps/yatline-palette.toml` (ключи как в `colors.toml`) перекрывает цвета — так сделаны rose-pine-hacker*.
+
+delta не задаёт `syntax-theme`, поэтому берёт `BAT_THEME` из `env` темы (efter — Catppuccin Mocha, остальные — ansi).
 
 `env` (строки `KEY=VALUE`, `{theme}` — путь к текущей теме) превращается в
 `~/.local/state/omarchy/app-theme.json` (nushell, `load-env` в `env.nu`) и `app-theme.zsh` (`.zshrc`).

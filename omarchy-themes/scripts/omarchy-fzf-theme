@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""
+Генерирует цвета fzf (файл для FZF_DEFAULT_OPTS_FILE) из colors.toml темы Omarchy.
+
+Использование: omarchy-fzf-theme <каталог темы> <выходной файл>
+"""
+import sys, tomllib
+from pathlib import Path
+
+# Ключ colors.toml → запасные ключи (старый формат: color0..15)
+FALLBACKS = {
+    "accent": ["color4", "blue"],
+    "cursor": ["accent", "color7"],
+    "background": ["color0"],
+    "lighter_background": ["selection", "color8"],
+    "selection": ["lighter_background", "color8"],
+    "foreground": ["color7"],
+    "muted": ["dark_foreground", "color8"],
+    "red": ["color1"],
+    "magenta": ["color5"],
+}
+
+
+def palette(theme_dir):
+    with open(theme_dir / "colors.toml", "rb") as f:
+        data = tomllib.load(f)
+    colors = data.get("colors", data)
+
+    def get(key):
+        for k in [key, *FALLBACKS.get(key, [])]:
+            if k in colors:
+                return colors[k]
+        return "-1"  # цвет терминала по умолчанию
+
+    return get
+
+
+def opts(get):
+    # Раскладка как у официальной темы catppuccin/fzf
+    pairs = {
+        "bg+": "lighter_background", "bg": "background", "spinner": "cursor", "hl": "red",
+        "fg": "foreground", "header": "red", "info": "magenta", "pointer": "cursor",
+        "marker": "accent", "fg+": "foreground", "prompt": "magenta", "hl+": "red",
+        "selected-bg": "selection", "border": "muted", "label": "foreground",
+    }
+    colors = ",".join(f"{k}:{get(v)}" for k, v in pairs.items())
+    return f"# Сгенерировано omarchy-fzf-theme из colors.toml текущей темы Omarchy\n--color={colors}\n"
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    Path(sys.argv[2]).write_text(opts(palette(Path(sys.argv[1]))), encoding="utf-8")

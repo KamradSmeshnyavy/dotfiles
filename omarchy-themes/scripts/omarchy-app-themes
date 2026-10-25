@@ -22,22 +22,31 @@ declare -A SLOTS=(
   [rmpc.ron]=$HOME/.config/rmpc/themes/omarchy.ron
   [nushell.nu]=$HOME/.config/nushell/themes/omarchy.nu
   [tmux.conf]=$HOME/.config/tmux/om-app-theme.conf
+  # не в ~/.config: путь задан в FZF_DEFAULT_OPTS_FILE (env.nu, .zshrc)
+  [fzf.opts]=$STATE/app-themes/fzf.opts
 )
 
 # Слоты, которые для темы без своего файла генерируются из её colors.toml
 declare -A GENERATED=()
 
-generate() {
-  [[ -e $THEME/apps/yatline.lua || ! -f $THEME/colors.toml ]] && return
-  local out=$STATE/app-themes/yatline.lua tmp
+# generate_one <файл в apps/> <генератор>: только если у темы нет своего файла
+generate_one() {
+  local name=$1 generator=$2 out tmp
+  [[ -e $THEME/apps/$name || ! -f $THEME/colors.toml ]] && return
+  out=$STATE/app-themes/generated-$name
   mkdir -p "$STATE/app-themes"
-  tmp=$(mktemp "$STATE/app-themes/.yatline.XXXXXX") || return
-  if "$SCRIPTS/omarchy-yatline-theme" "$THEME" "$tmp"; then
+  tmp=$(mktemp "$STATE/app-themes/.$name.XXXXXX") || return
+  if "$SCRIPTS/$generator" "$THEME" "$tmp"; then
     mv -f "$tmp" "$out"
-    GENERATED[yatline.lua]=$out
+    GENERATED[$name]=$out
   else
     mv -f "$tmp" "$tmp.failed"
   fi
+}
+
+generate() {
+  generate_one yatline.lua omarchy-yatline-theme
+  generate_one fzf.opts omarchy-fzf-theme
 }
 
 link_slots() {
@@ -45,8 +54,10 @@ link_slots() {
   for name in "${!SLOTS[@]}"; do
     slot=${SLOTS[$name]}
     # ~/.config/<app> нет — приложение не настроено, слот не нужен
-    rel=${slot#"$HOME/.config/"}
-    [[ -e $HOME/.config/${rel%%/*} ]] || continue
+    if [[ $slot == "$HOME/.config/"* ]]; then
+      rel=${slot#"$HOME/.config/"}
+      [[ -e $HOME/.config/${rel%%/*} ]] || continue
+    fi
 
     src=$THEME/apps/$name
     [[ -e $src ]] || src=${GENERATED[$name]:-$DEFAULTS/$name}

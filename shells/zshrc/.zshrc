@@ -245,12 +245,7 @@ if [ -f ~/.fzf.zsh ]; then
 
   # Use :: as the trigger sequence instead of the default **
   export FZF_COMPLETION_TRIGGER='::'
-  export FZF_DEFAULT_OPTS=" \
-  --color=bg+:#313244,bg:#1E1E2E,spinner:#F5E0DC,hl:#F38BA8 \
-  --color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC \
-  --color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8 \
-  --color=selected-bg:#45475A \
-  --color=border:#6C7086,label:#CDD6F4"
+  # Цвета — от темы Omarchy: FZF_DEFAULT_OPTS_FILE (omarchy-app-themes → слот fzf)
 
   # Eldritch Colorscheme / theme
   # https://github.com/eldritch-theme/fzf
@@ -267,6 +262,7 @@ fi
 # Nix!
 export NIX_CONF_DIR=$HOME/.config/nix
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
+export FZF_DEFAULT_OPTS_FILE="$HOME/.local/state/omarchy/app-themes/fzf.opts"
 # Переменные темы Omarchy (omarchy-app-themes)
 [[ -f ~/.local/state/omarchy/app-theme.zsh ]] && source ~/.local/state/omarchy/app-theme.zsh
 export PATH=/run/current-system/sw/bin:$PATH
