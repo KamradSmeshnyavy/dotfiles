@@ -706,8 +706,18 @@ keymap = [
 
 [[mgr.prepend_keymap]]
 on = "T"
-run = "plugin zoom"
+run = "plugin toggle-pane max-preview"
 desc = "Maximize or restore preview"
+
+[[mgr.prepend_keymap]]
+on = "+"
+run = "plugin zoom 1"
+desc = "Zoom in hovered image"
+
+[[mgr.prepend_keymap]]
+on = "-"
+run = "plugin zoom -1"
+desc = "Zoom out hovered image"
 
 [[mgr.prepend_keymap]]
 on = "<Enter>"

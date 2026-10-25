@@ -33,5 +33,7 @@ tui/gitui/theme.ron
 tui/rmpc/themes/omarchy.ron
 shells/nushell/themes/omarchy.nu
 tui/tmux/om-app-theme.conf
+tui/yazi/plugins/yatline-omarchy.yazi/main.lua
+tui/yazi/flavors/omarchy.yazi
 # генерируется omarchy-tmux-theme при каждой смене темы
 tui/tmux/om-theme.conf

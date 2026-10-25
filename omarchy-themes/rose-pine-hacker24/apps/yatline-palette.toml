@@ -1,0 +1,13 @@
+# Палитра yatline: Rose Pine (main). wekauwau/yatline-rose-pine.yazi умеет только светлую dawn,
+# поэтому тёмная палитра задана здесь, а таблицу строит scripts/omarchy-yatline-theme.
+accent = "#ebbcba"             # rose — режим NORMAL
+magenta = "#c4a7e7"            # iris — режим SELECT
+red = "#eb6f92"                # love
+yellow = "#f6c177"             # gold
+green = "#31748f"              # pine
+cyan = "#9ccfd8"               # foam
+blue = "#9ccfd8"               # foam
+foreground = "#e0def4"         # text
+background = "#191724"         # base
+dark_background = "#1f1d2e"    # surface
+lighter_background = "#26233a" # overlay

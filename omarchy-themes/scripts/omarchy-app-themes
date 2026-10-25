@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # Темы CLI/TUI-приложений, которые Omarchy сам не перекрашивает.
-# Каждый слот — симлинк на apps/<файл> текущей темы, а если его нет — на app-defaults/<файл>.
+# Каждый слот — симлинк на apps/<файл> текущей темы, а если его нет — на сгенерированный файл
+# (yatline.lua из colors.toml) или на app-defaults/<файл>.
 # apps/env (KEY=VALUE, {theme} → путь к текущей теме) превращается в app-theme.zsh и app-theme.json (nushell).
 set -u
 
 THEME=${OMARCHY_APP_THEME_DIR:-$HOME/.local/state/omarchy/current/theme}
 STATE=$HOME/.local/state/omarchy
-DEFAULTS=$(cd "$(dirname "$(readlink -f "$0")")/../app-defaults" && pwd) || exit 1
+SCRIPTS=$(dirname "$(readlink -f "$0")")
+DEFAULTS=$(cd "$SCRIPTS/../app-defaults" && pwd) || exit 1
 
 declare -A SLOTS=(
   [yazi.toml]=$HOME/.config/yazi/theme.toml
+  [yazi-flavor]=$HOME/.config/yazi/flavors/omarchy.yazi
+  [yatline.lua]=$HOME/.config/yazi/plugins/yatline-omarchy.yazi/main.lua
   [lazygit.yml]=$HOME/.config/lazygit/theme.yml
   [atuin.toml]=$HOME/.config/atuin/themes/omarchy.toml
   [lla.toml]=$HOME/.config/lla/themes/omarchy.toml
@@ -20,6 +24,22 @@ declare -A SLOTS=(
   [tmux.conf]=$HOME/.config/tmux/om-app-theme.conf
 )
 
+# Слоты, которые для темы без своего файла генерируются из её colors.toml
+declare -A GENERATED=()
+
+generate() {
+  [[ -e $THEME/apps/yatline.lua || ! -f $THEME/colors.toml ]] && return
+  local out=$STATE/app-themes/yatline.lua tmp
+  mkdir -p "$STATE/app-themes"
+  tmp=$(mktemp "$STATE/app-themes/.yatline.XXXXXX") || return
+  if "$SCRIPTS/omarchy-yatline-theme" "$THEME" "$tmp"; then
+    mv -f "$tmp" "$out"
+    GENERATED[yatline.lua]=$out
+  else
+    mv -f "$tmp" "$tmp.failed"
+  fi
+}
+
 link_slots() {
   local name slot src rel
   for name in "${!SLOTS[@]}"; do
@@ -29,7 +49,7 @@ link_slots() {
     [[ -e $HOME/.config/${rel%%/*} ]] || continue
 
     src=$THEME/apps/$name
-    [[ -e $src ]] || src=$DEFAULTS/$name
+    [[ -e $src ]] || src=${GENERATED[$name]:-$DEFAULTS/$name}
 
     if [[ -e $slot && ! -L $slot ]]; then
       echo "omarchy-app-themes: $slot — обычный файл, не трогаю" >&2
@@ -76,6 +96,7 @@ reload_tmux() {
   tmux refresh-client -S 2>/dev/null || true
 }
 
+generate
 link_slots
 write_env
 reload_tmux

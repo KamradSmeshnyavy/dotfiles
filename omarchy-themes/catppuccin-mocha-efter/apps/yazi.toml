@@ -1,3 +1,4 @@
+# Efterklang/dotfiles: tui_cli/yazi/theme.toml — его lavender-вариант catppuccin-mocha (apps/yazi-flavor)
 [flavor]
-use = "catppuccin-mocha"
-dark = "catppuccin-mocha"
+dark = "omarchy"
+light = "omarchy"

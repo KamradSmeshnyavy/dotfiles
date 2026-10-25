@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""
+Генерирует тему yatline (yazi) из colors.toml темы Omarchy.
+apps/yatline-palette.toml темы (те же ключи, что в colors.toml) перекрывает цвета.
+Раскладка — как в imsi32/yatline-catppuccin.yazi.
+
+Использование: omarchy-yatline-theme <каталог темы> <выходной main.lua>
+"""
+import sys, tomllib
+from pathlib import Path
+
+# Ключ colors.toml → запасные ключи (старый формат: color0..15)
+FALLBACKS = {
+    "accent": ["color4", "blue"],
+    "background": ["color0"],
+    "dark_background": ["background", "color0"],
+    "lighter_background": ["selection", "color8"],
+    "foreground": ["color7"],
+    "red": ["color1"],
+    "green": ["color2"],
+    "yellow": ["color3"],
+    "blue": ["color4"],
+    "magenta": ["color5"],
+    "cyan": ["color6"],
+}
+
+# Глифы Nerd Font кодами: при правке файла они не теряются
+SECTION = ("", "")
+INVERSE = ("", "")
+PART = ("", "")
+ICONS = {
+    "selected": "\U000f0eed", "copied": "", "cut": "",
+    "files": "", "filtereds": "",
+    "total": "", "success": "", "failed": "",
+}
+
+
+def load(path):
+    with open(path, "rb") as f:
+        data = tomllib.load(f)
+    return data.get("colors", data)
+
+
+def palette(theme_dir):
+    colors = load(theme_dir / "colors.toml")
+    override = theme_dir / "apps" / "yatline-palette.toml"
+    if override.exists():
+        colors = {**colors, **load(override)}
+
+    def get(key):
+        for k in [key, *FALLBACKS.get(key, [])]:
+            if k in colors:
+                return colors[k]
+        return "#000000"
+
+    return get
+
+
+def lua(get):
+    def icon(name, color):
+        return f'{name} = {{ icon = "{ICONS[name]}", fg = "{get(color)}" }}'
+
+    return f'''-- Сгенерировано omarchy-yatline-theme из colors.toml текущей темы Omarchy
+return {{
+	setup = function()
+		return {{
+			section_separator_open = "{SECTION[0]}",
+			section_separator_close = "{SECTION[1]}",
+			inverse_separator_open = "{INVERSE[0]}",
+			inverse_separator_close = "{INVERSE[1]}",
+			part_separator_open = "{PART[0]}",
+			part_separator_close = "{PART[1]}",
+
+			style_a = {{
+				fg = "{get("dark_background")}",
+				bg_mode = {{
+					normal = "{get("accent")}",
+					select = "{get("magenta")}",
+					un_set = "{get("red")}",
+				}},
+			}},
+			style_b = {{ bg = "{get("lighter_background")}", fg = "{get("foreground")}" }},
+			style_c = {{ bg = "{get("dark_background")}", fg = "{get("foreground")}" }},
+
+			permissions_t_fg = "{get("green")}",
+			permissions_r_fg = "{get("yellow")}",
+			permissions_w_fg = "{get("red")}",
+			permissions_x_fg = "{get("cyan")}",
+			permissions_s_fg = "{get("accent")}",
+
+			{icon("selected", "yellow")},
+			{icon("copied", "green")},
+			{icon("cut", "red")},
+			{icon("files", "blue")},
+			{icon("filtereds", "magenta")},
+
+			{icon("total", "yellow")},
+			{icon("success", "green")},
+			{icon("failed", "red")},
+		}}
+	end,
+}}
+'''
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    theme_dir, out = Path(sys.argv[1]), Path(sys.argv[2])
+    out.write_text(lua(palette(theme_dir)), encoding="utf-8")

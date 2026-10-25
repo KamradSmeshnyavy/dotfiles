@@ -58,6 +58,36 @@ use = "yazi-rs/plugins:zoom"
 rev = "c591a36"
 hash = "e8e279463ee99c940e6945a14cf4aa9e"
 
+[[plugin.deps]]
+use = "boydaihungst/mediainfo"
+rev = "f1cec0b"
+hash = "fd9312e974c63438b1f8737711462d52"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:piper"
+rev = "e0bbd20"
+hash = "d1e0499cae5f3aeb628c267616d4b682"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:mime-ext"
+rev = "e0bbd20"
+hash = "7d3b7f99e600fd7e77ebc5eb8423a897"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "e0bbd20"
+hash = "5b2fbef7d1513ce38ff72623a071a5e"
+
+[[plugin.deps]]
+use = "imsi32/yatline"
+rev = "dc44b73"
+hash = "fa488655544e367e5439a9748d28519e"
+
+[[plugin.deps]]
+use = "imsi32/yatline-catppuccin"
+rev = "6c3f166"
+hash = "e1d5b1c34c53c4c4661d910eb3a6fd95"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
 rev = "20b47bf"

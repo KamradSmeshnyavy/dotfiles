@@ -37,6 +37,9 @@ open = [
 	{ run = 'open %s', desc = "Open", for = "macos" },
 	{ run = 'start "" %s1', orphan = true, desc = "Open", for = "windows" },
 ]
+icat = [
+	{ run = '''clear; kitten icat --hold --stdin=no --scale-up --align=center -- %s''', block = true, desc = "Preview fullscreen (kitty icat)", for = "unix" },
+]
 play = [
 	{ run = 'mpv %s', orphan = true, for = "unix" },
 	{ run = 'mpv %s1', orphan = true, for = "windows" },
@@ -62,6 +65,7 @@ rules = [
 		"reveal",
 	] },
 	{ mime = "image/*", use = [
+		"icat",
 		"open",
 		"reveal",
 	] },
@@ -165,6 +169,47 @@ sort_by = "none"
 sort_reverse = false
 sort_sensitive = false
 
+# Превью как у Efterklang: mediainfo (картинки/видео/аудио + метаданные), дерево eza для папок, glow для markdown
+[[plugin.prepend_preloaders]]
+mime = "{audio,video,image}/*"
+run = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+mime = "application/subrip"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "{audio,video,image}/*"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "application/subrip"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+url = "*/"
+run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'
+
+[[plugin.prepend_previewers]]
+url = "*.{md,mdx}"
+run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s="${GLAMOUR_STYLE:-dark}" "$1"'
+
+# Тип файла по расширению (mime-ext), без запуска file
+[[plugin.prepend_fetchers]]
+id = "mime"
+group = "mime"
+url = "local://*"
+run = "mime-ext.local"
+prio = "high"
+
+[[plugin.prepend_fetchers]]
+id = "mime"
+group = "mime"
+url = "remote://*"
+run = "mime-ext.remote"
+prio = "high"
+
+# mactag fetcher убран: на Linux команды `tag` нет, плагин только сыпал ошибками в лог
 [[plugin.prepend_fetchers]]
 id = "git"
 url = "*"
@@ -176,18 +221,6 @@ id = "git"
 url = "*/"
 run = "git"
 group = "git"
-
-[[plugin.prepend_fetchers]]
-id = "mactag"
-url = "*"
-run = "mactag"
-group = "mactag"
-
-[[plugin.prepend_fetchers]]
-id = "mactag"
-url = "*/"
-run = "mactag"
-group = "mactag"
 
 [[plugin.prepend_previewers]]
 mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}"

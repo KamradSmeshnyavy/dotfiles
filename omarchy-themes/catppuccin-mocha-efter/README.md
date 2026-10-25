@@ -20,7 +20,8 @@ Stylus и Surfingkeys подхватывают палитру через `hooks/
 
 | файл | приложение | источник в Efterklang/dotfiles |
 |---|---|---|
-| `yazi.toml` | yazi | `tui_cli/yazi/theme.toml` (flavor catppuccin-mocha) |
+| `yazi.toml` + `yazi-flavor/` | yazi | `tui_cli/yazi/theme.toml` + его lavender-вариант `flavors/catppuccin-mocha.yazi` |
+| `yatline.lua` | yazi (yatline) | `init.lua`: `yatline-catppuccin` mocha |
 | `lazygit.yml` | lazygit | `gui.theme` из `tui_cli/lazygit/config.yml` |
 | `atuin.toml` | atuin | `tui_cli/atuin/themes/catppuccin-mocha-lavender.toml` |
 | `lla.toml` | lla | `tui_cli/lla/themes/catppuccin.toml` |

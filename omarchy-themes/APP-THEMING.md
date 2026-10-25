@@ -11,6 +11,8 @@
 | файл темы | слот | подключён в |
 |---|---|---|
 | `yazi.toml` | `~/.config/yazi/theme.toml` | yazi читает сам |
+| `yazi-flavor/` (каталог) | `~/.config/yazi/flavors/omarchy.yazi` | `dark = "omarchy"` в `yazi.toml` темы |
+| `yatline.lua` | `~/.config/yazi/plugins/yatline-omarchy.yazi/main.lua` | `init.lua`: `require("yatline-omarchy"):setup()` |
 | `lazygit.yml` | `~/.config/lazygit/theme.yml` | `LG_CONFIG_FILE` в `env.nu` / `.zshrc` |
 | `atuin.toml` | `~/.config/atuin/themes/omarchy.toml` | `[theme] name = "omarchy"` |
 | `lla.toml` | `~/.config/lla/themes/omarchy.toml` | `theme = "omarchy"` |
@@ -19,6 +21,10 @@
 | `rmpc.ron` | `~/.config/rmpc/themes/omarchy.ron` | `theme: "omarchy"` |
 | `nushell.nu` | `~/.config/nushell/themes/omarchy.nu` | `source` в `config.nu` |
 | `tmux.conf` | `~/.config/tmux/om-app-theme.conf` | `tmux.conf` после `om-theme.conf`; перечитывается сразу |
+
+Если у темы нет `apps/yatline.lua`, скрипт генерирует его из её `colors.toml`
+(`scripts/omarchy-yatline-theme` → `~/.local/state/omarchy/app-themes/yatline.lua`);
+`apps/yatline-palette.toml` (ключи как в `colors.toml`) перекрывает цвета — так сделаны rose-pine-hacker*.
 
 `env` (строки `KEY=VALUE`, `{theme}` — путь к текущей теме) превращается в
 `~/.local/state/omarchy/app-theme.json` (nushell, `load-env` в `env.nu`) и `app-theme.zsh` (`.zshrc`).
