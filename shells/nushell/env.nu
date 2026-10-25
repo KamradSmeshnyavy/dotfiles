@@ -1,21 +1,6 @@
 $env.PROMPT_INDICATOR_VI_INSERT = ""
 $env.PROMPT_INDICATOR_VI_NORMAL = ""
 
-# Импорт переменных из systemd user environment
-def --env import_systemd_env [] {
-  let ppid = ($env | get -o PPID | default "")
-  if ($ppid | is-empty) { return }
-  let env_file = $"/proc/($ppid)/environ"
-  if ($env_file | path exists) {
-    open $env_file | split row "\0" | each { |line|
-      let parts = ($line | split column "=" key value)
-      if ($parts | length) > 0 and ($parts.key.0 | is-not-empty) and ($parts.key.0 not-in $env) {
-        load-env {($parts.key.0): ($parts.value.0)}
-      }
-    }
-  }
-}
-import_systemd_env
 
 # Принудительный запуск Firefox в нативной среде Wayland
 $env.MOZ_ENABLE_WAYLAND = "1"
