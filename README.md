@@ -1,8 +1,7 @@
 <h1 align="center">
   🌌 Omarchy Linux Dotfiles
   <br>
-  <img src="https://img.shields.io/github/commit-activity/y/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="Commit Frequency">
-  <img src="https://img.shields.io/github/license/Efterklang/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="License">
+  <img src="https://img.shields.io/github/commit-activity/y/KamradSmeshnyavy/dotfiles?style=for-the-badge&labelColor=%23222436&color=%235771AA" alt="Commit Frequency">
 </h1>
 
 <p align="center">
@@ -59,11 +58,15 @@
 
 ```bash
 # 1. Клонируем репозиторий в домашнюю директорию
-git clone https://github.com/Efterklang/dotfiles.git ~/dotfiles
+git clone https://github.com/KamradSmeshnyavy/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # 2. Запускаем скрипт установки
 ./install/bootstrap.sh
+
+# Только ссылки конфигов + AI-скиллы (пакеты уже стоят); проверить, что ничего не забыто
+just link
+just check-links
 ```
 
 При запуске скрипт предложит удобное меню:
