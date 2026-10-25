@@ -3,6 +3,8 @@
 	name = KamradSmeshnyavy
 	email = ibragimovdenis36@gmail.com
 	useConfigOnly = true
+	# Подпись коммитов SSH-ключом (тем же, что для GitHub); на GitHub добавить его как Signing Key
+	signingkey = ~/.ssh/id_ed25519.pub
 
 # Core Settings
 [core]
@@ -16,7 +18,6 @@
 	longpaths = true
 	trustctime = false
 	excludesfile = ~/.config/git/.gitignore
-	ignorecase = true
 	untrackedcache = true
 
 # Network and Protocol Settings
@@ -24,9 +25,6 @@
 	postBuffer = 655360000
 	lowSpeedLimit = 0
 	lowSpeedTime = 999999
-
-[protocol]
-	version = 1
 
 # Merge and Diff Settings
 [merge]
@@ -94,5 +92,30 @@
 	insteadOf = gh:
 [url "https://github.com/"]
     insteadOf = ghh:
-[url "git@github.com:KamradSmeshnyavy /"]
+[url "git@github.com:KamradSmeshnyavy/"]
 	insteadOf = my:
+
+# Подпись: SSH вместо GPG; allowed_signers — чтобы git log --show-signature проверял локально
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+
+# Удобства
+[init]
+	defaultBranch = main
+[fetch]
+	prune = true
+	pruneTags = true
+[rebase]
+	autoStash = true
+[rerere]
+	enabled = true
+	autoupdate = true
+[diff]
+	algorithm = histogram
+	colorMoved = default
