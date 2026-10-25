@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""
+Ссылки на ~/dotfiles, которых нет в install/install.conf.yaml.
+
+Такие ссылки сделаны вручную и на новой машине (`just link`) не появятся.
+Выход 1, если найдены; 0 — всё описано в установщике.
+"""
+import os, sys
+from pathlib import Path
+
+import yaml
+
+REPO = Path(__file__).resolve().parent.parent
+HOME = Path.home()
+# Где искать ссылки (только первый уровень)
+SCAN = [HOME, HOME / ".config", HOME / ".config/omarchy/themes", HOME / ".config/omarchy/hooks",
+        HOME / ".config/omarchy/hooks/post-boot.d", HOME / ".local/bin", HOME / ".config/systemd/user"]
+
+
+def described():
+    conf = yaml.safe_load((REPO / "install/install.conf.yaml").read_text())
+    links = {}
+    for step in conf:
+        links.update(step.get("link", {}) or {})
+    return {Path(os.path.expanduser(k)) for k in links}
+
+
+def main():
+    known = described()
+    missing = []
+    for d in SCAN:
+        if not d.is_dir():
+            continue
+        for p in d.iterdir():
+            if not p.is_symlink():
+                continue
+            target = Path(os.readlink(p))
+            if not target.is_absolute():
+                target = (p.parent / target).resolve()
+            if REPO in target.parents and p not in known:
+                missing.append((p, target.relative_to(REPO)))
+    for p, t in sorted(missing):
+        print(f"нет в install.conf.yaml: ~/{p.relative_to(HOME)} -> {t}")
+    if not missing:
+        print("Все ссылки на dotfiles описаны в install/install.conf.yaml")
+    return 1 if missing else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

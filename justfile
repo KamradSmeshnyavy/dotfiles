@@ -39,6 +39,7 @@ gc:
 [linux]
 link:
     python3 {{justfile_directory()}}/install/install.py
+    git -C {{justfile_directory()}} config core.hooksPath .githooks
     @just install-skill
 
 # Применить тему Omarchy (без имени — показать список)
@@ -50,6 +51,11 @@ theme name="":
 [linux]
 app-themes:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
+
+# Ссылки на dotfiles, которых нет в install/install.conf.yaml (сделаны вручную)
+[linux]
+check-links:
+    {{justfile_directory()}}/scripts/check-links
 
 # Плагины yazi из tui/yazi/package.toml
 [linux]

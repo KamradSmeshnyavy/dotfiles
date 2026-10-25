@@ -69,6 +69,7 @@
     ~/.ssh: cli/ssh
     ~/.config/todo: cli/todo
     ~/.zshrc: shells/zshrc/.zshrc
+    ~/.p10k.zsh: cli/p10k/.p10k.zsh
     # MacOS specific configurations
     ~/Library/Application Support/Code/User/settings.json:
       path: apps/vscode/settings.json
@@ -107,6 +108,129 @@
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/catppuccin-mocha-efter:
       path: omarchy-themes/catppuccin-mocha-efter
+      if: "[ `uname` = Linux ]"
+    # Linux (omarchy): Hyprland, ввод, браузеры, TUI — раньше ставились вручную
+    ~/.config/hypr:
+      path: apps/hyprland
+      if: "[ `uname` = Linux ]"
+    ~/.config/swaync:
+      path: apps/swaync
+      if: "[ `uname` = Linux ]"
+    ~/.config/rofi:
+      path: apps/rofi
+      if: "[ `uname` = Linux ]"
+    ~/.config/wl-kbptr:
+      path: apps/wl-kbptr
+      if: "[ `uname` = Linux ]"
+    ~/.config/mouseless:
+      path: apps/mouseless
+      if: "[ `uname` = Linux ]"
+    ~/.config/kanata:
+      path: apps/kanata
+      if: "[ `uname` = Linux ]"
+    ~/.config/chromium-flags.conf:
+      path: apps/browser/chromium-flags.conf
+      if: "[ `uname` = Linux ]"
+    ~/.config/helium-browser-flags.conf:
+      path: apps/browser/configs/helium/helium-flags.conf
+      if: "[ `uname` = Linux ]"
+    ~/.config/tridactyl:
+      path: apps/browser/configs/tridactyl
+      if: "[ `uname` = Linux ]"
+    ~/.config/jolt:
+      path: tui/jolt
+      if: "[ `uname` = Linux ]"
+    ~/.config/ncmpcpp:
+      path: tui/ncmpcpp
+      if: "[ `uname` = Linux ]"
+    ~/.config/spotify-player:
+      path: tui/spotify-player
+      if: "[ `uname` = Linux ]"
+    # Linux: свои скрипты в ~/.local/bin
+    ~/.local/bin/omarchy-bg-browser:
+      path: scripts/bin/omarchy-bg-browser
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-customizer:
+      path: scripts/bin/omarchy-customizer
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/yazi-dbus-filemanager.py:
+      path: scripts/bin/yazi-dbus-filemanager.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/yazi-fm-dbus.py:
+      path: scripts/bin/yazi-fm-dbus.py
+      if: "[ `uname` = Linux ]"
+    # Темы Omarchy из omarchy-themes/
+    ~/.config/omarchy/themes/black-arch-my-vision:
+      path: omarchy-themes/black-arch-my-vision
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/black-arch-pastel:
+      path: omarchy-themes/black-arch-pastel
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nord-own:
+      path: omarchy-themes/nord
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker:
+      path: omarchy-themes/pastel-hacker
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-blue:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-blue
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-cyan:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-cyan
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-magenta:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-magenta
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-orange:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-orange
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-pink:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-pink
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-red:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-red
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-silver:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-silver
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker-yellow:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker-yellow
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24:
+      path: omarchy-themes/pastel-hacker24
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-blue:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-blue
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-cyan:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-cyan
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-magenta:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-magenta
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-orange:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-orange
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-pink:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-pink
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-red:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-red
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-silver:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-silver
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/pastel-hacker24-yellow:
+      path: omarchy-themes/pastel-hacker-variants/pastel-hacker24-yellow
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rose-pine-hacker:
+      path: omarchy-themes/rose-pine-hacker
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rose-pine-hacker24:
+      path: omarchy-themes/rose-pine-hacker24
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/thinkpad-boot-screen:
+      path: omarchy-themes/thinkpad-boot-screen
       if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]

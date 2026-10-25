@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Не пускать в коммит ключи, токены и пароли (репозиторий публичный).
+# Подключается `git config core.hooksPath .githooks` (делает `just link`).
+# Пропустить один раз, если это ложное срабатывание: git commit --no-verify
+set -u
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks не установлен — проверка секретов пропущена (omarchy pkg add gitleaks)" >&2
+  exit 0
+fi
+
+exec gitleaks git --pre-commit --staged --redact --no-banner
