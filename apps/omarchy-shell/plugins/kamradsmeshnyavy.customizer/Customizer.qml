@@ -35,11 +35,13 @@ Item {
     { key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true },
     { key: "bar-skins",   icon: "󰉼", title: "Bar Skin",     hint: "Live preview · form, colors, glass",   image: false, live: true,  bar: true },
     { key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
-    { key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true }
+    { key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true },
+    { key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — показать вживую · T — превью",     image: true,  live: false },
+    { key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true }
   ]
 
-  // Bar Tweaks rows whose ⏎ opens a color picker instead of stepping.
-  readonly property var colorTweaks: ["background", "gradient", "border", "text", "active"]
+  // Tweaks rows whose ⏎ opens a picker (color, text, file) instead of stepping.
+  readonly property var colorTweaks: ["background", "gradient", "border", "text", "active", "moduleBackground", "ownerMessage", "avatar"]
 
   // Header chips: status key -> category key it opens.
   readonly property var statusChips: [
@@ -49,7 +51,8 @@ Item {
     { key: "shader",    icon: "󰍹", category: "shaders" },
     { key: "opacity",   icon: "󰂵", category: "opacity" },
     { key: "blur",      icon: "󰂷", category: "blur" },
-    { key: "bar-skin",  icon: "󰉼", category: "bar-skins" }
+    { key: "bar-skin",  icon: "󰉼", category: "bar-skins" },
+    { key: "lock",      icon: "󰌾", category: "lock" }
   ]
 
   property bool opened: false
@@ -388,7 +391,7 @@ Item {
     var out = []
     for (var i = 0; i < displayModel.count; i++) {
       var r = displayModel.get(i)
-      if (/^(pick-|toggle$|next$|save$)/.test(r.value) || r.current || i === root.selectedIndex) continue
+      if (/^(pick-|toggle$|next$|save$|regen-thumbs$)/.test(r.value) || r.current || i === root.selectedIndex) continue
       out.push(i)
     }
     return out
@@ -415,6 +418,15 @@ Item {
     if (root.previewing === key) { previewTimer.stop(); root.previewing = "" }
     root.dismiss()
     Quickshell.execDetached([root.script, "apply", key, value])
+  }
+
+  // Lock: показать дизайн по-настоящему (окно превью экрана блокировки поверх
+  // всего). Overlay закрывается первым, иначе превью окажется под ним.
+  function previewLock() {
+    var id = root.category.key === "lock" && root.selectedRow ? root.selectedRow.value : ""
+    if (id === "regen-thumbs") return
+    root.dismiss()
+    Quickshell.execDetached([root.script, "lock-preview", id])
   }
 
   function thumbUrl(path) {
@@ -458,7 +470,9 @@ Item {
   function keyHints() {
     if (root.filtering) return [["⏎", "keep filter"], ["Esc", "clear"], ["↑↓", "move"]]
     if (root.pane === 0) return [["j k", "category"], ["l ⏎", "open"], ["1–9 0", "jump"], ["/", "search"], ["?", "keys"], ["q", "close"]]
+    if (root.category.key === "lock-tweaks") return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick"], ["p", "preview"], ["Esc", "back"]]
     if (root.category.tweak) return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick color"], ["Esc", "back"], ["?", "keys"]]
+    if (root.category.key === "lock") return [["j k", "move"], ["⏎", "apply"], ["p", "preview live"], ["T", "refresh previews"], ["/", "search"], ["h", "back"], ["?", "keys"]]
     var h = [["j k", "move"], ["⏎", "apply"], ["/", "search"], ["h", "back"]]
     if (root.category.key !== "walls") h.push(["r", "random"])
     else h.push(["o O", "pick"])
@@ -677,6 +691,8 @@ Item {
           if (tweaking && (t === "h" || t === "-" || k === Qt.Key_Left)) root.tweak("-")
           else if (tweaking && (t === "l" || t === "+" || t === "=" || k === Qt.Key_Right)) root.tweak("+")
           else if (tweaking && t === "x") root.tweak("reset")
+          else if (!ctrl && t === "p" && (root.category.key === "lock" || root.category.key === "lock-tweaks")) root.previewLock()
+          else if (!ctrl && t === "T" && root.category.key === "lock") root.run("regen-thumbs")
           else if (ctrl && root.category.key === "walls" && k === Qt.Key_O) root.run("pick-files")
           else if (ctrl && (k === Qt.Key_D)) root.move(root.halfPage())
           else if (ctrl && (k === Qt.Key_U)) root.move(-root.halfPage())
@@ -887,11 +903,24 @@ Item {
             left: parent.left; right: parent.right
           }
 
-          // Categories
-          Column {
-            id: catColumn
+          // Categories — прокручиваются, когда не влезают (активная всегда видна).
+          Flickable {
+            id: catFlick
             width: Style.space(250)
             height: parent.height
+            contentHeight: catColumn.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+
+            function ensureVisible(item) {
+              var y = item.y
+              if (y < contentY) contentY = y
+              else if (y + item.height > contentY + height) contentY = y + item.height - height
+            }
+
+          Column {
+            id: catColumn
+            width: catFlick.width
             spacing: Style.space(4)
 
             Text {
@@ -913,6 +942,7 @@ Item {
                 required property var modelData
                 readonly property bool active: index === root.categoryIndex
                 readonly property bool focused: active && root.pane === 0
+                onActiveChanged: if (active) Qt.callLater(catFlick.ensureVisible, catRow)
 
                 width: catColumn.width
                 height: Math.round(root.rowHeight * 1.45)
@@ -982,7 +1012,8 @@ Item {
                   anchors.right: parent.right
                   anchors.rightMargin: Style.space(8)
                   anchors.verticalCenter: parent.verticalCenter
-                  label: String((catRow.index + 1) % 10)
+                  label: catRow.index < 10 ? String((catRow.index + 1) % 10) : ""
+                  visible: catRow.index < 10
                   opacity: catRow.active ? 1 : 0.6
                 }
 
@@ -997,9 +1028,11 @@ Item {
             }
           }
 
+          }
+
           Rectangle {
             id: rule1
-            anchors.left: catColumn.right
+            anchors.left: catFlick.right
             anchors.leftMargin: root.contentSpacing
             width: 1; height: parent.height; color: root.hairline
           }
@@ -1655,6 +1688,7 @@ Item {
                   ["1 – 9  0", "jump to category"], ["o  O  ^o", "Recolor: image(s) / folder"],
                   ["h l  − +", "Bar Tweaks: change (hold)"], ["x", "Bar Tweaks: reset to default"],
                   ["⏎", "Bar Tweaks: step · pick color"], ["●", "Bar Tweaks: changed from default"],
+                  ["p", "Lock: show design live (Esc closes)"], ["T", "Lock: refresh previews"],
                   ["Esc", "back · revert live preview"], ["q", "close"]
                 ]
                 delegate: Row {

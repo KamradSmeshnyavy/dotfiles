@@ -25,6 +25,13 @@ ANIM_ACTIVE="$HOME/dotfiles/apps/hyprland/active_animations.lua"
 # Бар (плагин kamradsmeshnyavy.bar): пресеты в репо, активный скин и shell.json — в ~/.config.
 BAR_DIR="$HOME/dotfiles/apps/omarchy-shell/bar"
 BAR_SKIN="$HOME/.config/omarchy/bar-skin.json"
+# Экран блокировки (плагин kamradsmeshnyavy.lock): выбор и настройки — lock-design.json.
+LOCK_PLUGIN="$HOME/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.lock"
+LOCK_CFG="$HOME/.config/omarchy/lock-design.json"
+LOCK_USER_DIR="$HOME/.config/omarchy/lock-designs"
+LOCK_THUMBS="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-customizer/lock"
+# Файл, который правят твики (bar-skin.json или lock-design.json), — см. tweak_file.
+TW_FILE="$BAR_SKIN"
 SHELL_JSON="$HOME/.config/omarchy/shell.json"
 SHADER_DIR="$HOME/.config/hypr/shaders"
 TOGGLE="$SHADER_DIR/crt-toggle.sh"
@@ -115,10 +122,10 @@ current_shader() {
 # FileView, и подмена inode может оборвать слежку. Временные файлы — с
 # фиксированными именами в $RUN_DIR, их просто перезаписывает следующий вызов.
 
-# jq-фильтр поверх bar-skin.json (нет файла — начинаем с {}).
+# jq-фильтр поверх $TW_FILE (нет файла — начинаем с {}).
 skin_edit() {
-  local tmp="$RUN_DIR/bar-skin.tmp"
-  { [[ -s $BAR_SKIN ]] && cat "$BAR_SKIN" || echo '{}'; } | jq "$@" >"$tmp" && cp "$tmp" "$BAR_SKIN"
+  local tmp="$RUN_DIR/tweak.tmp"
+  { [[ -s $TW_FILE ]] && cat "$TW_FILE" || echo '{}'; } | jq "$@" >"$tmp" && cp "$tmp" "$TW_FILE"
 }
 
 shell_edit() {
@@ -214,6 +221,9 @@ TWEAKS=(
 default_label() {
   case "$1:$2" in
   height:0) echo "авто" ;;
+  ownerMessage:) echo "Привет, $USER" ;;
+  avatar:) echo "~/.face (или первая буква имени)" ;;
+  wallpaperBlur:1) echo "1 (как в стоке)" ;;
   compactHeight:0) echo "не менять" ;;
   compactAlpha:-1) echo "как обычно" ;;
   compact:off) echo "выкл" ;;
@@ -236,10 +246,29 @@ default_label() {
   esac
 }
 
+# Параметры экрана блокировки (Lock Tweaks) — те же типы, файл lock-design.json.
+LOCK_TWEAKS=(
+  "clock24|bool|true|Часы: 24 часа"
+  "showSeconds|bool|false|Часы: секунды"
+  "showDate|bool|true|Дата"
+  "wallpaperBlur|num|0 1 0.1 1|Обои: размытие"
+  "wallpaperDim|num|0 0.9 0.05 0|Обои: затемнение"
+  "reduceMotion|bool|false|Меньше анимации"
+  "ownerMessage|text||Приветствие"
+  "avatar|file||Аватар"
+)
+
 tweak_spec() {
   local t
-  for t in "${TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$t"; return; }; done
+  for t in "${TWEAKS[@]}" "${LOCK_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$t"; return; }; done
   return 1
+}
+
+# Какой файл правит параметр: lock-design.json для LOCK_TWEAKS, иначе bar-skin.json.
+tweak_file() {
+  local t
+  for t in "${LOCK_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$LOCK_CFG"; return; }; done
+  echo "$BAR_SKIN"
 }
 
 # Роли для цветовых параметров: стоковый цвет бара, роли шелла и ключи colors.toml темы.
@@ -258,7 +287,7 @@ font_list() {
 tweak_value() {
   local key=$1 def=$2
   if [[ $key == transparent ]]; then jq -r '.bar.transparent // false' "$SHELL_JSON"; return; fi
-  { [[ -s $BAR_SKIN ]] && cat "$BAR_SKIN" || echo '{}'; } |
+  { [[ -s $TW_FILE ]] && cat "$TW_FILE" || echo '{}'; } |
     jq -r --arg k "$key" --arg d "$def" 'if has($k) and .[$k] != null then .[$k] | tostring else $d end'
 }
 
@@ -279,6 +308,7 @@ cycle() {
 tweak() {
   local key=$1 how=$2 spec kind args cur next dir=1
   spec=$(tweak_spec "$key") || exit 1
+  TW_FILE=$(tweak_file "$key")
   IFS='|' read -r _ kind args _ <<<"$spec"
   [[ $how == - ]] && dir=-1
   if [[ $how == reset ]]; then
@@ -322,6 +352,19 @@ tweak() {
     }')
     skin_edit --arg k "$key" --argjson v "$next" '.[$k] = $v'
     ;;
+  text)
+    # Только ⏎ (pick): строку вводят в zenity; h/l ничего не делают.
+    [[ $how == pick ]] || return 0
+    next=$(zenity --entry --title="$key" --text="Текст (пусто — по умолчанию):" \
+      --entry-text="$(tweak_value "$key" "")" 2>/dev/null) || exit 0
+    if [[ -z $next ]]; then skin_edit --arg k "$key" 'del(.[$k])'; else skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'; fi
+    ;;
+  file)
+    [[ $how == pick ]] || return 0
+    next=$(zenity --file-selection --title="Аватар" --filename="$HOME/" \
+      --file-filter="Images | *.jpg *.jpeg *.png *.webp *.JPG *.JPEG *.PNG *.WEBP" 2>/dev/null) || exit 0
+    skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'
+    ;;
   color)
     if [[ $how == pick ]]; then
       local picked
@@ -339,6 +382,63 @@ tweak() {
     fi
     ;;
   esac
+}
+
+# Строки Bar Tweaks / Lock Tweaks: $1 — имя массива параметров, $2 — файл настроек.
+list_tweaks() {
+  local -n table=$1
+  TW_FILE=$2
+  local t key kind args label def v hint mark long deflong
+  for t in "${table[@]}"; do
+    IFS='|' read -r key kind args label <<<"$t"
+    case "$kind" in
+    num) def=${args##* } hint="h/l или −/+ — шаг $(awk '{print $3}' <<<"$args"), пределы $(awk '{print $1 " … " $2}' <<<"$args")" ;;
+    enum) def=${args%% *} hint="h/l — по кругу: $args" ;;
+    color) def=$args hint="h/l — роли темы (bar = стоковый цвет бара) · ⏎ — свой цвет" ;;
+    bool) def=$args hint="h/l или ⏎ — вкл/выкл" ;;
+    font) def="" hint="h/l — Nerd-шрифты из fc-list; пусто = системный" ;;
+    text) def="" hint="⏎ — ввести текст" ;;
+    file) def="" hint="⏎ — выбрать картинку" ;;
+    esac
+    v=$(tweak_value "$key" "$def")
+    mark=""
+    [[ $v != "$def" ]] && mark="●  "
+    long=$(default_label "$key" "$v")
+    deflong=$(default_label "$key" "$def")
+    # В строке списка — короткое значение (до скобки), полностью — в превью.
+    # Заметка: литеральные \n, overlay превращает их в переводы строк.
+    # 6-е поле — подпись под строкой в списке (по умолчанию).
+    printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$label:  ${long%% (*}" "$key" "$TW_FILE" \
+      "Сейчас: $long"'\n'"По умолчанию: $deflong"'\n\n'"$hint · x — сбросить к умолчанию" \
+      "по умолчанию: ${deflong%% (*}"
+  done
+}
+
+lock_current() { jq -r '.design // "classic"' "$LOCK_CFG" 2>/dev/null || echo classic; }
+
+# Имя файла превью: "my:Foo.qml" -> "my-Foo.qml".
+lock_thumb_name() { tr -c 'A-Za-z0-9._\n-' '-' <<<"$1"; }
+
+lock_edit() {
+  TW_FILE="$LOCK_CFG"
+  skin_edit "$@"
+}
+
+# Снимает каждый дизайн через превью экрана блокировки (без блокировки).
+lock_thumbs() {
+  mkdir -p "$LOCK_THUMBS"
+  notify-send -t 3000 "Lock" "Снимаю превью дизайнов…"
+  local id
+  {
+    jq -r '.[].id' "$LOCK_PLUGIN/designs/designs.json"
+    for f in "$LOCK_USER_DIR"/*.qml; do [[ -f $f ]] && echo "my:$(basename "$f")"; done
+  } | while read -r id; do
+    omarchy-shell lock previewDesign "$id" >/dev/null
+    sleep 1.5
+    grim -s 0.25 -t jpeg -q 85 "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg"
+  done
+  omarchy-shell lock hidePreview >/dev/null
+  notify-send -t 3000 "Lock" "Превью обновлены"
 }
 
 bar_skin_preview() {
@@ -388,28 +488,25 @@ list() {
         "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" "$(jq -r '.note // ""' "$f")"
     done
     ;;
-  bar-tweaks)
-    local t key kind args label def v hint
-    for t in "${TWEAKS[@]}"; do
-      IFS='|' read -r key kind args label <<<"$t"
-      case "$kind" in
-      num) def=${args##* } hint="h/l или −/+ — шаг $(awk '{print $3}' <<<"$args"), пределы $(awk '{print $1 " … " $2}' <<<"$args")" ;;
-      enum) def=${args%% *} hint="h/l — по кругу: $args" ;;
-      color) def=$args hint="h/l — роли темы (bar = стоковый цвет бара) · ⏎ — свой цвет" ;;
-      bool) def=$args hint="h/l или ⏎ — вкл/выкл" ;;
-      font) def="" hint="h/l — Nerd-шрифты из fc-list; пусто = системный" ;;
-      esac
-      v=$(tweak_value "$key" "$def")
-      local mark="" long deflong
-      [[ $v != "$def" ]] && mark="●  "
-      long=$(default_label "$key" "$v")
-      deflong=$(default_label "$key" "$def")
-      # В строке списка — короткое значение (до скобки), полностью — в превью.
-      # Заметка: литеральные \n, overlay превращает их в переводы строк.
-      # 6-е поле — подпись под строкой в списке (по умолчанию).
-      printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$label:  ${long%% (*}" "$key" "$BAR_SKIN" \
-        "Сейчас: $long"'\n'"По умолчанию: $deflong"'\n\n'"$hint · x — сбросить к умолчанию" \
-        "по умолчанию: ${deflong%% (*}"
+  bar-tweaks) list_tweaks TWEAKS "$BAR_SKIN" ;;
+  lock-tweaks) list_tweaks LOCK_TWEAKS "$LOCK_CFG" ;;
+  lock)
+    local cur id name file thumb
+    cur=$(lock_current)
+    printf '%s\t%s\t\t0\t%s\n' "🔄 Обновить превью всех дизайнов  (T)" "regen-thumbs" \
+      "Дизайны по очереди покажутся на экране (≈1,5 с каждый) и снимутся в цветах текущей темы."
+    jq -r '.[] | [.id, .name, .description, (.tags | join(" · "))] | @tsv' "$LOCK_PLUGIN/designs/designs.json" |
+      while IFS=$'\t' read -r id name desc tags; do
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$id" "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg" \
+          "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"p — показать вживую · ⏎ — выбрать" "$tags"
+      done
+    # Свои дизайны: ~/.config/omarchy/lock-designs/*.qml, id my:<файл>.
+    for file in "$LOCK_USER_DIR"/*.qml; do
+      [[ -f $file ]] || continue
+      name=$(basename "$file")
+      id="my:$name"
+      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${name%.qml}" "$id" "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg" \
+        "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "Свой дизайн: $file"'\n\n'"p — показать вживую · ⏎ — выбрать" "custom"
     done
     ;;
   themes)
@@ -507,7 +604,12 @@ apply() {
     cp "$BAR_SKIN" "$SKIN_BACKUP"
     notify-send -t 2000 "Bar Skin" "Applied: $(basename "$value" .json)"
     ;;
-  bar-tweaks) tweak "$value" pick ;;
+  bar-tweaks | lock-tweaks) tweak "$value" pick ;;
+  lock)
+    if [[ $value == regen-thumbs ]]; then lock_thumbs; exit 0; fi
+    lock_edit --arg d "$value" '.design = $d'
+    notify-send -t 2000 "Lock" "Дизайн: $value"
+    ;;
   themes)
     notify-send -t 3000 "Theme" "Applying $value..."
     omarchy theme set "$value"
@@ -576,6 +678,7 @@ status() {
   printf 'blur\t%s\n' "$("$BLUR" current 2>/dev/null)"
   printf 'bar-skin\t%s\n' "$(current_skin)"
   printf 'bar-layout\t%s\n' "$(current_layout)"
+  printf 'lock\t%s\n' "$(lock_current)"
   # Numbers for the preview stage: "active inactive" / "size passes vibrancy noise".
   printf 'opacity-values\t%s\n' "$("$OPACITY" list 2>/dev/null | awk '$4 == 1 { print $2, $3 }')"
   printf 'blur-values\t%s\n' "$("$BLUR" list 2>/dev/null | awk '$6 == 1 { print $2, $3, $4, $5 }')"
@@ -593,6 +696,8 @@ blur-restore) "$BLUR" restore ;;
 bar-skins-preview) bar_skin_preview "$2" ;;
 bar-skins-restore) bar_skin_restore ;;
 tweak) tweak "$2" "${3:-+}" ;;
+lock-preview) omarchy-shell lock previewDesign "${2:-}" >/dev/null ;;
+lock-thumbs) lock_thumbs ;;
 anim-preview)
   cp "$2" "$ANIM_ACTIVE"
   hyprctl reload >/dev/null 2>&1
