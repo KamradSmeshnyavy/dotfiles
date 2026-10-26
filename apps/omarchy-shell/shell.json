@@ -63,12 +63,17 @@
   "plugins": [
     {
       "id": "kamradsmeshnyavy.customizer"
+    },
+    {
+      "id": "kamradsmeshnyavy.lock"
     }
   ],
   "disabledPlugins": [
+    "omarchy.lock",
     "omarchy.menu"
   ],
   "cloneSourceRestores": [
+    "kamradsmeshnyavy.lock",
     "kamradsmeshnyavy.menu"
   ]
 }

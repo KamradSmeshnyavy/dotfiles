@@ -1,0 +1,23 @@
+[
+  { "id": "classic", "file": "", "name": "Classic", "description": "Стоковый экран Omarchy: размытые обои и поле по центру", "tags": ["minimal"] },
+  { "id": "zen", "file": "Zen.qml", "name": "Zen", "description": "Без поля — просто печатайте, точки появляются по центру", "tags": ["minimal"] },
+  { "id": "dock", "file": "Dock.qml", "name": "Dock", "description": "Всё в тонкой полосе внизу экрана", "tags": ["minimal"] },
+  { "id": "island", "file": "Island.qml", "name": "Island", "description": "Капсула сверху: время, дата и ввод в одном острове", "tags": ["minimal"] },
+  { "id": "split", "file": "Split.qml", "name": "Split", "description": "Слева панель с часами и вводом, справа обои", "tags": ["cards"] },
+  { "id": "sheet", "file": "Sheet.qml", "name": "Sheet", "description": "Матовая боковая панель с аватаром", "tags": ["cards"] },
+  { "id": "card", "file": "Card.qml", "name": "Card", "description": "Карточка-приветствие с аватаром и именем", "tags": ["cards"] },
+  { "id": "cinema", "file": "Cinema.qml", "name": "Cinema", "description": "Кинематографичные чёрные полосы сверху и снизу", "tags": ["cards"] },
+  { "id": "poster", "file": "Poster.qml", "name": "Poster", "description": "Огромные часы плакатом", "tags": ["clock"] },
+  { "id": "editorial", "file": "Editorial.qml", "name": "Editorial", "description": "Журнальная вёрстка: дата заголовком, тонкие линии", "tags": ["clock"] },
+  { "id": "analog", "file": "Analog.qml", "name": "Analog", "description": "Стрелочные часы", "tags": ["clock"] },
+  { "id": "flip", "file": "Flip.qml", "name": "Flip", "description": "Перекидные часы-карточки", "tags": ["clock"] },
+  { "id": "ring", "file": "Ring.qml", "name": "Ring", "description": "Кольцо секунд вокруг времени", "tags": ["clock"] },
+  { "id": "calendar", "file": "Calendar.qml", "name": "Calendar", "description": "Сетка месяца рядом с часами", "tags": ["clock", "info"] },
+  { "id": "terminal", "file": "Terminal.qml", "name": "Terminal", "description": "Вход как в консоли: login и Password", "tags": ["fun"] },
+  { "id": "neon", "file": "Neon.qml", "name": "Neon", "description": "Светящиеся неоновые надписи и рамка", "tags": ["fun"] },
+  { "id": "system", "file": "System.qml", "name": "System", "description": "Аптайм, память, нагрузка и батарея", "tags": ["info"] },
+  { "id": "music", "file": "Music.qml", "name": "Music", "description": "Что играет сейчас (MPRIS) с кнопками", "tags": ["info"] },
+  { "id": "aurora", "file": "Aurora.qml", "name": "Aurora", "description": "Плывущее сияние цветов темы", "tags": ["motion"] },
+  { "id": "rain", "file": "Rain.qml", "name": "Rain", "description": "Цифровой дождь", "tags": ["motion"] },
+  { "id": "constellation", "file": "Constellation.qml", "name": "Constellation", "description": "Каждый символ пароля зажигает звезду", "tags": ["motion", "fun"] }
+]
