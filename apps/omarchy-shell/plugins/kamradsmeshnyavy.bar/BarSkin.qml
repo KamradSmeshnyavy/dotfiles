@@ -146,6 +146,7 @@ QtObject {
   }
 
   readonly property color textColor: resolve(value("text"), Commons.Color.bar.text)
+  readonly property bool hasCustomText: String(value("text") || "bar") !== "bar"
   readonly property color activeColor: resolve(value("active"), Commons.Color.bar.active)
   readonly property color backgroundColor: {
     var c = resolve(value("background"), Commons.Color.bar.background)

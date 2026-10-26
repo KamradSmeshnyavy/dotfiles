@@ -77,7 +77,8 @@ Item {
   property color themeContrastForeground: Commons.Color.background
   property color transparentForeground: skin.textColor
   property color foreground: themeForeground
-  property color barForeground: useTransparentForeground ? transparentForeground : themeForeground
+  // skin: явный цвет текста скина сильнее подобранного под обои (стоковый transparent).
+  property color barForeground: useTransparentForeground && !skin.hasCustomText ? transparentForeground : themeForeground
   property bool foregroundAnimationEnabled: true
   property color background: skin.backgroundColor
   property color urgent: skin.activeColor
@@ -93,6 +94,16 @@ Item {
   // skin: compact — бар сжимается, когда на workspace одно окно / полноэкранное /
   // всегда (skin.compactMode). Решается на каждый монитор в BarPanel.
   property int skinCompactRevision: 0
+  // skin: предпросмотр из Customizer (IPC barskin preview): "expanded" — держать бар
+  // развёрнутым, чтобы правки формы были видны; "compact" — показать compact; "" — как обычно.
+  property string skinPreview: ""
+  IpcHandler {
+    target: "barskin"
+    function preview(mode: string): string {
+      root.skinPreview = mode === "expanded" || mode === "compact" ? mode : ""
+      return "ok"
+    }
+  }
   function skinCompactFor(workspace, revision) {
     var mode = root.skin.compactMode
     if (mode === "off") return false
@@ -1319,7 +1330,9 @@ Item {
       var m = Hyprland.monitorFor(barWindow.screen)
       return m ? m.activeWorkspace : null
     }
-    readonly property bool skinCompactWanted: root.skinCompactFor(skinWorkspace, root.skinCompactRevision)
+    readonly property bool skinCompactWanted: root.skinPreview === "expanded" ? false
+      : root.skinPreview === "compact" && root.skin.compactMode !== "off" ? true
+      : root.skinCompactFor(skinWorkspace, root.skinCompactRevision)
     readonly property bool skinCompact: skinCompactWanted
       && !(root.skin.compactExpandOnHover && (skinHover.hovered || root.activePopout !== null))
 
