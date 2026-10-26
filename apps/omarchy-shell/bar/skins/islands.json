@@ -1,0 +1,13 @@
+{
+  "note": "Три острова: левая секция, центр, правая",
+  "shape": "islands",
+  "gap": 6,
+  "margin": 8,
+  "radius": 10,
+  "height": 30,
+  "backgroundAlpha": 0.9,
+  "border": "accent",
+  "borderWidth": 1,
+  "borderAlpha": 0.5,
+  "islandGap": 6
+}

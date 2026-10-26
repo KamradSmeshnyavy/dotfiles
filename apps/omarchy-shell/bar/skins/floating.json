@@ -1,0 +1,13 @@
+{
+  "note": "Плавающая полоса с рамкой акцентом и тенью",
+  "shape": "floating",
+  "gap": 6,
+  "margin": 10,
+  "radius": 12,
+  "height": 30,
+  "backgroundAlpha": 0.9,
+  "border": "accent",
+  "borderWidth": 1,
+  "borderAlpha": 0.6,
+  "shadow": true
+}

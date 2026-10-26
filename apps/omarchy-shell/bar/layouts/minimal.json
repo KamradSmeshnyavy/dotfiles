@@ -1,0 +1,31 @@
+{
+  "note": "Минимум: workspaces · часы · сеть/звук/батарея",
+  "position": "top",
+  "centerAnchor": "omarchy.clock",
+  "layout": {
+    "left": [
+      {
+        "id": "omarchy.workspaces"
+      }
+    ],
+    "center": [
+      {
+        "id": "omarchy.clock",
+        "format": "HH:mm",
+        "weekStartDay": "monday"
+      }
+    ],
+    "right": [
+      {
+        "id": "omarchy.network"
+      },
+      {
+        "id": "omarchy.audio"
+      },
+      {
+        "id": "omarchy.power",
+        "showPercentage": false
+      }
+    ]
+  }
+}

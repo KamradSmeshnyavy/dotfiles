@@ -1,0 +1,11 @@
+{
+  "note": "Прозрачный бар, каждый модуль в своей капсуле",
+  "shape": "full",
+  "backgroundAlpha": 0,
+  "moduleStyle": "pills",
+  "moduleBackground": "background",
+  "moduleAlpha": 0.85,
+  "spacing": 4,
+  "padding": 8,
+  "height": 30
+}

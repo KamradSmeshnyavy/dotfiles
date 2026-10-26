@@ -1,0 +1,13 @@
+{
+  "note": "Капсула на 80% ширины с градиентом",
+  "shape": "pill",
+  "gap": 6,
+  "width": 0.8,
+  "height": 30,
+  "background": "lighter_background",
+  "gradient": "background",
+  "border": "accent",
+  "borderWidth": 1,
+  "borderAlpha": 0.7,
+  "shadow": true
+}

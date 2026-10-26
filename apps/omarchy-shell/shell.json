@@ -5,6 +5,7 @@
     "lock": 300
   },
   "bar": {
+    "id": "kamradsmeshnyavy.bar",
     "position": "top",
     "transparent": true,
     "centerAnchor": "omarchy.workspaces",

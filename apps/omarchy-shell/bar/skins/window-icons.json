@@ -1,0 +1,17 @@
+{
+  "note": "Floating-полоса: в workspaces иконки окон, активный на плашке",
+  "shape": "floating",
+  "gap": 6,
+  "margin": 10,
+  "radius": 12,
+  "height": 32,
+  "backgroundAlpha": 0.85,
+  "border": "accent",
+  "borderWidth": 1,
+  "borderAlpha": 0.4,
+  "wsWindowIcons": true,
+  "wsIconStyle": "color",
+  "wsLabelStyle": "numbers",
+  "wsActivePill": true,
+  "wsShowEmpty": false
+}

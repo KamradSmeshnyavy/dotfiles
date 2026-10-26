@@ -1,0 +1,8 @@
+{
+  "note": "Чёлка от верхнего края на 70% ширины",
+  "shape": "notch",
+  "width": 0.7,
+  "radius": 14,
+  "height": 30,
+  "background": "darker_background"
+}

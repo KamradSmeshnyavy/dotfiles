@@ -1,0 +1,54 @@
+{
+  "note": "Workspaces слева, всё остальное и часы справа (macOS-стиль)",
+  "position": "top",
+  "centerAnchor": "",
+  "layout": {
+    "left": [
+      {
+        "id": "kamradsmeshnyavy.menu"
+      },
+      {
+        "id": "omarchy.workspaces"
+      },
+      {
+        "id": "omarchy.active-window"
+      }
+    ],
+    "center": [],
+    "right": [
+      {
+        "id": "omarchy.tray"
+      },
+      {
+        "id": "omarchy.indicators"
+      },
+      {
+        "id": "omarchy.system-update"
+      },
+      {
+        "id": "omarchy.agents"
+      },
+      {
+        "id": "omarchy.network"
+      },
+      {
+        "id": "omarchy.bluetooth"
+      },
+      {
+        "id": "omarchy.audio"
+      },
+      {
+        "id": "omarchy.power",
+        "showPercentage": false
+      },
+      {
+        "id": "omarchy.tailscale"
+      },
+      {
+        "id": "omarchy.clock",
+        "format": "ddd d MMM  HH:mm",
+        "weekStartDay": "monday"
+      }
+    ]
+  }
+}

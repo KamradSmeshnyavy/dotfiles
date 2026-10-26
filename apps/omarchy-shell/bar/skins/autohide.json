@@ -1,0 +1,13 @@
+{
+  "note": "Стекло, которое прячется за край и выезжает по наведению",
+  "shape": "floating",
+  "gap": 6,
+  "margin": 10,
+  "radius": 12,
+  "height": 30,
+  "backgroundAlpha": 0.6,
+  "border": "foreground",
+  "borderWidth": 1,
+  "borderAlpha": 0.15,
+  "autoHide": true
+}

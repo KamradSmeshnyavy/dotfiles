@@ -1,0 +1,55 @@
+{
+  "note": "Моя текущая раскладка",
+  "position": "top",
+  "centerAnchor": "omarchy.workspaces",
+  "layout": {
+    "center": [
+      {
+        "id": "kamradsmeshnyavy.menu"
+      },
+      {
+        "id": "omarchy.workspaces"
+      },
+      {
+        "id": "omarchy.monitor"
+      }
+    ],
+    "left": [
+      {
+        "id": "omarchy.tray"
+      },
+      {
+        "format": "HH:mm",
+        "id": "omarchy.clock",
+        "weekStartDay": "monday"
+      }
+    ],
+    "right": [
+      {
+        "id": "omarchy.indicators"
+      },
+      {
+        "id": "omarchy.system-update"
+      },
+      {
+        "id": "omarchy.agents"
+      },
+      {
+        "id": "omarchy.network"
+      },
+      {
+        "id": "omarchy.bluetooth"
+      },
+      {
+        "id": "omarchy.audio"
+      },
+      {
+        "id": "omarchy.power",
+        "showPercentage": false
+      },
+      {
+        "id": "omarchy.tailscale"
+      }
+    ]
+  }
+}
