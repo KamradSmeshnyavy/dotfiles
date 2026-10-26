@@ -30,7 +30,7 @@ Item {
   readonly property var categories: [
     { key: "anims",       icon: "󰔡", title: "Animations",   hint: "Live preview while you browse",       image: false, live: true },
     { key: "themes",      icon: "󰏘", title: "Theme",        hint: "omarchy theme set",                    image: true,  live: false },
-    { key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Current theme's backgrounds",          image: true,  live: false },
+    { key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Категории как в SUPER+CTRL+SPACE",      image: true,  live: false },
     { key: "walls",       icon: "󰃣", title: "Recolor",      hint: "Lutgen · O folder · o image(s)",       image: true,  live: false },
     { key: "shaders",     icon: "󰍹", title: "Shader",       hint: "crt-toggle.sh",                        image: false, live: false },
     { key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview · SUPER+ALT+O cycles",    image: false, live: true },
@@ -75,6 +75,7 @@ Item {
   property var status: ({})
   property var lastPointer: null     // window coords of the last hover event
   property string keepValue: ""      // row (by value) to stay on when a list reloads after a tweak
+  property string wallPath: ""       // Wallpaper: папка-категория внутри ~/.config/omarchy/backgrounds/<тема>
   property string pendingTweak: ""   // a step that came in while the previous one ran (held key)
   property bool reloadQueued: false  // a reload asked for while the lister was busy
   property var themePalette: ({})    // colors.toml of the current theme, for the bar mock
@@ -123,6 +124,22 @@ Item {
   function close() {
     root.revertPreview()
     root.opened = false
+    root.syncBarPreview()
+  }
+
+  // Пока открыты категории бара, бар держится развёрнутым — иначе compact прячет
+  // правки формы, высоты и цвета; на строках «Compact: …» бар показывает compact.
+  property string barPreviewMode: ""
+  function syncBarPreview() {
+    var mode = "off"
+    var k = root.category.key
+    if (root.opened && (k === "bar-skins" || k === "bar-tweaks" || k === "bar-layouts")) {
+      var row = root.selectedRow
+      mode = row && root.isTweakRow(row) && /^compact/.test(root.tweakKey(row)) ? "compact" : "expanded"
+    }
+    if (mode === root.barPreviewMode) return
+    root.barPreviewMode = mode
+    Quickshell.execDetached(["omarchy-shell", "barskin", "preview", mode])
   }
 
   function dismiss() {
@@ -190,7 +207,7 @@ Item {
     root.cache = next
     // Fill the thumbnail cache in the background; rows fall back to the source until then.
     var cat = categories[root.categoryIndexOf(key)]
-    if (cat && cat.image) Quickshell.execDetached([root.script, "thumbs", key])
+    if (cat && cat.image) Quickshell.execDetached([root.script, "thumbs", key, key === "theme-walls" ? root.wallPath : ""])
     if (key !== root.category.key) return
     root.loading = false
     root.items = rows
@@ -305,6 +322,26 @@ Item {
     previewFile.path = (row && !root.category.image) ? row.preview : ""
     if (!row || root.category.image || !row.preview) root.previewText = ""
     if (root.category.live && root.pane === 1 && row) previewTimer.restart()
+    root.syncBarPreview()
+  }
+
+  // Wallpaper: зайти в папку-категорию (или выйти по ".."), не закрывая overlay.
+  // focusValue — строка, на которой встать после загрузки (папка, из которой вышли).
+  function openWallDir(path, focusValue) {
+    root.wallPath = path
+    root.filterText = ""
+    root.filtering = false
+    root.reloadCategory()
+    root.keepValue = focusValue || ""
+  }
+
+  // h / ← / Esc внутри папки: на уровень выше, курсор — на папку, из которой вышли.
+  function wallUp() {
+    if (root.category.key !== "theme-walls" || root.pane !== 1 || root.wallPath === "") return false
+    var from = root.wallPath
+    var cut = from.lastIndexOf("/")
+    root.openWallDir(cut < 0 ? "" : from.slice(0, cut), "dir:" + from)
+    return true
   }
 
   function activate() {
@@ -314,6 +351,13 @@ Item {
       return
     }
     if (!root.selectedRow) return
+    if (root.category.key === "theme-walls" && /^dir:/.test(root.selectedRow.value)) {
+      var target = root.selectedRow.value.slice(4)
+      // ".." ведёт к родителю — встать на папку, из которой вышли.
+      if (target.length < root.wallPath.length && root.wallPath.indexOf(target) === 0) root.wallUp()
+      else root.openWallDir(target, "")
+      return
+    }
     if (root.isTweakRow(root.selectedRow) && root.colorTweaks.indexOf(root.tweakKey(root.selectedRow)) === -1) root.tweak("+")
     else root.run(root.selectedRow.value)
   }
@@ -403,7 +447,7 @@ Item {
     var out = []
     for (var i = 0; i < displayModel.count; i++) {
       var r = displayModel.get(i)
-      if (/^(pick-|toggle$|next$|save$|regen-thumbs$|tweak:|cache$|prune$|none$)/.test(r.value) || r.current || i === root.selectedIndex) continue
+      if (/^(pick-|toggle$|next$|save$|regen-thumbs$|tweak:|cache$|prune$|none$|dir:)/.test(r.value) || r.current || i === root.selectedIndex) continue
       out.push(i)
     }
     return out
@@ -514,7 +558,7 @@ Item {
   Process {
     id: lister
     property string category: ""
-    command: [root.script, "list", category]
+    command: [root.script, "list", category, category === "theme-walls" ? root.wallPath : ""]
     stdout: StdioCollector {
       onStreamFinished: root.loadRows(lister.category, text)
     }
@@ -748,7 +792,7 @@ Item {
           else if (ctrl && (k === Qt.Key_P)) root.move(-1)
           else if (k === Qt.Key_Escape) {
             if (root.filterText) root.setFilter("")
-            else if (root.pane === 1) root.toCategories()
+            else if (root.pane === 1) { if (!root.wallUp()) root.toCategories() }
             else root.dismiss()
           }
           else if (k === Qt.Key_Return || k === Qt.Key_Enter) root.activate()
@@ -758,12 +802,12 @@ Item {
           else if (k === Qt.Key_PageDown) root.move(root.halfPage() * 2)
           else if (k === Qt.Key_Home) root.moveTo(0)
           else if (k === Qt.Key_End) root.moveTo(-1)
-          else if (k === Qt.Key_Left || k === Qt.Key_Backtab) root.toCategories()
+          else if (k === Qt.Key_Left || k === Qt.Key_Backtab) { if (!root.wallUp()) root.toCategories() }
           else if (k === Qt.Key_Right || k === Qt.Key_Tab) { if (root.pane === 0) root.activate() }
           else if (ctrl || !printable) return
           else if (t === "j") root.move(1)
           else if (t === "k") root.move(-1)
-          else if (t === "h") root.toCategories()
+          else if (t === "h") { if (!root.wallUp()) root.toCategories() }
           else if (t === "l") { if (root.pane === 0) root.activate() }
           else if (t === "g") { if (pendingG) root.moveTo(0); else { root.pendingG = true; gTimer.restart() } }
           else if (t === "G") root.moveTo(-1)
@@ -1121,6 +1165,7 @@ Item {
                 textFormat: Text.PlainText
                 text: root.filtering ? root.filterText + "▏"
                   : root.filterText ? root.filterText
+                  : root.category.key === "theme-walls" && root.wallPath ? "󰉋 " + root.wallPath + "  ( / )"
                   : "Search " + root.category.title.toLowerCase() + "…  ( / )"
                 color: root.filtering || root.filterText ? root.foreground : root.muted
                 font.family: root.fontFamily

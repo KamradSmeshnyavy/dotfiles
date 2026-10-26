@@ -3,7 +3,7 @@
 # fzf script scripts/bin/omarchy-customizer, split into list/preview/apply so
 # the overlay can drive them.
 #
-#   customizer.sh list <category>          TSV: label, value, preview path, current(0/1), note[, sub — подпись под строкой]
+#   customizer.sh list <category> [path]   TSV: label, value, preview path, current(0/1), note[, sub — подпись под строкой]
 #   customizer.sh anim-preview <file>      load an animation set without committing
 #   customizer.sh anim-restore             undo previews (back to what `list anims` saw)
 #   customizer.sh apply <category> <value>
@@ -424,11 +424,33 @@ tweak() {
   esac
 }
 
+# Параметр бара, который при текущей форме / compact ничего не меняет, — подсказка вместо
+# «по умолчанию», чтобы не казалось, что настройка «не применяется».
+bar_tweak_note() {
+  local key=$1 shape=$2 compact=$3 need=""
+  case "$key" in
+  gap) need="floating pill islands" ;;
+  margin) need="floating pill islands notch" ;;
+  width) need="floating pill notch" ;;
+  radius) need="floating islands notch hug" ;;
+  islandGap) need="islands" ;;
+  shadow | glow) need="floating pill islands notch underline" ;;
+  compact) return 0 ;;
+  compact*) [[ $compact == off ]] && echo "действует, когда «Compact: когда сжимать» включён" ; return 0 ;;
+  esac
+  [[ -z $need || " $need " == *" $shape "* ]] && return 0
+  echo "не действует для формы $shape — нужна: $need"
+}
+
 # Строки Bar Tweaks / Lock Tweaks: $1 — имя массива параметров, $2 — файл настроек.
 list_tweaks() {
   local -n table=$1
   TW_FILE=$2
-  local t key kind args label def v hint mark long deflong
+  local t key kind args label def v hint mark long deflong sub shape compact
+  if [[ $1 == TWEAKS ]]; then
+    shape=$(tweak_value shape full)
+    compact=$(tweak_value compact off)
+  fi
   for t in "${table[@]}"; do
     IFS='|' read -r key kind args label <<<"$t"
     case "$kind" in
@@ -448,9 +470,13 @@ list_tweaks() {
     # В строке списка — короткое значение (до скобки), полностью — в превью.
     # Заметка: литеральные \n, overlay превращает их в переводы строк.
     # 6-е поле — подпись под строкой в списке (по умолчанию).
+    sub="по умолчанию: ${deflong%% (*}"
+    local na=""
+    [[ $1 == TWEAKS ]] && na=$(bar_tweak_note "$key" "$shape" "$compact")
+    [[ -n $na ]] && sub="○ $na"
     printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$label:  ${long%% (*}" "$key" "$TW_FILE" \
-      "Сейчас: $long"'\n'"По умолчанию: $deflong"'\n\n'"$hint · x — сбросить к умолчанию" \
-      "по умолчанию: ${deflong%% (*}"
+      "Сейчас: $long"'\n'"По умолчанию: $deflong${na:+\\n$na}"'\n\n'"$hint · x — сбросить к умолчанию" \
+      "$sub"
   done
 }
 
@@ -687,13 +713,43 @@ STYLES
     done
     ;;
   theme-walls)
-    local bg cur_bg
-    bg="$HOME/.config/omarchy/themes/$(theme_name)/backgrounds"
-    [[ -d $bg ]] || bg="$HOME/.local/state/omarchy/current/theme/backgrounds"
+    # Как omarchy-bg-browser (SUPER+CTRL+SPACE): категории — подпапки
+    # ~/.config/omarchy/backgrounds/<тема>. $2 — путь внутри неё ("" — корень).
+    # Строки папок: value "dir:<путь>", превью — первая картинка папки.
+    local rel=${2:-} root dir bg cur_bg sub n first name cur parent
+    [[ $rel == *..* || $rel == /* ]] && rel=""
+    root="$HOME/.config/omarchy/backgrounds/$(theme_name)"
+    dir="$root${rel:+/$rel}"
     cur_bg=$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null)
-    images_in "$bg" 1 | while read -r f; do
-      printf '%s\t%s\t%s\t%s\n' "$(basename "$f")" "$f" "$f" "$([[ $(readlink -f "$f") == "$cur_bg" ]] && echo 1 || echo 0)"
-    done
+    if [[ -n $rel ]]; then
+      parent=${rel%/*}
+      [[ $parent == "$rel" ]] && parent=""
+      printf '%s\t%s\t\t0\t%s\t%s\n' "󰁝  .." "dir:$parent" "Назад: ${parent:-все категории}" "$rel"
+    fi
+    if [[ -d $dir ]]; then
+      while IFS= read -r -d '' sub; do
+        n=$(find -L "$sub" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.bmp' \) \
+          -not -name '.*' 2>/dev/null | wc -l)
+        ((n > 0)) || continue
+        name=${sub##*/}
+        first=$(images_in "$sub" 10 | head -n 1)
+        cur=0
+        [[ $cur_bg == "$(readlink -f "$sub")"/* ]] && cur=1
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "󰉋  $name" "dir:${rel:+$rel/}$name" "$first" "$cur" \
+          "Категория — обоев: $n"'\n\n'"⏎ — открыть · h — назад" "обоев: $n"
+      done < <(find -L "$dir" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -print0 2>/dev/null | sort -z)
+      images_in "$dir" 1 | while read -r f; do
+        printf '%s\t%s\t%s\t%s\n' "$(basename "$f")" "$f" "$f" "$([[ $(readlink -f "$f") == "$cur_bg" ]] && echo 1 || echo 0)"
+      done
+    fi
+    # В корне — ещё и собственные обои темы, как в стоковом switcher.
+    if [[ -z $rel ]]; then
+      bg="$HOME/.config/omarchy/themes/$(theme_name)/backgrounds"
+      [[ -d $bg ]] || bg="$HOME/.local/state/omarchy/current/theme/backgrounds"
+      images_in "$bg" 1 | while read -r f; do
+        printf '%s\t%s\t%s\t%s\n' "$(basename "$f")" "$f" "$f" "$([[ $(readlink -f "$f") == "$cur_bg" ]] && echo 1 || echo 0)"
+      done
+    fi
     ;;
   walls)
     local dir
@@ -849,7 +905,7 @@ thumbs() {
   mkdir -p "$THUMB_DIR"
   export THUMB_DIR
   export -f thumb_one
-  list "$1" | cut -f3 | grep -v '^$' | xargs -d '\n' -P "$(nproc)" -I{} bash -c 'thumb_one "$1"' _ {}
+  list "$1" "${2:-}" | cut -f3 | grep -v '^$' | xargs -d '\n' -P "$(nproc)" -I{} bash -c 'thumb_one "$1"' _ {}
 }
 
 status() {
@@ -882,9 +938,9 @@ status() {
 
 mkdir -p "$RUN_DIR"
 case "${1:-}" in
-list) list "${2:-}" ;;
+list) list "${2:-}" "${3:-}" ;;
 status) status ;;
-thumbs) thumbs "${2:-}" ;;
+thumbs) thumbs "${2:-}" "${3:-}" ;;
 opacity-preview) "$OPACITY" preview "$2" ;;
 opacity-restore) "$OPACITY" restore ;;
 blur-preview) "$BLUR" preview "$2" ;;
