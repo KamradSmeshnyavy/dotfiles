@@ -1,5 +1,6 @@
 import QtQuick
 import qs.Commons
+import qs.Ui
 
 // What every skin is handed by the menu, and what it may hand back. Menu.qml
 // wires these in one place when the skin's Loader finishes, so a new skin only
@@ -156,6 +157,25 @@ Item {
     root.pendingDirection = delta > 0 ? 1 : -1
     root.selectRequested(start + Math.min(slot, size - 1))
     return true
+  }
+
+  // Hover selection. Rows slide under a still pointer whenever the keyboard
+  // moves the cursor, and Qt reports that as the pointer entering them; a
+  // fast double step then got pulled back by the row it slid onto. So a
+  // hover only selects once the pointer has really moved since the last
+  // selection made any other way. Row MouseAreas call this from both
+  // onEntered and onPositionChanged with mapToItem(root, mouseX, mouseY).
+  property bool pointerSelecting: false
+  PointerMoveGate { id: pointerGate; referenceItem: root }
+  onSelectedIndexChanged: if (!root.pointerSelecting) pointerGate.reset()
+  onRevisionChanged: pointerGate.reset()
+  onWoke: pointerGate.reset()
+
+  function hoverSelect(index, point) {
+    if (!pointerGate.moved(root, point)) return
+    root.pointerSelecting = true
+    root.selectRequested(index)
+    root.pointerSelecting = false
   }
 
   function clampTo(index) {

@@ -393,7 +393,8 @@ SkinBase {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: root.selectRequested(track.index)
+        onEntered: root.hoverSelect(track.index, mapToItem(root, mouseX, mouseY))
+        onPositionChanged: root.hoverSelect(track.index, mapToItem(root, mouseX, mouseY))
         onClicked: root.activated(track.index)
       }
     }

@@ -265,7 +265,8 @@ SkinBase {
           if (card.k === 0) root.activated(card.index)
           else root.selectRequested(card.index)
         }
-        onEntered: if (card.ak <= 2 && card.ak > 0) root.selectRequested(card.index)
+        onEntered: if (card.ak <= 2 && card.ak > 0) root.hoverSelect(card.index, mapToItem(root, mouseX, mouseY))
+        onPositionChanged: if (card.ak <= 2 && card.ak > 0) root.hoverSelect(card.index, mapToItem(root, mouseX, mouseY))
       }
     }
   }

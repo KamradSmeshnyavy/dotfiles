@@ -445,7 +445,8 @@ SkinBase {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (!fish.selHere) root.selectRequested(fish.index)
+        onEntered: if (!fish.selHere) root.hoverSelect(fish.index, mapToItem(root, mouseX, mouseY))
+        onPositionChanged: if (!fish.selHere) root.hoverSelect(fish.index, mapToItem(root, mouseX, mouseY))
         onClicked: root.activated(fish.index)
       }
     }

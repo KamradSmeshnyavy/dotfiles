@@ -10,13 +10,15 @@ SkinBase {
 
   launchDelay: 560
 
-  readonly property int fanReach: 6
+  // deck.bin deals every card face up, so the fan opens wide enough
+  // (~134u per card) that neighbours don't cover each other's sigil and name.
+  readonly property int fanReach: root.hack ? 5 : 6
   readonly property real cardW: 128 * u
   readonly property real cardH: 204 * u
   readonly property real pivotX: width / 2
   readonly property real pivotY: height + 460 * u
   readonly property real fanR: 700 * u
-  readonly property real spread: 6.5
+  readonly property real spread: root.hack ? 11 : 6.5
 
   readonly property var hues: root.theme ? root.theme.hues : [root.accent]
   // tarot-hack (deck.bin) draws everything through these: wireframe cards,
@@ -321,8 +323,10 @@ SkinBase {
       readonly property color hue: root.hues[card.index % root.hues.length] || root.accent
       readonly property real angleDeg: card.k * root.spread
       readonly property real a: card.angleDeg * Math.PI / 180
-      // Face up only while chosen; the flip runs through edge-on.
-      property real flip: card.chosen ? 0 : 180
+      // Face up only while chosen (always in deck.bin, dimmed when not
+      // chosen); the flip runs through edge-on.
+      readonly property bool faded: root.hack && !card.chosen
+      property real flip: card.chosen || root.hack ? 0 : 180
       Behavior on flip { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }
       property real lift: card.chosen ? 1 : 0
       Behavior on lift { NumberAnimation { duration: 360; easing.type: Easing.OutBack } }
@@ -357,29 +361,6 @@ SkinBase {
         color: root.hack ? root.hackBg : (root.theme ? root.theme.mix(card.hue, "#000000", 0.55) : "#301830")
         border.color: root.hack ? root.hackLine : root.gilt
         border.width: root.hack ? 1 : 2
-        // deck.bin back: the card's id and a barcode.
-        Column {
-          id: backId
-          visible: root.hack
-          anchors.centerIn: parent
-          spacing: 10 * root.u
-          // The back is seen through a 180° turn; mirror it back so it reads.
-          transform: Scale { origin.x: backId.width / 2; xScale: -1 }
-          Text { anchors.horizontalCenter: parent.horizontalCenter; text: "0x" + root.fakeHex(card.index, 2); color: root.gilt; font.family: root.mono; font.pixelSize: 16 * root.u; font.weight: Font.Bold }
-          Row {
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 2 * root.u
-            Repeater {
-              model: 14
-              Rectangle {
-                required property int index
-                width: (1 + parseInt(root.fakeHex(card.index * 31 + index, 1), 16) % 3) * root.u
-                height: 30 * root.u
-                color: root.hackDim
-              }
-            }
-          }
-        }
         Rectangle {
           visible: !root.hack
           anchors.fill: parent; anchors.margins: 8 * u
@@ -414,7 +395,7 @@ SkinBase {
         visible: card.flip <= 90
         radius: root.hack ? 0 : 10 * u
         color: root.parchment
-        border.color: root.gilt
+        border.color: card.faded ? root.hackLine : root.gilt
         border.width: root.hack ? 1 : 2
 
         Rectangle {
@@ -429,7 +410,7 @@ SkinBase {
           anchors.horizontalCenter: parent.horizontalCenter
           y: 14 * u
           text: root.hack ? "0x" + card.index.toString(16).padStart(2, "0") : root.roman(card.index + 1)
-          color: root.ink
+          color: card.faded ? root.dim : root.ink
           font.family: root.serif; font.pixelSize: 15 * u; font.weight: Font.Bold; font.letterSpacing: 2
         }
         Rectangle {
@@ -442,7 +423,7 @@ SkinBase {
           RowIcon {
             anchors.centerIn: parent
             size: (root.hack ? 40 : 50) * u
-            opacity: root.hack ? 0.85 : 1
+            opacity: card.faded ? 0.6 : root.hack ? 0.85 : 1
             kind: card.kind
             glyph: card.icon
             glyphFont: card.iconFont
@@ -462,7 +443,7 @@ SkinBase {
           elide: Text.ElideRight
           textFormat: Text.PlainText
           text: root.hack ? card.label.toLowerCase() : card.label.toUpperCase()
-          color: root.ink
+          color: card.faded ? root.dim : root.ink
           font.family: root.serif; font.pixelSize: 10 * u; font.weight: Font.Bold; font.letterSpacing: 1.5
         }
         // deck.bin: the card glitches away block by block instead of burning.
@@ -500,7 +481,8 @@ SkinBase {
           if (card.chosen) root.activated(card.index)
           else root.selectRequested(card.index)
         }
-        onEntered: if (!card.chosen && Math.abs(card.k) <= 2) root.selectRequested(card.index)
+        onEntered: if (!card.chosen && Math.abs(card.k) <= 2) root.hoverSelect(card.index, mapToItem(root, mouseX, mouseY))
+        onPositionChanged: if (!card.chosen && Math.abs(card.k) <= 2) root.hoverSelect(card.index, mapToItem(root, mouseX, mouseY))
       }
     }
   }

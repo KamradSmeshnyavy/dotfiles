@@ -435,7 +435,8 @@ SkinBase {
           height: root.starSize * 1.2
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onEntered: root.selectRequested(star.index)
+          onEntered: root.hoverSelect(star.index, mapToItem(root, mouseX, mouseY))
+          onPositionChanged: root.hoverSelect(star.index, mapToItem(root, mouseX, mouseY))
           onClicked: root.activated(star.index)
         }
       }
