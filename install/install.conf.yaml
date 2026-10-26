@@ -23,7 +23,6 @@
     ~/.config/carapace: tui/carapace
     ~/.config/glow: tui/glow
     ~/.config/cava: tui/cava
-    ~/.config/chromium: apps/chromium
     ~/.config/dust: tui/dust
     ~/.config/eza: tui/eza
     ~/.config/fastfetch: tui/fastfetch

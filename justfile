@@ -1,4 +1,4 @@
-flake_dir := "~/dotfiles/packages/nix-darwin"
+flake_dir := "~/dotfiles/macos/nix-darwin"
 hostname  := "MacBook-Pro-Denis"
 
 # Список рецептов для текущей ОС

@@ -13,7 +13,6 @@ in
     ".config/btop".source = link "${dotfilesRoot}/tui/btop";
     ".config/carapace".source = link "${dotfilesRoot}/tui/carapace";
     ".config/cava".source = link "${dotfilesRoot}/tui/cava";
-    ".config/chromium".source = link "${dotfilesRoot}/apps/chromium";
     ".config/dust".source = link "${dotfilesRoot}/tui/dust";
     ".config/fastfetch".source = link "${dotfilesRoot}/tui/fastfetch";
     ".config/fish".source = link "${dotfilesRoot}/shells/fish";
