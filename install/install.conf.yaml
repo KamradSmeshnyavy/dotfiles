@@ -89,6 +89,16 @@
     ~/.config/Code/User/snippets:
       path: apps/vscode/snippets
       if: "[ `uname` = Linux ]"
+    # omarchy-shell: свои плагины (бар со скинами, меню, Customizer)
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.bar:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.bar
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.menu:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.menu
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.customizer:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer
+      if: "[ `uname` = Linux ]"
     # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
     ~/.config/omarchy/hooks/theme-set:
       path: omarchy-themes/hooks/theme-set

@@ -52,6 +52,11 @@ theme name="":
 app-themes:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
 
+# Что поменялось в стоковом Bar.qml относительно клона kamradsmeshnyavy.bar (правки скинов помечены `// skin:`)
+[linux]
+bar-upstream-diff:
+    diff -u "${OMARCHY_PATH:-$HOME/.local/share/omarchy}/shell/plugins/bar/Bar.qml" {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.bar/Bar.qml || true
+
 # Ссылки на dotfiles, которых нет в install/install.conf.yaml (сделаны вручную)
 [linux]
 check-links:
