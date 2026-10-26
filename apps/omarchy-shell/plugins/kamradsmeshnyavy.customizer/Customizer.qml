@@ -23,17 +23,23 @@ Item {
   readonly property string script: decodeURIComponent(String(Qt.resolvedUrl("customizer.sh")).replace(/^file:\/\//, ""))
 
   // key: customizer.sh category; image: preview pane shows the picture;
-  // live: hovering a row previews it, Esc / leaving the category reverts.
+  // live: hovering a row previews it, Esc / leaving the category reverts;
+  // bar: preview pane draws a bar mock (BarMock.qml); tweak: h/l step the row's value.
   readonly property var categories: [
     { key: "anims",       icon: "󰔡", title: "Animations",   hint: "Live preview while you browse",       image: false, live: true },
-    { key: "layouts",     icon: "󰕮", title: "Shell Layout", hint: "~/.config/omarchy/shell-*.json",      image: false, live: false },
     { key: "themes",      icon: "󰏘", title: "Theme",        hint: "omarchy theme set",                    image: true,  live: false },
     { key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Current theme's backgrounds",          image: true,  live: false },
     { key: "walls",       icon: "󰃣", title: "Recolor",      hint: "Lutgen · O folder · o image(s)",       image: true,  live: false },
     { key: "shaders",     icon: "󰍹", title: "Shader",       hint: "crt-toggle.sh",                        image: false, live: false },
     { key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview · SUPER+ALT+O cycles",    image: false, live: true },
-    { key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true }
+    { key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true },
+    { key: "bar-skins",   icon: "󰉼", title: "Bar Skin",     hint: "Live preview · form, colors, glass",   image: false, live: true,  bar: true },
+    { key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
+    { key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true }
   ]
+
+  // Bar Tweaks rows whose ⏎ opens a color picker instead of stepping.
+  readonly property var colorTweaks: ["background", "gradient", "border", "text", "active"]
 
   // Header chips: status key -> category key it opens.
   readonly property var statusChips: [
@@ -42,7 +48,8 @@ Item {
     { key: "anims",     icon: "󰔡", category: "anims" },
     { key: "shader",    icon: "󰍹", category: "shaders" },
     { key: "opacity",   icon: "󰂵", category: "opacity" },
-    { key: "blur",      icon: "󰂷", category: "blur" }
+    { key: "blur",      icon: "󰂷", category: "blur" },
+    { key: "bar-skin",  icon: "󰉼", category: "bar-skins" }
   ]
 
   property bool opened: false
@@ -60,6 +67,12 @@ Item {
   property bool helpOpen: false
   property var status: ({})
   property var lastPointer: null     // window coords of the last hover event
+  property string keepValue: ""      // row (by value) to stay on when a list reloads after a tweak
+  property string pendingTweak: ""   // a step that came in while the previous one ran (held key)
+  property bool reloadQueued: false  // a reload asked for while the lister was busy
+  property var themePalette: ({})    // colors.toml of the current theme, for the bar mock
+  property var activeSkin: ({})      // ~/.config/omarchy/bar-skin.json
+  property var activeBar: ({})       // ~/.config/omarchy/shell.json .bar
 
   readonly property var category: categories[categoryIndex]
   property var selectedRow: null     // set by selectionChanged(); ListModel.get() isn't reactive
@@ -127,6 +140,9 @@ Item {
     if (index === root.categoryIndex && !force) return
     root.revertPreview()
     root.categoryIndex = index
+    root.pendingTweak = ""
+    root.reloadQueued = false
+    root.keepValue = ""
     root.filtering = false
     root.filterText = ""
     root.selectedIndex = 0
@@ -156,7 +172,8 @@ Item {
     for (var i = 0; i < lines.length; i++) {
       if (!lines[i]) continue
       var f = lines[i].split("\t")
-      rows.push({ label: f[0] || "", value: f[1] || "", preview: f[2] || "", current: f[3] === "1", note: f[4] || "" })
+      rows.push({ label: f[0] || "", value: f[1] || "", preview: f[2] || "", current: f[3] === "1",
+        note: (f[4] || "").replace(/\\n/g, "\n"), sub: f[5] || "" })
     }
     var next = ({})
     for (var k in root.cache) next[k] = root.cache[k]
@@ -168,8 +185,15 @@ Item {
     if (key !== root.category.key) return
     root.loading = false
     root.items = rows
-    root.selectedIndex = root.currentIndexOf(rows)
+    root.selectedIndex = root.keepValue ? root.indexOfValue(rows, root.keepValue) : root.currentIndexOf(rows)
+    root.keepValue = ""
     root.rebuild()
+    if (root.reloadQueued) { root.reloadQueued = false; root.reloadCategory() }
+  }
+
+  function indexOfValue(rows, value) {
+    for (var i = 0; i < rows.length; i++) if (rows[i].value === value) return i
+    return root.currentIndexOf(rows)
   }
 
   function loadStatus(raw) {
@@ -228,7 +252,8 @@ Item {
   }
 
   function listRowHeight() {
-    return root.category.image ? root.thumbRowHeight : root.rowHeight
+    if (root.category.image) return root.thumbRowHeight
+    return root.category.tweak ? Math.round(root.rowHeight * 1.5) : root.rowHeight
   }
 
   // Jump to a row (-1 = last); in the category pane, to a category.
@@ -279,7 +304,83 @@ Item {
       root.selectionChanged()
       return
     }
-    if (root.selectedRow) root.run(root.selectedRow.value)
+    if (!root.selectedRow) return
+    if (root.category.tweak && root.colorTweaks.indexOf(root.selectedRow.value) === -1) root.tweak("+")
+    else root.run(root.selectedRow.value)
+  }
+
+  // Bar Tweaks: step the selected parameter and reload the list on the same row.
+  // The overlay stays open; the bar behind it and the mock follow bar-skin.json.
+  // A held key autorepeats faster than customizer.sh runs: the latest step waits
+  // in pendingTweak and runs when the previous one exits, and the list is only
+  // re-read once the steps stop. Killing a running lister to restart it used to
+  // deliver its partial output and drop the selection back to the first row.
+  function tweak(dir) {
+    if (!root.category.tweak || root.pane !== 1 || !root.selectedRow) return
+    if (tweaker.running) { root.pendingTweak = dir; return }
+    tweaker.key = root.selectedRow.value
+    tweaker.command = [root.script, "tweak", tweaker.key, dir]
+    tweaker.running = true
+  }
+
+  function tweakDone() {
+    var next = root.pendingTweak
+    root.pendingTweak = ""
+    if (next && root.category.tweak && root.selectedRow && root.selectedRow.value === tweaker.key) {
+      tweaker.command = [root.script, "tweak", tweaker.key, next]
+      tweaker.running = true
+      return
+    }
+    root.reloadCategory()
+  }
+
+  function reloadCategory() {
+    if (lister.running) { root.reloadQueued = true; return }
+    var key = root.category.key
+    var next = ({})
+    for (var k in root.cache) if (k !== key) next[k] = root.cache[k]
+    root.cache = next
+    root.keepValue = root.selectedRow ? root.selectedRow.value : ""
+    lister.category = key
+    lister.running = true
+  }
+
+  function parseJson(text) {
+    try {
+      var v = JSON.parse(String(text || ""))
+      return v && typeof v === "object" ? v : ({})
+    } catch (e) {
+      return ({})
+    }
+  }
+
+  function parsePalette(text) {
+    var out = ({})
+    var lines = String(text || "").split("\n")
+    for (var i = 0; i < lines.length; i++) {
+      var m = lines[i].match(/^\s*([A-Za-z0-9_]+)\s*=\s*["'](#[0-9A-Fa-f]{6})["']/)
+      if (m) out[m[1]] = m[2]
+    }
+    root.themePalette = out
+  }
+
+  // What the bar mock draws: the row's own skin / layout, the live one otherwise.
+  function mockSkin() {
+    if (root.category.key === "bar-skins" && root.previewText) return root.parseJson(root.previewText)
+    return root.activeSkin
+  }
+
+  function mockBar() {
+    if (root.category.key !== "bar-layouts" || !root.previewText) {
+      if (root.category.key !== "bar-skins" || !root.previewText) return root.activeBar
+      var b = ({})
+      for (var k in root.activeBar) b[k] = root.activeBar[k]
+      b.transparent = root.parseJson(root.previewText).transparent === true
+      return b
+    }
+    var preset = root.parseJson(root.previewText)
+    preset.transparent = root.activeBar.transparent === true
+    return preset
   }
 
   // Rows "r" may land on: no picker / toggle actions, and not the one in use.
@@ -287,7 +388,7 @@ Item {
     var out = []
     for (var i = 0; i < displayModel.count; i++) {
       var r = displayModel.get(i)
-      if (/^(pick-|toggle$|next$)/.test(r.value) || r.current || i === root.selectedIndex) continue
+      if (/^(pick-|toggle$|next$|save$)/.test(r.value) || r.current || i === root.selectedIndex) continue
       out.push(i)
     }
     return out
@@ -295,6 +396,7 @@ Item {
 
   function randomPick() {
     if (root.category.key === "walls") return   // a random Lutgen run is too slow to be a toy
+    if (root.category.tweak) return
     if (root.pane === 0) { root.pane = 1 }
     var c = root.randomCandidates()
     if (c.length === 0) return
@@ -355,11 +457,12 @@ Item {
 
   function keyHints() {
     if (root.filtering) return [["⏎", "keep filter"], ["Esc", "clear"], ["↑↓", "move"]]
-    if (root.pane === 0) return [["j k", "category"], ["l ⏎", "open"], ["1–" + root.categories.length, "jump"], ["/", "search"], ["?", "keys"], ["q", "close"]]
+    if (root.pane === 0) return [["j k", "category"], ["l ⏎", "open"], ["1–9 0", "jump"], ["/", "search"], ["?", "keys"], ["q", "close"]]
+    if (root.category.tweak) return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick color"], ["Esc", "back"], ["?", "keys"]]
     var h = [["j k", "move"], ["⏎", "apply"], ["/", "search"], ["h", "back"]]
     if (root.category.key !== "walls") h.push(["r", "random"])
     else h.push(["o O", "pick"])
-    if (!root.category.image && root.category.key !== "opacity" && root.category.key !== "blur") h.push(["J K", "scroll"])
+    if (!root.category.image && !root.category.bar && root.category.key !== "opacity" && root.category.key !== "blur") h.push(["J K", "scroll"])
     h.push(["?", "keys"])
     return h
   }
@@ -389,8 +492,42 @@ Item {
     id: previewFile
     blockLoading: false
     printErrors: false
+    // Bar Tweaks rows all preview bar-skin.json, which changes under them.
+    watchChanges: true
+    onFileChanged: reload()
     onLoaded: root.previewText = root.formatPreview(text())
     onLoadFailed: root.previewText = ""
+  }
+
+  Process {
+    id: tweaker
+    property string key: ""
+    onExited: root.tweakDone()
+  }
+
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/bar-skin.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.activeSkin = root.parseJson(text())
+    onLoadFailed: root.activeSkin = ({})
+  }
+
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/shell.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.activeBar = root.parseJson(text()).bar || ({})
+  }
+
+  FileView {
+    path: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme/colors.toml"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.parsePalette(text())
   }
 
   // Live preview, debounced so scrolling doesn't reload Hyprland per row.
@@ -536,7 +673,11 @@ Item {
             return
           }
 
-          if (ctrl && root.category.key === "walls" && k === Qt.Key_O) root.run("pick-files")
+          var tweaking = root.category.tweak && root.pane === 1 && !ctrl
+          if (tweaking && (t === "h" || t === "-" || k === Qt.Key_Left)) root.tweak("-")
+          else if (tweaking && (t === "l" || t === "+" || t === "=" || k === Qt.Key_Right)) root.tweak("+")
+          else if (tweaking && t === "x") root.tweak("reset")
+          else if (ctrl && root.category.key === "walls" && k === Qt.Key_O) root.run("pick-files")
           else if (ctrl && (k === Qt.Key_D)) root.move(root.halfPage())
           else if (ctrl && (k === Qt.Key_U)) root.move(-root.halfPage())
           else if (ctrl && (k === Qt.Key_F)) root.move(root.halfPage() * 2)
@@ -572,8 +713,8 @@ Item {
           else if (t === "r") root.randomPick()
           else if (root.category.key === "walls" && t === "o") root.run("pick-files")
           else if (root.category.key === "walls" && t === "O") root.run("pick-dir")
-          else if (t >= "1" && t <= String(root.categories.length)) {
-            root.setCategory(Number(t) - 1)
+          else if (t >= "0" && t <= "9" && (t === "0" ? 9 : Number(t) - 1) < root.categories.length) {
+            root.setCategory(t === "0" ? 9 : Number(t) - 1)
             root.activate()
           }
           else return
@@ -841,7 +982,7 @@ Item {
                   anchors.right: parent.right
                   anchors.rightMargin: Style.space(8)
                   anchors.verticalCenter: parent.verticalCenter
-                  label: String(catRow.index + 1)
+                  label: String((catRow.index + 1) % 10)
                   opacity: catRow.active ? 1 : 0.6
                 }
 
@@ -943,13 +1084,16 @@ Item {
                 required property string label
                 required property string preview
                 required property string note
+                required property string sub
                 required property bool current
 
                 readonly property bool hasCursor: index === root.selectedIndex
                 readonly property var palette: root.paletteOf(note)
 
                 width: itemList.width
-                height: root.listRowHeight()
+                // Длинные подписи переносятся (до двух строк) — строка растёт под них.
+                height: root.category.image ? root.listRowHeight()
+                  : Math.max(root.listRowHeight(), rowText.implicitHeight + Style.space(12))
 
                 ClippingRectangle {
                   id: thumb
@@ -1000,6 +1144,7 @@ Item {
                 }
 
                 Column {
+                  id: rowText
                   anchors.left: root.category.image ? thumb.right : rowIcon.right
                   anchors.leftMargin: Style.space(10)
                   anchors.right: activePill.visible ? activePill.left : parent.right
@@ -1009,13 +1154,30 @@ Item {
 
                   Text {
                     width: parent.width
-                    elide: Text.ElideMiddle
+                    // Имена файлов — одной строкой с многоточием в середине, остальное переносится.
+                    wrapMode: root.category.image ? Text.NoWrap : Text.Wrap
+                    maximumLineCount: root.category.image ? 1 : 2
+                    elide: root.category.image ? Text.ElideMiddle : Text.ElideRight
                     textFormat: Text.PlainText
                     text: itemRow.label
                     color: itemRow.hasCursor ? root.selectedText : (itemRow.current ? root.accent : root.foreground)
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.title
                     font.bold: itemRow.current
+                  }
+
+                  // Second line, e.g. a Bar Tweaks default.
+                  Text {
+                    visible: itemRow.sub !== ""
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    maximumLineCount: 2
+                    elide: Text.ElideRight
+                    textFormat: Text.PlainText
+                    text: itemRow.sub
+                    color: root.muted
+                    font.family: root.fontFamily
+                    font.pixelSize: Style.font.caption
                   }
 
                   // Theme palette dots.
@@ -1112,15 +1274,18 @@ Item {
             Item {
               id: previewHead
               width: parent.width
-              height: root.rowHeight
+              height: Math.max(root.rowHeight, headTitle.implicitHeight)
 
               Text {
+                id: headTitle
                 anchors.left: parent.left
                 anchors.right: headPill.left
                 anchors.rightMargin: Style.space(8)
                 anchors.verticalCenter: parent.verticalCenter
                 textFormat: Text.PlainText
                 text: root.selectedRow ? root.selectedRow.label : root.category.title
+                wrapMode: Text.Wrap
+                maximumLineCount: 2
                 elide: Text.ElideRight
                 color: root.foreground
                 font.family: root.fontFamily
@@ -1317,12 +1482,69 @@ Item {
                 }
               }
 
+              // Bar: a mock of kamradsmeshnyavy.bar over the wallpaper, then the row's note.
+              Item {
+                id: barStage
+                anchors.fill: parent
+                visible: root.category.bar === true && root.selectedRow !== null
+                readonly property url wallpaper: visible && root.status.wallpaper ? root.fileUrl(root.status.wallpaper) : ""
+                readonly property var bar: root.mockBar()
+                readonly property bool vertical: bar.position === "left" || bar.position === "right"
+
+                ClippingRectangle {
+                  id: barScreen
+                  anchors { top: parent.top; left: parent.left; right: parent.right; margins: Style.space(12) }
+                  // A strip of the screen: the edge the bar sits on and a bit of desktop.
+                  height: barStage.vertical ? parent.height * 0.62 : Math.max(Style.space(90), parent.height * 0.32)
+                  radius: root.innerRadius
+                  color: "transparent"
+
+                  Image {
+                    anchors.fill: parent
+                    source: barStage.wallpaper
+                    sourceSize.width: Math.max(1, previewBox.width)
+                    sourceSize.height: Math.max(1, previewBox.height)
+                    fillMode: Image.PreserveAspectCrop
+                    verticalAlignment: barStage.bar.position === "bottom" ? Image.AlignBottom : Image.AlignTop
+                    asynchronous: true
+                  }
+
+                  BarMock {
+                    anchors.fill: parent
+                    skin: root.mockSkin()
+                    bar: barStage.bar
+                    palette: root.themePalette
+                    screenWidth: panel.screen ? panel.screen.width : 1440
+                  }
+                }
+
+                Flickable {
+                  anchors { top: barScreen.bottom; bottom: parent.bottom; left: parent.left; right: parent.right; margins: Style.space(14) }
+                  contentHeight: barNote.implicitHeight
+                  boundsBehavior: Flickable.StopAtBounds
+                  clip: true
+                  Text {
+                    id: barNote
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    textFormat: Text.PlainText
+                    lineHeight: 1.2
+                    text: !root.selectedRow ? ""
+                      : root.selectedRow.note + (root.category.key === "bar-skins" && root.previewText ? "\n\n" + root.previewText : "")
+                    color: root.foreground
+                    opacity: 0.85
+                    font.family: Style.font.family
+                    font.pixelSize: Style.font.body
+                  }
+                }
+              }
+
               // Text previews (animations, layouts, shaders) as a code block.
               Flickable {
                 id: previewFlick
                 anchors.fill: parent
                 anchors.margins: Style.space(14)
-                visible: !root.category.image && !opacityStage.visible
+                visible: !root.category.image && !opacityStage.visible && !barStage.visible
                 contentHeight: previewLabel.implicitHeight
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
@@ -1430,7 +1652,9 @@ Item {
                   ["gg  G", "first / last"], ["^d ^u  ^f ^b", "half / full page"],
                   ["⏎", "apply"], ["r", "random pick (not Recolor)"],
                   ["/", "search, ⏎ keeps, Esc clears"], ["J K", "scroll text preview"],
-                  ["1 – " + root.categories.length, "jump to category"], ["o  O  ^o", "Recolor: image(s) / folder"],
+                  ["1 – 9  0", "jump to category"], ["o  O  ^o", "Recolor: image(s) / folder"],
+                  ["h l  − +", "Bar Tweaks: change (hold)"], ["x", "Bar Tweaks: reset to default"],
+                  ["⏎", "Bar Tweaks: step · pick color"], ["●", "Bar Tweaks: changed from default"],
                   ["Esc", "back · revert live preview"], ["q", "close"]
                 ]
                 delegate: Row {

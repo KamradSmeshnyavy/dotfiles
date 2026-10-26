@@ -4,7 +4,7 @@
   "name": "Customizer",
   "version": "1.0.0",
   "author": "kamradsmeshnyavy",
-  "description": "Animations, shell layouts, themes, wallpapers, screen shaders, transparency and blur in one overlay",
+  "description": "Animations, bar skins / layouts / tweaks, themes, wallpapers, screen shaders, transparency and blur in one overlay",
   "kinds": [
     "overlay"
   ],

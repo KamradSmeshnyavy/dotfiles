@@ -3,7 +3,7 @@
 # fzf script scripts/bin/omarchy-customizer, split into list/preview/apply so
 # the overlay can drive them.
 #
-#   customizer.sh list <category>          TSV: label, value, preview path, current(0/1), note
+#   customizer.sh list <category>          TSV: label, value, preview path, current(0/1), note[, sub — подпись под строкой]
 #   customizer.sh anim-preview <file>      load an animation set without committing
 #   customizer.sh anim-restore             undo previews (back to what `list anims` saw)
 #   customizer.sh apply <category> <value>
@@ -13,19 +13,27 @@
 #   customizer.sh opacity-restore          back to the saved preset
 #   customizer.sh blur-preview <name>      same pair for the blur presets
 #   customizer.sh blur-restore
+#   customizer.sh bar-skins-preview <file> примерить скин бара, не сохраняя
+#   customizer.sh bar-skins-restore        вернуть скин, который видел `list bar-skins`
+#   customizer.sh tweak <key> <+|-|pick|reset>  шаг / сброс одного параметра скина (Bar Tweaks)
 #
-# Categories: anims layouts themes theme-walls walls shaders opacity blur
+# Categories: anims bar-layouts bar-skins bar-tweaks themes theme-walls walls shaders opacity blur
 set -uo pipefail
 
 ANIM_DIR="$HOME/dotfiles/apps/hyprland/animations_lua"
 ANIM_ACTIVE="$HOME/dotfiles/apps/hyprland/active_animations.lua"
-LAYOUT_DIR="$HOME/.config/omarchy"
+# Бар (плагин kamradsmeshnyavy.bar): пресеты в репо, активный скин и shell.json — в ~/.config.
+BAR_DIR="$HOME/dotfiles/apps/omarchy-shell/bar"
+BAR_SKIN="$HOME/.config/omarchy/bar-skin.json"
+SHELL_JSON="$HOME/.config/omarchy/shell.json"
 SHADER_DIR="$HOME/.config/hypr/shaders"
 TOGGLE="$SHADER_DIR/crt-toggle.sh"
 OPACITY="$HOME/.config/hypr/opacity.sh"
 BLUR="$HOME/.config/hypr/blur.sh"
 RUN_DIR="${XDG_RUNTIME_DIR:-/tmp}/omarchy-customizer"
 ANIM_BACKUP="$RUN_DIR/active_animations.lua"
+SKIN_BACKUP="$RUN_DIR/bar-skin.json"
+TRANSPARENT_BACKUP="$RUN_DIR/bar-transparent"
 # Thumbnails are named md5(<source path>).jpg, the same Qt.md5() the overlay uses.
 THUMB_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-customizer/thumbs"
 
@@ -102,6 +110,248 @@ current_shader() {
   if [[ -z $cur || $cur == "[[EMPTY]]" ]]; then echo off; else basename "$cur" .frag; fi
 }
 
+# ── Бар ────────────────────────────────────────────────────────────────
+# Файлы пишем на месте (cp поверх), а не mv: бар и шелл следят за ними через
+# FileView, и подмена inode может оборвать слежку. Временные файлы — с
+# фиксированными именами в $RUN_DIR, их просто перезаписывает следующий вызов.
+
+# jq-фильтр поверх bar-skin.json (нет файла — начинаем с {}).
+skin_edit() {
+  local tmp="$RUN_DIR/bar-skin.tmp"
+  { [[ -s $BAR_SKIN ]] && cat "$BAR_SKIN" || echo '{}'; } | jq "$@" >"$tmp" && cp "$tmp" "$BAR_SKIN"
+}
+
+shell_edit() {
+  local tmp="$RUN_DIR/shell.tmp"
+  jq "$@" "$SHELL_JSON" >"$tmp" && cp "$tmp" "$SHELL_JSON"
+}
+
+# Стоковый флаг transparent живёт в shell.json; пишем, только если он меняется,
+# чтобы зря не дёргать перечитывание всего конфига шелла.
+set_transparent() {
+  [[ $(jq -r '.bar.transparent // false' "$SHELL_JSON") == "$1" ]] && return 0
+  shell_edit --argjson t "$1" '.bar.transparent = $t'
+}
+
+skin_canon() { jq -S 'del(.note)' "$1" 2>/dev/null; }
+
+# Имя пресета, совпадающего с активным скином, иначе custom (stock, если файла нет).
+current_skin() {
+  [[ -s $BAR_SKIN ]] || { echo stock; return; }
+  local f cur
+  cur=$(skin_canon "$BAR_SKIN")
+  for f in "$BAR_DIR"/skins/*.json; do
+    [[ $(skin_canon "$f") == "$cur" ]] && { basename "$f" .json; return; }
+  done
+  echo custom
+}
+
+layout_canon() { jq -S '{position: (.position // "top"), centerAnchor: (.centerAnchor // ""), layout}' "$@" 2>/dev/null; }
+
+current_layout() {
+  local f cur
+  cur=$(jq '.bar' "$SHELL_JSON" | layout_canon)
+  for f in "$BAR_DIR"/layouts/*.json; do
+    [[ $(layout_canon "$f") == "$cur" ]] && { basename "$f" .json; return; }
+  done
+  echo custom
+}
+
+# Краткая сводка раскладки для заметки: "top · L: menu workspaces · C: clock · R: …".
+layout_summary() {
+  jq -r '[(.position // "top"),
+          ("L: " + ([.layout.left[]?.id | sub("^[a-z]+\\."; "")] | join(" "))),
+          ("C: " + ([.layout.center[]?.id | sub("^[a-z]+\\."; "")] | join(" "))),
+          ("R: " + ([.layout.right[]?.id | sub("^[a-z]+\\."; "")] | join(" ")))] | join("  ·  ")' "$1"
+}
+
+# Параметры Bar Tweaks: ключ|тип|аргументы|подпись. Дефолты совпадают с BarSkin.qml:
+# у num последнее число, у enum первое слово, у color/bool — сами аргументы.
+TWEAKS=(
+  "shape|enum|full floating pill islands notch underline hug|Форма"
+  "height|num|0 48 2 0|Высота"
+  "gap|num|0 24 2 0|Отступ от края экрана"
+  "margin|num|0 300 10 0|Поля слева/справа"
+  "width|num|0.3 1 0.05 1|Ширина (floating/pill/notch)"
+  "radius|num|0 24 2 0|Скругление (hug: углы)"
+  "padding|num|-1 40 2 -1|Отступ модулей от краёв"
+  "islandGap|num|0 20 2 0|Поля островов"
+  "background|color|bar|Фон"
+  "backgroundAlpha|num|-1 1 0.05 -1|Альфа фона"
+  "gradient|color|none|Градиент: второй цвет"
+  "border|color|accent|Рамка"
+  "borderWidth|num|0 4 1 0|Толщина рамки"
+  "borderAlpha|num|0 1 0.1 1|Альфа рамки"
+  "text|color|bar|Текст"
+  "active|color|bar|Цвет «внимания» (запись, апдейты)"
+  "moduleStyle|enum|plain pills hover|Подложка модулей"
+  "moduleBackground|color|foreground|Цвет подложки модулей"
+  "moduleAlpha|num|0 1 0.02 0.08|Альфа подложки модулей"
+  "spacing|num|0 20 2 0|Зазор между модулями"
+  "shadow|bool|false|Тень"
+  "glow|bool|false|Свечение цветом рамки"
+  "autoHide|bool|false|Авто-скрытие (выезжает по наведению)"
+  "transparent|bool|false|Прозрачный (сток, текст по обоям)"
+  "font|font||Шрифт"
+  "wsLabelStyle|enum|omarchy numbers circled circled-filled circled-sans circled-sans-filled parens fullwidth superscript roman roman-small kanji greek cyrillic braille dots squares diamonds stars triangles hearts hexagons bars none|Workspaces: подписи"
+  "wsWindowIcons|bool|false|Workspaces: иконки окон"
+  "wsIconStyle|enum|color mono tinted accent bubble faded glyph letter dots count|Workspaces: стиль иконок окон"
+  "wsMaxIcons|num|1 8 1 3|Workspaces: иконок на workspace (дальше +N)"
+  "wsDedupe|bool|true|Workspaces: одно приложение — одна иконка"
+  "wsShown|num|1 10 1 5|Workspaces: сколько видно всегда"
+  "wsShowEmpty|bool|true|Workspaces: показывать пустые"
+  "wsActivePill|bool|false|Workspaces: плашка под активным"
+  "compact|enum|off single fullscreen always|Compact: когда сжимать"
+  "compactHeight|num|0 40 2 22|Compact: высота"
+  "compactModules|enum|essentials all center minimal|Compact: какие модули видны"
+  "compactShape|enum|full same floating pill notch underline hug|Compact: форма"
+  "compactAlpha|num|-1 1 0.05 -1|Compact: альфа фона"
+  "compactReserve|enum|keep shrink|Compact: место под баром"
+  "compactExpandOnHover|bool|true|Compact: разворачивать по наведению"
+)
+
+# Как показывать дефолт в подписи: особые значения — словами.
+default_label() {
+  case "$1:$2" in
+  height:0) echo "авто" ;;
+  compactHeight:0) echo "не менять" ;;
+  compactAlpha:-1) echo "как обычно" ;;
+  compact:off) echo "выкл" ;;
+  compact:single) echo "одно окно на workspace" ;;
+  compact:fullscreen) echo "полноэкранное окно" ;;
+  compact:always) echo "всегда" ;;
+  compactModules:essentials) echo "essentials (меню, workspaces, часы, сеть, звук, питание)" ;;
+  compactModules:center) echo "center (только центр)" ;;
+  compactModules:minimal) echo "minimal (workspaces + часы)" ;;
+  compactModules:all) echo "all (все)" ;;
+  compactShape:same) echo "same (как обычно)" ;;
+  compactReserve:keep) echo "keep (прежнее, окна не дёргаются)" ;;
+  compactReserve:shrink) echo "shrink (окна получают место)" ;;
+  padding:-1) echo "сток" ;;
+  backgroundAlpha:-1) echo "из темы" ;;
+  gradient:none) echo "нет" ;;
+  font:) echo "системный" ;;
+  *:bar) echo "bar (цвет темы)" ;;
+  *) echo "$2" ;;
+  esac
+}
+
+tweak_spec() {
+  local t
+  for t in "${TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$t"; return; }; done
+  return 1
+}
+
+# Роли для цветовых параметров: стоковый цвет бара, роли шелла и ключи colors.toml темы.
+color_roles() {
+  local colors="$HOME/.local/state/omarchy/current/theme/colors.toml"
+  printf '%s\n' bar background foreground accent muted urgent
+  awk -F'=' '/^[a-z_]+ *= *"#/ { gsub(/ /, "", $1); print $1 }' "$colors" 2>/dev/null |
+    grep -vxE 'background|foreground|accent|muted'
+}
+
+font_list() {
+  echo ""
+  fc-list : family | tr ',' '\n' | grep -iE 'nerd font$|( |^)NF$' | sort -u
+}
+
+tweak_value() {
+  local key=$1 def=$2
+  if [[ $key == transparent ]]; then jq -r '.bar.transparent // false' "$SHELL_JSON"; return; fi
+  { [[ -s $BAR_SKIN ]] && cat "$BAR_SKIN" || echo '{}'; } |
+    jq -r --arg k "$key" --arg d "$def" 'if has($k) and .[$k] != null then .[$k] | tostring else $d end'
+}
+
+# Следующий элемент списка по кругу: $1 = текущее, $2 = +1/-1, остальное — список.
+cycle() {
+  local cur=$1 dir=$2 i n
+  shift 2
+  local -a list=("$@")
+  n=${#list[@]}
+  for ((i = 0; i < n; i++)); do [[ ${list[i]} == "$cur" ]] && break; done
+  # Не нашли (значение задано руками): вперёд — первый, назад — последний.
+  if ((i == n)); then
+    if ((dir > 0)); then i=$((n - 1)); else i=0; fi
+  fi
+  echo "${list[((i + dir + n) % n)]}"
+}
+
+tweak() {
+  local key=$1 how=$2 spec kind args cur next dir=1
+  spec=$(tweak_spec "$key") || exit 1
+  IFS='|' read -r _ kind args _ <<<"$spec"
+  [[ $how == - ]] && dir=-1
+  if [[ $how == reset ]]; then
+    if [[ $key == transparent ]]; then
+      set_transparent false
+    fi
+    skin_edit --arg k "$key" 'del(.[$k])'
+    return
+  fi
+  case "$kind" in
+  enum)
+    read -ra list <<<"$args"
+    next=$(cycle "$(tweak_value "$key" "${list[0]}")" "$dir" "${list[@]}")
+    skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'
+    ;;
+  font)
+    mapfile -t list < <(font_list)
+    next=$(cycle "$(tweak_value "$key" "")" "$dir" "${list[@]}")
+    skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'
+    ;;
+  bool)
+    cur=$(tweak_value "$key" "$args")
+    next=$([[ $cur == true ]] && echo false || echo true)
+    if [[ $key == transparent ]]; then
+      set_transparent "$next"
+      skin_edit --argjson v "$next" '.transparent = $v'
+    else
+      skin_edit --arg k "$key" --argjson v "$next" '.[$k] = $v'
+    fi
+    ;;
+  num)
+    local lo hi step def
+    read -r lo hi step def <<<"$args"
+    cur=$(tweak_value "$key" "$def")
+    next=$(awk -v c="$cur" -v d="$dir" -v lo="$lo" -v hi="$hi" -v s="$step" 'BEGIN {
+      # -1 = «как в стоке»: шаг вверх от него сразу на ноль.
+      if (lo == -1 && c < 0) { v = d > 0 ? 0 : -1 }
+      else { v = c + d * s; v = int(v / s + (v >= 0 ? 0.5 : -0.5)) * s; if (lo == -1 && v < 0) v = -1 }
+      if (v < lo) v = lo; if (v > hi) v = hi
+      if (s == int(s)) printf "%d", v; else { out = sprintf("%.2f", v); sub(/0+$/, "", out); sub(/\.$/, "", out); print out }
+    }')
+    skin_edit --arg k "$key" --argjson v "$next" '.[$k] = $v'
+    ;;
+  color)
+    if [[ $how == pick ]]; then
+      local picked
+      picked=$(zenity --color-selection --title="Bar: $key" 2>/dev/null) || exit 0
+      # zenity отдаёт rgb(r,g,b) — переводим в #rrggbb.
+      next=$(sed -E 's/rgba?\(([0-9]+),([0-9]+),([0-9]+).*/\1 \2 \3/' <<<"$picked" | xargs printf '#%02x%02x%02x')
+    else
+      mapfile -t list < <( [[ $key == gradient ]] && echo none; color_roles)
+      next=$(cycle "$(tweak_value "$key" "$args")" "$dir" "${list[@]}")
+    fi
+    if [[ $next == none ]]; then
+      skin_edit --arg k "$key" 'del(.[$k])'
+    else
+      skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'
+    fi
+    ;;
+  esac
+}
+
+bar_skin_preview() {
+  cp "$1" "$BAR_SKIN"
+  set_transparent "$(jq -r '.transparent // false' "$1")"
+}
+
+bar_skin_restore() {
+  # Overlay зовёт это только после превью, так что снимок свежий.
+  [[ -f $SKIN_BACKUP ]] && cp "$SKIN_BACKUP" "$BAR_SKIN"
+  [[ -f $TRANSPARENT_BACKUP ]] && set_transparent "$(cat "$TRANSPARENT_BACKUP")"
+}
+
 list() {
   case "$1" in
   anims)
@@ -114,13 +364,52 @@ list() {
       printf '%s\t%s\t%s\t%s\n' "$(basename "$f" .lua)" "$f" "$f" "$cur"
     done
     ;;
-  layouts)
-    local f
-    for f in "$LAYOUT_DIR"/shell-*.json; do
+  bar-layouts)
+    local f cur
+    cur=$(current_layout)
+    printf '%s\t%s\t\t0\t%s\n' "💾 Сохранить текущую как пресет…" "save" \
+      "Записать раскладку из shell.json в apps/omarchy-shell/bar/layouts/<имя>.json."
+    for f in "$BAR_DIR"/layouts/*.json; do
       [[ -f $f ]] || continue
-      local cur=0
-      cmp -s "$f" "$LAYOUT_DIR/shell.json" && cur=1
-      printf '%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" "$cur"
+      printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \
+        "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" \
+        "$(jq -r '.note // ""' "$f")  ·  $(layout_summary "$f")"
+    done
+    ;;
+  bar-skins)
+    # Снимок того, что сейчас на баре; превью перезаписывают его до bar-skins-restore.
+    if [[ -s $BAR_SKIN ]]; then cp "$BAR_SKIN" "$SKIN_BACKUP"; else echo '{}' >"$SKIN_BACKUP"; fi
+    jq -r '.bar.transparent // false' "$SHELL_JSON" >"$TRANSPARENT_BACKUP"
+    local f cur
+    cur=$(current_skin)
+    for f in "$BAR_DIR"/skins/*.json; do
+      [[ -f $f ]] || continue
+      printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \
+        "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" "$(jq -r '.note // ""' "$f")"
+    done
+    ;;
+  bar-tweaks)
+    local t key kind args label def v hint
+    for t in "${TWEAKS[@]}"; do
+      IFS='|' read -r key kind args label <<<"$t"
+      case "$kind" in
+      num) def=${args##* } hint="h/l или −/+ — шаг $(awk '{print $3}' <<<"$args"), пределы $(awk '{print $1 " … " $2}' <<<"$args")" ;;
+      enum) def=${args%% *} hint="h/l — по кругу: $args" ;;
+      color) def=$args hint="h/l — роли темы (bar = стоковый цвет бара) · ⏎ — свой цвет" ;;
+      bool) def=$args hint="h/l или ⏎ — вкл/выкл" ;;
+      font) def="" hint="h/l — Nerd-шрифты из fc-list; пусто = системный" ;;
+      esac
+      v=$(tweak_value "$key" "$def")
+      local mark="" long deflong
+      [[ $v != "$def" ]] && mark="●  "
+      long=$(default_label "$key" "$v")
+      deflong=$(default_label "$key" "$def")
+      # В строке списка — короткое значение (до скобки), полностью — в превью.
+      # Заметка: литеральные \n, overlay превращает их в переводы строк.
+      # 6-е поле — подпись под строкой в списке (по умолчанию).
+      printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$label:  ${long%% (*}" "$key" "$BAR_SKIN" \
+        "Сейчас: $long"'\n'"По умолчанию: $deflong"'\n\n'"$hint · x — сбросить к умолчанию" \
+        "по умолчанию: ${deflong%% (*}"
     done
     ;;
   themes)
@@ -197,11 +486,28 @@ apply() {
     hyprctl reload >/dev/null 2>&1
     notify-send -t 2000 "Animations" "Loaded: $(basename "$value" .lua)"
     ;;
-  layouts)
-    # shell.json hot-reloads, so no shell restart (it would kill this overlay too).
-    cp "$value" "$LAYOUT_DIR/shell.json"
-    notify-send -t 2000 "Shell Layout" "Applied: $(basename "$value")"
+  bar-layouts)
+    if [[ $value == save ]]; then
+      local name
+      name=$(zenity --entry --title="Bar layout" --text="Имя пресета:" 2>/dev/null) || exit 0
+      name=$(tr -cs 'A-Za-z0-9_-' '-' <<<"$name" | sed 's/^-*//; s/-*$//')
+      [[ -n $name ]] || exit 0
+      jq --arg n "Сохранено $(date +%F)" '.bar | {note: $n, position, centerAnchor, layout}' "$SHELL_JSON" \
+        >"$BAR_DIR/layouts/$name.json"
+      notify-send -t 2000 "Bar Layout" "Saved: $name"
+      exit 0
+    fi
+    # shell.json перечитывается на лету, рестарт шелла не нужен (он убил бы и overlay).
+    # Остальное (plugins, idle, bar.id, transparent) не трогаем.
+    shell_edit --slurpfile p "$value" '.bar += ($p[0] | del(.note))'
+    notify-send -t 2000 "Bar Layout" "Applied: $(basename "$value" .json)"
     ;;
+  bar-skins)
+    bar_skin_preview "$value"
+    cp "$BAR_SKIN" "$SKIN_BACKUP"
+    notify-send -t 2000 "Bar Skin" "Applied: $(basename "$value" .json)"
+    ;;
+  bar-tweaks) tweak "$value" pick ;;
   themes)
     notify-send -t 3000 "Theme" "Applying $value..."
     omarchy theme set "$value"
@@ -268,6 +574,8 @@ status() {
   printf 'shader\t%s\n' "$(current_shader)"
   printf 'opacity\t%s\n' "$("$OPACITY" current 2>/dev/null)"
   printf 'blur\t%s\n' "$("$BLUR" current 2>/dev/null)"
+  printf 'bar-skin\t%s\n' "$(current_skin)"
+  printf 'bar-layout\t%s\n' "$(current_layout)"
   # Numbers for the preview stage: "active inactive" / "size passes vibrancy noise".
   printf 'opacity-values\t%s\n' "$("$OPACITY" list 2>/dev/null | awk '$4 == 1 { print $2, $3 }')"
   printf 'blur-values\t%s\n' "$("$BLUR" list 2>/dev/null | awk '$6 == 1 { print $2, $3, $4, $5 }')"
@@ -282,6 +590,9 @@ opacity-preview) "$OPACITY" preview "$2" ;;
 opacity-restore) "$OPACITY" restore ;;
 blur-preview) "$BLUR" preview "$2" ;;
 blur-restore) "$BLUR" restore ;;
+bar-skins-preview) bar_skin_preview "$2" ;;
+bar-skins-restore) bar_skin_restore ;;
+tweak) tweak "$2" "${3:-+}" ;;
 anim-preview)
   cp "$2" "$ANIM_ACTIVE"
   hyprctl reload >/dev/null 2>&1
@@ -295,7 +606,7 @@ anim-restore)
   ;;
 apply) apply "$2" "$3" ;;
 *)
-  echo "usage: $0 list|status|thumbs|anim-preview|anim-restore|opacity-preview|opacity-restore|blur-preview|blur-restore|apply ..." >&2
+  echo "usage: $0 list|status|thumbs|anim-preview|anim-restore|opacity-preview|opacity-restore|blur-preview|blur-restore|bar-skins-preview|bar-skins-restore|tweak|apply ..." >&2
   exit 1
   ;;
 esac
