@@ -42,6 +42,10 @@ $character"""
 [directory]
 style = "blue"
 
+# # ✦ = счётчик фоновых job; atuin.nu спавнит job на каждом prompt
+# [jobs]
+# disabled = true
+
 [character]
 success_symbol = "[❯](green)"
 error_symbol = "[❯](red)"
