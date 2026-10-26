@@ -20,7 +20,8 @@ let zoxide_completer = {|spans|
   $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD }
 }
 
-let multiple_completers = {|spans|
+let multiple_completers = {|place|
+  let spans = $place.command
   match $spans.0 {
     z => $zoxide_completer
     _ => $carapace_completer
