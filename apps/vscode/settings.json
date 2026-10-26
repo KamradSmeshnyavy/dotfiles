@@ -95,7 +95,7 @@
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "editor.cursorBlinking": "smooth",
   "editor.cursorStyle": "block",
-  "editor.fontFamily": "Maple Mono NF, Google Sans Code, Hack Nerd Font, SF Mono, SF Pro, Monaspace Radon, JetbrainsMono Nerd Font, Monaspace Argon, MonoLisa, Segoe UI Variable, Noto Sans SC, Monaspace Xenon, Franklin Gothic, Cascadia Code, Kristen ITC, Monaspace Neon, DejaVu Sans Mono, Inconsolata, Monaspace Krypton",
+  "editor.fontFamily": "Maple Mono NF CN, Google Sans Code, Hack Nerd Font, SF Mono, SF Pro, Monaspace Radon, JetbrainsMono Nerd Font, Monaspace Argon, MonoLisa, Segoe UI Variable, Noto Sans SC, Monaspace Xenon, Franklin Gothic, Cascadia Code, Kristen ITC, Monaspace Neon, DejaVu Sans Mono, Inconsolata, Monaspace Krypton",
   "editor.fontLigatures": true,
   "editor.fontVariations": true,
   "editor.fontSize": 16,
@@ -134,7 +134,7 @@
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.middleClickBehavior": "paste",
   "terminal.integrated.mouseWheelZoom": true,
-  "terminal.integrated.fontFamily": "MesloLGS NF, SF Mono, Monaco, 'Courier New', monospace",
+  "terminal.integrated.fontFamily": "Maple Mono NF CN, MesloLGS NF, SF Mono, Monaco, 'Courier New', monospace",
   "terminal.integrated.lineHeight": 1.2,
   "terminal.integrated.fontWeight": "650",
   "terminal.integrated.defaultProfile.osx": "zsh",
@@ -245,7 +245,7 @@
   "debug.console.historySuggestions": true,
   "debug.console.closeOnEnd": true,
   "debug.allowBreakpointsEverywhere": true,
-  "debug.console.fontFamily": "Maple Mono NF",
+  "debug.console.fontFamily": "Maple Mono NF CN",
   // * ╭───────────────────────────────────────────────────────╮
   // * │                    VSCode UI                          │
   // * ╰───────────────────────────────────────────────────────╯
@@ -323,7 +323,7 @@
   "scm.alwaysShowRepositories": true,
   "scm.countBadge": "off",
   "scm.autoReveal": true,
-  "scm.inputFontFamily": "Maple Mono NF",
+  "scm.inputFontFamily": "Maple Mono NF CN",
   // * ╭───────────────────────────────────────────────────────╮
   // * │                    extensions                         │
   // * ╰───────────────────────────────────────────────────────╯
@@ -367,7 +367,7 @@
     "buttonsEnabled": true
   },
   "errorLens.gutterIconsEnabled": true,
-  "errorLens.fontFamily": "Maple Mono NF",
+  "errorLens.fontFamily": "Maple Mono NF CN",
   "errorLens.fontWeight": "100",
   "leetcode.endpoint": "leetcode",
   "leetcode.nodePath": "/opt/homebrew/bin/node",
@@ -472,7 +472,7 @@
   "piclist.customType": "<img src=\"$url\" alt=\"$fileName\"/>",
   "markdown.preview.linkify": false,
   "markdown.preview.typographer": true,
-  "markdown.preview.fontFamily": "Maple Mono NF",
+  "markdown.preview.fontFamily": "Maple Mono NF CN",
   "markdown.preview.scrollEditorWithPreview": false,
   "markdown.copyFiles.destination": {
     "*": "./assets/${documentBaseName}.${fileExtName}"

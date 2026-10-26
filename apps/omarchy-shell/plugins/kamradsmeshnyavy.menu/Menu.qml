@@ -290,7 +290,9 @@ Item {
   // shell started shows up without restarting it.
   readonly property var providers: ({
     "fonts": {
-      script: "current=$(omarchy-font-current 2>/dev/null); omarchy-font-list 2>/dev/null | while read -r f; do [[ -z $f ]] && continue; printf '%s\\t%s\\t%s\\n' \"$f\" \"$f\" \"$current\"; done",
+      // omarchy-font-list keeps only spacing=100 fonts; dual-width ones (spacing=90,
+      // e.g. Maple Mono NF CN with CJK glyphs) are monospace for Latin too, so list them.
+      script: "current=$(omarchy-font-current 2>/dev/null); { omarchy-font-list 2>/dev/null; fc-list :spacing=90 -f '%{family[0]}\\n' 2>/dev/null; } | grep -v -i -E 'emoji|signwriting|omarchy' | sort -u | while read -r f; do [[ -z $f ]] && continue; printf '%s\\t%s\\t%s\\n' \"$f\" \"$f\" \"$current\"; done",
       icon: "",
       volatile: true,
       actionFor: function(value) { return "omarchy-font-set " + Util.shellQuote(value) }
