@@ -55,7 +55,7 @@ font-feature = "ss04"
 font-feature = "liga"
 # font-thicken = true
 font-thicken-strength = 255
-# font-feature = -calt, -liga, -dlig
+font-feature = -calt, -liga, -dlig
 
 # background
 # background-opacity = 0.80
