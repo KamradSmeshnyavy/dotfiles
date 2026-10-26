@@ -6,6 +6,8 @@ import QtQuick 6.11
 import QtQuick.Effects
 import qs.Commons
 import qs.Ui
+// TransitionEffect — тот же шейдер переходов, что у обоев (превью Wallpaper FX).
+import "../kamradsmeshnyavy.background"
 
 // Quickshell port of scripts/bin/omarchy-customizer (the old fzf menu on
 // SUPER+SHIFT+T). Header with what is in use now, then three panes:
@@ -37,7 +39,9 @@ Item {
     { key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
     { key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true },
     { key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — показать вживую · T — превью",     image: true,  live: false },
-    { key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true }
+    { key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true },
+    { key: "wallpaper-fx", icon: "󰸉", title: "Wallpaper FX", hint: "Переходы обоев · p — проиграть",         image: false, live: false, fx: true },
+    { key: "theme-switcher", icon: "󰸌", title: "Theme Switcher", hint: "Стиль пикера · ⚡ кэш · p — открыть", image: false, live: false, picker: true }
   ]
 
   // Tweaks rows whose ⏎ opens a picker (color, text, file) instead of stepping.
@@ -76,6 +80,8 @@ Item {
   property var themePalette: ({})    // colors.toml of the current theme, for the bar mock
   property var activeSkin: ({})      // ~/.config/omarchy/bar-skin.json
   property var activeBar: ({})       // ~/.config/omarchy/shell.json .bar
+  property var activeFx: ({})        // ~/.config/omarchy/wallpaper-transition.json
+  property var activePicker: ({})    // ~/.config/omarchy/image-picker.json
 
   readonly property var category: categories[categoryIndex]
   property var selectedRow: null     // set by selectionChanged(); ListModel.get() isn't reactive
@@ -308,7 +314,7 @@ Item {
       return
     }
     if (!root.selectedRow) return
-    if (root.category.tweak && root.colorTweaks.indexOf(root.selectedRow.value) === -1) root.tweak("+")
+    if (root.isTweakRow(root.selectedRow) && root.colorTweaks.indexOf(root.tweakKey(root.selectedRow)) === -1) root.tweak("+")
     else root.run(root.selectedRow.value)
   }
 
@@ -318,10 +324,16 @@ Item {
   // in pendingTweak and runs when the previous one exits, and the list is only
   // re-read once the steps stop. Killing a running lister to restart it used to
   // deliver its partial output and drop the selection back to the first row.
+  // Строка-настройка: вся категория tweak или строка "tweak:<key>" внутри галереи.
+  function isTweakRow(row) {
+    return row !== null && (root.category.tweak === true || /^tweak:/.test(row.value))
+  }
+  function tweakKey(row) { return String(row.value).replace(/^tweak:/, "") }
+
   function tweak(dir) {
-    if (!root.category.tweak || root.pane !== 1 || !root.selectedRow) return
+    if (root.pane !== 1 || !root.selectedRow || !root.isTweakRow(root.selectedRow)) return
     if (tweaker.running) { root.pendingTweak = dir; return }
-    tweaker.key = root.selectedRow.value
+    tweaker.key = root.tweakKey(root.selectedRow)
     tweaker.command = [root.script, "tweak", tweaker.key, dir]
     tweaker.running = true
   }
@@ -329,7 +341,7 @@ Item {
   function tweakDone() {
     var next = root.pendingTweak
     root.pendingTweak = ""
-    if (next && root.category.tweak && root.selectedRow && root.selectedRow.value === tweaker.key) {
+    if (next && root.selectedRow && root.isTweakRow(root.selectedRow) && root.tweakKey(root.selectedRow) === tweaker.key) {
       tweaker.command = [root.script, "tweak", tweaker.key, next]
       tweaker.running = true
       return
@@ -391,7 +403,7 @@ Item {
     var out = []
     for (var i = 0; i < displayModel.count; i++) {
       var r = displayModel.get(i)
-      if (/^(pick-|toggle$|next$|save$|regen-thumbs$)/.test(r.value) || r.current || i === root.selectedIndex) continue
+      if (/^(pick-|toggle$|next$|save$|regen-thumbs$|tweak:|cache$|prune$|none$)/.test(r.value) || r.current || i === root.selectedIndex) continue
       out.push(i)
     }
     return out
@@ -427,6 +439,15 @@ Item {
     if (id === "regen-thumbs") return
     root.dismiss()
     Quickshell.execDetached([root.script, "lock-preview", id])
+  }
+
+  // Wallpaper FX: выбрать эффект строки (если это эффект) и проиграть его на рабочем столе.
+  function playFx() {
+    var row = root.selectedRow
+    var effect = row && !root.isTweakRow(row) ? row.value : ""
+    root.dismiss()
+    Quickshell.execDetached(["bash", "-c", (effect ? '"$0" apply wallpaper-fx "$1" && ' : "") + 'sleep 0.3; "$0" fx-replay',
+      root.script, effect])
   }
 
   function thumbUrl(path) {
@@ -472,6 +493,11 @@ Item {
     if (root.pane === 0) return [["j k", "category"], ["l ⏎", "open"], ["1–9 0", "jump"], ["/", "search"], ["?", "keys"], ["q", "close"]]
     if (root.category.key === "lock-tweaks") return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick"], ["p", "preview"], ["Esc", "back"]]
     if (root.category.tweak) return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick color"], ["Esc", "back"], ["?", "keys"]]
+    if (root.category.fx || root.category.picker) {
+      var tw = root.isTweakRow(root.selectedRow)
+      return tw ? [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["p", root.category.fx ? "play" : "open"], ["Esc", "back"]]
+        : [["j k", "move"], ["⏎", "apply"], ["p", root.category.fx ? "play on desktop" : "open switcher"], ["/", "search"], ["h", "back"], ["?", "keys"]]
+    }
     if (root.category.key === "lock") return [["j k", "move"], ["⏎", "apply"], ["p", "preview live"], ["T", "refresh previews"], ["/", "search"], ["h", "back"], ["?", "keys"]]
     var h = [["j k", "move"], ["⏎", "apply"], ["/", "search"], ["h", "back"]]
     if (root.category.key !== "walls") h.push(["r", "random"])
@@ -526,6 +552,24 @@ Item {
     onFileChanged: reload()
     onLoaded: root.activeSkin = root.parseJson(text())
     onLoadFailed: root.activeSkin = ({})
+  }
+
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/wallpaper-transition.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.activeFx = root.parseJson(text())
+    onLoadFailed: root.activeFx = ({})
+  }
+
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/image-picker.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.activePicker = root.parseJson(text())
+    onLoadFailed: root.activePicker = ({})
   }
 
   FileView {
@@ -687,12 +731,14 @@ Item {
             return
           }
 
-          var tweaking = root.category.tweak && root.pane === 1 && !ctrl
+          var tweaking = root.pane === 1 && !ctrl && root.isTweakRow(root.selectedRow)
           if (tweaking && (t === "h" || t === "-" || k === Qt.Key_Left)) root.tweak("-")
           else if (tweaking && (t === "l" || t === "+" || t === "=" || k === Qt.Key_Right)) root.tweak("+")
           else if (tweaking && t === "x") root.tweak("reset")
           else if (!ctrl && t === "p" && (root.category.key === "lock" || root.category.key === "lock-tweaks")) root.previewLock()
           else if (!ctrl && t === "T" && root.category.key === "lock") root.run("regen-thumbs")
+          else if (!ctrl && t === "p" && root.category.key === "wallpaper-fx") root.playFx()
+          else if (!ctrl && t === "p" && root.category.key === "theme-switcher") { root.dismiss(); Quickshell.execDetached([root.script, "picker-open"]) }
           else if (ctrl && root.category.key === "walls" && k === Qt.Key_O) root.run("pick-files")
           else if (ctrl && (k === Qt.Key_D)) root.move(root.halfPage())
           else if (ctrl && (k === Qt.Key_U)) root.move(-root.halfPage())
@@ -1350,8 +1396,8 @@ Item {
                 anchors.fill: parent
                 visible: root.category.image
                 source: root.category.image && root.selectedRow && root.selectedRow.preview ? root.fileUrl(root.selectedRow.preview) : ""
-                sourceSize.width: Math.max(1, previewBox.width * 1.5)
-                sourceSize.height: Math.max(1, previewBox.height * 1.5)
+                sourceSize.width: Math.max(1, previewBox.width * 2)
+                sourceSize.height: Math.max(1, previewBox.height * 2)
                 fillMode: root.category.key === "themes" ? Image.PreserveAspectFit : Image.PreserveAspectCrop
                 asynchronous: true
                 cache: false
@@ -1572,12 +1618,133 @@ Item {
                 }
               }
 
+              // Wallpaper FX: выбранный эффект крутится между текущими и следующими обоями.
+              Item {
+                id: fxStage
+                anchors.fill: parent
+                visible: root.category.fx === true && root.selectedRow !== null
+                readonly property string effect: {
+                  var row = root.selectedRow
+                  var e = row && !root.isTweakRow(row) ? row.value : String(root.activeFx.type || "slant")
+                  return e === "none" || e === "random" ? "fade" : e
+                }
+                readonly property int duration: Math.max(150, Number(root.activeFx.duration) || 420)
+
+                ClippingRectangle {
+                  id: fxScreen
+                  anchors { top: parent.top; left: parent.left; right: parent.right; margins: Style.space(12) }
+                  height: width * 0.5625
+                  radius: root.innerRadius
+                  color: "transparent"
+
+                  Image {
+                    id: fxFrom
+                    anchors.fill: parent
+                    source: fxStage.visible && root.status["wallpaper-next"] ? root.fileUrl(root.status["wallpaper-next"]) : ""
+                    sourceSize.width: Math.max(1, fxScreen.width)
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                  }
+                  Image {
+                    id: fxTo
+                    anchors.fill: parent
+                    source: fxStage.visible && root.status.wallpaper ? root.fileUrl(root.status.wallpaper) : ""
+                    sourceSize.width: Math.max(1, fxScreen.width)
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                  }
+                  TransitionEffect {
+                    id: fxEffect
+                    anchors.fill: parent
+                    visible: fxStage.visible && fxFrom.status === Image.Ready && fxTo.status === Image.Ready
+                    fromItem: fxFrom
+                    toItem: fxTo
+                    effect: fxStage.effect
+                    angleDegrees: Number(root.activeFx.angle || 0)
+                    softness: root.activeFx.softness !== undefined ? Number(root.activeFx.softness) : 0.02
+                    origin: Qt.point(0.5, 0.5)
+                    // Цикл: переход (длительность из настроек), пауза, заново.
+                    SequentialAnimation on progress {
+                      running: fxEffect.visible
+                      loops: Animation.Infinite
+                      NumberAnimation { from: 0; to: 1; duration: fxStage.duration * 2; easing.type: Easing.InOutCubic }
+                      PauseAnimation { duration: 700 }
+                    }
+                  }
+                }
+
+                Flickable {
+                  anchors { top: fxScreen.bottom; bottom: parent.bottom; left: parent.left; right: parent.right; margins: Style.space(14) }
+                  contentHeight: fxNote.implicitHeight
+                  boundsBehavior: Flickable.StopAtBounds
+                  clip: true
+                  Text {
+                    id: fxNote
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    textFormat: Text.PlainText
+                    lineHeight: 1.2
+                    text: (root.selectedRow ? root.selectedRow.note : "") + "\n\nВ превью переход замедлен вдвое."
+                    color: root.foreground
+                    opacity: 0.85
+                    font.family: Style.font.family
+                    font.pixelSize: Style.font.body
+                  }
+                }
+              }
+
+              // Theme Switcher: макет карусели в выбранном (или текущем) стиле.
+              Item {
+                id: pickerStage
+                anchors.fill: parent
+                visible: root.category.picker === true && root.selectedRow !== null
+                readonly property string style: {
+                  var row = root.selectedRow
+                  return row && /^style:/.test(row.value) ? row.value.slice(6) : String(root.activePicker.style || "slices")
+                }
+
+                Rectangle {
+                  id: pickerScreen
+                  anchors { top: parent.top; left: parent.left; right: parent.right; margins: Style.space(12) }
+                  height: width * 0.42
+                  radius: root.innerRadius
+                  color: Util.alpha(Color.background, 0.9)
+                  clip: true
+                  PickerMock {
+                    anchors.fill: parent
+                    anchors.margins: Style.space(10)
+                    style: pickerStage.style
+                    config: root.activePicker
+                    images: root.status["picker-previews"] ? String(root.status["picker-previews"]).split("|") : []
+                  }
+                }
+
+                Flickable {
+                  anchors { top: pickerScreen.bottom; bottom: parent.bottom; left: parent.left; right: parent.right; margins: Style.space(14) }
+                  contentHeight: pickerNote.implicitHeight
+                  boundsBehavior: Flickable.StopAtBounds
+                  clip: true
+                  Text {
+                    id: pickerNote
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    textFormat: Text.PlainText
+                    lineHeight: 1.2
+                    text: root.selectedRow ? root.selectedRow.note : ""
+                    color: root.foreground
+                    opacity: 0.85
+                    font.family: Style.font.family
+                    font.pixelSize: Style.font.body
+                  }
+                }
+              }
+
               // Text previews (animations, layouts, shaders) as a code block.
               Flickable {
                 id: previewFlick
                 anchors.fill: parent
                 anchors.margins: Style.space(14)
-                visible: !root.category.image && !opacityStage.visible && !barStage.visible
+                visible: !root.category.image && !opacityStage.visible && !barStage.visible && !fxStage.visible && !pickerStage.visible
                 contentHeight: previewLabel.implicitHeight
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
@@ -1689,6 +1856,7 @@ Item {
                   ["h l  − +", "Bar Tweaks: change (hold)"], ["x", "Bar Tweaks: reset to default"],
                   ["⏎", "Bar Tweaks: step · pick color"], ["●", "Bar Tweaks: changed from default"],
                   ["p", "Lock: show design live (Esc closes)"], ["T", "Lock: refresh previews"],
+                  ["p", "Wallpaper FX: play · Theme Switcher: open"], ["h l", "FX / Switcher: settings rows"],
                   ["Esc", "back · revert live preview"], ["q", "close"]
                 ]
                 delegate: Row {

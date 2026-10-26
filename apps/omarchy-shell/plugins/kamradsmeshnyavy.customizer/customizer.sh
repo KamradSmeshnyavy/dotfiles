@@ -30,6 +30,10 @@ LOCK_PLUGIN="$HOME/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.lock"
 LOCK_CFG="$HOME/.config/omarchy/lock-design.json"
 LOCK_USER_DIR="$HOME/.config/omarchy/lock-designs"
 LOCK_THUMBS="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-customizer/lock"
+# Переходы обоев (kamradsmeshnyavy.background) и вид пикера тем/обоев (kamradsmeshnyavy.image-picker).
+FX_CFG="$HOME/.config/omarchy/wallpaper-transition.json"
+PICKER_CFG="$HOME/.config/omarchy/image-picker.json"
+PICKER_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/image-selector"
 # Файл, который правят твики (bar-skin.json или lock-design.json), — см. tweak_file.
 TW_FILE="$BAR_SKIN"
 SHELL_JSON="$HOME/.config/omarchy/shell.json"
@@ -224,6 +228,10 @@ default_label() {
   ownerMessage:) echo "Привет, $USER" ;;
   avatar:) echo "~/.face (или первая буква имени)" ;;
   wallpaperBlur:1) echo "1 (как в стоке)" ;;
+  expandedWidth:0 | expandedHeight:0 | sliceWidth:0 | sliceHeight:0) echo "из стиля" ;;
+  cardRadius:-1) echo "из стиля" ;;
+  scrimAlpha:-1) echo "из темы" ;;
+  duration:420) echo "420 (как в стоке)" ;;
   compactHeight:0) echo "не менять" ;;
   compactAlpha:-1) echo "как обычно" ;;
   compact:off) echo "выкл" ;;
@@ -258,9 +266,34 @@ LOCK_TWEAKS=(
   "avatar|file||Аватар"
 )
 
+# Настройки переходов обоев — строки tweak:<key> в категории Wallpaper FX.
+FX_TWEAKS=(
+  "duration|num|100 3000 50 420|Длительность, мс"
+  "easing|enum|InOutCubic InOutQuad InOutQuart InOutSine InOutExpo OutCubic OutExpo OutQuint OutBack OutBounce OutElastic InCubic InExpo Linear|Кривая"
+  "angle|num|0 345 15 0|Угол (wipe, wave, slide)"
+  "origin|enum|center cursor random|Откуда круг/капля"
+  "softness|num|0 0.2 0.01 0.02|Мягкость края"
+)
+
+# Вид пикера тем и обоев — строки tweak:<key> в категории Theme Switcher.
+# 0 / -1 = значение из стиля-пресета или темы (ключ в файле тогда не хранится).
+PICKER_TWEAKS=(
+  "expandedWidth|num|0 1600 20 0|Ширина выбранной"
+  "expandedHeight|num|0 1000 20 0|Высота выбранной"
+  "sliceWidth|num|0 600 10 0|Ширина соседних"
+  "sliceHeight|num|0 900 10 0|Высота соседних"
+  "cardRadius|num|-1 40 2 -1|Скругление"
+  "dim|num|0 0.9 0.05 0.42|Затемнение соседних"
+  "selectedBorder|num|0 8 1 3|Рамка выбранной"
+  "animMs|num|0 600 20 160|Анимация перелистывания, мс"
+  "scrimAlpha|num|-1 1 0.05 -1|Затемнение фона"
+  "labels|bool|false|Подписи всегда"
+  "autoCache|bool|false|Кэшировать обои при смене темы"
+)
+
 tweak_spec() {
   local t
-  for t in "${TWEAKS[@]}" "${LOCK_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$t"; return; }; done
+  for t in "${TWEAKS[@]}" "${LOCK_TWEAKS[@]}" "${FX_TWEAKS[@]}" "${PICKER_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$t"; return; }; done
   return 1
 }
 
@@ -268,6 +301,8 @@ tweak_spec() {
 tweak_file() {
   local t
   for t in "${LOCK_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$LOCK_CFG"; return; }; done
+  for t in "${FX_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$FX_CFG"; return; }; done
+  for t in "${PICKER_TWEAKS[@]}"; do [[ ${t%%|*} == "$1" ]] && { echo "$PICKER_CFG"; return; }; done
   echo "$BAR_SKIN"
 }
 
@@ -350,7 +385,12 @@ tweak() {
       if (v < lo) v = lo; if (v > hi) v = hi
       if (s == int(s)) printf "%d", v; else { out = sprintf("%.2f", v); sub(/0+$/, "", out); sub(/\.$/, "", out); print out }
     }')
-    skin_edit --arg k "$key" --argjson v "$next" '.[$k] = $v'
+    # Заглушка «из стиля / из темы» — ключ убираем, чтобы работал пресет пикера.
+    if [[ $TW_FILE == "$PICKER_CFG" && $next == "$def" && ($def == 0 || $def == -1) ]]; then
+      skin_edit --arg k "$key" 'del(.[$k])'
+    else
+      skin_edit --arg k "$key" --argjson v "$next" '.[$k] = $v'
+    fi
     ;;
   text)
     # Только ⏎ (pick): строку вводят в zenity; h/l ничего не делают.
@@ -435,10 +475,81 @@ lock_thumbs() {
   } | while read -r id; do
     omarchy-shell lock previewDesign "$id" >/dev/null
     sleep 1.5
-    grim -s 0.25 -t jpeg -q 85 "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg"
+    grim -s 1 -t jpeg -q 90 "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg"
   done
   omarchy-shell lock hidePreview >/dev/null
   notify-send -t 3000 "Lock" "Превью обновлены"
+}
+
+# Миниатюры пикеров заранее: theme switcher (все темы) и обои текущей темы.
+# Каталоги — ровно те же, что передают omarchy-theme-switcher / omarchy-theme-bg-switcher:
+# ключ кэша строк omarchy-menu-images — md5 списка каталогов.
+picker_cache() {
+  local start before after theme
+  start=$(date +%s)
+  before=$(find "$PICKER_CACHE" -maxdepth 1 -name '*.jpg' 2>/dev/null | wc -l)
+  notify-send -t 3000 "Theme Switcher" "Кэширую миниатюры…"
+  # --preload готовит previews/ (по превью на тему) и прогревает overlay.
+  omarchy-theme-switcher --preload >/dev/null 2>&1
+  omarchy-menu-images --cache-only "${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/theme-selector/previews" >/dev/null 2>&1
+  theme=$(theme_name)
+  omarchy-menu-images --cache-only "$HOME/.local/state/omarchy/current/theme/backgrounds" \
+    "$HOME/.config/omarchy/backgrounds/$theme" >/dev/null 2>&1
+  after=$(find "$PICKER_CACHE" -maxdepth 1 -name '*.jpg' 2>/dev/null | wc -l)
+  notify-send -t 4000 "Theme Switcher" "Готово за $(($(date +%s) - start)) с: новых миниатюр $((after - before))"
+}
+
+# Миниатюры, чей исходник исчез или изменился (размер:mtime не совпадает с index.tsv),
+# удаляются; индекс переписывается. --dry-run только считает. Работает строго внутри
+# $PICKER_CACHE (realpath-проверка).
+picker_prune() {
+  python3 - "$PICKER_CACHE" "${1:-}" <<'PRUNE'
+import os, sys
+cache = os.path.realpath(sys.argv[1])
+dry = sys.argv[2] == "--dry-run"
+index = os.path.join(cache, "index.tsv")
+keep, lines = set(), []
+try:
+    for line in open(index, encoding="utf-8", errors="replace"):
+        parts = line.rstrip("\n").split("\t")
+        if len(parts) != 3:
+            continue
+        path, sig, h = parts
+        try:
+            st = os.stat(path)
+        except OSError:
+            continue
+        if f"{st.st_size}:{int(st.st_mtime)}" == sig:
+            keep.add(h + ".jpg")
+            lines.append(line if line.endswith("\n") else line + "\n")
+except FileNotFoundError:
+    pass
+# Всё, на что ссылаются кэши строк (*.rows), тоже оставляем.
+for name in os.listdir(cache):
+    if name.endswith(".rows"):
+        for row in open(os.path.join(cache, name), encoding="utf-8", errors="replace"):
+            cols = row.rstrip("\n").split("\t")
+            if len(cols) == 2:
+                keep.add(os.path.basename(cols[1]))
+count = size = 0
+for name in os.listdir(cache):
+    if not name.endswith(".jpg") or name in keep:
+        continue
+    full = os.path.join(cache, name)
+    if not os.path.realpath(full).startswith(cache + os.sep) or not os.path.isfile(full):
+        continue
+    count += 1
+    size += os.path.getsize(full)
+    if not dry:
+        os.remove(full)
+if not dry:
+    tmp = index + ".prune.tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.writelines(dict.fromkeys(lines))
+    os.replace(tmp, index)
+verb = "Можно удалить" if dry else "Удалено"
+print(f"{verb}: {count} миниатюр, {size / 1024**3:.1f} ГБ; останется {len(keep)}")
+PRUNE
 }
 
 bar_skin_preview() {
@@ -490,6 +601,59 @@ list() {
     ;;
   bar-tweaks) list_tweaks TWEAKS "$BAR_SKIN" ;;
   lock-tweaks) list_tweaks LOCK_TWEAKS "$LOCK_CFG" ;;
+  wallpaper-fx)
+    # Сначала настройки (строки tweak:<key>), потом эффекты.
+    list_tweaks FX_TWEAKS "$FX_CFG" | awk -F'\t' 'BEGIN { OFS = "\t" } { $2 = "tweak:" $2; print }'
+    local cur e desc
+    cur=$(jq -r '.type // "slant"' "$FX_CFG" 2>/dev/null || echo slant)
+    while IFS='|' read -r e desc; do
+      printf '%s\t%s\t\t%s\t%s\n' "$e" "$e" "$([[ $e == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"⏎ — выбрать · p — проиграть на рабочем столе"
+    done <<'EFFECTS'
+slant|Косая шторка от центра — как в стоке Omarchy
+fade|Плавное растворение
+wipe|Шторка по направлению «Угол»
+wave|Шторка с волнистым краем
+grow|Круг растёт из точки (center / cursor / random)
+outer|Круг сжимается к точке — новые обои приходят с краёв
+diamond|Ромб из точки
+clock|Радиальная развёртка, как стрелка часов
+blinds|Жалюзи
+doors|Двери: раскрытие от середины
+mosaic|Квадраты в случайном порядке
+dissolve|Пиксельный шум
+pixelize|Укрупнение пикселей и обратно
+ripple|Круги на воде
+swirl|Закрутка к центру
+crosszoom|Радиальное размытие с приближением
+slide|Новые обои выталкивают старые (по «Углу»)
+zoom|Старые улетают вперёд, новые проявляются
+glitch|Рваные полосы и разъезд каналов
+burn|Прогорание пятнами с раскалённым краем
+waterdrop|Капля: волны от точки с затуханием
+hexagon|Соты открываются от центра
+random|Каждый раз случайный эффект
+none|Без анимации
+EFFECTS
+    ;;
+  theme-switcher)
+    printf '%s\t%s\t\t0\t%s\n' "⚡ Закэшировать миниатюры" "cache" \
+      "Сделать миниатюры для theme switcher (все темы) и для обоев текущей темы заранее, чтобы пикеры открывались сразу."'\n\n'"Кэш: $PICKER_CACHE ($(du -sh "$PICKER_CACHE" 2>/dev/null | cut -f1))"
+    printf '%s\t%s\t\t0\t%s\n' "🧹 Очистить неиспользуемые миниатюры" "prune" \
+      "Удалить миниатюры картинок, которых больше нет или которые изменились. Миниатюры существующих картинок остаются."'\n\n'"$(picker_prune --dry-run 2>/dev/null)"
+    list_tweaks PICKER_TWEAKS "$PICKER_CFG" | awk -F'\t' 'BEGIN { OFS = "\t" } { $2 = "tweak:" $2; print }'
+    local cur st desc
+    cur=$(jq -r '.style // "slices"' "$PICKER_CFG" 2>/dev/null || echo slices)
+    while IFS='|' read -r st desc; do
+      printf '%s\t%s\t\t%s\t%s\n' "$st" "style:$st" "$([[ $st == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"⏎ — выбрать · p — открыть theme switcher"
+    done <<'STYLES'
+slices|Скошенные ломтики — как в стоке Omarchy
+cards|Ровные карточки со скруглением
+coverflow|Соседи повёрнуты в 3D, как в iTunes
+strip|Лента одинаковых карточек, выбранная крупнее
+wide|Огромное превью и тонкие ломтики
+polaroid|Карточки в белой рамке с подписью
+STYLES
+    ;;
   lock)
     local cur id name file thumb
     cur=$(lock_current)
@@ -605,6 +769,29 @@ apply() {
     notify-send -t 2000 "Bar Skin" "Applied: $(basename "$value" .json)"
     ;;
   bar-tweaks | lock-tweaks) tweak "$value" pick ;;
+  wallpaper-fx)
+    if [[ $value == tweak:* ]]; then tweak "${value#tweak:}" pick; exit 0; fi
+    TW_FILE="$FX_CFG"
+    skin_edit --arg t "$value" '.type = $t'
+    notify-send -t 2000 "Wallpaper FX" "Переход: $value"
+    ;;
+  theme-switcher)
+    case "$value" in
+    tweak:*) tweak "${value#tweak:}" pick ;;
+    cache) picker_cache ;;
+    prune)
+      local info
+      info=$(picker_prune --dry-run)
+      zenity --question --title="Кэш миниатюр" --text="$info\n\nУдалить?" 2>/dev/null || exit 0
+      notify-send -t 4000 "Theme Switcher" "$(picker_prune)"
+      ;;
+    style:*)
+      TW_FILE="$PICKER_CFG"
+      skin_edit --arg s "${value#style:}" '.style = $s'
+      notify-send -t 2000 "Theme Switcher" "Стиль: ${value#style:}"
+      ;;
+    esac
+    ;;
   lock)
     if [[ $value == regen-thumbs ]]; then lock_thumbs; exit 0; fi
     lock_edit --arg d "$value" '.design = $d'
@@ -679,6 +866,15 @@ status() {
   printf 'bar-skin\t%s\n' "$(current_skin)"
   printf 'bar-layout\t%s\n' "$(current_layout)"
   printf 'lock\t%s\n' "$(lock_current)"
+  printf 'fx\t%s\n' "$(jq -r '.type // "slant"' "$FX_CFG" 2>/dev/null || echo slant)"
+  # Для макетов в превью: вторые обои темы и 7 превью тем вокруг текущей.
+  local cur_bg
+  cur_bg=$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null)
+  printf 'wallpaper-next\t%s\n' "$(images_in "$(dirname "$cur_bg")" 1 | grep -vxF "$cur_bg" | head -n 1)"
+  printf 'picker-previews\t%s\n' "$(find -L "${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/theme-selector/previews" -maxdepth 1 -type f 2>/dev/null |
+    sort | awk -v cur="$(theme_name)" '{ a[NR] = $0; n = $0; sub(/.*\//, "", n); sub(/\.[^.]+$/, "", n); if (n == cur) c = NR }
+      END { if (!c) c = 4; s = c - 3; if (s < 1) s = 1; e = s + 6; if (e > NR) e = NR
+            for (i = s; i <= e; i++) printf "%s%s", (i > s ? "|" : ""), a[i] }')"
   # Numbers for the preview stage: "active inactive" / "size passes vibrancy noise".
   printf 'opacity-values\t%s\n' "$("$OPACITY" list 2>/dev/null | awk '$4 == 1 { print $2, $3 }')"
   printf 'blur-values\t%s\n' "$("$BLUR" list 2>/dev/null | awk '$6 == 1 { print $2, $3, $4, $5 }')"
@@ -698,6 +894,9 @@ bar-skins-restore) bar_skin_restore ;;
 tweak) tweak "$2" "${3:-+}" ;;
 lock-preview) omarchy-shell lock previewDesign "${2:-}" >/dev/null ;;
 lock-thumbs) lock_thumbs ;;
+fx-replay) omarchy-shell background replay >/dev/null ;;
+picker-cache) picker_cache ;;
+picker-open) setsid -f omarchy-theme-switcher >/dev/null 2>&1 ;;
 anim-preview)
   cp "$2" "$ANIM_ACTIVE"
   hyprctl reload >/dev/null 2>&1
