@@ -6,3 +6,7 @@
 ~/dotfiles/omarchy-themes/scripts/omarchy-darkreader sync 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-stylus sync 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys sync 2>/dev/null || true
+# Customizer → Theme Switcher → «Кэшировать обои при смене темы» (autoCache в image-picker.json).
+if jq -e '.autoCache == true' ~/.config/omarchy/image-picker.json >/dev/null 2>&1; then
+  (~/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/customizer.sh picker-cache >/dev/null 2>&1 &)
+fi
