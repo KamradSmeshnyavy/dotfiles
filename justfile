@@ -57,6 +57,13 @@ app-themes:
 bar-upstream-diff:
     diff -u "${OMARCHY_PATH:-$HOME/.local/share/omarchy}/shell/plugins/bar/Bar.qml" {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.bar/Bar.qml || true
 
+# Пересобрать шейдер переходов обоев (kamradsmeshnyavy.background) после правки transition.frag
+[linux]
+shaders-wallpaper:
+    /usr/lib/qt6/bin/qsb --glsl "100 es,120,150" --hlsl 50 --msl 12 -O \
+      -o {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag.qsb \
+      {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag
+
 # Ссылки на dotfiles, которых нет в install/install.conf.yaml (сделаны вручную)
 [linux]
 check-links:

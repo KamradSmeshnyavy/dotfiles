@@ -62,17 +62,27 @@
   },
   "plugins": [
     {
+      "id": "kamradsmeshnyavy.background"
+    },
+    {
       "id": "kamradsmeshnyavy.customizer"
+    },
+    {
+      "id": "kamradsmeshnyavy.image-picker"
     },
     {
       "id": "kamradsmeshnyavy.lock"
     }
   ],
   "disabledPlugins": [
+    "omarchy.background",
+    "omarchy.image-picker",
     "omarchy.lock",
     "omarchy.menu"
   ],
   "cloneSourceRestores": [
+    "kamradsmeshnyavy.background",
+    "kamradsmeshnyavy.image-picker",
     "kamradsmeshnyavy.lock",
     "kamradsmeshnyavy.menu"
   ]

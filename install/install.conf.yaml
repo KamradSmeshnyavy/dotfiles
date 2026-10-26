@@ -102,6 +102,12 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.lock:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.lock
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.background:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.background
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.image-picker:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
+      if: "[ `uname` = Linux ]"
     # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
     ~/.config/omarchy/hooks/theme-set:
       path: omarchy-themes/hooks/theme-set
