@@ -212,6 +212,7 @@ TWEAKS=(
   "wsShown|num|1 10 1 5|Workspaces: сколько видно всегда"
   "wsShowEmpty|bool|true|Workspaces: показывать пустые"
   "wsActivePill|bool|false|Workspaces: плашка под активным"
+  "wsActiveColor|color|default|Workspaces: цвет текущего"
   "compact|enum|off single fullscreen always|Compact: когда сжимать"
   "compactHeight|num|0 40 2 22|Compact: высота"
   "compactModules|enum|essentials all center minimal|Compact: какие модули видны"
@@ -226,6 +227,7 @@ default_label() {
   case "$1:$2" in
   height:0) echo "авто" ;;
   ownerMessage:) echo "Привет, $USER" ;;
+  wsActiveColor:default) echo "как в стиле (omarchy — цвет текста, иначе accent)" ;;
   avatar:) echo "~/.face (или первая буква имени)" ;;
   wallpaperBlur:1) echo "1 (как в стоке)" ;;
   expandedWidth:0 | expandedHeight:0 | sliceWidth:0 | sliceHeight:0) echo "из стиля" ;;
@@ -412,10 +414,10 @@ tweak() {
       # zenity отдаёт rgb(r,g,b) — переводим в #rrggbb.
       next=$(sed -E 's/rgba?\(([0-9]+),([0-9]+),([0-9]+).*/\1 \2 \3/' <<<"$picked" | xargs printf '#%02x%02x%02x')
     else
-      mapfile -t list < <( [[ $key == gradient ]] && echo none; color_roles)
+      mapfile -t list < <( [[ $key == gradient ]] && echo none; [[ $key == wsActiveColor ]] && echo default; color_roles)
       next=$(cycle "$(tweak_value "$key" "$args")" "$dir" "${list[@]}")
     fi
-    if [[ $next == none ]]; then
+    if [[ $next == none || $next == default ]]; then
       skin_edit --arg k "$key" 'del(.[$k])'
     else
       skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'

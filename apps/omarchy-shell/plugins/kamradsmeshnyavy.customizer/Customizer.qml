@@ -45,7 +45,7 @@ Item {
   ]
 
   // Tweaks rows whose ⏎ opens a picker (color, text, file) instead of stepping.
-  readonly property var colorTweaks: ["background", "gradient", "border", "text", "active", "moduleBackground", "ownerMessage", "avatar"]
+  readonly property var colorTweaks: ["background", "gradient", "border", "text", "active", "moduleBackground", "wsActiveColor", "ownerMessage", "avatar"]
 
   // Header chips: status key -> category key it opens.
   readonly property var statusChips: [

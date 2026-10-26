@@ -15,7 +15,8 @@ import qs.Ui
 //   wsDedupe        одно приложение — одна иконка
 //   wsShown         сколько workspace всегда видно (занятые до 10 — всегда)
 //   wsShowEmpty     показывать пустые из первых wsShown
-//   wsActivePill    плашка цвета акцента под активным
+//   wsActivePill    плашка под активным (цвет — wsActiveColor)
+//   wsActiveColor   цвет текущего workspace: роль темы или #hex
 // Колесо мыши листает workspace.
 BarWidget {
   id: root
@@ -38,6 +39,11 @@ BarWidget {
 
   readonly property color fg: bar ? bar.barForeground : Commons.Color.foreground
   readonly property color accent: Commons.Color.accent
+  // wsActiveColor: цвет текущего workspace (роль темы или #hex); пусто — как в стиле:
+  // omarchy — цвет текста, остальные стили — accent.
+  readonly property string activeSpec: String(opt("wsActiveColor", "") || "")
+  readonly property bool customActive: activeSpec !== "" && activeSpec !== "default"
+  readonly property color activeColor: customActive && skin ? skin.resolve(activeSpec, accent) : accent
   readonly property string font: bar ? bar.fontFamily : Style.font.family
   readonly property int iconSize: Math.round(Style.font.body * 1.25)
 
@@ -220,9 +226,9 @@ BarWidget {
           width: root.vertical ? parent.width - Style.space(6) : parent.width - Style.space(2)
           height: root.vertical ? parent.height - Style.space(2) : parent.height - Style.space(8)
           radius: Math.min(width, height) / 2
-          color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.22)
+          color: Qt.rgba(root.activeColor.r, root.activeColor.g, root.activeColor.b, 0.22)
           border.width: 1
-          border.color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.6)
+          border.color: Qt.rgba(root.activeColor.r, root.activeColor.g, root.activeColor.b, 0.6)
         }
 
         Rectangle {
@@ -246,7 +252,7 @@ BarWidget {
           Text {
             visible: cell.text !== ""
             text: cell.text
-            color: (cell.focused && !cell.plainStock) ? root.accent : root.fg
+            color: cell.focused && (root.customActive || !cell.plainStock) ? root.activeColor : root.fg
             font.family: root.font
             font.pixelSize: cell.shaped ? Math.round(Style.font.body * 0.9) : Style.font.body
             font.bold: cell.focused && !cell.plainStock && !cell.shaped
