@@ -925,6 +925,7 @@ status() {
   printf 'bar-layout\t%s\n' "$(current_layout)"
   printf 'lock\t%s\n' "$(lock_current)"
   printf 'fx\t%s\n' "$(jq -r '.type // "slant"' "$FX_CFG" 2>/dev/null || echo slant)"
+  printf 'picker\t%s\n' "$(jq -r '.style // "slices"' "$PICKER_CFG" 2>/dev/null || echo slices)"
   # Для макетов в превью: вторые обои темы и 7 превью тем вокруг текущей.
   local cur_bg
   cur_bg=$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null)

@@ -28,20 +28,30 @@ Item {
   // live: hovering a row previews it, Esc / leaving the category reverts;
   // bar: preview pane draws a bar mock (BarMock.qml); tweak: h/l step the row's value.
   readonly property var categories: [
-    { key: "anims",       icon: "󰔡", title: "Animations",   hint: "Live preview while you browse",       image: false, live: true },
-    { key: "themes",      icon: "󰏘", title: "Theme",        hint: "omarchy theme set",                    image: true,  live: false },
-    { key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Категории как в SUPER+CTRL+SPACE",      image: true,  live: false },
-    { key: "walls",       icon: "󰃣", title: "Recolor",      hint: "Lutgen · O folder · o image(s)",       image: true,  live: false },
-    { key: "shaders",     icon: "󰍹", title: "Shader",       hint: "crt-toggle.sh",                        image: false, live: false },
-    { key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview · SUPER+ALT+O cycles",    image: false, live: true },
-    { key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true },
-    { key: "bar-skins",   icon: "󰉼", title: "Bar Skin",     hint: "Live preview · form, colors, glass",   image: false, live: true,  bar: true },
-    { key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
-    { key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true },
-    { key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — показать вживую · T — превью",     image: true,  live: false },
-    { key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true },
-    { key: "wallpaper-fx", icon: "󰸉", title: "Wallpaper FX", hint: "Переходы обоев · p — проиграть",         image: false, live: false, fx: true },
-    { key: "theme-switcher", icon: "󰸌", title: "Theme Switcher", hint: "Стиль пикера · ⚡ кэш · p — открыть", image: false, live: false, picker: true }
+    { group: "desk", key: "themes",      icon: "󰏘", title: "Theme",        hint: "omarchy theme set",                    image: true,  live: false },
+    { group: "desk", key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Категории как в SUPER+CTRL+SPACE",      image: true,  live: false },
+    { group: "desk", key: "walls",       icon: "󰃣", title: "Recolor",      hint: "Lutgen · O folder · o image(s)",       image: true,  live: false },
+    { group: "desk", key: "wallpaper-fx", icon: "󰗘", title: "Wallpaper FX", hint: "Переходы обоев · p — проиграть",       image: false, live: false, fx: true },
+    { group: "bar",  key: "bar-skins",   icon: "󰉼", title: "Bar Skin",     hint: "Live preview · form, colors, glass",   image: false, live: true,  bar: true },
+    { group: "bar",  key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
+    { group: "bar",  key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true },
+    { group: "win",  key: "anims",       icon: "󰔡", title: "Animations",   hint: "Live preview while you browse",       image: false, live: true },
+    { group: "win",  key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview · SUPER+ALT+O cycles",    image: false, live: true },
+    { group: "win",  key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true },
+    { group: "win",  key: "shaders",     icon: "󰍹", title: "Shader",       hint: "crt-toggle.sh",                        image: false, live: false },
+    { group: "lock", key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — показать вживую · T — превью",     image: true,  live: false },
+    { group: "lock", key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true },
+    { group: "pick", key: "theme-switcher", icon: "󰸌", title: "Theme Switcher", hint: "Стиль пикера · ⚡ кэш · p — открыть", image: false, live: false, picker: true }
+  ]
+
+  // Вкладки сверху: группы категорий (1–5, Tab / Shift+Tab); chips — какие чипы
+  // статуса показывать в шапке, пока группа открыта.
+  readonly property var groups: [
+    { id: "desk", icon: "󰧨", title: "Рабочий стол", chips: ["theme", "wallpaper", "fx"] },
+    { id: "bar",  icon: "󰕮", title: "Бар",          chips: ["bar-skin", "bar-layout"] },
+    { id: "win",  icon: "󱂬", title: "Окна",         chips: ["anims", "opacity", "blur", "shader"] },
+    { id: "lock", icon: "󰌾", title: "Блокировка",   chips: ["lock"] },
+    { id: "pick", icon: "󰸌", title: "Пикеры",       chips: ["picker"] }
   ]
 
   // Tweaks rows whose ⏎ opens a picker (color, text, file) instead of stepping.
@@ -49,14 +59,17 @@ Item {
 
   // Header chips: status key -> category key it opens.
   readonly property var statusChips: [
-    { key: "theme",     icon: "󰏘", category: "themes" },
-    { key: "wallpaper", icon: "󰸉", category: "theme-walls" },
-    { key: "anims",     icon: "󰔡", category: "anims" },
-    { key: "shader",    icon: "󰍹", category: "shaders" },
-    { key: "opacity",   icon: "󰂵", category: "opacity" },
-    { key: "blur",      icon: "󰂷", category: "blur" },
-    { key: "bar-skin",  icon: "󰉼", category: "bar-skins" },
-    { key: "lock",      icon: "󰌾", category: "lock" }
+    { key: "theme",      icon: "󰏘", title: "Тема",         category: "themes" },
+    { key: "wallpaper",  icon: "󰸉", title: "Обои",         category: "theme-walls" },
+    { key: "fx",         icon: "󰗘", title: "Переход",      category: "wallpaper-fx" },
+    { key: "bar-skin",   icon: "󰉼", title: "Скин",         category: "bar-skins" },
+    { key: "bar-layout", icon: "󰕮", title: "Раскладка",    category: "bar-layouts" },
+    { key: "anims",      icon: "󰔡", title: "Анимации",     category: "anims" },
+    { key: "opacity",    icon: "󰂵", title: "Прозрачность", category: "opacity" },
+    { key: "blur",       icon: "󰂷", title: "Блюр",         category: "blur" },
+    { key: "shader",     icon: "󰍹", title: "Шейдер",       category: "shaders" },
+    { key: "lock",       icon: "󰌾", title: "Дизайн",       category: "lock" },
+    { key: "picker",     icon: "󰸌", title: "Стиль",        category: "theme-switcher" }
   ]
 
   property bool opened: false
@@ -85,6 +98,35 @@ Item {
   property var activePicker: ({})    // ~/.config/omarchy/image-picker.json
 
   readonly property var category: categories[categoryIndex]
+
+  // ── Группы ──────────────────────────────────────────────────────────
+  readonly property int groupIndex: Math.max(0, groupIndexOf(category.group))
+  readonly property var group: groups[groupIndex]
+  // Индексы (в categories) категорий текущей группы — их показывает левая колонка.
+  readonly property var groupCategories: {
+    var out = []
+    for (var i = 0; i < categories.length; i++) if (categories[i].group === group.id) out.push(i)
+    return out
+  }
+  readonly property var groupChips: statusChips.filter(function(c) { return root.group.chips.indexOf(c.key) !== -1 })
+  property var groupLast: ({})       // группа -> последняя открытая в ней категория
+
+  function groupIndexOf(id) {
+    for (var i = 0; i < groups.length; i++) if (groups[i].id === id) return i
+    return -1
+  }
+
+  function setGroup(index) {
+    var n = groups.length
+    index = (index + n) % n
+    var id = groups[index].id
+    var target = root.groupLast[id]
+    if (target === undefined) {
+      for (var i = 0; i < categories.length; i++) if (categories[i].group === id) { target = i; break }
+    }
+    root.pane = 0
+    root.setCategory(target)
+  }
   property var selectedRow: null     // set by selectionChanged(); ListModel.get() isn't reactive
 
   property color background: Color.menu.background
@@ -98,8 +140,13 @@ Item {
   readonly property color muted: Util.alpha(foreground, 0.55)
   readonly property color faint: Util.alpha(foreground, 0.08)
   readonly property color hairline: Util.alpha(foreground, 0.10)
-  readonly property int cornerRadius: Style.cornerRadius
-  readonly property int innerRadius: Math.max(4, cornerRadius - 2)
+  // Стекло + мягкие карточки: окно полупрозрачное (Hyprland размывает под ним —
+  // layer rule omarchy-customizer в apps/hyprland/windows.lua), панели и строки — карточки.
+  readonly property int cornerRadius: Math.max(Style.cornerRadius, 18)
+  readonly property int innerRadius: 12
+  readonly property real glassAlpha: 0.78
+  readonly property color panelFill: Util.alpha(foreground, 0.045)
+  readonly property color panelBorder: Util.alpha(foreground, 0.08)
   property string fontFamily: Style.font.menuFamily
   property int contentMargin: Style.spacing.panelPadding
   property int contentSpacing: Style.spacing.md
@@ -166,6 +213,11 @@ Item {
     if (index === root.categoryIndex && !force) return
     root.revertPreview()
     root.categoryIndex = index
+    var last = ({})
+    for (var g in root.groupLast) last[g] = root.groupLast[g]
+    last[categories[index].group] = index
+    root.groupLast = last
+    contentFade.restart()
     root.pendingTweak = ""
     root.reloadQueued = false
     root.keepValue = ""
@@ -285,7 +337,8 @@ Item {
   // Jump to a row (-1 = last); in the category pane, to a category.
   function moveTo(index) {
     if (root.pane === 0) {
-      root.setCategory(index < 0 ? categories.length - 1 : index)
+      var cats = root.groupCategories
+      root.setCategory(cats[index < 0 ? cats.length - 1 : Math.min(index, cats.length - 1)])
       return
     }
     if (displayModel.count === 0) return
@@ -301,9 +354,10 @@ Item {
 
   function move(delta) {
     if (root.pane === 0) {
-      var n = categories.length
-      root.setCategory(Math.abs(delta) === 1 ? (root.categoryIndex + delta + n) % n
-        : Math.max(0, Math.min(n - 1, root.categoryIndex + delta)))
+      var cats = root.groupCategories
+      var n = cats.length
+      var pos = cats.indexOf(root.categoryIndex)
+      root.setCategory(cats[Math.abs(delta) === 1 ? (pos + delta + n) % n : Math.max(0, Math.min(n - 1, pos + delta))])
       return
     }
     if (displayModel.count === 0) return
@@ -534,7 +588,7 @@ Item {
 
   function keyHints() {
     if (root.filtering) return [["⏎", "keep filter"], ["Esc", "clear"], ["↑↓", "move"]]
-    if (root.pane === 0) return [["j k", "category"], ["l ⏎", "open"], ["1–9 0", "jump"], ["/", "search"], ["?", "keys"], ["q", "close"]]
+    if (root.pane === 0) return [["Tab", "group"], ["1–" + root.groups.length, "group"], ["j k", "category"], ["l ⏎", "open"], ["/", "search"], ["?", "keys"], ["q", "close"]]
     if (root.category.key === "lock-tweaks") return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick"], ["p", "preview"], ["Esc", "back"]]
     if (root.category.tweak) return [["j k", "move"], ["h l  − +", "change (hold)"], ["x", "default"], ["⏎", "step · pick color"], ["Esc", "back"], ["?", "keys"]]
     if (root.category.fx || root.category.picker) {
@@ -552,6 +606,15 @@ Item {
   }
 
   ListModel { id: displayModel }
+
+  // Смена категории: список и превью мягко проявляются со сдвигом снизу.
+  ParallelAnimation {
+    id: contentFade
+    NumberAnimation { target: listColumn; property: "opacity"; from: 0.25; to: 1; duration: 200; easing.type: Easing.OutCubic }
+    NumberAnimation { target: previewColumn; property: "opacity"; from: 0.25; to: 1; duration: 240; easing.type: Easing.OutCubic }
+    NumberAnimation { target: listShift; property: "y"; from: 10; to: 0; duration: 220; easing.type: Easing.OutCubic }
+    NumberAnimation { target: previewShift; property: "y"; from: 14; to: 0; duration: 260; easing.type: Easing.OutCubic }
+  }
 
   Timer { id: gTimer; interval: 700; onTriggered: root.pendingG = false }
 
@@ -728,9 +791,52 @@ Item {
       height: root.cardHeight
       radius: root.cornerRadius
       anchors.centerIn: parent
-      color: root.background
-      borderSpec: root.borderSpec
-      padding: root.contentMargin
+      color: "transparent"
+      borderSpec: Border.flat(Util.alpha(root.foreground, 0.14), 1)
+      padding: root.contentMargin + Style.space(4)
+
+      // Стекло: размытая копия обоев, совмещённая с экраном, + тон темы поверх.
+      // Свой блюр, а не Hyprland: тот у пользователя бывает выключен (Blur = off).
+      ClippingRectangle {
+        anchors.fill: parent
+        radius: root.cornerRadius
+        color: root.background
+        z: -1
+
+        Image {
+          id: glassWall
+          x: -card.x
+          y: -card.y
+          width: panel.width
+          height: panel.height
+          source: root.opened && root.status.wallpaper ? root.fileUrl(root.status.wallpaper) : ""
+          sourceSize.width: Math.max(1, panel.width / 2)
+          fillMode: Image.PreserveAspectCrop
+          asynchronous: true
+          visible: false
+        }
+        MultiEffect {
+          x: glassWall.x
+          y: glassWall.y
+          width: glassWall.width
+          height: glassWall.height
+          source: glassWall
+          visible: glassWall.status === Image.Ready
+          autoPaddingEnabled: false
+          blurEnabled: true
+          blur: 1
+          blurMax: 64
+          blurMultiplier: 1.5
+          saturation: 0.15
+        }
+        Rectangle {
+          anchors.fill: parent
+          color: Util.alpha(root.background, root.glassAlpha)
+          radius: root.cornerRadius
+          border.width: 1
+          border.color: Util.alpha(root.foreground, 0.14)
+        }
+      }
 
       // Pop in on open.
       opacity: root.opened ? 1 : 0
@@ -802,8 +908,10 @@ Item {
           else if (k === Qt.Key_PageDown) root.move(root.halfPage() * 2)
           else if (k === Qt.Key_Home) root.moveTo(0)
           else if (k === Qt.Key_End) root.moveTo(-1)
-          else if (k === Qt.Key_Left || k === Qt.Key_Backtab) { if (!root.wallUp()) root.toCategories() }
-          else if (k === Qt.Key_Right || k === Qt.Key_Tab) { if (root.pane === 0) root.activate() }
+          else if (k === Qt.Key_Backtab) root.setGroup(root.groupIndex - 1)
+          else if (k === Qt.Key_Tab) root.setGroup(root.groupIndex + 1)
+          else if (k === Qt.Key_Left) { if (!root.wallUp()) root.toCategories() }
+          else if (k === Qt.Key_Right) { if (root.pane === 0) root.activate() }
           else if (ctrl || !printable) return
           else if (t === "j") root.move(1)
           else if (t === "k") root.move(-1)
@@ -819,10 +927,7 @@ Item {
           else if (t === "r") root.randomPick()
           else if (root.category.key === "walls" && t === "o") root.run("pick-files")
           else if (root.category.key === "walls" && t === "O") root.run("pick-dir")
-          else if (t >= "0" && t <= "9" && (t === "0" ? 9 : Number(t) - 1) < root.categories.length) {
-            root.setCategory(t === "0" ? 9 : Number(t) - 1)
-            root.activate()
-          }
+          else if (t >= "1" && t <= String(root.groups.length)) root.setGroup(Number(t) - 1)
           else return
           event.accepted = true
         }
@@ -883,24 +988,97 @@ Item {
             }
           }
 
+          // Вкладки-группы: капсула, под активной скользит подсветка.
+          Rectangle {
+            id: tabBar
+            anchors.centerIn: parent
+            height: Math.round(header.height * 0.72)
+            width: tabRow.implicitWidth + Style.space(8)
+            radius: height / 2
+            color: root.panelFill
+            border.width: 1
+            border.color: root.panelBorder
+
+            Rectangle {
+              id: tabGlow
+              readonly property Item target: tabRow.width > 0 ? tabRepeater.itemAt(root.groupIndex) : null
+              x: target ? tabRow.x + target.x : 0
+              width: target ? target.width : 0
+              anchors.verticalCenter: parent.verticalCenter
+              height: parent.height - Style.space(8)
+              radius: height / 2
+              color: Util.alpha(root.accent, 0.18)
+              border.width: 1
+              border.color: Util.alpha(root.accent, 0.55)
+              Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+              Behavior on width { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+            }
+
+            Row {
+              id: tabRow
+              anchors.centerIn: parent
+              spacing: 0
+              Repeater {
+                id: tabRepeater
+                model: root.groups
+                delegate: Item {
+                  required property int index
+                  required property var modelData
+                  readonly property bool active: index === root.groupIndex
+                  width: tabLabel.implicitWidth + Style.space(28)
+                  height: tabBar.height
+                  Row {
+                    id: tabLabel
+                    anchors.centerIn: parent
+                    spacing: Style.space(7)
+                    Text {
+                      anchors.verticalCenter: parent.verticalCenter
+                      text: modelData.icon
+                      color: active ? root.accent : root.muted
+                      font.family: root.fontFamily
+                      font.pixelSize: Style.font.title
+                      Behavior on color { ColorAnimation { duration: 160 } }
+                    }
+                    Text {
+                      anchors.verticalCenter: parent.verticalCenter
+                      text: modelData.title
+                      color: active ? root.foreground : root.muted
+                      font.family: root.fontFamily
+                      font.pixelSize: Style.font.body
+                      font.bold: active
+                      Behavior on color { ColorAnimation { duration: 160 } }
+                    }
+                  }
+                  MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.setGroup(index)
+                  }
+                }
+              }
+            }
+          }
+
           // What is in use right now; clicking a chip opens its category.
           Row {
             id: chips
+            // Чипы статуса переехали в левую панель («Сейчас»); шапка — логотип и вкладки.
+            visible: false
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             spacing: Style.space(6)
 
             Repeater {
-              model: root.statusChips
+              model: root.groupChips
               delegate: Rectangle {
                 required property var modelData
                 readonly property bool hot: root.category.key === modelData.category
                 height: Style.font.body + Style.space(14)
                 width: Math.min(Style.space(190), chipRow.implicitWidth + Style.space(18))
                 radius: height / 2
-                color: hot ? Util.alpha(root.accent, 0.16) : root.faint
+                color: hot ? Util.alpha(root.accent, 0.16) : root.panelFill
                 border.width: 1
-                border.color: hot ? Util.alpha(root.accent, 0.5) : root.hairline
+                border.color: hot ? Util.alpha(root.accent, 0.5) : root.panelBorder
                 Behavior on color { ColorAnimation { duration: 140 } }
 
                 Row {
@@ -941,11 +1119,10 @@ Item {
           }
         }
 
-        Rectangle {
+        Item {
           id: headerRule
           anchors { top: header.bottom; topMargin: root.contentSpacing; left: parent.left; right: parent.right }
           height: 1
-          color: root.hairline
         }
 
         // ── Footer: contextual key hints ───────────────────────────
@@ -977,11 +1154,10 @@ Item {
           }
         }
 
-        Rectangle {
+        Item {
           id: footerRule
           anchors { bottom: footer.top; bottomMargin: Style.space(8); left: parent.left; right: parent.right }
           height: 1
-          color: root.hairline
         }
 
         // ── Body ───────────────────────────────────────────────────
@@ -993,11 +1169,29 @@ Item {
             left: parent.left; right: parent.right
           }
 
+          // Мягкие подложки трёх панелей (категории · список · превью).
+          Repeater {
+            model: [catFlick, listColumn, previewColumn]
+            delegate: Rectangle {
+              required property Item modelData
+              x: modelData.x - Style.space(10)
+              y: modelData.y - Style.space(10)
+              width: modelData.width + Style.space(20)
+              height: modelData.height + Style.space(20)
+              radius: 16
+              color: root.panelFill
+              border.width: 1
+              border.color: root.panelBorder
+            }
+          }
+
           // Categories — прокручиваются, когда не влезают (активная всегда видна).
           Flickable {
             id: catFlick
-            width: Style.space(250)
-            height: parent.height
+            x: Style.space(10)
+            y: Style.space(10)
+            width: Style.space(240)
+            height: parent.height - Style.space(20)
             contentHeight: catColumn.implicitHeight
             boundsBehavior: Flickable.StopAtBounds
             clip: true
@@ -1014,7 +1208,7 @@ Item {
             spacing: Style.space(4)
 
             Text {
-              text: "CATEGORIES"
+              text: root.group.title.toUpperCase()
               color: root.muted
               font.family: root.fontFamily
               font.pixelSize: Style.font.caption
@@ -1025,11 +1219,12 @@ Item {
             }
 
             Repeater {
-              model: root.categories
+              model: root.groupCategories
               delegate: Rectangle {
                 id: catRow
-                required property int index
-                required property var modelData
+                required property int modelData
+                readonly property int index: modelData
+                readonly property var info: root.categories[modelData]
                 readonly property bool active: index === root.categoryIndex
                 readonly property bool focused: active && root.pane === 0
                 onActiveChanged: if (active) Qt.callLater(catFlick.ensureVisible, catRow)
@@ -1037,9 +1232,9 @@ Item {
                 width: catColumn.width
                 height: Math.round(root.rowHeight * 1.45)
                 radius: root.innerRadius
-                color: active ? root.selectedBackground : (catHover.containsMouse ? root.faint : "transparent")
-                border.width: focused ? 1 : 0
-                border.color: Util.alpha(root.accent, 0.6)
+                color: active ? Util.alpha(root.accent, 0.14) : (catHover.containsMouse ? root.faint : "transparent")
+                border.width: active ? 1 : 0
+                border.color: Util.alpha(root.accent, focused ? 0.7 : 0.3)
                 Behavior on color { ColorAnimation { duration: 120 } }
 
                 Rectangle {
@@ -1064,7 +1259,7 @@ Item {
                   Behavior on color { ColorAnimation { duration: 140 } }
                   Text {
                     anchors.centerIn: parent
-                    text: catRow.modelData.icon
+                    text: catRow.info.icon
                     color: catRow.active ? root.accent : root.foreground
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.iconLarge
@@ -1080,7 +1275,7 @@ Item {
                   spacing: Style.space(1)
                   Text {
                     width: parent.width
-                    text: catRow.modelData.title
+                    text: catRow.info.title
                     elide: Text.ElideRight
                     color: catRow.active ? root.selectedText : root.foreground
                     font.family: root.fontFamily
@@ -1089,7 +1284,7 @@ Item {
                   }
                   Text {
                     width: parent.width
-                    text: catRow.modelData.hint
+                    text: catRow.info.hint
                     elide: Text.ElideRight
                     color: root.muted
                     font.family: root.fontFamily
@@ -1102,9 +1297,9 @@ Item {
                   anchors.right: parent.right
                   anchors.rightMargin: Style.space(8)
                   anchors.verticalCenter: parent.verticalCenter
-                  label: catRow.index < 10 ? String((catRow.index + 1) % 10) : ""
-                  visible: catRow.index < 10
-                  opacity: catRow.active ? 1 : 0.6
+                  label: "⏎"
+                  visible: catRow.focused
+                  opacity: 0.8
                 }
 
                 MouseArea {
@@ -1116,24 +1311,96 @@ Item {
                 }
               }
             }
+
+            // Что сейчас стоит в этой группе; клик открывает категорию.
+            Item { width: 1; height: Style.space(10) }
+            Text {
+              visible: root.groupChips.length > 0
+              text: "СЕЙЧАС"
+              color: root.muted
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.caption
+              font.bold: true
+              font.letterSpacing: 1.4
+              leftPadding: Style.space(6)
+              bottomPadding: Style.space(2)
+            }
+            Repeater {
+              model: root.groupChips
+              delegate: Rectangle {
+                required property var modelData
+                width: catColumn.width
+                height: Style.font.body + Style.space(16)
+                radius: height / 2
+                color: nowMouse.containsMouse ? Util.alpha(root.accent, 0.12) : root.panelFill
+                border.width: 1
+                border.color: root.panelBorder
+                Behavior on color { ColorAnimation { duration: 120 } }
+                Row {
+                  anchors.left: parent.left
+                  anchors.leftMargin: Style.space(12)
+                  anchors.right: parent.right
+                  anchors.rightMargin: Style.space(12)
+                  anchors.verticalCenter: parent.verticalCenter
+                  spacing: Style.space(8)
+                  Text {
+                    id: nowIcon
+                    text: modelData.icon
+                    color: root.accent
+                    font.family: root.fontFamily
+                    font.pixelSize: Style.font.body
+                  }
+                  Text {
+                    id: nowTitle
+                    text: modelData.title
+                    color: root.muted
+                    font.family: root.fontFamily
+                    font.pixelSize: Style.font.bodySmall
+                  }
+                  Text {
+                    width: parent.width - nowIcon.width - nowTitle.width - Style.space(16)
+                    text: root.statusText(modelData.key)
+                    elide: Text.ElideRight
+                    color: root.foreground
+                    font.family: root.fontFamily
+                    font.pixelSize: Style.font.bodySmall
+                  }
+                }
+                MouseArea {
+                  id: nowMouse
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: {
+                    var i = root.categoryIndexOf(modelData.category)
+                    if (i < 0) return
+                    root.setCategory(i)
+                    root.pane = 1
+                    root.selectionChanged()
+                  }
+                }
+              }
+            }
           }
 
           }
 
-          Rectangle {
+          Item {
             id: rule1
             anchors.left: catFlick.right
-            anchors.leftMargin: root.contentSpacing
-            width: 1; height: parent.height; color: root.hairline
+            anchors.leftMargin: Style.space(14)
+            width: 1; height: parent.height
           }
 
           // Items
           Item {
             id: listColumn
             anchors.left: rule1.right
-            anchors.leftMargin: root.contentSpacing
-            width: Style.space(360)
-            height: parent.height
+            anchors.leftMargin: Style.space(14)
+            y: Style.space(10)
+            width: Style.space(370)
+            height: parent.height - Style.space(20)
+            transform: Translate { id: listShift }
 
             Rectangle {
               id: search
@@ -1190,16 +1457,24 @@ Item {
               anchors { top: search.bottom; topMargin: root.contentSpacing; bottom: parent.bottom; left: parent.left; right: parent.right }
               model: displayModel
               clip: true
-              spacing: Style.space(2)
+              spacing: Style.space(4)
               boundsBehavior: Flickable.StopAtBounds
               highlightFollowsCurrentItem: true
-              highlightMoveDuration: 120
-              highlightResizeDuration: 0
+              highlightMoveDuration: 160
+              highlightResizeDuration: 120
               highlight: Rectangle {
                 radius: root.innerRadius
-                color: root.selectedBackground
-                border.width: root.pane === 1 ? 1 : 0
-                border.color: Util.alpha(root.accent, 0.6)
+                color: Util.alpha(root.accent, root.pane === 1 ? 0.16 : 0.08)
+                border.width: 1
+                border.color: Util.alpha(root.accent, root.pane === 1 ? 0.6 : 0.25)
+                layer.enabled: root.pane === 1
+                layer.effect: MultiEffect {
+                  shadowEnabled: true
+                  shadowColor: "#000000"
+                  shadowOpacity: 0.35
+                  shadowBlur: 0.5
+                  shadowVerticalOffset: 2
+                }
               }
 
               delegate: Item {
@@ -1215,6 +1490,14 @@ Item {
                 readonly property var palette: root.paletteOf(note)
 
                 width: itemList.width
+
+                // Мягкая карточка под курсором мыши (выбранную рисует highlight).
+                Rectangle {
+                  anchors.fill: parent
+                  radius: root.innerRadius
+                  color: rowMouse.containsMouse && !itemRow.hasCursor ? root.faint : "transparent"
+                  Behavior on color { ColorAnimation { duration: 120 } }
+                }
                 // Длинные подписи переносятся (до двух строк) — строка растёт под них.
                 height: root.category.image ? root.listRowHeight()
                   : Math.max(root.listRowHeight(), rowText.implicitHeight + Style.space(12))
@@ -1227,7 +1510,7 @@ Item {
                   anchors.verticalCenter: parent.verticalCenter
                   width: visible ? Math.round(height * 1.6) : 0
                   height: parent.height - Style.space(10)
-                  radius: root.innerRadius - 1
+                  radius: root.innerRadius - 2
                   color: root.faint
 
                   Image {
@@ -1331,6 +1614,7 @@ Item {
                 }
 
                 MouseArea {
+                  id: rowMouse
                   anchors.fill: parent
                   hoverEnabled: true
                   cursorShape: Qt.PointingHandCursor
@@ -1380,20 +1664,23 @@ Item {
             }
           }
 
-          Rectangle {
+          Item {
             id: rule2
             anchors.left: listColumn.right
-            anchors.leftMargin: root.contentSpacing
-            width: 1; height: parent.height; color: root.hairline
+            anchors.leftMargin: Style.space(14)
+            width: 1; height: parent.height
           }
 
           // Preview
           Item {
             id: previewColumn
             anchors.left: rule2.right
-            anchors.leftMargin: root.contentSpacing
+            anchors.leftMargin: Style.space(14)
             anchors.right: parent.right
-            height: parent.height
+            anchors.rightMargin: Style.space(10)
+            y: Style.space(10)
+            height: parent.height - Style.space(20)
+            transform: Translate { id: previewShift }
 
             Item {
               id: previewHead
@@ -1430,10 +1717,10 @@ Item {
             ClippingRectangle {
               id: previewBox
               anchors { top: previewHead.bottom; topMargin: root.contentSpacing; bottom: actions.top; bottomMargin: root.contentSpacing; left: parent.left; right: parent.right }
-              radius: root.innerRadius + 2
+              radius: root.innerRadius
               color: root.faint
               border.width: 1
-              border.color: root.hairline
+              border.color: root.panelBorder
 
               // Pictures: crop wallpapers to fill, keep theme screenshots whole.
               Image {
@@ -1897,7 +2184,8 @@ Item {
                   ["gg  G", "first / last"], ["^d ^u  ^f ^b", "half / full page"],
                   ["⏎", "apply"], ["r", "random pick (not Recolor)"],
                   ["/", "search, ⏎ keeps, Esc clears"], ["J K", "scroll text preview"],
-                  ["1 – 9  0", "jump to category"], ["o  O  ^o", "Recolor: image(s) / folder"],
+                  ["Tab  ⇧Tab", "next / previous group"], ["1 – 5", "jump to group"],
+                  ["o  O  ^o", "Recolor: image(s) / folder"],
                   ["h l  − +", "Bar Tweaks: change (hold)"], ["x", "Bar Tweaks: reset to default"],
                   ["⏎", "Bar Tweaks: step · pick color"], ["●", "Bar Tweaks: changed from default"],
                   ["p", "Lock: show design live (Esc closes)"], ["T", "Lock: refresh previews"],
