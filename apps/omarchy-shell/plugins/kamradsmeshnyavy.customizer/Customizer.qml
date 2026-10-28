@@ -592,6 +592,9 @@ Item {
 
   // The old fzf preview for shaders showed just the header comments and consts.
   function formatPreview(text) {
+    // Описание пресета уже есть в заметке над JSON — переводы note_* в нём только мешают.
+    if (root.category.key === "bar-skins" || root.category.key === "bar-layouts")
+      return text.split("\n").filter(function(l) { return !/^\s*"note(_[a-z]+)?":/.test(l) }).join("\n")
     if (root.category.key !== "shaders") return text
     return text.split("\n").filter(function(l) { return /^(\/\/|const)/.test(l) }).join("\n")
   }

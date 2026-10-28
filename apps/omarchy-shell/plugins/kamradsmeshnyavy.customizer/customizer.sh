@@ -161,7 +161,7 @@ set_transparent() {
   shell_edit --argjson t "$1" '.bar.transparent = $t'
 }
 
-skin_canon() { jq -S 'del(.note)' "$1" 2>/dev/null; }
+skin_canon() { jq -S 'with_entries(select(.key | test("^note(_[a-z]+)?$") | not))' "$1" 2>/dev/null; }
 
 # Имя пресета, совпадающего с активным скином, иначе custom (stock, если файла нет).
 current_skin() {
@@ -173,6 +173,9 @@ current_skin() {
   done
   echo custom
 }
+
+# Описание пресета на языке интерфейса: note_<lang>, иначе note.
+note_of() { jq -r --arg l "$UI_LANG" '.["note_" + $l] // .note // ""' "$1" 2>/dev/null; }
 
 layout_canon() { jq -S '{position: (.position // "top"), centerAnchor: (.centerAnchor // ""), layout}' "$@" 2>/dev/null; }
 
@@ -629,7 +632,7 @@ list() {
       [[ -f $f ]] || continue
       printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \
         "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" \
-        "$(jq -r '.note // ""' "$f")  ·  $(layout_summary "$f")"
+        "$(note_of "$f")  ·  $(layout_summary "$f")"
     done
     ;;
   bar-skins)
@@ -641,7 +644,7 @@ list() {
     for f in "$BAR_DIR"/skins/*.json; do
       [[ -f $f ]] || continue
       printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \
-        "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" "$(jq -r '.note // ""' "$f")"
+        "$([[ $(basename "$f" .json) == "$cur" ]] && echo 1 || echo 0)" "$(note_of "$f")"
     done
     ;;
   bar-tweaks) list_tweaks TWEAKS "$BAR_SKIN" ;;
@@ -704,7 +707,7 @@ STYLES
     cur=$(lock_current)
     printf '%s\t%s\t\t0\t%s\n' "$(t "🔄 Refresh previews of all designs  (T)")" "regen-thumbs" \
       "$(t "Each design shows on screen in turn (≈1.5 s each) and is captured in the current theme's colours.")"
-    jq -r '.[] | [.id, .name, .description, (.tags | join(" · "))] | @tsv' "$LOCK_PLUGIN/designs/designs.json" |
+    jq -r --arg l "$UI_LANG" '.[] | [.id, .name, (.["description_" + $l] // .description), (.tags | join(" · "))] | @tsv' "$LOCK_PLUGIN/designs/designs.json" |
       while IFS=$'\t' read -r id name desc tags; do
         printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$id" "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg" \
           "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"$(t "p — show it live · ⏎ — select")" "$tags"
