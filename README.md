@@ -9,14 +9,16 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo-preview.webp" alt="Демо: тайлинг, лаунчер, Customizer, переход обоев" width="100%">
+  <img src="assets/demo-preview.webp" alt="Демо: тайлинг, музыка, браузер, переключение workspace, лаунчер, Customizer, переход обоев" width="100%">
   <br>
-  <sub>🎬 Полное видео (38 с): <a href="assets/demo.mp4">assets/demo.mp4</a></sub>
+  <sub>🎬 Полное видео со звуком (51 с, 🎵 Lane 8 — Little by Little): <a href="assets/demo.mp4">assets/demo.mp4</a></sub>
 </p>
 
-<!-- Чтобы видео играло прямо в README: перетащи assets/demo.mp4 в редактор README на GitHub
-     и вставь сюда полученную ссылку https://github.com/user-attachments/assets/… отдельной строкой. -->
-## <https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af>
+<!-- Видео играет прямо в README, если ссылка user-attachments стоит отдельной строкой без ## и <>.
+     После обновления assets/demo.mp4 перетащи его в редактор README на GitHub и замени ссылку ниже. -->
+https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
+
+---
 
 ## 📸 Галерея
 
@@ -27,6 +29,8 @@
 | ![Neovim](assets/neovim-editor.webp) | ![Yazi](assets/yazi-filemanager.webp) |
 | **Customizer** (Super+Shift+T) | **Лаунчер** (Super+Alt+Space) |
 | ![Customizer](assets/customizer.webp) | ![Launcher](assets/launcher.webp) |
+| **Музыка** (Spotifast + cava) | **Браузер** (Firefox, тема через Dark Reader / Stylus) |
+| ![Music](assets/music.webp) | ![Browser](assets/browser.webp) |
 
 ---
 
@@ -43,6 +47,24 @@
 | 🗃️ **Мультиплексоры** | **tmux**, Zellij. |
 | 🛠️ **CLI / TUI** | yazi, lazygit / gitui / delta, bat, eza / lla, btop / procs, fzf / television, zoxide, atuin, glow, rmpc / cava, fastfetch. |
 | ⌨️ **Ввод** | kanata, mouseless, wl-kbptr; на macOS — Karabiner и Hammerspoon. |
+
+---
+
+## 🧰 Утилиты
+
+Все TUI-инструменты подхватывают цвета текущей темы Omarchy через слоты (`just app-themes`).
+
+| Delta | LazyGit |
+| :---: | :---: |
+| [![delta](assets/delta.webp)](assets/delta.webp) | [![lazygit](assets/lazygit.webp)](assets/lazygit.webp) |
+| **eza & lla** | **bat** |
+| [![eza_lla](assets/eza_lla.webp)](assets/eza_lla.webp) | [![bat](assets/bat.webp)](assets/bat.webp) |
+| **tmux** | **fzf** |
+| [![tmux](assets/tmux.webp)](assets/tmux.webp) | [![fzf](assets/fzf.webp)](assets/fzf.webp) |
+| **btop** | **procs** |
+| [![btop](assets/btop.webp)](assets/btop.webp) | [![procs](assets/procs.webp)](assets/procs.webp) |
+| **Television** | **Scooter** |
+| [![television](assets/television.webp)](assets/television.webp) | [![scooter](assets/scooter.webp)](assets/scooter.webp) |
 
 ---
 
