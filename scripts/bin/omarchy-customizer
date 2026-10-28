@@ -3,26 +3,26 @@
 # Force bash for fzf previews
 export SHELL=$(which bash)
 
-mkdir -p ~/dotfiles/apps/hyprland/
+mkdir -p ~/.local/state/omarchy-customizer/
 
 MENU_OPTIONS="1. 🎨 Hyprland Animations\n2. 📊 Shell Layouts\n3. 🖌️ Omarchy Themes\n4. 🖼️ Theme Wallpaper (No Recolor)\n5. 🖼️ Recolor Wallpaper (Lutgen)\n6. 📺 Screen Shaders\n7. ❌ Exit"
 CHOICE=$(echo -e "$MENU_OPTIONS" | fzf --prompt="Select Category: " --height=15 --border=rounded)
 
 if [[ "$CHOICE" == *"Hyprland Animations"* ]]; then
-    ANIM_DIR="$HOME/dotfiles/apps/hyprland/animations_lua"
+    ANIM_DIR="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer/animations"
     cd "$ANIM_DIR" || exit
     
-    cp "$HOME/dotfiles/apps/hyprland/active_animations.lua" "/tmp/backup_anim.lua" 2>/dev/null || true
+    cp "$HOME/.local/state/omarchy-customizer/animations.lua" "/tmp/backup_anim.lua" 2>/dev/null || true
 
-    PREVIEW_CMD="cp {} \"$HOME/dotfiles/apps/hyprland/active_animations.lua\" && hyprctl reload >/dev/null 2>&1; cat {}"
+    PREVIEW_CMD="cp {} \"$HOME/.local/state/omarchy-customizer/animations.lua\" && hyprctl reload >/dev/null 2>&1; cat {}"
     SELECTED=$(find . -maxdepth 1 -name "*.lua" | sed 's|^\./||' | sort | fzf --prompt="Select Animation: " --preview "$PREVIEW_CMD" --preview-window="right:60%:wrap" --height=80% --border=rounded)
     
     if [ -n "$SELECTED" ]; then
-        cp "$SELECTED" "$HOME/dotfiles/apps/hyprland/active_animations.lua"
+        cp "$SELECTED" "$HOME/.local/state/omarchy-customizer/animations.lua"
         hyprctl reload >/dev/null 2>&1
         notify-send -t 2000 "Animations" "Loaded: $SELECTED"
     else
-        cp "/tmp/backup_anim.lua" "$HOME/dotfiles/apps/hyprland/active_animations.lua" 2>/dev/null || true
+        cp "/tmp/backup_anim.lua" "$HOME/.local/state/omarchy-customizer/animations.lua" 2>/dev/null || true
         hyprctl reload >/dev/null 2>&1
     fi
 
@@ -94,14 +94,14 @@ elif [[ "$CHOICE" == *"Recolor Wallpaper"* ]]; then
         rm -f "$TMP_SRC"/*
         cp "$SELECTED_WP" "$TMP_SRC/"
         notify-send -t 3000 "Wallpaper" "Recoloring $(basename "$SELECTED_WP") with Lutgen..."
-        ~/dotfiles/omarchy-themes/scripts/omarchy-lutgen-wallpapers "$THEME_DIR" "$TMP_SRC"
+        ~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/recolor-wallpapers "$THEME_DIR" "$TMP_SRC"
         omarchy theme bg set "$THEME_DIR/backgrounds/$(basename "$SELECTED_WP")"
         notify-send -t 3000 "Wallpaper" "Applied $(basename "$SELECTED_WP")!"
     fi
 
 elif [[ "$CHOICE" == *"Screen Shaders"* ]]; then
-    SHADER_DIR="$HOME/.config/hypr/shaders"
-    TOGGLE="$SHADER_DIR/crt-toggle.sh"
+    SHADER_DIR="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer/shaders"
+    TOGGLE="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/crt-toggle.sh"
     CURRENT=$(hyprctl getoption decoration:screen_shader -j | jq -r .str)
     CURRENT_NAME=$(basename "$CURRENT" .frag)
     [[ "$CURRENT" == "[[EMPTY]]" || -z "$CURRENT" ]] && CURRENT_NAME="off"

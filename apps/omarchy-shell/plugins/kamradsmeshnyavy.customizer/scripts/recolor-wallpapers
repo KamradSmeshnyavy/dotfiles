@@ -40,8 +40,8 @@ fi
 
 echo "Extracting palette from $THEME_DIR/colors.toml..."
 COLORS=$(python3 -c "
-import tomllib
-with open('$THEME_DIR/colors.toml', 'rb') as f:
+import sys, tomllib
+with open(sys.argv[1], 'rb') as f:
     data = tomllib.load(f)
 colors = data.get('colors', data)
 seen = set()
@@ -63,7 +63,7 @@ if len(seen) == 0:
             if c not in seen:
                 seen.add(c)
                 print(c)
-")
+" "$THEME_DIR/colors.toml")
 
 # Convert python output lines to an array
 mapfile -t LUTGEN_COLORS <<< "$COLORS"

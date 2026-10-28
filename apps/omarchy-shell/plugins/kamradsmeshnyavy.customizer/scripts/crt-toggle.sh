@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # Screen-shader switcher that also sets the damage-tracking mode each shader
-# needs. The choice is saved to $STATE and looknfeel.lua re-applies it on
-# every config load, so `hyprctl reload` / relogin keep it.
+# needs. The choice is saved to $STATE and the Customizer re-applies it after
+# every config reload (customizer.sh restore, or hypr/customizer.lua).
 #
 #   crt-toggle.sh            # on/off (turns on the last used shader)
 #   crt-toggle.sh next       # switch to the next shader in this dir (turns on)
 #   crt-toggle.sh <name>     # toggle a specific shader, e.g. crt-static
 #   crt-toggle.sh on <name>  # always turn <name> on (used by omarchy-customizer)
 #   crt-toggle.sh off
+#   crt-toggle.sh restore    # re-apply the saved shader silently
+#   crt-toggle.sh list       # shader paths: the plugin's shaders/, then ~/.config/omarchy/customizer/shaders
 #
-# Bound in bindings.lua: SUPER+ALT+C (toggle), SUPER+ALT+SHIFT+C (next).
+# Bind it if you like, e.g. SUPER+ALT+C (toggle), SUPER+ALT+SHIFT+C (next).
 #
 # damage_tracking modes (hyprland src/render/types.hpp):
 #   2 full    - default, redraw only changed boxes. Fine for flat shaders.
@@ -19,8 +21,11 @@
 #
 # `hyprctl keyword` doesn't work with the Lua config; `hyprctl eval` does.
 set -euo pipefail
+# shellcheck source=i18n.sh
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/i18n.sh"
 
-DIR="$HOME/.config/hypr/shaders"
+DIR="$CUSTOMIZER_DIR/shaders"
+USER_DIR="$HOME/.config/omarchy/customizer/shaders"
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/hypr"
 STATE="$STATE_DIR/screen-shader"   # "<path> <damage_tracking>" or empty = off
 LAST="$STATE_DIR/screen-shader-last"
@@ -43,9 +48,9 @@ name() { basename "$1" .frag; }
 
 dt_label() {
     case "$1" in
-    0) echo "damage_tracking = 0 (перерисовка каждый кадр, много энергии)" ;;
-    1) echo "damage_tracking = 1 (весь экран при изменениях)" ;;
-    2) echo "damage_tracking = 2 (только изменённые области)" ;;
+    0) echo "damage_tracking = 0 ($(t "redraws every frame, uses more power"))" ;;
+    1) echo "damage_tracking = 1 ($(t "whole screen on changes"))" ;;
+    2) echo "damage_tracking = 2 ($(t "changed areas only"))" ;;
     esac
 }
 
@@ -65,16 +70,16 @@ apply() { # $1 = shader path or "" for off
 
     if [[ -z "$path" ]]; then
         : >"$STATE"
-        notify "Шейдер выключен: $(name "$current")" "$(dt_label "$dt")"
+        notify "$(t "Shader off: %s" "$(name "$current")")" "$(dt_label "$dt")"
         return
     fi
 
     echo "$path $dt" >"$STATE"
     echo "$path" >"$LAST"
     if [[ -n "$current" ]]; then
-        notify "Шейдер: $(name "$current") → $(name "$path")" "$(dt_label "$dt")"
+        notify "$(t "Shader: %s → %s" "$(name "$current")" "$(name "$path")")" "$(dt_label "$dt")"
     else
-        notify "Шейдер включён: $(name "$path")" "$(dt_label "$dt")"
+        notify "$(t "Shader on: %s" "$(name "$path")")" "$(dt_label "$dt")"
     fi
 }
 
@@ -82,7 +87,13 @@ current="$(hyprctl getoption decoration:screen_shader -j | jq -r .str)"
 current="${current/#\~/$HOME}"
 [[ "$current" == "[[EMPTY]]" ]] && current=""
 
-mapfile -t shaders < <(printf '%s\n' "$DIR"/*.frag | sort)
+# A user shader with the same name wins over the bundled one.
+find_shader() { # $1 = name -> path
+    local d
+    for d in "$USER_DIR" "$DIR"; do [[ -f $d/$1.frag ]] && { echo "$d/$1.frag"; return 0; }; done
+    return 1
+}
+mapfile -t shaders < <(for n in $( { ls "$DIR" "$USER_DIR" 2>/dev/null; } | sed -n 's/\.frag$//p' | sort -u); do find_shader "$n"; done)
 
 case "${1:-toggle}" in
 toggle)
@@ -90,7 +101,7 @@ toggle)
         apply ""
     else
         last="$(cat "$LAST" 2>/dev/null || true)"
-        [[ -f "$last" ]] || last="$DIR/bettercrt.frag"
+        [[ -f "$last" ]] || last="$(find_shader "$(name "${last:-bettercrt}")" || echo "$DIR/bettercrt.frag")"
         apply "$last"
     fi
     ;;
@@ -105,16 +116,24 @@ next)
     apply "$next"
     ;;
 on)
-    target="$DIR/${2:-}.frag"
-    [[ -f "$target" ]] || { notify "Шейдер не найден" "$target"; exit 1; }
+    target="$(find_shader "${2:-}")" || { notify "$(t "Shader not found")" "${2:-}"; exit 1; }
     [[ "$current" == "$target" ]] || apply "$target"
     ;;
 off)
     [[ -z "$current" ]] || apply ""
     ;;
+restore)
+    # Saved by an older version under another directory: look the shader up by name.
+    read -r saved _ <"$STATE" 2>/dev/null || saved=""
+    [[ -n $saved ]] || exit 0
+    [[ -f $saved ]] || saved="$(find_shader "$(name "$saved")")" || exit 0
+    dt="$(damage_mode "$saved")"
+    hyprctl eval "hl.config({ decoration = { screen_shader = \"$saved\" }, debug = { damage_tracking = $dt } })" >/dev/null
+    echo "$saved $dt" >"$STATE"
+    ;;
+list) printf '%s\n' "${shaders[@]}" ;;
 *)
-    target="$DIR/$1.frag"
-    [[ -f "$target" ]] || { notify "Шейдер не найден" "$target"; exit 1; }
+    target="$(find_shader "$1")" || { notify "$(t "Shader not found")" "$1"; exit 1; }
     if [[ "$current" == "$target" ]]; then apply ""; else apply "$target"; fi
     ;;
 esac

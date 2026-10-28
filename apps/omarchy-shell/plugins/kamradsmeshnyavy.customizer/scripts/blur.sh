@@ -2,18 +2,21 @@
 # System-wide background blur presets (decoration.blur). Works on every
 # translucent window, so it shows together with the opacity.sh presets.
 # The choice is saved to $STATE as "<name> <size> <passes> <vibrancy> <noise>"
-# and looknfeel.lua re-applies those values on every config load.
+# and the Customizer re-applies it after every config reload (customizer.sh restore,
+# or hypr/customizer.lua when it is loaded from the Hyprland config).
 #
 #   blur.sh                  # next preset (same as `next`)
 #   blur.sh next | prev      # cycle through PRESETS
 #   blur.sh set <name>       # apply a preset by name (used by the customizer)
 #   blur.sh preview <name>   # apply without saving or notifying (customizer hover)
-#   blur.sh restore          # re-apply the saved preset silently
+#   blur.sh restore          # re-apply the saved preset silently (none saved: hyprctl reload)
 #   blur.sh list             # "<name> <size> <passes> <vibrancy> <noise> <current 0/1>"
 #   blur.sh current          # name of the preset in use
 #
-# Bound in bindings.lua: SUPER+ALT+U (next), SUPER+ALT+SHIFT+U (prev).
+# Bind it if you like, e.g. SUPER+ALT+U (next), SUPER+ALT+SHIFT+U (prev).
 set -euo pipefail
+# shellcheck source=i18n.sh
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/i18n.sh"
 
 # name size passes vibrancy noise   (size 0 = blur off)
 PRESETS=(
@@ -63,13 +66,13 @@ set_blur() { # $1 = name; fails when unknown
 
 apply() { # $1 = name
     local s p v n
-    set_blur "$1" || { notify "Нет такого пресета" "$1"; exit 1; }
+    set_blur "$1" || { notify "$(t "No such preset")" "$1"; exit 1; }
     read -r s p v n < <(lookup "$1")
     echo "$1 $s $p $v $n" >"$STATE"
     if ((s == 0)); then
-        notify "Блюр: выключен" "окна просвечивают без размытия"
+        notify "$(t "Blur: off")" "$(t "windows show through without blur")"
     else
-        notify "Блюр: $1" "size $s · passes $p · vibrancy $v"
+        notify "$(t "Blur: %s" "$1")" "size $s · passes $p · vibrancy $v"
     fi
 }
 
@@ -89,7 +92,7 @@ next) step 1 ;;
 prev) step -1 ;;
 set) apply "${2:?preset name}" ;;
 preview) set_blur "${2:?preset name}" ;;
-restore) set_blur "$(current)" ;;
+restore) if [[ -s $STATE ]]; then set_blur "$(current)"; else hyprctl reload >/dev/null; fi ;;
 current) current ;;
 list)
     cur="$(current)"

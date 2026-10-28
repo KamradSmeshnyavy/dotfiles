@@ -20,8 +20,16 @@
 # Categories: anims bar-layouts bar-skins bar-tweaks themes theme-walls walls shaders opacity blur
 set -uo pipefail
 
-ANIM_DIR="$HOME/dotfiles/apps/hyprland/animations_lua"
-ANIM_ACTIVE="$HOME/dotfiles/apps/hyprland/active_animations.lua"
+CUSTOMIZER_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+# shellcheck source=scripts/i18n.sh
+source "$CUSTOMIZER_DIR/scripts/i18n.sh"
+
+# Пресеты анимаций: свои из плагина + пользовательские (с тем же именем — пользовательский).
+# Выбранный лежит в state: его подхватывает hypr/customizer.lua и `restore`.
+ANIM_DIR="$CUSTOMIZER_DIR/animations"
+ANIM_USER_DIR="$HOME/.config/omarchy/customizer/animations"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-customizer"
+ANIM_ACTIVE="$STATE_DIR/animations.lua"
 # Бар (плагин kamradsmeshnyavy.bar): пресеты лежат в самом плагине, активный скин и shell.json — в ~/.config.
 # Плагины берём по ссылкам в ~/.config/omarchy/plugins: они — сабмодули и могут жить где угодно.
 BAR_DIR="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.bar"
@@ -38,10 +46,10 @@ PICKER_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/image-selector"
 # Файл, который правят твики (bar-skin.json или lock-design.json), — см. tweak_file.
 TW_FILE="$BAR_SKIN"
 SHELL_JSON="$HOME/.config/omarchy/shell.json"
-SHADER_DIR="$HOME/.config/hypr/shaders"
-TOGGLE="$SHADER_DIR/crt-toggle.sh"
-OPACITY="$HOME/.config/hypr/opacity.sh"
-BLUR="$HOME/.config/hypr/blur.sh"
+TOGGLE="$CUSTOMIZER_DIR/scripts/crt-toggle.sh"
+OPACITY="$CUSTOMIZER_DIR/scripts/opacity.sh"
+BLUR="$CUSTOMIZER_DIR/scripts/blur.sh"
+RECOLOR="$CUSTOMIZER_DIR/scripts/recolor-wallpapers"
 RUN_DIR="${XDG_RUNTIME_DIR:-/tmp}/omarchy-customizer"
 ANIM_BACKUP="$RUN_DIR/active_animations.lua"
 SKIN_BACKUP="$RUN_DIR/bar-skin.json"
@@ -83,28 +91,28 @@ recolor() {
   local src=$1 theme_dir files
   theme_dir="$HOME/.config/omarchy/themes/$(theme_name)"
   if [[ ! -d $theme_dir ]]; then
-    notify-send "Wallpaper" "Cannot recolor stock Omarchy theme. Please use a custom theme."
+    notify-send "Wallpaper" "$(t "Cannot recolor a stock Omarchy theme. Use a custom theme.")"
     exit 1
   fi
   mapfile -t files < <(images_in "$src" 1)
   if ((${#files[@]} == 0)); then
-    notify-send "Wallpaper" "No images in $src"
+    notify-send "Wallpaper" "$(t "No images in %s" "$src")"
     exit 1
   fi
   if ((${#files[@]} == 1)); then
-    notify-send -t 3000 "Wallpaper" "Recoloring $(basename "${files[0]}") with Lutgen..."
+    notify-send -t 3000 "Wallpaper" "$(t "Recoloring %s with lutgen…" "$(basename "${files[0]}")")"
   else
-    notify-send -t 3000 "Wallpaper" "Recoloring ${#files[@]} images from $(basename "$src") with Lutgen..."
+    notify-send -t 3000 "Wallpaper" "$(t "Recoloring %s images from %s with lutgen…" "${#files[@]}" "$(basename "$src")")"
   fi
-  if ! "$HOME/dotfiles/omarchy-themes/scripts/omarchy-lutgen-wallpapers" "$theme_dir" "$src"; then
-    notify-send -u critical "Wallpaper" "Lutgen failed"
+  if ! "$RECOLOR" "$theme_dir" "$src"; then
+    notify-send -u critical "Wallpaper" "$(t "lutgen failed")"
     exit 1
   fi
   if ((${#files[@]} == 1)); then
     omarchy theme bg set "$theme_dir/backgrounds/$(basename "${files[0]}")"
-    notify-send -t 3000 "Wallpaper" "Applied $(basename "${files[0]}")!"
+    notify-send -t 3000 "Wallpaper" "$(t "Applied %s" "$(basename "${files[0]}")")"
   else
-    notify-send -t 5000 "Wallpaper" "Added ${#files[@]} recolored wallpapers to $(theme_name). Pick one in Theme Wallpaper (4)."
+    notify-send -t 5000 "Wallpaper" "$(t "Added %s recolored wallpapers to %s. Pick one in Wallpaper." "${#files[@]}" "$(theme_name)")"
   fi
 }
 
@@ -114,6 +122,14 @@ recolor_files() {
   src=$(mktemp -d "${TMPDIR:-/tmp}/omarchy-lutgen-src.XXXXXX")
   cp -- "$@" "$src/"
   recolor "$src"
+}
+
+# Пресеты анимаций по имени: пользовательский с тем же именем перекрывает встроенный.
+anim_files() {
+  local f
+  for f in "$ANIM_USER_DIR"/*.lua "$ANIM_DIR"/*.lua; do
+    [[ -f $f ]] && printf '%s\t%s\n' "$(basename "$f")" "$f"
+  done | sort -t$'\t' -k1,1 -u | cut -f2
 }
 
 current_shader() {
@@ -180,118 +196,118 @@ layout_summary() {
 # Параметры Bar Tweaks: ключ|тип|аргументы|подпись. Дефолты совпадают с BarSkin.qml:
 # у num последнее число, у enum первое слово, у color/bool — сами аргументы.
 TWEAKS=(
-  "shape|enum|full floating pill islands notch underline hug|Форма"
-  "height|num|0 48 2 0|Высота"
-  "gap|num|0 24 2 0|Отступ от края экрана"
-  "margin|num|0 300 10 0|Поля слева/справа"
-  "width|num|0.3 1 0.05 1|Ширина (floating/pill/notch)"
-  "radius|num|0 24 2 0|Скругление (hug: углы)"
-  "padding|num|-1 40 2 -1|Отступ модулей от краёв"
-  "islandGap|num|0 20 2 0|Поля островов"
-  "background|color|bar|Фон"
-  "backgroundAlpha|num|-1 1 0.05 -1|Альфа фона"
-  "gradient|color|none|Градиент: второй цвет"
-  "border|color|accent|Рамка"
-  "borderWidth|num|0 4 1 0|Толщина рамки"
-  "borderAlpha|num|0 1 0.1 1|Альфа рамки"
-  "text|color|bar|Текст"
-  "active|color|bar|Цвет «внимания» (запись, апдейты)"
-  "moduleStyle|enum|plain pills hover|Подложка модулей"
-  "moduleBackground|color|foreground|Цвет подложки модулей"
-  "moduleAlpha|num|0 1 0.02 0.08|Альфа подложки модулей"
-  "spacing|num|0 20 2 0|Зазор между модулями"
-  "shadow|bool|false|Тень"
-  "glow|bool|false|Свечение цветом рамки"
-  "autoHide|bool|false|Авто-скрытие (выезжает по наведению)"
-  "transparent|bool|false|Прозрачный (сток, текст по обоям)"
-  "font|font||Шрифт"
-  "wsLabelStyle|enum|omarchy numbers circled circled-filled circled-sans circled-sans-filled parens fullwidth superscript roman roman-small kanji greek cyrillic braille dots squares diamonds stars triangles hearts hexagons bars none|Workspaces: подписи"
-  "wsWindowIcons|bool|false|Workspaces: иконки окон"
-  "wsIconStyle|enum|color mono tinted accent bubble faded glyph letter dots count|Workspaces: стиль иконок окон"
-  "wsMaxIcons|num|1 8 1 3|Workspaces: иконок на workspace (дальше +N)"
-  "wsDedupe|bool|true|Workspaces: одно приложение — одна иконка"
-  "wsShown|num|1 10 1 5|Workspaces: сколько видно всегда"
-  "wsShowEmpty|bool|true|Workspaces: показывать пустые"
-  "wsActivePill|bool|false|Workspaces: плашка под активным"
-  "wsActiveColor|color|default|Workspaces: цвет текущего"
-  "compact|enum|off single fullscreen always|Compact: когда сжимать"
-  "compactHeight|num|0 40 2 22|Compact: высота"
-  "compactModules|enum|essentials all center minimal|Compact: какие модули видны"
-  "compactShape|enum|full same floating pill notch underline hug|Compact: форма"
-  "compactAlpha|num|-1 1 0.05 -1|Compact: альфа фона"
-  "compactReserve|enum|keep shrink|Compact: место под баром"
-  "compactExpandOnHover|bool|true|Compact: разворачивать по наведению"
+  "shape|enum|full floating pill islands notch underline hug|Shape"
+  "height|num|0 48 2 0|Height"
+  "gap|num|0 24 2 0|Gap from the screen edge"
+  "margin|num|0 300 10 0|Left/right margins"
+  "width|num|0.3 1 0.05 1|Width (floating/pill/notch)"
+  "radius|num|0 24 2 0|Radius (hug: corners)"
+  "padding|num|-1 40 2 -1|Module padding"
+  "islandGap|num|0 20 2 0|Island padding"
+  "background|color|bar|Background"
+  "backgroundAlpha|num|-1 1 0.05 -1|Background alpha"
+  "gradient|color|none|Gradient: second colour"
+  "border|color|accent|Border"
+  "borderWidth|num|0 4 1 0|Border width"
+  "borderAlpha|num|0 1 0.1 1|Border alpha"
+  "text|color|bar|Text"
+  "active|color|bar|Attention colour (recording, updates)"
+  "moduleStyle|enum|plain pills hover|Module background"
+  "moduleBackground|color|foreground|Module background colour"
+  "moduleAlpha|num|0 1 0.02 0.08|Module background alpha"
+  "spacing|num|0 20 2 0|Gap between modules"
+  "shadow|bool|false|Shadow"
+  "glow|bool|false|Glow in the border colour"
+  "autoHide|bool|false|Auto-hide (slides out on hover)"
+  "transparent|bool|false|Transparent (stock, text over the wallpaper)"
+  "font|font||Font"
+  "wsLabelStyle|enum|omarchy numbers circled circled-filled circled-sans circled-sans-filled parens fullwidth superscript roman roman-small kanji greek cyrillic braille dots squares diamonds stars triangles hearts hexagons bars none|Workspaces: labels"
+  "wsWindowIcons|bool|false|Workspaces: window icons"
+  "wsIconStyle|enum|color mono tinted accent bubble faded glyph letter dots count|Workspaces: window icon style"
+  "wsMaxIcons|num|1 8 1 3|Workspaces: icons per workspace (then +N)"
+  "wsDedupe|bool|true|Workspaces: one icon per app"
+  "wsShown|num|1 10 1 5|Workspaces: always visible"
+  "wsShowEmpty|bool|true|Workspaces: show empty"
+  "wsActivePill|bool|false|Workspaces: pill under the active one"
+  "wsActiveColor|color|default|Workspaces: active colour"
+  "compact|enum|off single fullscreen always|Compact: when to shrink"
+  "compactHeight|num|0 40 2 22|Compact: height"
+  "compactModules|enum|essentials all center minimal|Compact: visible modules"
+  "compactShape|enum|full same floating pill notch underline hug|Compact: shape"
+  "compactAlpha|num|-1 1 0.05 -1|Compact: background alpha"
+  "compactReserve|enum|keep shrink|Compact: space under the bar"
+  "compactExpandOnHover|bool|true|Compact: expand on hover"
 )
 
 # Как показывать дефолт в подписи: особые значения — словами.
 default_label() {
   case "$1:$2" in
-  height:0) echo "авто" ;;
-  ownerMessage:) echo "Привет, $USER" ;;
-  wsActiveColor:default) echo "как в стиле (omarchy — цвет текста, иначе accent)" ;;
-  avatar:) echo "~/.face (или первая буква имени)" ;;
-  wallpaperBlur:1) echo "1 (как в стоке)" ;;
-  expandedWidth:0 | expandedHeight:0 | sliceWidth:0 | sliceHeight:0) echo "из стиля" ;;
-  cardRadius:-1) echo "из стиля" ;;
-  scrimAlpha:-1) echo "из темы" ;;
-  duration:420) echo "420 (как в стоке)" ;;
-  compactHeight:0) echo "не менять" ;;
-  compactAlpha:-1) echo "как обычно" ;;
-  compact:off) echo "выкл" ;;
-  compact:single) echo "одно окно на workspace" ;;
-  compact:fullscreen) echo "полноэкранное окно" ;;
-  compact:always) echo "всегда" ;;
-  compactModules:essentials) echo "essentials (меню, workspaces, часы, сеть, звук, питание)" ;;
-  compactModules:center) echo "center (только центр)" ;;
-  compactModules:minimal) echo "minimal (workspaces + часы)" ;;
-  compactModules:all) echo "all (все)" ;;
-  compactShape:same) echo "same (как обычно)" ;;
-  compactReserve:keep) echo "keep (прежнее, окна не дёргаются)" ;;
-  compactReserve:shrink) echo "shrink (окна получают место)" ;;
-  padding:-1) echo "сток" ;;
-  backgroundAlpha:-1) echo "из темы" ;;
-  gradient:none) echo "нет" ;;
-  font:) echo "системный" ;;
-  *:bar) echo "bar (цвет темы)" ;;
+  height:0) t "auto" ;;
+  ownerMessage:) t "Hello, %s" "$USER" ;;
+  wsActiveColor:default) t "as in the style (omarchy — text colour, otherwise accent)" ;;
+  avatar:) t "~/.face (or the first letter of the name)" ;;
+  wallpaperBlur:1) t "1 (stock)" ;;
+  expandedWidth:0 | expandedHeight:0 | sliceWidth:0 | sliceHeight:0) t "from the style" ;;
+  cardRadius:-1) t "from the style" ;;
+  scrimAlpha:-1) t "from the theme" ;;
+  duration:420) t "420 (stock)" ;;
+  compactHeight:0) t "unchanged" ;;
+  compactAlpha:-1) t "as usual" ;;
+  compact:off) t "off" ;;
+  compact:single) t "one window on the workspace" ;;
+  compact:fullscreen) t "fullscreen window" ;;
+  compact:always) t "always" ;;
+  compactModules:essentials) t "essentials (menu, workspaces, clock, network, audio, power)" ;;
+  compactModules:center) t "center (center only)" ;;
+  compactModules:minimal) t "minimal (workspaces + clock)" ;;
+  compactModules:all) t "all (everything)" ;;
+  compactShape:same) t "same (as usual)" ;;
+  compactReserve:keep) t "keep (unchanged, windows don't jump)" ;;
+  compactReserve:shrink) t "shrink (windows take the space)" ;;
+  padding:-1) t "stock" ;;
+  backgroundAlpha:-1) t "from the theme" ;;
+  gradient:none) t "none" ;;
+  font:) t "system" ;;
+  *:bar) t "bar (theme colour)" ;;
   *) echo "$2" ;;
   esac
 }
 
 # Параметры экрана блокировки (Lock Tweaks) — те же типы, файл lock-design.json.
 LOCK_TWEAKS=(
-  "clock24|bool|true|Часы: 24 часа"
-  "showSeconds|bool|false|Часы: секунды"
-  "showDate|bool|true|Дата"
-  "wallpaperBlur|num|0 1 0.1 1|Обои: размытие"
-  "wallpaperDim|num|0 0.9 0.05 0|Обои: затемнение"
-  "reduceMotion|bool|false|Меньше анимации"
-  "ownerMessage|text||Приветствие"
-  "avatar|file||Аватар"
+  "clock24|bool|true|Clock: 24-hour"
+  "showSeconds|bool|false|Clock: seconds"
+  "showDate|bool|true|Date"
+  "wallpaperBlur|num|0 1 0.1 1|Wallpaper: blur"
+  "wallpaperDim|num|0 0.9 0.05 0|Wallpaper: dim"
+  "reduceMotion|bool|false|Reduce motion"
+  "ownerMessage|text||Greeting"
+  "avatar|file||Avatar"
 )
 
 # Настройки переходов обоев — строки tweak:<key> в категории Wallpaper FX.
 FX_TWEAKS=(
-  "duration|num|100 3000 50 420|Длительность, мс"
-  "easing|enum|InOutCubic InOutQuad InOutQuart InOutSine InOutExpo OutCubic OutExpo OutQuint OutBack OutBounce OutElastic InCubic InExpo Linear|Кривая"
-  "angle|num|0 345 15 0|Угол (wipe, wave, slide)"
-  "origin|enum|center cursor random|Откуда круг/капля"
-  "softness|num|0 0.2 0.01 0.02|Мягкость края"
+  "duration|num|100 3000 50 420|Duration, ms"
+  "easing|enum|InOutCubic InOutQuad InOutQuart InOutSine InOutExpo OutCubic OutExpo OutQuint OutBack OutBounce OutElastic InCubic InExpo Linear|Easing"
+  "angle|num|0 345 15 0|Angle (wipe, wave, slide)"
+  "origin|enum|center cursor random|Where circles/drops start"
+  "softness|num|0 0.2 0.01 0.02|Edge softness"
 )
 
 # Вид пикера тем и обоев — строки tweak:<key> в категории Theme Switcher.
 # 0 / -1 = значение из стиля-пресета или темы (ключ в файле тогда не хранится).
 PICKER_TWEAKS=(
-  "expandedWidth|num|0 1600 20 0|Ширина выбранной"
-  "expandedHeight|num|0 1000 20 0|Высота выбранной"
-  "sliceWidth|num|0 600 10 0|Ширина соседних"
-  "sliceHeight|num|0 900 10 0|Высота соседних"
-  "cardRadius|num|-1 40 2 -1|Скругление"
-  "dim|num|0 0.9 0.05 0.42|Затемнение соседних"
-  "selectedBorder|num|0 8 1 3|Рамка выбранной"
-  "animMs|num|0 600 20 160|Анимация перелистывания, мс"
-  "scrimAlpha|num|-1 1 0.05 -1|Затемнение фона"
-  "labels|bool|false|Подписи всегда"
-  "autoCache|bool|false|Кэшировать обои при смене темы"
+  "expandedWidth|num|0 1600 20 0|Selected width"
+  "expandedHeight|num|0 1000 20 0|Selected height"
+  "sliceWidth|num|0 600 10 0|Neighbour width"
+  "sliceHeight|num|0 900 10 0|Neighbour height"
+  "cardRadius|num|-1 40 2 -1|Corner radius"
+  "dim|num|0 0.9 0.05 0.42|Neighbour dim"
+  "selectedBorder|num|0 8 1 3|Selected border"
+  "animMs|num|0 600 20 160|Scroll animation, ms"
+  "scrimAlpha|num|-1 1 0.05 -1|Background dim"
+  "labels|bool|false|Always show labels"
+  "autoCache|bool|false|Cache wallpapers on theme change"
 )
 
 tweak_spec() {
@@ -398,13 +414,13 @@ tweak() {
   text)
     # Только ⏎ (pick): строку вводят в zenity; h/l ничего не делают.
     [[ $how == pick ]] || return 0
-    next=$(zenity --entry --title="$key" --text="Текст (пусто — по умолчанию):" \
+    next=$(zenity --entry --title="$key" --text="$(t "Text (empty — default):")" \
       --entry-text="$(tweak_value "$key" "")" 2>/dev/null) || exit 0
     if [[ -z $next ]]; then skin_edit --arg k "$key" 'del(.[$k])'; else skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'; fi
     ;;
   file)
     [[ $how == pick ]] || return 0
-    next=$(zenity --file-selection --title="Аватар" --filename="$HOME/" \
+    next=$(zenity --file-selection --title="$(t "Avatar")" --filename="$HOME/" \
       --file-filter="Images | *.jpg *.jpeg *.png *.webp *.JPG *.JPEG *.PNG *.WEBP" 2>/dev/null) || exit 0
     skin_edit --arg k "$key" --arg v "$next" '.[$k] = $v'
     ;;
@@ -439,10 +455,10 @@ bar_tweak_note() {
   islandGap) need="islands" ;;
   shadow | glow) need="floating pill islands notch underline" ;;
   compact) return 0 ;;
-  compact*) [[ $compact == off ]] && echo "действует, когда «Compact: когда сжимать» включён" ; return 0 ;;
+  compact*) [[ $compact == off ]] && t "only works when “Compact: when to shrink” is on" ; return 0 ;;
   esac
   [[ -z $need || " $need " == *" $shape "* ]] && return 0
-  echo "не действует для формы $shape — нужна: $need"
+  t "no effect for shape %s — needs: %s" "$shape" "$need"
 }
 
 # Строки Bar Tweaks / Lock Tweaks: $1 — имя массива параметров, $2 — файл настроек.
@@ -457,13 +473,13 @@ list_tweaks() {
   for t in "${table[@]}"; do
     IFS='|' read -r key kind args label <<<"$t"
     case "$kind" in
-    num) def=${args##* } hint="h/l или −/+ — шаг $(awk '{print $3}' <<<"$args"), пределы $(awk '{print $1 " … " $2}' <<<"$args")" ;;
-    enum) def=${args%% *} hint="h/l — по кругу: $args" ;;
-    color) def=$args hint="h/l — роли темы (bar = стоковый цвет бара) · ⏎ — свой цвет" ;;
-    bool) def=$args hint="h/l или ⏎ — вкл/выкл" ;;
-    font) def="" hint="h/l — Nerd-шрифты из fc-list; пусто = системный" ;;
-    text) def="" hint="⏎ — ввести текст" ;;
-    file) def="" hint="⏎ — выбрать картинку" ;;
+    num) def=${args##* } hint=$(t "h/l or −/+ — step %s, range %s" "$(awk '{print $3}' <<<"$args")" "$(awk '{print $1 " … " $2}' <<<"$args")") ;;
+    enum) def=${args%% *} hint=$(t "h/l — cycle: %s" "$args") ;;
+    color) def=$args hint=$(t "h/l — theme roles (bar = stock bar colour) · ⏎ — your own colour") ;;
+    bool) def=$args hint=$(t "h/l or ⏎ — on/off") ;;
+    font) def="" hint=$(t "h/l — Nerd fonts from fc-list; empty = system") ;;
+    text) def="" hint=$(t "⏎ — enter text") ;;
+    file) def="" hint=$(t "⏎ — pick an image") ;;
     esac
     v=$(tweak_value "$key" "$def")
     mark=""
@@ -473,12 +489,12 @@ list_tweaks() {
     # В строке списка — короткое значение (до скобки), полностью — в превью.
     # Заметка: литеральные \n, overlay превращает их в переводы строк.
     # 6-е поле — подпись под строкой в списке (по умолчанию).
-    sub="по умолчанию: ${deflong%% (*}"
+    sub=$(t "default: %s" "${deflong%% (*}")
     local na=""
     [[ $1 == TWEAKS ]] && na=$(bar_tweak_note "$key" "$shape" "$compact")
     [[ -n $na ]] && sub="○ $na"
-    printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$label:  ${long%% (*}" "$key" "$TW_FILE" \
-      "Сейчас: $long"'\n'"По умолчанию: $deflong${na:+\\n$na}"'\n\n'"$hint · x — сбросить к умолчанию" \
+    printf '%s\t%s\t%s\t0\t%s\t%s\n' "$mark$(t "$label"):  ${long%% (*}" "$key" "$TW_FILE" \
+      "$(t "Now: %s" "$long")"'\n'"$(t "Default: %s" "$deflong")${na:+\\n$na}"'\n\n'"$hint · $(t "x — reset to default")" \
       "$sub"
   done
 }
@@ -496,7 +512,7 @@ lock_edit() {
 # Снимает каждый дизайн через превью экрана блокировки (без блокировки).
 lock_thumbs() {
   mkdir -p "$LOCK_THUMBS"
-  notify-send -t 3000 "Lock" "Снимаю превью дизайнов…"
+  notify-send -t 3000 "Lock" "$(t "Capturing design previews…")"
   local id
   {
     jq -r '.[].id' "$LOCK_PLUGIN/designs/designs.json"
@@ -507,7 +523,7 @@ lock_thumbs() {
     grim -s 1 -t jpeg -q 90 "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg"
   done
   omarchy-shell lock hidePreview >/dev/null
-  notify-send -t 3000 "Lock" "Превью обновлены"
+  notify-send -t 3000 "Lock" "$(t "Previews updated")"
 }
 
 # Миниатюры пикеров заранее: theme switcher (все темы) и обои текущей темы.
@@ -517,7 +533,7 @@ picker_cache() {
   local start before after theme
   start=$(date +%s)
   before=$(find "$PICKER_CACHE" -maxdepth 1 -name '*.jpg' 2>/dev/null | wc -l)
-  notify-send -t 3000 "Theme Switcher" "Кэширую миниатюры…"
+  notify-send -t 3000 "Theme Switcher" "$(t "Caching thumbnails…")"
   # --preload готовит previews/ (по превью на тему) и прогревает overlay.
   omarchy-theme-switcher --preload >/dev/null 2>&1
   omarchy-menu-images --cache-only "${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/theme-selector/previews" >/dev/null 2>&1
@@ -525,17 +541,18 @@ picker_cache() {
   omarchy-menu-images --cache-only "$HOME/.local/state/omarchy/current/theme/backgrounds" \
     "$HOME/.config/omarchy/backgrounds/$theme" >/dev/null 2>&1
   after=$(find "$PICKER_CACHE" -maxdepth 1 -name '*.jpg' 2>/dev/null | wc -l)
-  notify-send -t 4000 "Theme Switcher" "Готово за $(($(date +%s) - start)) с: новых миниатюр $((after - before))"
+  notify-send -t 4000 "Theme Switcher" "$(t "Done in %s s: %s new thumbnails" "$(($(date +%s) - start))" "$((after - before))")"
 }
 
 # Миниатюры, чей исходник исчез или изменился (размер:mtime не совпадает с index.tsv),
 # удаляются; индекс переписывается. --dry-run только считает. Работает строго внутри
 # $PICKER_CACHE (realpath-проверка).
 picker_prune() {
-  python3 - "$PICKER_CACHE" "${1:-}" <<'PRUNE'
+  python3 - "$PICKER_CACHE" "${1:-}" "$(t "Can delete: %s thumbnails, %s GB; %s stay")" "$(t "Deleted: %s thumbnails, %s GB; %s stay")" <<'PRUNE'
 import os, sys
 cache = os.path.realpath(sys.argv[1])
 dry = sys.argv[2] == "--dry-run"
+msg_dry, msg_done = sys.argv[3], sys.argv[4]
 index = os.path.join(cache, "index.tsv")
 keep, lines = set(), []
 try:
@@ -576,8 +593,7 @@ if not dry:
     with open(tmp, "w", encoding="utf-8") as f:
         f.writelines(dict.fromkeys(lines))
     os.replace(tmp, index)
-verb = "Можно удалить" if dry else "Удалено"
-print(f"{verb}: {count} миниатюр, {size / 1024**3:.1f} ГБ; останется {len(keep)}")
+print((msg_dry if dry else msg_done).replace("%s", "{}").format(count, f"{size / 1024**3:.1f}", len(keep)))
 PRUNE
 }
 
@@ -595,10 +611,10 @@ bar_skin_restore() {
 list() {
   case "$1" in
   anims)
-    # Snapshot what is in use; previews overwrite it until anim-restore.
-    cp "$ANIM_ACTIVE" "$ANIM_BACKUP" 2>/dev/null
-    for f in "$ANIM_DIR"/*.lua; do
-      [[ -f $f ]] || continue
+    # Snapshot what is in use (empty file = nothing picked yet, Hyprland's own config);
+    # previews overwrite it until anim-restore.
+    if [[ -f $ANIM_ACTIVE ]]; then cp "$ANIM_ACTIVE" "$ANIM_BACKUP"; else : >"$ANIM_BACKUP"; fi
+    anim_files | while read -r f; do
       local cur=0
       cmp -s "$f" "$ANIM_ACTIVE" && cur=1
       printf '%s\t%s\t%s\t%s\n' "$(basename "$f" .lua)" "$f" "$f" "$cur"
@@ -607,8 +623,8 @@ list() {
   bar-layouts)
     local f cur
     cur=$(current_layout)
-    printf '%s\t%s\t\t0\t%s\n' "💾 Сохранить текущую как пресет…" "save" \
-      "Записать раскладку из shell.json в layouts/<имя>.json плагина kamradsmeshnyavy.bar."
+    printf '%s\t%s\t\t0\t%s\n' "$(t "💾 Save the current one as a preset…")" "save" \
+      "$(t "Write the layout from shell.json to layouts/<name>.json of the kamradsmeshnyavy.bar plugin.")"
     for f in "$BAR_DIR"/layouts/*.json; do
       [[ -f $f ]] || continue
       printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \
@@ -636,62 +652,62 @@ list() {
     local cur e desc
     cur=$(jq -r '.type // "slant"' "$FX_CFG" 2>/dev/null || echo slant)
     while IFS='|' read -r e desc; do
-      printf '%s\t%s\t\t%s\t%s\n' "$e" "$e" "$([[ $e == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"⏎ — выбрать · p — проиграть на рабочем столе"
+      printf '%s\t%s\t\t%s\t%s\n' "$e" "$e" "$([[ $e == "$cur" ]] && echo 1 || echo 0)" "$(t "$desc")"'\n\n'"$(t "⏎ — select · p — play it on the desktop")"
     done <<'EFFECTS'
-slant|Косая шторка от центра — как в стоке Omarchy
-fade|Плавное растворение
-wipe|Шторка по направлению «Угол»
-wave|Шторка с волнистым краем
-grow|Круг растёт из точки (center / cursor / random)
-outer|Круг сжимается к точке — новые обои приходят с краёв
-diamond|Ромб из точки
-clock|Радиальная развёртка, как стрелка часов
-blinds|Жалюзи
-doors|Двери: раскрытие от середины
-mosaic|Квадраты в случайном порядке
-dissolve|Пиксельный шум
-pixelize|Укрупнение пикселей и обратно
-ripple|Круги на воде
-swirl|Закрутка к центру
-crosszoom|Радиальное размытие с приближением
-slide|Новые обои выталкивают старые (по «Углу»)
-zoom|Старые улетают вперёд, новые проявляются
-glitch|Рваные полосы и разъезд каналов
-burn|Прогорание пятнами с раскалённым краем
-waterdrop|Капля: волны от точки с затуханием
-hexagon|Соты открываются от центра
-random|Каждый раз случайный эффект
-none|Без анимации
+slant|Slanted wipe from the centre — stock Omarchy
+fade|Smooth cross-fade
+wipe|Wipe along the “Angle”
+wave|Wipe with a wavy edge
+grow|A circle grows from a point (center / cursor / random)
+outer|A circle shrinks to a point — the new wallpaper comes from the edges
+diamond|A diamond from a point
+clock|Radial sweep, like a clock hand
+blinds|Blinds
+doors|Doors opening from the middle
+mosaic|Squares in random order
+dissolve|Pixel noise
+pixelize|Pixels grow and shrink back
+ripple|Ripples on water
+swirl|Swirl into the centre
+crosszoom|Radial blur with zoom
+slide|The new wallpaper pushes the old one out (along the “Angle”)
+zoom|The old one flies forward, the new one fades in
+glitch|Torn stripes and channel split
+burn|Burns through in spots with a glowing edge
+waterdrop|A drop: waves from a point, fading out
+hexagon|Honeycomb opening from the centre
+random|A random effect every time
+none|No animation
 EFFECTS
     ;;
   theme-switcher)
-    printf '%s\t%s\t\t0\t%s\n' "⚡ Закэшировать миниатюры" "cache" \
-      "Сделать миниатюры для theme switcher (все темы) и для обоев текущей темы заранее, чтобы пикеры открывались сразу."'\n\n'"Кэш: $PICKER_CACHE ($(du -sh "$PICKER_CACHE" 2>/dev/null | cut -f1))"
-    printf '%s\t%s\t\t0\t%s\n' "🧹 Очистить неиспользуемые миниатюры" "prune" \
-      "Удалить миниатюры картинок, которых больше нет или которые изменились. Миниатюры существующих картинок остаются."'\n\n'"$(picker_prune --dry-run 2>/dev/null)"
+    printf '%s\t%s\t\t0\t%s\n' "$(t "⚡ Cache thumbnails")" "cache" \
+      "$(t "Make thumbnails for the theme switcher (all themes) and for the current theme's wallpapers ahead of time, so the pickers open instantly.")"'\n\n'"$(t "Cache: %s" "$PICKER_CACHE ($(command du -sh "$PICKER_CACHE" 2>/dev/null | cut -f1))")"
+    printf '%s\t%s\t\t0\t%s\n' "$(t "🧹 Clean up unused thumbnails")" "prune" \
+      "$(t "Delete thumbnails of images that are gone or have changed. Thumbnails of existing images stay.")"'\n\n'"$(picker_prune --dry-run 2>/dev/null)"
     list_tweaks PICKER_TWEAKS "$PICKER_CFG" | awk -F'\t' 'BEGIN { OFS = "\t" } { $2 = "tweak:" $2; print }'
     local cur st desc
     cur=$(jq -r '.style // "slices"' "$PICKER_CFG" 2>/dev/null || echo slices)
     while IFS='|' read -r st desc; do
-      printf '%s\t%s\t\t%s\t%s\n' "$st" "style:$st" "$([[ $st == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"⏎ — выбрать · p — открыть theme switcher"
+      printf '%s\t%s\t\t%s\t%s\n' "$st" "style:$st" "$([[ $st == "$cur" ]] && echo 1 || echo 0)" "$(t "$desc")"'\n\n'"$(t "⏎ — select · p — open the theme switcher")"
     done <<'STYLES'
-slices|Скошенные ломтики — как в стоке Omarchy
-cards|Ровные карточки со скруглением
-coverflow|Соседи повёрнуты в 3D, как в iTunes
-strip|Лента одинаковых карточек, выбранная крупнее
-wide|Огромное превью и тонкие ломтики
-polaroid|Карточки в белой рамке с подписью
+slices|Slanted slices — stock Omarchy
+cards|Even rounded cards
+coverflow|Neighbours turned in 3D, like iTunes
+strip|A strip of equal cards, the selected one bigger
+wide|A huge preview and thin slices
+polaroid|Cards in a white frame with a caption
 STYLES
     ;;
   lock)
     local cur id name file thumb
     cur=$(lock_current)
-    printf '%s\t%s\t\t0\t%s\n' "🔄 Обновить превью всех дизайнов  (T)" "regen-thumbs" \
-      "Дизайны по очереди покажутся на экране (≈1,5 с каждый) и снимутся в цветах текущей темы."
+    printf '%s\t%s\t\t0\t%s\n' "$(t "🔄 Refresh previews of all designs  (T)")" "regen-thumbs" \
+      "$(t "Each design shows on screen in turn (≈1.5 s each) and is captured in the current theme's colours.")"
     jq -r '.[] | [.id, .name, .description, (.tags | join(" · "))] | @tsv' "$LOCK_PLUGIN/designs/designs.json" |
       while IFS=$'\t' read -r id name desc tags; do
         printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$id" "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg" \
-          "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"p — показать вживую · ⏎ — выбрать" "$tags"
+          "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "$desc"'\n\n'"$(t "p — show it live · ⏎ — select")" "$tags"
       done
     # Свои дизайны: ~/.config/omarchy/lock-designs/*.qml, id my:<файл>.
     for file in "$LOCK_USER_DIR"/*.qml; do
@@ -699,7 +715,7 @@ STYLES
       name=$(basename "$file")
       id="my:$name"
       printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${name%.qml}" "$id" "$LOCK_THUMBS/$(lock_thumb_name "$id").jpg" \
-        "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "Свой дизайн: $file"'\n\n'"p — показать вживую · ⏎ — выбрать" "custom"
+        "$([[ $id == "$cur" ]] && echo 1 || echo 0)" "$(t "Your design: %s" "$file")"'\n\n'"$(t "p — show it live · ⏎ — select")" "custom"
     done
     ;;
   themes)
@@ -727,7 +743,7 @@ STYLES
     if [[ -n $rel ]]; then
       parent=${rel%/*}
       [[ $parent == "$rel" ]] && parent=""
-      printf '%s\t%s\t\t0\t%s\t%s\n' "󰁝  .." "dir:$parent" "Назад: ${parent:-все категории}" "$rel"
+      printf '%s\t%s\t\t0\t%s\t%s\n' "󰁝  .." "dir:$parent" "$(t "Back: %s" "${parent:-$(t "all categories")}")" "$rel"
     fi
     if [[ -d $dir ]]; then
       while IFS= read -r -d '' sub; do
@@ -739,7 +755,7 @@ STYLES
         cur=0
         [[ $cur_bg == "$(readlink -f "$sub")"/* ]] && cur=1
         printf '%s\t%s\t%s\t%s\t%s\t%s\n' "󰉋  $name" "dir:${rel:+$rel/}$name" "$first" "$cur" \
-          "Категория — обоев: $n"'\n\n'"⏎ — открыть · h — назад" "обоев: $n"
+          "$(t "Category — wallpapers: %s" "$n")"'\n\n'"$(t "⏎ — open · h — back")" "$(t "wallpapers: %s" "$n")"
       done < <(find -L "$dir" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -print0 2>/dev/null | sort -z)
       images_in "$dir" 1 | while read -r f; do
         printf '%s\t%s\t%s\t%s\n' "$(basename "$f")" "$f" "$f" "$([[ $(readlink -f "$f") == "$cur_bg" ]] && echo 1 || echo 0)"
@@ -757,10 +773,10 @@ STYLES
   walls)
     local dir
     dir=$(walls_dir)
-    printf '%s\t%s\t\t0\t%s\n' "📂 Recolor a whole folder…  (O)" "pick-dir" \
-      "Pick a folder; every image directly in it is recolored into the theme's backgrounds."
-    printf '%s\t%s\t\t0\t%s\n' "🖼 Recolor image(s) from anywhere…  (o)" "pick-files" \
-      "Pick one or more images (Ctrl/Shift-click) from any folder."
+    printf '%s\t%s\t\t0\t%s\n' "$(t "📂 Recolor a whole folder…  (O)")" "pick-dir" \
+      "$(t "Pick a folder; every image directly in it is recolored into the theme's backgrounds.")"
+    printf '%s\t%s\t\t0\t%s\n' "$(t "🖼 Recolor image(s) from anywhere…  (o)")" "pick-files" \
+      "$(t "Pick one or more images (Ctrl/Shift-click) from any folder.")"
     images_in "$dir" 10 | while read -r f; do
       printf '%s\t%s\t%s\t0\n' "${f#"$dir"/}" "$f" "$f"
     done
@@ -768,10 +784,9 @@ STYLES
   shaders)
     local cur
     cur=$(current_shader)
-    printf '%s\t%s\t\t0\n' "⏻ Toggle shader (now: $cur)" "toggle"
-    printf '%s\t%s\t\t0\n' "⏭ Next shader" "next"
-    for f in "$SHADER_DIR"/*.frag; do
-      [[ -f $f ]] || continue
+    printf '%s\t%s\t\t0\n' "$(t "⏻ Toggle shader (now: %s)" "$cur")" "toggle"
+    printf '%s\t%s\t\t0\n' "$(t "⏭ Next shader")" "next"
+    "$TOGGLE" list | while read -r f; do
       local n
       n=$(basename "$f" .frag)
       printf '%s\t%s\t%s\t%s\n' "$n" "$n" "$f" "$([[ $n == "$cur" ]] && echo 1 || echo 0)"
@@ -788,7 +803,7 @@ STYLES
     local n sz ps v no cur
     "$BLUR" list | while read -r n sz ps v no cur; do
       if ((sz == 0)); then
-        printf '%s\t%s\t\t%s\t%s\n' "$n  (no blur)" "$n" "$cur" "size 0 passes 0 vibrancy 0 noise 0"
+        printf '%s\t%s\t\t%s\t%s\n' "$n  ($(t "no blur"))" "$n" "$cur" "size 0 passes 0 vibrancy 0 noise 0"
       else
         printf '%s\t%s\t\t%s\t%s\n' "$n  ($sz × $ps)" "$n" "$cur" "size $sz passes $ps vibrancy $v noise $no"
       fi
@@ -804,35 +819,35 @@ apply() {
     cp "$value" "$ANIM_ACTIVE"
     cp "$value" "$ANIM_BACKUP"
     hyprctl reload >/dev/null 2>&1
-    notify-send -t 2000 "Animations" "Loaded: $(basename "$value" .lua)"
+    notify-send -t 2000 "Animations" "$(t "Loaded: %s" "$(basename "$value" .lua)")"
     ;;
   bar-layouts)
     if [[ $value == save ]]; then
       local name
-      name=$(zenity --entry --title="Bar layout" --text="Имя пресета:" 2>/dev/null) || exit 0
+      name=$(zenity --entry --title="Bar layout" --text="$(t "Preset name:")" 2>/dev/null) || exit 0
       name=$(tr -cs 'A-Za-z0-9_-' '-' <<<"$name" | sed 's/^-*//; s/-*$//')
       [[ -n $name ]] || exit 0
-      jq --arg n "Сохранено $(date +%F)" '.bar | {note: $n, position, centerAnchor, layout}' "$SHELL_JSON" \
+      jq --arg n "$(t "Saved %s" "$(date +%F)")" '.bar | {note: $n, position, centerAnchor, layout}' "$SHELL_JSON" \
         >"$BAR_DIR/layouts/$name.json"
-      notify-send -t 2000 "Bar Layout" "Saved: $name"
+      notify-send -t 2000 "Bar Layout" "$(t "Saved: %s" "$name")"
       exit 0
     fi
     # shell.json перечитывается на лету, рестарт шелла не нужен (он убил бы и overlay).
     # Остальное (plugins, idle, bar.id, transparent) не трогаем.
     shell_edit --slurpfile p "$value" '.bar += ($p[0] | del(.note))'
-    notify-send -t 2000 "Bar Layout" "Applied: $(basename "$value" .json)"
+    notify-send -t 2000 "Bar Layout" "$(t "Applied %s" "$(basename "$value" .json)")"
     ;;
   bar-skins)
     bar_skin_preview "$value"
     cp "$BAR_SKIN" "$SKIN_BACKUP"
-    notify-send -t 2000 "Bar Skin" "Applied: $(basename "$value" .json)"
+    notify-send -t 2000 "Bar Skin" "$(t "Applied %s" "$(basename "$value" .json)")"
     ;;
   bar-tweaks | lock-tweaks) tweak "$value" pick ;;
   wallpaper-fx)
     if [[ $value == tweak:* ]]; then tweak "${value#tweak:}" pick; exit 0; fi
     TW_FILE="$FX_CFG"
     skin_edit --arg t "$value" '.type = $t'
-    notify-send -t 2000 "Wallpaper FX" "Переход: $value"
+    notify-send -t 2000 "Wallpaper FX" "$(t "Transition: %s" "$value")"
     ;;
   theme-switcher)
     case "$value" in
@@ -841,40 +856,40 @@ apply() {
     prune)
       local info
       info=$(picker_prune --dry-run)
-      zenity --question --title="Кэш миниатюр" --text="$info\n\nУдалить?" 2>/dev/null || exit 0
+      zenity --question --title="$(t "Thumbnail cache")" --text="$info\n\n$(t "Delete?")" 2>/dev/null || exit 0
       notify-send -t 4000 "Theme Switcher" "$(picker_prune)"
       ;;
     style:*)
       TW_FILE="$PICKER_CFG"
       skin_edit --arg s "${value#style:}" '.style = $s'
-      notify-send -t 2000 "Theme Switcher" "Стиль: ${value#style:}"
+      notify-send -t 2000 "Theme Switcher" "$(t "Style: %s" "${value#style:}")"
       ;;
     esac
     ;;
   lock)
     if [[ $value == regen-thumbs ]]; then lock_thumbs; exit 0; fi
     lock_edit --arg d "$value" '.design = $d'
-    notify-send -t 2000 "Lock" "Дизайн: $value"
+    notify-send -t 2000 "Lock" "$(t "Design: %s" "$value")"
     ;;
   themes)
-    notify-send -t 3000 "Theme" "Applying $value..."
+    notify-send -t 3000 "Theme" "$(t "Applying %s…" "$value")"
     omarchy theme set "$value"
-    notify-send -t 3000 "Theme" "Applied $value!"
+    notify-send -t 3000 "Theme" "$(t "Applied %s" "$value")"
     ;;
   theme-walls)
     omarchy theme bg set "$value"
-    notify-send -t 3000 "Wallpaper" "Applied $(basename "$value")!"
+    notify-send -t 3000 "Wallpaper" "$(t "Applied %s" "$(basename "$value")")"
     ;;
   walls)
     local picked
     case "$value" in
     pick-dir)
-      picked=$(zenity --file-selection --directory --title="Folder to recolor" \
+      picked=$(zenity --file-selection --directory --title="$(t "Folder to recolor")" \
         --filename="$(walls_dir)/" 2>/dev/null) || exit 0
       recolor "$picked"
       ;;
     pick-files)
-      picked=$(zenity --file-selection --multiple --separator=$'\n' --title="Image(s) to recolor" \
+      picked=$(zenity --file-selection --multiple --separator=$'\n' --title="$(t "Image(s) to recolor")" \
         --filename="$(walls_dir)/" \
         --file-filter="Images | *.jpg *.jpeg *.png *.webp *.JPG *.JPEG *.PNG *.WEBP" 2>/dev/null) || exit 0
       local -a list
@@ -913,9 +928,10 @@ thumbs() {
 
 status() {
   local anim=custom f
-  for f in "$ANIM_DIR"/*.lua; do
-    [[ -f $f ]] && cmp -s "$f" "$ANIM_ACTIVE" && { anim=$(basename "$f" .lua); break; }
-  done
+  [[ -s $ANIM_ACTIVE ]] || anim=default
+  while read -r f; do
+    cmp -s "$f" "$ANIM_ACTIVE" && { anim=$(basename "$f" .lua); break; }
+  done < <(anim_files)
   printf 'theme\t%s\n' "$(theme_name)"
   printf 'wallpaper\t%s\n' "$(readlink -f "$HOME/.local/state/omarchy/current/background" 2>/dev/null)"
   printf 'anims\t%s\n' "$anim"
@@ -940,10 +956,44 @@ status() {
   printf 'blur-values\t%s\n' "$("$BLUR" list 2>/dev/null | awk '$6 == 1 { print $2, $3, $4, $5 }')"
 }
 
-mkdir -p "$RUN_DIR"
+# Вернуть сохранённое после `hyprctl reload` (Customizer зовёт это на configreloaded и при старте
+# шелла): анимации, прозрачность, блюр, шейдер. Без сохранённого выбора ничего не трогаем.
+restore() {
+  local hypr_state="${XDG_STATE_HOME:-$HOME/.local/state}/hypr"
+  [[ -s $ANIM_ACTIVE ]] && hyprctl eval "$(<"$ANIM_ACTIVE")" >/dev/null
+  [[ -s $hypr_state/opacity ]] && "$OPACITY" restore
+  [[ -s $hypr_state/blur ]] && "$BLUR" restore
+  "$TOGGLE" restore
+  # Блюр под самим оверлеем.
+  hyprctl eval 'hl.layer_rule({ match = { namespace = "omarchy-customizer" }, blur = true, ignore_alpha = 0.6 })' >/dev/null
+  date +%s >"$RUN_DIR/restored"
+}
+
+# Что есть на этой машине: категории, которым нужны плагины-компаньоны или программы, без них скрыты.
+available() {
+  local plugins="$HOME/.config/omarchy/plugins"
+  echo themes
+  echo theme-walls
+  command -v lutgen >/dev/null && command -v zenity >/dev/null && echo walls
+  echo anims
+  echo opacity
+  echo blur
+  echo shaders
+  if [[ -f $BAR_DIR/manifest.json ]]; then printf '%s\n' bar-skins bar-layouts bar-tweaks; fi
+  if [[ -f $LOCK_PLUGIN/manifest.json ]]; then printf '%s\n' lock lock-tweaks; fi
+  [[ -f $plugins/kamradsmeshnyavy.background/manifest.json ]] && echo wallpaper-fx
+  [[ -f $plugins/kamradsmeshnyavy.image-picker/manifest.json ]] && echo theme-switcher
+  command -v zenity >/dev/null && echo has:zenity
+  return 0
+}
+
+mkdir -p "$RUN_DIR" "$STATE_DIR"
 case "${1:-}" in
 list) list "${2:-}" "${3:-}" ;;
 status) status ;;
+available) available ;;
+restore) restore ;;
+lang) echo "$UI_LANG" ;;
 thumbs) thumbs "${2:-}" "${3:-}" ;;
 opacity-preview) "$OPACITY" preview "$2" ;;
 opacity-restore) "$OPACITY" restore ;;
@@ -963,14 +1013,14 @@ anim-preview)
   ;;
 anim-restore)
   # The overlay only calls this after a preview, so the backup is fresh.
-  if [[ -f $ANIM_BACKUP ]] && ! cmp -s "$ANIM_BACKUP" "$ANIM_ACTIVE"; then
+  if [[ -f $ANIM_BACKUP ]] && ! cmp -s "$ANIM_BACKUP" "${ANIM_ACTIVE}"; then
     cp "$ANIM_BACKUP" "$ANIM_ACTIVE"
     hyprctl reload >/dev/null 2>&1
   fi
   ;;
 apply) apply "$2" "$3" ;;
 *)
-  echo "usage: $0 list|status|thumbs|anim-preview|anim-restore|opacity-preview|opacity-restore|blur-preview|blur-restore|bar-skins-preview|bar-skins-restore|tweak|apply ..." >&2
+  echo "usage: $0 list|status|available|restore|lang|thumbs|anim-preview|anim-restore|opacity-preview|opacity-restore|blur-preview|blur-restore|bar-skins-preview|bar-skins-restore|tweak|apply ..." >&2
   exit 1
   ;;
 esac

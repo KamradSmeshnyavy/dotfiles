@@ -1,13 +1,12 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
 import QtQuick 6.11
 import QtQuick.Effects
 import qs.Commons
 import qs.Ui
-// TransitionEffect — тот же шейдер переходов, что у обоев (превью Wallpaper FX).
-import "../kamradsmeshnyavy.background"
 
 // Quickshell port of scripts/bin/omarchy-customizer (the old fzf menu on
 // SUPER+SHIFT+T). Header with what is in use now, then three panes:
@@ -23,54 +22,87 @@ Item {
   readonly property string thumbDir: Quickshell.env("XDG_CACHE_HOME") ? Quickshell.env("XDG_CACHE_HOME") + "/omarchy-customizer/thumbs"
     : Quickshell.env("HOME") + "/.cache/omarchy-customizer/thumbs"
   readonly property string script: decodeURIComponent(String(Qt.resolvedUrl("customizer.sh")).replace(/^file:\/\//, ""))
+  readonly property string pluginDir: script.replace(/\/customizer\.sh$/, "")
 
   // key: customizer.sh category; image: preview pane shows the picture;
   // live: hovering a row previews it, Esc / leaving the category reverts;
   // bar: preview pane draws a bar mock (BarMock.qml); tweak: h/l step the row's value.
-  readonly property var categories: [
+  readonly property var allCategories: [
     { group: "desk", key: "themes",      icon: "󰏘", title: "Theme",        hint: "omarchy theme set",                    image: true,  live: false },
-    { group: "desk", key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Категории как в SUPER+CTRL+SPACE",      image: true,  live: false },
+    { group: "desk", key: "theme-walls", icon: "󰸉", title: "Wallpaper",    hint: "Categories as in SUPER+CTRL+SPACE",      image: true,  live: false },
     { group: "desk", key: "walls",       icon: "󰃣", title: "Recolor",      hint: "Lutgen · O folder · o image(s)",       image: true,  live: false },
-    { group: "desk", key: "wallpaper-fx", icon: "󰗘", title: "Wallpaper FX", hint: "Переходы обоев · p — проиграть",       image: false, live: false, fx: true },
+    { group: "desk", key: "wallpaper-fx", icon: "󰗘", title: "Wallpaper FX", hint: "Wallpaper transitions · p — play",      image: false, live: false, fx: true },
     { group: "bar",  key: "bar-skins",   icon: "󰉼", title: "Bar Skin",     hint: "Live preview · form, colors, glass",   image: false, live: true,  bar: true },
     { group: "bar",  key: "bar-layouts", icon: "󰕮", title: "Bar Layout",   hint: "Sections & edge · shell.json",         image: false, live: false, bar: true },
     { group: "bar",  key: "bar-tweaks",  icon: "󰒓", title: "Bar Tweaks",   hint: "h l / − + change · ⏎ custom color",    image: false, live: false, bar: true, tweak: true },
     { group: "win",  key: "anims",       icon: "󰔡", title: "Animations",   hint: "Live preview while you browse",       image: false, live: true },
-    { group: "win",  key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview · SUPER+ALT+O cycles",    image: false, live: true },
-    { group: "win",  key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview · SUPER+ALT+U cycles",    image: false, live: true },
-    { group: "win",  key: "shaders",     icon: "󰍹", title: "Shader",       hint: "crt-toggle.sh",                        image: false, live: false },
-    { group: "lock", key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — показать вживую · T — превью",     image: true,  live: false },
-    { group: "lock", key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — показать",             image: false, live: false, tweak: true },
-    { group: "pick", key: "theme-switcher", icon: "󰸌", title: "Theme Switcher", hint: "Стиль пикера · ⚡ кэш · p — открыть", image: false, live: false, picker: true }
+    { group: "win",  key: "opacity",     icon: "󰂵", title: "Transparency", hint: "Live preview while you browse",        image: false, live: true },
+    { group: "win",  key: "blur",        icon: "󰂷", title: "Blur",         hint: "Live preview while you browse",        image: false, live: true },
+    { group: "win",  key: "shaders",     icon: "󰍹", title: "Shader",       hint: "CRT, TFT · scripts/crt-toggle.sh",      image: false, live: false },
+    { group: "lock", key: "lock",        icon: "󰌾", title: "Lock",         hint: "p — show it live · T — previews",       image: true,  live: false },
+    { group: "lock", key: "lock-tweaks", icon: "󰷛", title: "Lock Tweaks",  hint: "h l change · p — show",                 image: false, live: false, tweak: true },
+    { group: "pick", key: "theme-switcher", icon: "󰸌", title: "Theme Switcher", hint: "Picker style · ⚡ cache · p — open", image: false, live: false, picker: true }
   ]
 
   // Вкладки сверху: группы категорий (1–5, Tab / Shift+Tab); chips — какие чипы
   // статуса показывать в шапке, пока группа открыта.
-  readonly property var groups: [
-    { id: "desk", icon: "󰧨", title: "Рабочий стол", chips: ["theme", "wallpaper", "fx"] },
-    { id: "bar",  icon: "󰕮", title: "Бар",          chips: ["bar-skin", "bar-layout"] },
-    { id: "win",  icon: "󱂬", title: "Окна",         chips: ["anims", "opacity", "blur", "shader"] },
-    { id: "lock", icon: "󰌾", title: "Блокировка",   chips: ["lock"] },
-    { id: "pick", icon: "󰸌", title: "Пикеры",       chips: ["picker"] }
+  readonly property var allGroups: [
+    { id: "desk", icon: "󰧨", title: "Desktop",  chips: ["theme", "wallpaper", "fx"] },
+    { id: "bar",  icon: "󰕮", title: "Bar",      chips: ["bar-skin", "bar-layout"] },
+    { id: "win",  icon: "󱂬", title: "Windows",  chips: ["anims", "opacity", "blur", "shader"] },
+    { id: "lock", icon: "󰌾", title: "Lock",     chips: ["lock"] },
+    { id: "pick", icon: "󰸌", title: "Pickers",  chips: ["picker"] }
   ]
 
   // Tweaks rows whose ⏎ opens a picker (color, text, file) instead of stepping.
   readonly property var colorTweaks: ["background", "gradient", "border", "text", "active", "moduleBackground", "wsActiveColor", "ownerMessage", "avatar"]
 
   // Header chips: status key -> category key it opens.
-  readonly property var statusChips: [
-    { key: "theme",      icon: "󰏘", title: "Тема",         category: "themes" },
-    { key: "wallpaper",  icon: "󰸉", title: "Обои",         category: "theme-walls" },
-    { key: "fx",         icon: "󰗘", title: "Переход",      category: "wallpaper-fx" },
-    { key: "bar-skin",   icon: "󰉼", title: "Скин",         category: "bar-skins" },
-    { key: "bar-layout", icon: "󰕮", title: "Раскладка",    category: "bar-layouts" },
-    { key: "anims",      icon: "󰔡", title: "Анимации",     category: "anims" },
-    { key: "opacity",    icon: "󰂵", title: "Прозрачность", category: "opacity" },
-    { key: "blur",       icon: "󰂷", title: "Блюр",         category: "blur" },
-    { key: "shader",     icon: "󰍹", title: "Шейдер",       category: "shaders" },
-    { key: "lock",       icon: "󰌾", title: "Дизайн",       category: "lock" },
-    { key: "picker",     icon: "󰸌", title: "Стиль",        category: "theme-switcher" }
+  readonly property var allStatusChips: [
+    { key: "theme",      icon: "󰏘", title: "Theme",        category: "themes" },
+    { key: "wallpaper",  icon: "󰸉", title: "Wallpaper",    category: "theme-walls" },
+    { key: "fx",         icon: "󰗘", title: "Transition",   category: "wallpaper-fx" },
+    { key: "bar-skin",   icon: "󰉼", title: "Skin",         category: "bar-skins" },
+    { key: "bar-layout", icon: "󰕮", title: "Layout",       category: "bar-layouts" },
+    { key: "anims",      icon: "󰔡", title: "Animations",   category: "anims" },
+    { key: "opacity",    icon: "󰂵", title: "Transparency", category: "opacity" },
+    { key: "blur",       icon: "󰂷", title: "Blur",         category: "blur" },
+    { key: "shader",     icon: "󰍹", title: "Shader",       category: "shaders" },
+    { key: "lock",       icon: "󰌾", title: "Design",       category: "lock" },
+    { key: "picker",     icon: "󰸌", title: "Style",        category: "theme-switcher" }
   ]
+
+  // ── Перевод и что доступно на этой машине ────────────────────────────
+  // Строки в коде — английские; i18n/<lang>.json переводит их (язык — `customizer.sh lang`:
+  // "lang" в ~/.config/omarchy/customizer.json или $LANG). Категории, которым нужен
+  // плагин-компаньон или программа (`customizer.sh available`), без них скрыты.
+  property var i18n: ({})
+  property var available: null       // null — ещё не знаем: показываем всё
+  function tr(s) { return root.i18n[s] !== undefined ? root.i18n[s] : s }
+  function localized(item) {
+    var out = Object.assign({}, item)
+    if (item.title !== undefined) out.title = root.tr(item.title)
+    if (item.hint !== undefined) out.hint = root.tr(item.hint)
+    return out
+  }
+  function setAvailable(raw) {
+    var list = String(raw || "").split("\n").filter(function(s) { return s.length > 0 })
+    var key = root.category ? root.category.key : ""
+    var cats = root.allCategories.filter(function(c) { return list.indexOf(c.key) !== -1 })
+    var idx = -1
+    for (var i = 0; i < cats.length; i++) if (cats[i].key === key) { idx = i; break }
+    // Сначала индекс (он меньше длины и старого, и нового списка), потом сам список.
+    root.groupLast = ({})
+    root.categoryIndex = Math.max(0, idx)
+    root.available = list
+    if (root.opened && idx < 0) root.setCategory(0, true)
+  }
+  function isAvailable(key) { return root.available === null || root.available.indexOf(key) !== -1 }
+  readonly property var categories: allCategories.filter(function(c) { return root.isAvailable(c.key) }).map(root.localized)
+  readonly property var groups: allGroups.filter(function(g) {
+    return root.categories.some(function(c) { return c.group === g.id })
+  }).map(root.localized)
+  readonly property var statusChips: allStatusChips.filter(function(c) { return root.isAvailable(c.category) }).map(root.localized)
 
   property bool opened: false
   property int categoryIndex: 0
@@ -165,6 +197,8 @@ Item {
     root.setCategory(root.categoryIndex, true)
     statusProc.running = false
     statusProc.running = true
+    availableProc.running = false
+    availableProc.running = true
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
 
@@ -625,6 +659,53 @@ Item {
     stdout: StdioCollector {
       onStreamFinished: root.loadRows(lister.category, text)
     }
+  }
+
+  Process {
+    id: langProc
+    command: [root.script, "lang"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var lang = text.trim()
+        if (lang && lang !== "en") i18nFile.path = root.pluginDir + "/i18n/" + lang + ".json"
+        else root.i18n = ({})
+      }
+    }
+  }
+
+  FileView {
+    id: i18nFile
+    printErrors: false
+    onLoaded: root.i18n = root.parseJson(text())
+    onLoadFailed: root.i18n = ({})
+  }
+
+  Process {
+    id: availableProc
+    command: [root.script, "available"]
+    stdout: StdioCollector {
+      onStreamFinished: root.setAvailable(text)
+    }
+  }
+
+  // После `hyprctl reload` (и при старте шелла) вернуть сохранённые анимации, прозрачность,
+  // блюр и шейдер — так Customizer работает и без строки в конфиге Hyprland.
+  Process {
+    id: restoreProc
+    command: [root.script, "restore"]
+  }
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (event.name !== "configreloaded") return
+      restoreProc.running = false
+      restoreProc.running = true
+    }
+  }
+  Component.onCompleted: {
+    langProc.running = true
+    availableProc.running = true
+    restoreProc.running = true
   }
 
   Process {
@@ -1316,7 +1397,7 @@ Item {
             Item { width: 1; height: Style.space(10) }
             Text {
               visible: root.groupChips.length > 0
-              text: "СЕЙЧАС"
+              text: root.tr("NOW")
               color: root.muted
               font.family: root.fontFamily
               font.pixelSize: Style.font.caption
@@ -1433,7 +1514,7 @@ Item {
                 text: root.filtering ? root.filterText + "▏"
                   : root.filterText ? root.filterText
                   : root.category.key === "theme-walls" && root.wallPath ? "󰉋 " + root.wallPath + "  ( / )"
-                  : "Search " + root.category.title.toLowerCase() + "…  ( / )"
+                  : root.tr("Search %1…").arg(root.category.title.toLowerCase()) + "  ( / )"
                 color: root.filtering || root.filterText ? root.foreground : root.muted
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.body
@@ -1985,16 +2066,24 @@ Item {
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true
                   }
-                  TransitionEffect {
+                  // Тот же шейдер переходов, что у обоев: берём его из плагина kamradsmeshnyavy.background,
+                  // если он стоит (без него категория Wallpaper FX скрыта).
+                  Loader {
                     id: fxEffect
                     anchors.fill: parent
-                    visible: fxStage.visible && fxFrom.status === Image.Ready && fxTo.status === Image.Ready
-                    fromItem: fxFrom
-                    toItem: fxTo
-                    effect: fxStage.effect
-                    angleDegrees: Number(root.activeFx.angle || 0)
-                    softness: root.activeFx.softness !== undefined ? Number(root.activeFx.softness) : 0.02
-                    origin: Qt.point(0.5, 0.5)
+                    property real progress: 0
+                    active: root.isAvailable("wallpaper-fx")
+                    source: active ? "file://" + Quickshell.env("HOME") + "/.config/omarchy/plugins/kamradsmeshnyavy.background/TransitionEffect.qml" : ""
+                    visible: fxStage.visible && fxFrom.status === Image.Ready && fxTo.status === Image.Ready && status === Loader.Ready
+                    onLoaded: {
+                      item.fromItem = fxFrom
+                      item.toItem = fxTo
+                      item.origin = Qt.point(0.5, 0.5)
+                      item.effect = Qt.binding(function() { return fxStage.effect })
+                      item.angleDegrees = Qt.binding(function() { return Number(root.activeFx.angle || 0) })
+                      item.softness = Qt.binding(function() { return root.activeFx.softness !== undefined ? Number(root.activeFx.softness) : 0.02 })
+                      item.progress = Qt.binding(function() { return fxEffect.progress })
+                    }
                     // Цикл: переход (длительность из настроек), пауза, заново.
                     SequentialAnimation on progress {
                       running: fxEffect.visible
@@ -2016,7 +2105,7 @@ Item {
                     wrapMode: Text.Wrap
                     textFormat: Text.PlainText
                     lineHeight: 1.2
-                    text: (root.selectedRow ? root.selectedRow.note : "") + "\n\nВ превью переход замедлен вдвое."
+                    text: (root.selectedRow ? root.selectedRow.note : "") + "\n\n" + root.tr("The preview plays the transition at half speed.")
                     color: root.foreground
                     opacity: 0.85
                     font.family: Style.font.family

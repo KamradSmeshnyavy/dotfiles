@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 # System-wide window transparency presets (decoration active/inactive_opacity).
 # The choice is saved to $STATE as "<name> <active> <inactive>" and
-# looknfeel.lua re-applies those values on every config load, so
-# `hyprctl reload` / relogin keep it.
+# the Customizer re-applies it after every config reload (customizer.sh restore,
+# or hypr/customizer.lua when it is loaded from the Hyprland config).
 #
 #   opacity.sh               # next preset (same as `next`)
 #   opacity.sh next | prev   # cycle through PRESETS
 #   opacity.sh set <name>    # apply a preset by name (used by the customizer)
 #   opacity.sh preview <name>  # apply without saving or notifying (customizer hover)
-#   opacity.sh restore       # re-apply the saved preset silently
+#   opacity.sh restore       # re-apply the saved preset silently (none saved: hyprctl reload)
 #   opacity.sh list          # "<name> <active> <inactive> <current 0/1>" per line
 #   opacity.sh current       # name of the preset in use
 #
-# Bound in bindings.lua: SUPER+ALT+O (next), SUPER+ALT+SHIFT+O (prev).
+# Bind it if you like, e.g. SUPER+ALT+O (next), SUPER+ALT+SHIFT+O (prev).
 set -euo pipefail
+# shellcheck source=i18n.sh
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/i18n.sh"
 
 # name active inactive
 PRESETS=(
@@ -62,10 +64,10 @@ set_opacity() { # $1 = name; fails when unknown
 
 apply() { # $1 = name
     local a i
-    set_opacity "$1" || { notify "Нет такого пресета" "$1"; exit 1; }
+    set_opacity "$1" || { notify "$(t "No such preset")" "$1"; exit 1; }
     read -r a i < <(lookup "$1")
     echo "$1 $a $i" >"$STATE"
-    notify "Прозрачность: $1" "активное окно $a · неактивные $i"
+    notify "$(t "Transparency: %s" "$1")" "$(t "active window %s · inactive %s" "$a" "$i")"
 }
 
 step() { # $1 = +1 / -1
@@ -84,7 +86,7 @@ next) step 1 ;;
 prev) step -1 ;;
 set) apply "${2:?preset name}" ;;
 preview) set_opacity "${2:?preset name}" ;;
-restore) set_opacity "$(current)" ;;
+restore) if [[ -s $STATE ]]; then set_opacity "$(current)"; else hyprctl reload >/dev/null; fi ;;
 current) current ;;
 list)
     cur="$(current)"
