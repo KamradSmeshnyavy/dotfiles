@@ -1,5 +1,7 @@
 # Темы CLI/TUI-приложений для тем Omarchy
 
+[🇬🇧 English](APP-THEMING.en.md)
+
 `scripts/omarchy-app-themes` (запускается из `hooks/theme-set`) красит приложения, которые Omarchy сам не трогает.
 
 ## Слоты

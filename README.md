@@ -15,7 +15,7 @@
 > transitions on a custom shader (24 effects), and a **Customizer** overlay (`Super+Shift+T`) that
 > live-previews all of it. Every TUI app — Neovim, Yazi, lazygit, btop, tmux, Kitty — follows the active
 > theme. Shell is Nushell + Starship; symlinks are managed by Dotbot, commands live in a `justfile`.
-> Docs are in Russian; install steps and the demo above work as-is.
+> **Full English README: [README.en.md](README.en.md).**
 
 <p align="center">
   <img src="assets/demo-preview.webp" alt="Демо: тайлинг, compact-бар, музыка, браузер, переключение workspace, скины лаунчера, Customizer, переход обоев" width="100%">
@@ -42,6 +42,24 @@ https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
 | ![Customizer](assets/customizer.webp) | ![Launcher](assets/launcher.webp) |
 | **Музыка** (Spotifast + cava) | **Браузер** (Firefox, тема через Dark Reader / Stylus) |
 | ![Music](assets/music.webp) | ![Browser](assets/browser.webp) |
+
+---
+
+## 🧩 Плагины Omarchy отдельно
+
+Каждый плагин оболочки — отдельный репо, ставится без остальных dotfiles через
+`omarchy plugin add <url> --enable`:
+
+| Плагин | |
+| :--- | :--- |
+| [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) | бар: 18 скинов, 9 раскладок, compact-режим с раскрытием по наведению, workspaces с 20+ стилями подписей |
+| [omarchy-launcher-skins](https://github.com/KamradSmeshnyavy/omarchy-launcher-skins) | полноэкранные скины лаунчера: карта звёзд, CRT-терминал, планетарий, аквариум, таро, метро… |
+| [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) | 21 дизайн экрана блокировки поверх стокового PAM, с безопасным фолбэком |
+| [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) | 24 перехода обоев на одном своём шейдере |
+| [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles) | шесть стилей пикера тем и обоев |
+
+**Customizer** (`Super+Shift+T`) есть только здесь: он управляет всеми плагинами, а также анимациями,
+прозрачностью, блюром и шейдерами Hyprland.
 
 ---
 
