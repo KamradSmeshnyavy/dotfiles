@@ -1,5 +1,7 @@
 # Бар omarchy-shell: скины и раскладки
 
+> Плагин — отдельный репо и сабмодуль: [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) (там README на английском).
+
 Верхний бар — клон стокового `omarchy.bar` (`omarchy plugin clone omarchy.bar`) с прослойкой скинов:
 `apps/omarchy-shell/plugins/kamradsmeshnyavy.bar/` → `~/.config/omarchy/plugins/kamradsmeshnyavy.bar`.
 Шелл выбирает его через `bar.id` в `~/.config/omarchy/shell.json`; если клон не загрузится, шелл сам

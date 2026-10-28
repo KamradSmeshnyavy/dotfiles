@@ -14,3 +14,15 @@
 [submodule "omarchy-themes/thinkpad-boot-screen"]
 	path = omarchy-themes/thinkpad-boot-screen
 	url = https://github.com/Yilmaz41/Thinkpad-boot-screen.git
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.bar"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.bar
+	url = https://github.com/KamradSmeshnyavy/omarchy-bar-skins
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.lock"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.lock
+	url = https://github.com/KamradSmeshnyavy/omarchy-lock-designs
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.background"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.background
+	url = https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
+	url = https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles

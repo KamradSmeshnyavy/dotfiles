@@ -1,5 +1,7 @@
 # Обои и theme switcher: переходы, стили пикера, кэш миниатюр
 
+> Плагины — отдельные репо и сабмодули: [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) и [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles).
+
 Два клона первой стороны, оба настраиваются в Customizer (Super+Shift+T):
 
 | Плагин | Клон | Настройки | Категория |

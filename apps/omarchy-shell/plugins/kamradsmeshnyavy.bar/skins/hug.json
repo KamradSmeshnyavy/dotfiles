@@ -1,7 +1,0 @@
-{
-  "note": "Полоса во всю ширину с вогнутыми углами под ней (как «Hug» у end-4)",
-  "shape": "hug",
-  "radius": 14,
-  "height": 30,
-  "background": "darker_background"
-}

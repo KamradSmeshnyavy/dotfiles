@@ -1,5 +1,7 @@
 # Экран блокировки omarchy-shell: дизайны
 
+> Плагин — отдельный репо и сабмодуль: [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) (там README на английском).
+
 Свой аналог [omarchy-lock-explorer](https://github.com/SirJul1337/omarchy-lock-explorer), написанный
 заново: чужой код не используется. Клон стокового `omarchy.lock` (`omarchy plugin clone omarchy.lock`):
 `apps/omarchy-shell/plugins/kamradsmeshnyavy.lock/` → `~/.config/omarchy/plugins/kamradsmeshnyavy.lock`.

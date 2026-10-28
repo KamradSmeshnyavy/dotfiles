@@ -121,6 +121,13 @@ television, gitui, rmpc, nushell, tmux, fzf читают тему из файл�
 - pre-commit: `gitleaks` (`.githooks/pre-commit`); обходить `--no-verify` только при ложном срабатывании.
 - Сабмодули (`.gitmodules`): `.dotbot`, `apps/ghostty/shaders`, `apps/ghostty/cursors`, `apps/sketchybar`,
   `omarchy-themes/thinkpad-boot-screen`. После клонирования: `git submodule update --init --recursive`.
+- Плагины omarchy-shell `kamradsmeshnyavy.{bar,lock,background,image-picker}` — сабмодули, отдельные
+  публичные репо (omarchy-bar-skins, omarchy-lock-designs, omarchy-wallpaper-fx,
+  omarchy-image-picker-styles). Правка: коммит и пуш внутри сабмодуля, потом коммит указателя в dotfiles.
+  README репо — на английском (+ README.ru.md), их тоже держать в актуальном виде.
+- Лаунчер `kamradsmeshnyavy.menu` не сабмодуль: 17 скинов портированы из omlauch / omarchy-quickapps
+  без лицензии. Публичная копия без них — omarchy-launcher-skins, обновляется `just publish-launcher`
+  (`scripts/publish-launcher`) в клон `~/src/omarchy-launcher-skins`.
 
 ## Подводные камни
 

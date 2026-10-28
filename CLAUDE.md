@@ -69,3 +69,10 @@ dotfiles/
 
 `.dotbot`, `apps/ghostty/shaders`, `apps/ghostty/cursors`, `apps/sketchybar`,
 `omarchy-themes/thinkpad-boot-screen`. После клонирования: `git submodule update --init --recursive`.
+
+Свои плагины omarchy-shell — тоже сабмодули, это отдельные публичные репо (правка = коммит и пуш в
+сабмодуле, затем коммит нового указателя в dotfiles): `kamradsmeshnyavy.bar` → omarchy-bar-skins,
+`.lock` → omarchy-lock-designs, `.background` → omarchy-wallpaper-fx, `.image-picker` →
+omarchy-image-picker-styles. Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
+лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.
+Customizer — только в dotfiles.
