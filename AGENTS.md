@@ -121,9 +121,12 @@ television, gitui, rmpc, nushell, tmux, fzf читают тему из файл�
 - pre-commit: `gitleaks` (`.githooks/pre-commit`); обходить `--no-verify` только при ложном срабатывании.
 - Сабмодули (`.gitmodules`): `.dotbot`, `apps/ghostty/shaders`, `apps/ghostty/cursors`, `apps/sketchybar`,
   `omarchy-themes/thinkpad-boot-screen`. После клонирования: `git submodule update --init --recursive`.
-- Плагины omarchy-shell `kamradsmeshnyavy.{bar,lock,background,image-picker}` — сабмодули, отдельные
-  публичные репо (omarchy-bar-skins, omarchy-lock-designs, omarchy-wallpaper-fx,
-  omarchy-image-picker-styles). Правка: коммит и пуш внутри сабмодуля, потом коммит указателя в dotfiles.
+- Плагины omarchy-shell `kamradsmeshnyavy.{bar,lock,background,image-picker,customizer}` — сабмодули,
+  отдельные публичные репо (omarchy-bar-skins, omarchy-lock-designs, omarchy-wallpaper-fx,
+  omarchy-image-picker-styles, omarchy-customizer — последний под GPL-3.0). Customizer самодостаточен:
+  шейдеры экрана, opacity.sh/blur.sh, перекраска обоев и пресеты анимаций — внутри него; выбор хранится в
+  `~/.local/state/{omarchy-customizer,hypr}`, `looknfeel.lua` подключает его `hypr/customizer.lua`.
+  Строки UI — английские, `i18n/ru.json` — перевод (новую строку добавлять в оба места). Правка: коммит и пуш внутри сабмодуля, потом коммит указателя в dotfiles.
   README репо — на английском (+ README.ru.md), их тоже держать в актуальном виде.
 - Лаунчер `kamradsmeshnyavy.menu` не сабмодуль: 17 скинов портированы из omlauch / omarchy-quickapps
   без лицензии. Публичная копия без них — omarchy-launcher-skins, обновляется `just publish-launcher`

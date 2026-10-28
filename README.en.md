@@ -47,10 +47,9 @@ with `omarchy plugin add <url> --enable`, without the rest of these dotfiles:
 | [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) | 21 lock screen designs on top of the stock PAM flow, with a safe fallback |
 | [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) | 24 wallpaper transitions on a single custom shader |
 | [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles) | six styles for the theme / wallpaper picker |
+| [omarchy-customizer](https://github.com/KamradSmeshnyavy/omarchy-customizer) | the **Customizer** overlay (`Super+Shift+T`): themes, wallpapers, recolor, Hyprland animations, transparency, blur, screen shaders — and all of the above when installed |
 
-The **Customizer** overlay (`Super+Shift+T`, `apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer`)
-lives only here: it drives all of the above plus Hyprland animations, transparency, blur and screen
-shaders, with live preview.
+Everything at once: `curl -fsSL https://raw.githubusercontent.com/KamradSmeshnyavy/omarchy-customizer/main/install.sh | bash -s -- --all`.
 
 ---
 

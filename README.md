@@ -57,9 +57,9 @@ https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
 | [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) | 21 дизайн экрана блокировки поверх стокового PAM, с безопасным фолбэком |
 | [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) | 24 перехода обоев на одном своём шейдере |
 | [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles) | шесть стилей пикера тем и обоев |
+| [omarchy-customizer](https://github.com/KamradSmeshnyavy/omarchy-customizer) | оверлей **Customizer** (`Super+Shift+T`): темы, обои, перекраска, анимации, прозрачность, блюр, шейдеры Hyprland — и всё перечисленное выше, если стоит |
 
-**Customizer** (`Super+Shift+T`) есть только здесь: он управляет всеми плагинами, а также анимациями,
-прозрачностью, блюром и шейдерами Hyprland.
+Всё сразу: `curl -fsSL https://raw.githubusercontent.com/KamradSmeshnyavy/omarchy-customizer/main/install.sh | bash -s -- --all`.
 
 ---
 

@@ -26,3 +26,6 @@
 [submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker"]
 	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
 	url = https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer
+	url = https://github.com/KamradSmeshnyavy/omarchy-customizer
