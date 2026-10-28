@@ -16,7 +16,7 @@
 
 <!-- Видео играет прямо в README, если ссылка user-attachments стоит отдельной строкой без ## и <>.
      После обновления assets/demo.mp4 перетащи его в редактор README на GitHub и замени ссылку ниже. -->
-https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
+<https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9caf>
 
 ---
 
