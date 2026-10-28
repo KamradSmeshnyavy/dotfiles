@@ -796,7 +796,7 @@ run = """plugin television -- \
 desc = "Jump to a file via television zoxide"
 
 [[mgr.prepend_keymap]]
-on = ["<C-S-d>"]
+on = ["`"]
 run = "shell 'ripdrag %s -x 2>/dev/null &' --confirm"
 desc = "Drag and drop (ripdrag)"
 
