@@ -27,7 +27,7 @@
      rumdl (MD034) иначе оборачивает её в <> — отсюда комментарий ниже.
      После обновления assets/demo.mp4 перетащи его в редактор README на GitHub и замени ссылку. -->
 <!-- rumdl-disable-next-line MD034 -->
-https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
+https://github.com/user-attachments/assets/b56f581c-844a-47e7-b27d-a467b0e2e1aa
 
 ---
 
