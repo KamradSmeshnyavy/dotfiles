@@ -9,14 +9,16 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo-preview.webp" alt="Демо: тайлинг, музыка, браузер, переключение workspace, лаунчер, Customizer, переход обоев" width="100%">
+  <img src="assets/demo-preview.webp" alt="Демо: тайлинг, compact-бар, музыка, браузер, переключение workspace, скины лаунчера, Customizer, переход обоев" width="100%">
   <br>
-  <sub>🎬 Полное видео со звуком (51 с, 🎵 Lane 8 — Little by Little): <a href="assets/demo.mp4">assets/demo.mp4</a></sub>
+  <sub>🎬 Полное видео со звуком (89 с, 🎵 Lane 8 — Little by Little): тайлинг, compact-бар, workspace, обзор скинов лаунчера, Customizer — <a href="assets/demo.mp4">assets/demo.mp4</a></sub>
 </p>
 
-<!-- Видео играет прямо в README, если ссылка user-attachments стоит отдельной строкой без ## и <>.
-     После обновления assets/demo.mp4 перетащи его в редактор README на GitHub и замени ссылку ниже. -->
-<https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9caf>
+<!-- Видео играет прямо в README, если ссылка user-attachments стоит отдельной строкой без <>.
+     rumdl (MD034) иначе оборачивает её в <> — отсюда комментарий ниже.
+     После обновления assets/demo.mp4 перетащи его в редактор README на GitHub и замени ссылку. -->
+<!-- rumdl-disable-next-line MD034 -->
+https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af
 
 ---
 
@@ -27,7 +29,7 @@
 | ![Desktop](assets/desktop-hyprland.webp) | ![Terminal](assets/kitty-terminal.webp) |
 | **Neovim** | **Yazi** |
 | ![Neovim](assets/neovim-editor.webp) | ![Yazi](assets/yazi-filemanager.webp) |
-| **Customizer** (Super+Shift+T) | **Лаунчер** (Super+Alt+Space) |
+| **Customizer** (Super+Shift+T) | **Лаунчер** (скин terminal, Super+Alt+Space) |
 | ![Customizer](assets/customizer.webp) | ![Launcher](assets/launcher.webp) |
 | **Музыка** (Spotifast + cava) | **Браузер** (Firefox, тема через Dark Reader / Stylus) |
 | ![Music](assets/music.webp) | ![Browser](assets/browser.webp) |
