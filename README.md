@@ -5,83 +5,85 @@
 </h1>
 
 <p align="center">
-  <i>Мои элегантные и воспроизводимые конфигурационные файлы для Arch Linux (Omarchy), стилизованные в кастомной теме <b>pastel-hacker</b>.</i>
+  <i>Воспроизводимые конфиги для Arch Linux + <a href="https://omarchy.org">Omarchy</a> (Hyprland) в своей теме <b>Rose Pine Hacker24</b>. macOS — вторичная платформа.</i>
 </p>
 
----
+<p align="center">
+  <img src="assets/demo-preview.webp" alt="Демо: тайлинг, лаунчер, Customizer, переход обоев" width="100%">
+  <br>
+  <sub>🎬 Полное видео (38 с): <a href="assets/demo.mp4">assets/demo.mp4</a></sub>
+</p>
 
-## 📸 Галерея (Screenshots)
+<!-- Чтобы видео играло прямо в README: перетащи assets/demo.mp4 в редактор README на GitHub
+     и вставь сюда полученную ссылку https://github.com/user-attachments/assets/… отдельной строкой. -->
+## <https://github.com/user-attachments/assets/b3709295-4c80-41c3-9966-e235e3b9c6af>
 
-> **Заметка:** Чтобы галерея отображалась корректно, сделай актуальные скриншоты в своей системе с темой `pastel-hacker` и сохрани их в папку `assets/` с именами, указанными ниже.
+## 📸 Галерея
 
-| Desktop (Hyprland + Waybar) | Terminal (Kitty + Nushell) |
+| Рабочий стол (Hyprland + свой бар) | Терминал (Kitty + Nushell + fastfetch) |
 | :---: | :---: |
-| ![Desktop](assets/desktop-hyprland.png) | ![Terminal](assets/kitty-terminal.png) |
-| **Neovim** | **File Manager (Yazi)** |
-| ![Neovim](assets/neovim-editor.png) | ![Yazi](assets/yazi-filemanager.png) |
+| ![Desktop](assets/desktop-hyprland.webp) | ![Terminal](assets/kitty-terminal.webp) |
+| **Neovim** | **Yazi** |
+| ![Neovim](assets/neovim-editor.webp) | ![Yazi](assets/yazi-filemanager.webp) |
+| **Customizer** (Super+Shift+T) | **Лаунчер** (Super+Alt+Space) |
+| ![Customizer](assets/customizer.webp) | ![Launcher](assets/launcher.webp) |
 
 ---
 
-## 🚀 Основные компоненты (Main Components)
+## 🚀 Основные компоненты
 
-Система построена вокруг современных, быстрых и эстетичных инструментов:
-
-| Категория | Инструменты |
+| Категория | Что используется |
 | :--- | :--- |
-| 🪟 **Window Manager** | **Hyprland** (Linux) — основной композитор. <br> _(Также сохранена поддержка Yabai / Aerospace для macOS)_. |
-| 🎨 **Theme & Styling** | Глобальная тема **`pastel-hacker`** управляется через Omarchy Theme Engine. Цвета динамически применяются к GTK, Waybar, Rofi, SwayNC, терминалам и редакторам через кастомные Python-хуки. |
-| 🖥️ **Terminals** | **Kitty** (основной терминал), Ghostty, Wezterm, Alacritty. |
-| 🐚 **Shells** | **Nushell** (по умолчанию), Fish, Zsh. <br> Промпты стилизуются с помощью **Starship** и OhMyPosh. |
-| 📝 **Editors** | **Neovim** (основной консольный редактор, написан на Lua), **VS Code** (с кастомным CSS и темой Catppuccin). |
-| 🗃️ **Multiplexers** | **Zellij**, **Tmux**. |
-| 🛠️ **CLI / TUI Утилиты** | **yazi** / **nnn** (файловые менеджеры) <br> **bat** (замена cat) <br> **eza** / **lla** (замена ls) <br> **btop** / **procs** (мониторинг системы) <br> **lazygit** / **gitui** (работа с Git) <br> **zoxide** (умный cd) <br> **fzf** / **television** (fuzzy finders) |
-| 🚀 **Launchers & Menus** | **Rofi** (Меню приложений, буфер обмена, селекторы тем), **Walker** (Системное меню Omarchy) |
-| 🔔 **Notifications** | **SwayNC** (Продвинутый центр уведомлений с историей и быстрыми настройками) |
-| ⏻ **Power Menu** | **Wlogout** (Полноэкранное меню выключения) |
+| 🪟 **WM** | **Hyprland** с конфигом на Lua (`apps/hyprland/`), изменения применяются через `hyprctl eval`. На macOS — yabai / AeroSpace / skhd / SketchyBar. |
+| 🧩 **Оболочка Omarchy** | Свои плагины omarchy-shell (`apps/omarchy-shell/plugins/`): **бар** со скинами и compact-режимом ([docs](docs/apps/omarchy-shell-bar.md)), **экран блокировки** с 21 дизайном ([docs](docs/apps/omarchy-shell-lock.md)), **переходы обоев** — 24 эффекта на своём шейдере и стили пикеров ([docs](docs/apps/omarchy-shell-wallpaper.md)), **меню-лаунчер** со скинами (созвездие, CRT-терминал, zen и др.), **Customizer** — оверлей для темы, обоев, бара, окон, блокировки и пикеров. |
+| 🎨 **Темы** | Свои темы Omarchy в `omarchy-themes/` (Rose Pine Hacker24, Pastel Hacker, Catppuccin Mocha, Nord, …). TUI-приложения следуют теме через слоты ([APP-THEMING](omarchy-themes/APP-THEMING.md)), браузеры — через Dark Reader и Stylus ([BROWSER-THEMING](omarchy-themes/BROWSER-THEMING.md)). |
+| 🖥️ **Терминалы** | **Kitty** (основной), Ghostty (шейдеры и курсоры — сабмодули), WezTerm. |
+| 🐚 **Оболочки** | **Nushell** (основной), Zsh, Fish; промпт — **Starship**. |
+| 📝 **Редакторы** | **Neovim** (Lua), Helix, **VS Code** со своим CSS. |
+| 🗃️ **Мультиплексоры** | **tmux**, Zellij. |
+| 🛠️ **CLI / TUI** | yazi, lazygit / gitui / delta, bat, eza / lla, btop / procs, fzf / television, zoxide, atuin, glow, rmpc / cava, fastfetch. |
+| ⌨️ **Ввод** | kanata, mouseless, wl-kbptr; на macOS — Karabiner и Hammerspoon. |
 
 ---
 
-## 📦 Зависимости (Requirements)
+## 🛠️ Установка
 
-Перед установкой убедитесь, что в системе установлены базовые пакеты. (Большинство зависимостей устанавливаются скриптом, но для старта нужны):
-
-- `git`
-- `python3` (требуется для работы менеджера симлинков Dotbot)
-- `base-devel` (для сборки AUR-пакетов)
-- Любой **Nerd Font** (рекомендуется *JetBrainsMono Nerd Font* или *FiraCode Nerd Font*)
-
----
-
-## 🛠️ Установка (Installation)
-
-Процесс установки автоматизирован. Скрипт `bootstrap.sh` сам установит необходимые системные и AUR пакеты (через `pacman` и `yay`), а затем развернет конфигурацию с помощью **Dotbot**.
-
-```bash
-# 1. Клонируем репозиторий в домашнюю директорию
-git clone https://github.com/KamradSmeshnyavy/dotfiles.git ~/dotfiles
+```sh
+# 1. Клонировать вместе с сабмодулями
+git clone --recursive https://github.com/KamradSmeshnyavy/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
-# 2. Запускаем скрипт установки
+# 2. Пакеты + симлинки (интерактивное меню: только пакеты / только dotfiles / всё)
 ./install/bootstrap.sh
 
-# Только ссылки конфигов + AI-скиллы (пакеты уже стоят); проверить, что ничего не забыто
+# Только симлинки (Dotbot) + git hooks + AI-скиллы, если пакеты уже стоят
 just link
-just check-links
+just check-links      # ручные симлинки, которых нет в install/install.conf.yaml
+just app-themes       # направить слоты тем приложений на текущую тему
 ```
 
-При запуске скрипт предложит удобное меню:
-1. Установить только пакеты.
-2. Применить только dotfiles (создать симлинки).
-3. **Установить пакеты и применить dotfiles (рекомендуется для первой установки).**
+Предпросмотр без изменений: `python3 install/install.py --dry-run`. Все команды — `just` без аргументов.
+
+Нужны `git`, `python3`, `just`, `base-devel` и Nerd Font (везде используется **Maple Mono NF CN**).
 
 ---
 
-## 📁 Структура репозитория
+## 📁 Структура
 
-- `apps/` — конфигурации графических приложений (Hyprland, Kitty, VS Code, Waybar и др.).
-- `cli/` и `tui/` — конфигурации консольных утилит (Zellij, Yazi, Git, Btop и др.).
-- `shells/` — настройки командных оболочек (Nushell, Zsh, Fish) и промптов (Starship).
-- `install/` — скрипты установки пакетов и линковки конфигов (`bootstrap.sh`, `install.py`).
-- `omarchy-themes/` — движок тем Omarchy и директории с темами (включая `pastel-hacker`).
-- `macos/` / `justfile` — legacy и специфичные скрипты для macOS.
-- `docs/` - документация по каждому конфигу.
+```text
+dotfiles/
+├── justfile           # все команды (рецепты разделены на Linux / macOS)
+├── install/           # bootstrap.sh, install.py, install.conf.yaml (Dotbot), packages/
+├── apps/              # GUI и окружение: hyprland, omarchy-shell, kitty, ghostty, vscode, …
+├── tui/               # терминальные инструменты: nvim, helix, git, lazygit, yazi, tmux, …
+├── shells/            # nushell, zshrc, fish, starship.toml
+├── cli/               # ssh, p10k, todo
+├── omarchy-themes/    # темы Omarchy, хуки и скрипты синхронизации тем
+├── scripts/           # bin/ → ~/.local/bin, check-links, install-skill.nu
+├── skills/            # AI-скиллы для агентов
+├── macos/             # nix-darwin flake
+├── docs/              # описание каждого конфига: docs/{apps,tui,shells,cli}/<имя>.md
+└── assets/            # скриншоты и демо
+```
+
+Подробности для AI-агентов (Claude Code, Codex и др.) — в [AGENTS.md](AGENTS.md).
