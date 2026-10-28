@@ -8,6 +8,15 @@
   <i>Воспроизводимые конфиги для Arch Linux + <a href="https://omarchy.org">Omarchy</a> (Hyprland) в своей теме <b>Rose Pine Hacker24</b>. macOS — вторичная платформа.</i>
 </p>
 
+> **🇬🇧 In English.** Arch Linux + [Omarchy](https://omarchy.org) (Hyprland) dotfiles in a custom
+> **Rose Pine Hacker24** theme. Beyond the usual configs it reworks the Omarchy shell itself with
+> Quickshell plugins: a top bar with 18 skins and a compact mode that expands on hover, an app launcher
+> with 35 skins (star map, terminal, orrery, aquarium…), a lock screen with 21 designs, wallpaper
+> transitions on a custom shader (24 effects), and a **Customizer** overlay (`Super+Shift+T`) that
+> live-previews all of it. Every TUI app — Neovim, Yazi, lazygit, btop, tmux, Kitty — follows the active
+> theme. Shell is Nushell + Starship; symlinks are managed by Dotbot, commands live in a `justfile`.
+> Docs are in Russian; install steps and the demo above work as-is.
+
 <p align="center">
   <img src="assets/demo-preview.webp" alt="Демо: тайлинг, compact-бар, музыка, браузер, переключение workspace, скины лаунчера, Customizer, переход обоев" width="100%">
   <br>
