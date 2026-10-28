@@ -69,6 +69,11 @@ shaders-wallpaper:
 check-links:
     {{justfile_directory()}}/scripts/check-links
 
+# Обновить публичный omarchy-launcher-skins из лаунчера в dotfiles (без портированных скинов)
+[linux]
+publish-launcher path="~/src/omarchy-launcher-skins":
+    {{justfile_directory()}}/scripts/publish-launcher {{path}}
+
 # Плагины yazi из tui/yazi/package.toml
 [linux]
 yazi-plugins:

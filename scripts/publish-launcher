@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""
+Синхронизировать публичный репо omarchy-launcher-skins с плагином kamradsmeshnyavy.menu.
+
+В dotfiles лаунчер полный, а в публичный репо идут только свои скины: порты из omlauch и
+omarchy-quickapps (файлы, где они упомянуты) без лицензии распространять нельзя. Скрипт копирует
+*.qml и *.js без портов и вырезает порты из карты скинов в SkinConfig.qml. manifest.json, README,
+LICENSE и screenshots/ в репо свои — их не трогаем. Коммит и пуш — вручную.
+
+  publish-launcher [путь к клону omarchy-launcher-skins]   (по умолчанию ~/src/omarchy-launcher-skins)
+"""
+import re
+import shutil
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+SRC = REPO / "apps/omarchy-shell/plugins/kamradsmeshnyavy.menu"
+DST = Path(sys.argv[1] if len(sys.argv) > 1 else Path.home() / "src/omarchy-launcher-skins").expanduser()
+PORT_MARKERS = ("omlauch", "quickapps")
+
+if not (DST / "manifest.json").is_file():
+    sys.exit(f"нет клона omarchy-launcher-skins в {DST}")
+
+ports = {f.name for f in SRC.glob("*View.qml") if any(m in f.read_text() for m in PORT_MARKERS)}
+copied = []
+for f in sorted(SRC.iterdir()):
+    if f.suffix not in (".qml", ".js") or f.name in ports:
+        continue
+    shutil.copy2(f, DST / f.name)
+    copied.append(f.name)
+
+cfg = DST / "SkinConfig.qml"
+text = cfg.read_text()
+text = re.sub(r'\n\s*"[\w-]+": "(' + "|".join(map(re.escape, ports)) + r')",?', "", text)
+text = text.replace(
+    "  // card. The ported ones come from hamzaabde-langjk/omlauch and\n"
+    "  // bjarneo/omarchy-quickapps, recoloured from the active theme.\n",
+    "  // card. Every skin is recoloured from the active theme.\n",
+)
+text = text.replace("    // Originals.\n", "")
+cfg.write_text(text)
+
+left = [p for p in ports if p in text]
+stale = sorted(f.name for f in DST.glob("*View.qml") if f.name in ports)
+print(f"скопировано {len(copied)} файлов, пропущено портов: {len(ports)}")
+if left or stale:
+    sys.exit(f"порты остались: SkinConfig {left}, файлы {stale} — убрать вручную")
+print(f"проверь: git -C {DST} diff --stat")
