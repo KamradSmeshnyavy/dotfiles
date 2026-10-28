@@ -22,11 +22,12 @@ set -uo pipefail
 
 ANIM_DIR="$HOME/dotfiles/apps/hyprland/animations_lua"
 ANIM_ACTIVE="$HOME/dotfiles/apps/hyprland/active_animations.lua"
-# Бар (плагин kamradsmeshnyavy.bar): пресеты в репо, активный скин и shell.json — в ~/.config.
-BAR_DIR="$HOME/dotfiles/apps/omarchy-shell/bar"
+# Бар (плагин kamradsmeshnyavy.bar): пресеты лежат в самом плагине, активный скин и shell.json — в ~/.config.
+# Плагины берём по ссылкам в ~/.config/omarchy/plugins: они — сабмодули и могут жить где угодно.
+BAR_DIR="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.bar"
 BAR_SKIN="$HOME/.config/omarchy/bar-skin.json"
 # Экран блокировки (плагин kamradsmeshnyavy.lock): выбор и настройки — lock-design.json.
-LOCK_PLUGIN="$HOME/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.lock"
+LOCK_PLUGIN="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.lock"
 LOCK_CFG="$HOME/.config/omarchy/lock-design.json"
 LOCK_USER_DIR="$HOME/.config/omarchy/lock-designs"
 LOCK_THUMBS="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-customizer/lock"
@@ -607,7 +608,7 @@ list() {
     local f cur
     cur=$(current_layout)
     printf '%s\t%s\t\t0\t%s\n' "💾 Сохранить текущую как пресет…" "save" \
-      "Записать раскладку из shell.json в apps/omarchy-shell/bar/layouts/<имя>.json."
+      "Записать раскладку из shell.json в layouts/<имя>.json плагина kamradsmeshnyavy.bar."
     for f in "$BAR_DIR"/layouts/*.json; do
       [[ -f $f ]] || continue
       printf '%s\t%s\t%s\t%s\t%s\n' "$(basename "$f" .json)" "$f" "$f" \

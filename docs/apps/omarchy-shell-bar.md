@@ -14,8 +14,8 @@
 |---|---|
 | `~/.config/omarchy/bar-skin.json` | активный скин; бар следит за файлом и меняется на лету |
 | `~/.config/omarchy/shell.json` `.bar` | позиция, секции виджетов, `transparent` (тоже на лету) |
-| `apps/omarchy-shell/bar/skins/*.json` | пресеты скинов |
-| `apps/omarchy-shell/bar/layouts/*.json` | пресеты раскладок (`position`, `centerAnchor`, `layout`) |
+| `kamradsmeshnyavy.bar/skins/*.json` | пресеты скинов |
+| `kamradsmeshnyavy.bar/layouts/*.json` | пресеты раскладок (`position`, `centerAnchor`, `layout`) |
 | `kamradsmeshnyavy.bar/BarSkin.qml` | чтение скина, дефолты, цвета-роли |
 | `kamradsmeshnyavy.bar/SkinFrame.qml` | подложка по форме, маска ввода, exclusive zone |
 | `kamradsmeshnyavy.bar/SkinIsland.qml` | острова под секциями |
@@ -104,7 +104,7 @@
 
 ## Новый пресет
 
-- Скин: положить JSON в `apps/omarchy-shell/bar/skins/`, он сразу появится в Bar Skin.
+- Скин: положить JSON в `skins/` плагина `kamradsmeshnyavy.bar`, он сразу появится в Bar Skin.
   Или собрать в Bar Tweaks и скопировать `~/.config/omarchy/bar-skin.json`.
 - Раскладка: в Bar Layout строка «💾 Сохранить текущую как пресет…».
 
