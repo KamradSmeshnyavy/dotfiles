@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Commons as Commons
 import qs.Ui
 import "MenuModel.js" as MenuModel
+import "Commands.js" as Commands
 
 Item {
   id: root
@@ -65,6 +66,45 @@ Item {
   property bool rowsLoaded: false
   property string activeMenu: "root"
   property string filterText: ""
+  // Команды лаунчера (">" в поиске, Commands.js): темы и скины бара читаются один раз за открытие.
+  readonly property bool commandMode: !root.dmenuActive && root.filterText.trim().charAt(0) === ">"
+  property var commandData: ({ themes: [], skins: [], wallpaperTheme: false, plugins: {}, home: Quickshell.env("HOME") })
+  property bool commandDataLoaded: false
+  property string uiLang: ""
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/customizer.json"
+    watchChanges: true
+    printErrors: false
+    onLoaded: { try { root.uiLang = String(JSON.parse(text() || "{}").lang || "") } catch (e) { root.uiLang = "" } }
+    onFileChanged: reload()
+  }
+  Process {
+    id: commandProbe
+    command: ["bash", "-c",
+      "shopt -s nullglob; " +
+      "for d in \"$HOME\"/.config/omarchy/themes/*/ \"${OMARCHY_PATH:-$HOME/.local/share/omarchy}\"/themes/*/; do b=${d%/}; printf 'theme\\t%s\\n' \"${b##*/}\"; done | sort -u; " +
+      "for f in \"$HOME\"/.config/omarchy/bar-skins/*.json; do printf 'uskin\\t%s\\n' \"$f\"; done; " +
+      "for f in \"$HOME\"/.config/omarchy/plugins/kamradsmeshnyavy.bar/skins/*.json; do printf 'skin\\t%s\\n' \"$f\"; done; " +
+      "command -v omarchy-wallpaper-theme >/dev/null && echo wallpaper-theme; " +
+      "for p in widgets customizer; do [ -f \"$HOME/.config/omarchy/plugins/kamradsmeshnyavy.$p/manifest.json\" ] && printf 'plugin\\t%s\\n' \"$p\"; done; true"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var data = { themes: [], skins: [], wallpaperTheme: false, plugins: {}, home: Quickshell.env("HOME") }
+        var lines = text.split("\n")
+        for (var i = 0; i < lines.length; i++) {
+          var f = lines[i].split("\t")
+          if (f[0] === "theme" && f[1]) data.themes.push(f[1])
+          else if ((f[0] === "skin" || f[0] === "uskin") && f[1])
+            data.skins.push({ name: f[1].replace(/^.*\//, "").replace(/\.json$/, ""), path: f[1], user: f[0] === "uskin" })
+          else if (f[0] === "wallpaper-theme") data.wallpaperTheme = true
+          else if (f[0] === "plugin" && f[1]) data.plugins[f[1]] = true
+        }
+        root.commandData = data
+        root.commandDataLoaded = true
+        if (root.commandMode) root.rebuildDisplay()
+      }
+    }
+  }
   property int selectedIndex: 0
   property bool cursorActive: false
   property int requestSerial: 0
@@ -629,7 +669,11 @@ Item {
     var query = root.filterText.trim()
     root.searchDivider = false
 
-    if (query) {
+    if (root.commandMode) {
+      if (!root.commandDataLoaded && !commandProbe.running) commandProbe.running = true
+      // filterText без trim: пробел после имени команды переключает на её аргументы.
+      rows = Commands.rows(root.filterText.replace(/^\s+/, ""), root.commandData, root.uiLang === "ru")
+    } else if (query) {
       var currentRows = []
       var drilldownRows = []
 
@@ -737,7 +781,7 @@ Item {
     root.selectedIndex = 0
     root.cursorActive = root.mode !== "input"
     root.disarmPointer()
-    if (!root.dmenuActive && root.filterText.trim()) root.loadProvidersForSearch()
+    if (!root.dmenuActive && root.filterText.trim() && !root.commandMode) root.loadProvidersForSearch()
     root.rebuildDisplay()
   }
 
@@ -798,6 +842,9 @@ Item {
       opened = false
       filterText = ""
       root.launchApp(appId, label)
+    } else if (row.provider === "cmd-complete") {
+      // Команда с аргументами: дописать ">имя " в поиск, меню не закрывать.
+      root.setFilter(row.action)
     } else {
       root.applySelected(row.itemId, row.action)
     }
@@ -915,6 +962,7 @@ Item {
     activeMenu = root.item(initialMenu) ? initialMenu : "root"
     navStack = []
     filterText = ""
+    commandDataLoaded = false
     selectedIndex = 0
     cursorActive = true
     root.disarmPointer()
