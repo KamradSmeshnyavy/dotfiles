@@ -3,6 +3,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Shapes
 
 // Меню выключения, выезжающее из правого края / рамки (идея caelestia, написано с нуля).
@@ -18,8 +19,14 @@ PanelWindow {
   readonly property int button: 64
   readonly property int buttonWidth: 84
   readonly property int gap: 10
-  readonly property int flare: host.drawerFlare
-  readonly property int bodyRadius: 22
+  // Вид — как у дашборда (host.panelStyle): attached — из края / рамки с вогнутыми углами,
+  // floating — карточка с отступом от края и тенью.
+  readonly property var style: host.panelStyle
+  readonly property bool attached: style.attached
+  readonly property int flare: attached ? style.flare : 0
+  readonly property int bodyRadius: style.cornerRadius
+  readonly property int edgeGap: attached ? 0 : 12
+  readonly property int shadowPad: attached ? 0 : 20
 
   property bool hibernate: false
   property bool suspend: true
@@ -84,8 +91,8 @@ PanelWindow {
   anchors.right: true
   exclusionMode: ExclusionMode.Normal
   exclusiveZone: 0
-  implicitWidth: thickness
-  implicitHeight: length + 2 * flare
+  implicitWidth: thickness + edgeGap + shadowPad
+  implicitHeight: length + 2 * Math.max(flare, shadowPad)
   color: "transparent"
   surfaceFormat.opaque: false
   WlrLayershell.namespace: "omarchy-power"
@@ -99,16 +106,34 @@ PanelWindow {
     onCleared: power.host.powerOpen = false
   }
 
+  readonly property real bodyTop: Math.max(flare, shadowPad)
+
   Item {
     id: hit
-    x: power.width - power.w
-    y: power.flare
+    x: power.width - power.edgeGap - power.w
+    y: power.bodyTop
     width: power.w
     height: power.length
   }
 
   // Контур как у OSD у края: вогнутые углы сверху и снизу переходят в край экрана.
+  // floating: карточка с рамкой и тенью.
+  Rectangle {
+    visible: !power.attached
+    x: hit.x
+    y: hit.y
+    width: hit.width
+    height: hit.height
+    radius: Math.min(power.bodyRadius, width / 2)
+    color: power.style.color
+    border.width: power.style.borderWidth
+    border.color: power.style.borderColor
+    layer.enabled: true
+    layer.effect: MultiEffect { shadowEnabled: true; shadowColor: "#000000"; shadowOpacity: 0.4; shadowBlur: 0.8 }
+  }
+
   Shape {
+    visible: power.attached
     anchors.fill: parent
     preferredRendererType: Shape.CurveRenderer
 
@@ -121,7 +146,7 @@ PanelWindow {
       readonly property real top: power.flare
       readonly property real bottom: power.height - power.flare
 
-      fillColor: power.host.drawerColor
+      fillColor: power.style.color
       strokeWidth: -1
       startX: outline.ww
       startY: 0
@@ -139,8 +164,8 @@ PanelWindow {
 
   Item {
     id: content
-    x: power.width - power.w
-    y: power.flare
+    x: hit.x
+    y: hit.y
     width: power.w
     height: power.length
     clip: true

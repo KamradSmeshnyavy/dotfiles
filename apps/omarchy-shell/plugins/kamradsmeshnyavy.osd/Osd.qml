@@ -21,14 +21,16 @@ Item {
 
   readonly property bool mediaOsd: iconKey.indexOf("media") === 0 || iconKey.indexOf("player") === 0
 
-  // edge: стиль из ~/.config/omarchy/osd.json — {"osdStyle": "edge"|"stock", "osdSide": "right"|"left"}.
+  // edge: настройки из ~/.config/omarchy/osd.json (Customizer → Окна → OSD):
+  //   osdStyle edge|stock, osdSide right|left, osdAlign center|top|bottom, osdSize compact|normal|large,
+  //   osdShowValue, osdTimeout (мс, -1 — как в стоке), osdFollowBar, osdAttach auto|attached|floating,
+  //   osdBackground / osdAlpha / osdRadius — когда не следуем бару.
   // В стиле edge OSD со шкалой выезжает из края экрана (EdgeOsd.qml), остальные — стоковая карточка.
   property var edgeConfig: ({})
-  readonly property string edgeStyle: String(edgeConfig.osdStyle || "edge")
-  readonly property bool useEdge: edgeStyle === "edge" && hasProgress && !mediaOsd
-  property var barSkin: ({})
-  property var palette: ({})
   readonly property string home: Quickshell.env("HOME")
+  function cfg(key, def) { var v = edgeConfig[key]; return v === undefined || v === null ? def : v }
+  readonly property string edgeStyle: String(cfg("osdStyle", "edge"))
+  readonly property bool useEdge: edgeStyle === "edge" && hasProgress && !mediaOsd
   FileView {
     path: root.home + "/.config/omarchy/osd.json"
     watchChanges: true
@@ -37,49 +39,22 @@ Item {
     onLoadFailed: root.edgeConfig = {}
     onFileChanged: reload()
   }
-  // edge: цвет — как у бара/рамки (bar-skin.json), у прозрачного бара — цвет попапов.
-  FileView {
-    path: root.home + "/.config/omarchy/bar-skin.json"
-    watchChanges: true
-    printErrors: false
-    onLoaded: { try { root.barSkin = JSON.parse(text() || "{}") || {} } catch (e) { root.barSkin = {} } }
-    onLoadFailed: root.barSkin = {}
-    onFileChanged: reload()
-  }
-  FileView {
-    path: root.home + "/.local/state/omarchy/current/theme/colors.toml"
-    watchChanges: true
-    printErrors: false
-    onLoaded: {
-      var out = {}
-      var lines = String(text() || "").split("\n")
-      for (var i = 0; i < lines.length; i++) {
-        var m = lines[i].match(/^\s*([A-Za-z0-9_]+)\s*=\s*["'](#[0-9A-Fa-f]{6})["']/)
-        if (m) out[m[1]] = m[2]
-      }
-      root.palette = out
-    }
-    onFileChanged: reload()
-  }
-  function edgeColor() {
-    var spec = String(barSkin.background || "bar")
-    var c = spec === "bar" ? Commons.Color.bar.background
-      : spec.charAt(0) === "#" ? Qt.color(spec)
-      : spec === "background" ? Commons.Color.background
-      : spec === "foreground" ? Commons.Color.foreground
-      : spec === "accent" ? Commons.Color.accent
-      : palette[spec] ? Qt.color(palette[spec]) : Commons.Color.bar.background
-    var a = Number(barSkin.backgroundAlpha)
-    if (isFinite(a) && a >= 0) c = Qt.rgba(c.r, c.g, c.b, a)
-    if (c.a < 0.6 || barSkin.shape === "islands") c = Commons.Color.popups.background
-    return Qt.rgba(c.r, c.g, c.b, Math.max(0.94, c.a))
+  BarStyle {
+    id: edgeStyleSpec
+    follow: root.cfg("osdFollowBar", true) !== false
+    attach: String(root.cfg("osdAttach", "auto"))
+    background: String(root.cfg("osdBackground", "background"))
+    alpha: Number(root.cfg("osdAlpha", 0.94))
+    radius: Number(root.cfg("osdRadius", 18))
   }
 
   EdgeOsd {
     osd: root
-    side: String(root.edgeConfig.osdSide || "right")
-    fill: root.edgeColor()
-    flare: root.barSkin.shape === "frame" || root.barSkin.shape === "hug" ? Math.max(8, Number(root.barSkin.radius) || 0) : 14
+    style: edgeStyleSpec
+    side: String(root.cfg("osdSide", "right"))
+    align: String(root.cfg("osdAlign", "center"))
+    size: String(root.cfg("osdSize", "normal"))
+    showValue: root.cfg("osdShowValue", true) !== false
     shown: root.opened && root.useEdge
   }
 
@@ -128,6 +103,11 @@ Item {
     message = next.message
     icon = next.icon
     duration = next.duration
+    // edge: при новом показе перечитать, включено ли размытие (стекло у прозрачного бара).
+    if (!opened) edgeStyleSpec.refresh()
+    // edge: своё время показа (osdTimeout > 0), иначе как пришло от omarchy osd.
+    var timeout = Number(root.cfg("osdTimeout", -1))
+    if (timeout > 0) duration = timeout
     opened = true
     // edge: тик громкости (omarchy-sound не чаще раза в 80 мс; выключатель — sounds.json).
     if (iconKey.indexOf("volume") === 0) Quickshell.execDetached([root.home + "/.local/bin/omarchy-sound", "audio-volume-change"])

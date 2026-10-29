@@ -17,6 +17,10 @@ OSD со шкалой (громкость, яркость, микрофон — 
 | `osdStyle` | `edge` | `edge` или `stock` (стоковая карточка снизу) |
 | `osdSide` | `right` | `right` или `left` |
 
+Вид — `BarStyle.qml`, как у дашборда: `osdFollowBar` (`true`), `osdAttach` (`auto` / `attached` /
+`floating`), свои `osdBackground` / `osdAlpha` / `osdRadius`. Ещё: `osdAlign` (`center` / `top` / `bottom`
+вдоль края), `osdSize` (`compact` / `normal` / `large`), `osdShowValue`, `osdTimeout` (мс, `-1` — как в стоке).
+
 Вернуть стоковый OSD целиком: `omarchy plugin enable omarchy.osd`.
 
 ## Уведомления
@@ -30,6 +34,11 @@ OSD со шкалой (громкость, яркость, микрофон — 
 | Ключ (`~/.config/omarchy/notify-style.json`) | По умолчанию | |
 |---|---|---|
 | `notifyStyle` | `drawer` | `drawer` или `stock` |
+| `notifyFollowBar`, `notifyAttach` | `true`, `auto` | как у дашборда: прилипать к сплошному бару, иначе плавающая карточка |
+| `notifyCorner` | `top-right` | `top-right` / `top-left` / `top-center` (по центру — затёки с обеих сторон) |
+| `notifyWidth`, `notifyMax` | `380`, `0` | ширина тоста; сколько видно сразу (`0` — все, новые сверху) |
+| `notifyCards` | `flat` | `flat` — без рамки внутри подложки, `bordered` — стоковые |
+| `notifyBackground`, `notifyAlpha`, `notifyRadius` | | свой вид, когда не следуем бару |
 
 ## Звуки
 

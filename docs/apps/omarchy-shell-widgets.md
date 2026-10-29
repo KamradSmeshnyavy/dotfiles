@@ -29,6 +29,18 @@ cava и опрос `/proc` запускаются один раз на все м
 CPU/RAM за 2 минуты, температура и батарея. Пока дашборд открыт, данные собираются, даже если
 виджеты на рабочем столе выключены.
 
+### Вид дашборда и меню выключения
+
+Customizer → Рабочий стол → **Дашборд** (ключи в `widgets.json`). Стиль считает `BarStyle.qml`:
+
+| Ключ | По умолчанию | |
+|---|---|---|
+| `dashFollowBar` | `true` | цвет, прозрачность, рамка и скругление как у бара; у прозрачного бара — стекло (0.72 под размытием Hyprland, 0.92 без него) |
+| `dashAttach` | `auto` | `auto` — прилипать вогнутыми углами только к сплошному бару у края (`frame`, `hug`, `full`), иначе плавающая карточка с отступом и тенью; `attached` / `floating` — принудительно |
+| `dashBackground`, `dashAlpha`, `dashRadius`, `dashBorder` | `background`, `0.94`, `22`, `false` | свой вид, когда `dashFollowBar: false` |
+| `dashMedia`, `dashCalendar`, `dashWeather`, `dashStats` | `true` | блоки; ширина подстраивается |
+| `dashAnimation`, `dashDuration` | `grow`, `340` | `grow` / `slide` / `fade`, мс |
+
 ## Меню выключения
 
 `Super+Esc` (`omarchy-shell widgets togglePower`; было стоковое System-меню — оно осталось в лаунчере) —

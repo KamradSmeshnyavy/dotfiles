@@ -38,7 +38,20 @@ Item {
     locale: "",                 // язык даты: "" — как в Customizer (customizer.json), иначе системный
     screens: "all",             // all primary
     weatherCity: "",            // город для погоды (open-meteo); пусто — блок погоды с подсказкой
-    weatherUnits: "celsius"     // celsius fahrenheit
+    weatherUnits: "celsius",    // celsius fahrenheit
+    // Дашборд (Dashboard.qml) и меню выключения: стиль — BarStyle.qml.
+    dashFollowBar: true,
+    dashAttach: "auto",         // auto attached floating
+    dashBackground: "background",
+    dashAlpha: 0.94,
+    dashRadius: 22,
+    dashBorder: false,
+    dashMedia: true,
+    dashCalendar: true,
+    dashWeather: true,
+    dashStats: true,
+    dashAnimation: "grow",      // grow slide fade
+    dashDuration: 340
   })
 
   property var raw: ({})
@@ -181,7 +194,7 @@ Item {
   property bool dashboardOpen: false
   // Меню выключения (PowerMenu.qml). Открытие одного закрывает другое.
   property bool powerOpen: false
-  onPowerOpenChanged: if (powerOpen) { dashboardOpen = false; overviewOpen = false }
+  onPowerOpenChanged: if (powerOpen) { dashboardOpen = false; overviewOpen = false; dashStyle.refresh() }
   // Обзор рабочих столов (Overview.qml).
   property bool overviewOpen: false
   onOverviewOpenChanged: if (overviewOpen) { dashboardOpen = false; powerOpen = false }
@@ -197,7 +210,7 @@ Item {
     function openOverview(): void { root.overviewOpen = true }
     function closeOverview(): void { root.overviewOpen = false }
   }
-  onDashboardOpenChanged: if (dashboardOpen) { powerOpen = false; overviewOpen = false; weatherFetcher.refreshIfStale() }
+  onDashboardOpenChanged: if (dashboardOpen) { powerOpen = false; overviewOpen = false; dashStyle.refresh(); weatherFetcher.refreshIfStale() }
 
   // Экран под курсором / с фокусом — дашборд открывается там.
   readonly property var focusedScreen: {
@@ -207,27 +220,17 @@ Item {
     return list.length > 0 ? list[0] : null
   }
 
-  // Цвет и форма бара (bar-skin.json) — дашборд того же цвета, что бар и рамка.
-  property var barSkin: ({})
-  FileView {
-    path: root.home + "/.config/omarchy/bar-skin.json"
-    watchChanges: true
-    printErrors: false
-    onLoaded: { try { root.barSkin = JSON.parse(text() || "{}") || {} } catch (e) { root.barSkin = {} } }
-    onLoadFailed: root.barSkin = {}
-    onFileChanged: reload()
+  // Стиль дашборда и меню выключения: как у бара или свой (BarStyle.qml, ключи dash* в widgets.json).
+  BarStyle {
+    id: dashStyle
+    follow: root.value("dashFollowBar") !== false
+    attach: String(root.value("dashAttach"))
+    background: String(root.value("dashBackground"))
+    alpha: root.num("dashAlpha")
+    radius: root.num("dashRadius")
+    border: root.flag("dashBorder")
   }
-  // Прозрачный бар (скины glass, islands, stock-transparent) — тогда цвет попапов темы.
-  readonly property color drawerColor: {
-    var spec = String(barSkin.background || "bar")
-    var c = spec === "bar" ? Commons.Color.bar.background : resolve(spec, Commons.Color.bar.background)
-    var a = Number(barSkin.backgroundAlpha)
-    if (isFinite(a) && a >= 0) c = Qt.rgba(c.r, c.g, c.b, a)
-    if (c.a < 0.6 || barSkin.shape === "islands") c = Commons.Color.popups.background
-    return Qt.rgba(c.r, c.g, c.b, Math.max(0.94, c.a))
-  }
-  readonly property int drawerFlare: barSkin.shape === "frame" || barSkin.shape === "hug"
-    ? Math.max(8, Number(barSkin.radius) || 0) : 14
+  readonly property var panelStyle: dashStyle
 
   // Погода: open-meteo (без ключа), раз в 20 минут, только пока открыт дашборд.
   QtObject {

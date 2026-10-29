@@ -65,7 +65,7 @@ PanelWindow {
 
   Rectangle {
     anchors.fill: parent
-    color: Qt.rgba(ov.host.drawerColor.r, ov.host.drawerColor.g, ov.host.drawerColor.b, 0.93)
+    color: Qt.rgba(ov.host.panelStyle.color.r, ov.host.panelStyle.color.g, ov.host.panelStyle.color.b, 0.93)
     opacity: ov.host.overviewOpen ? 1 : 0
     Behavior on opacity { NumberAnimation { duration: 180 } }
     TapHandler { onTapped: ov.host.overviewOpen = false }

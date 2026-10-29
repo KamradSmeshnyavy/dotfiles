@@ -2,6 +2,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
@@ -52,15 +53,20 @@ Item {
   readonly property int liveBarSize: shell && shell.bar && !shell.bar.barHidden ? Math.max(0, shell.bar.barSize) : defaultBarSize
   readonly property int barClearance: liveBarSize + Style.gapsOut
 
-  // drawer: стиль из ~/.config/omarchy/notify-style.json ({"notifyStyle": "drawer"|"stock"}).
-  // drawer — тосты лежат в общей подложке цвета бара в правом верхнем углу, вогнутые углы
-  // переходят в бар и в правый край / рамку (идея caelestia, написано с нуля).
+  // drawer: настройки из ~/.config/omarchy/notify-style.json (Customizer → Окна → Уведомления):
+  //   notifyStyle drawer|stock, notifyCorner top-right|top-left|top-center, notifyWidth, notifyMax (0 — все),
+  //   notifyCards flat|bordered, notifyFollowBar, notifyAttach auto|attached|floating,
+  //   notifyBackground / notifyAlpha / notifyRadius — когда не следуем бару.
+  // drawer — тосты лежат в общей подложке (BarStyle.qml): прилипшей к бару и краю вогнутыми углами
+  // (сплошной бар у края) или плавающей карточкой с отступом (прозрачный / «островной» бар).
   property var drawerConfig: ({})
-  property var barSkin: ({})
-  property var palette: ({})
-  readonly property bool drawerStyle: String(drawerConfig.notifyStyle || "drawer") === "drawer"
+  function cfg(key, def) { var v = drawerConfig[key]; return v === undefined || v === null ? def : v }
+  readonly property bool drawerStyle: String(cfg("notifyStyle", "drawer")) === "drawer"
+  readonly property string drawerCorner: String(cfg("notifyCorner", "top-right"))
+  readonly property int drawerWidth: Math.max(240, Number(cfg("notifyWidth", 380)))
+  readonly property int drawerMax: Math.max(0, Number(cfg("notifyMax", 0)))
+  readonly property bool drawerFlatCards: String(cfg("notifyCards", "flat")) === "flat"
   readonly property int drawerPad: 10
-  readonly property int drawerFlare: barSkin.shape === "frame" || barSkin.shape === "hug" ? Math.max(8, Number(barSkin.radius) || 0) : 14
   FileView {
     path: service.home + "/.config/omarchy/notify-style.json"
     watchChanges: true
@@ -69,43 +75,15 @@ Item {
     onLoadFailed: service.drawerConfig = {}
     onFileChanged: reload()
   }
-  FileView {
-    path: service.home + "/.config/omarchy/bar-skin.json"
-    watchChanges: true
-    printErrors: false
-    onLoaded: { try { service.barSkin = JSON.parse(text() || "{}") || {} } catch (e) { service.barSkin = {} } }
-    onLoadFailed: service.barSkin = {}
-    onFileChanged: reload()
+  BarStyle {
+    id: drawerSpec
+    follow: service.cfg("notifyFollowBar", true) !== false
+    attach: String(service.cfg("notifyAttach", "auto"))
+    background: String(service.cfg("notifyBackground", "background"))
+    alpha: Number(service.cfg("notifyAlpha", 0.94))
+    radius: Number(service.cfg("notifyRadius", 18))
   }
-  FileView {
-    path: service.home + "/.local/state/omarchy/current/theme/colors.toml"
-    watchChanges: true
-    printErrors: false
-    onLoaded: {
-      var out = {}
-      var lines = String(text() || "").split("\n")
-      for (var i = 0; i < lines.length; i++) {
-        var m = lines[i].match(/^\s*([A-Za-z0-9_]+)\s*=\s*["'](#[0-9A-Fa-f]{6})["']/)
-        if (m) out[m[1]] = m[2]
-      }
-      service.palette = out
-    }
-    onFileChanged: reload()
-  }
-  // Цвет подложки — как у бара и рамки; у прозрачного бара — фон уведомлений темы.
-  readonly property color drawerColor: {
-    var spec = String(barSkin.background || "bar")
-    var c = spec === "bar" ? Color.bar.background
-      : spec.charAt(0) === "#" ? Qt.color(spec)
-      : spec === "background" ? Color.background
-      : spec === "foreground" ? Color.foreground
-      : spec === "accent" ? Color.accent
-      : palette[spec] ? Qt.color(palette[spec]) : Color.bar.background
-    var a = Number(barSkin.backgroundAlpha)
-    if (isFinite(a) && a >= 0) c = Qt.rgba(c.r, c.g, c.b, a)
-    if (c.a < 0.6 || barSkin.shape === "islands") c = Color.notifications.background
-    return Qt.rgba(c.r, c.g, c.b, Math.max(0.94, c.a))
-  }
+  readonly property var drawer: drawerSpec
 
   // Live Notification objects by originalId, kept OUT of the ListModels: a
   // QObject stored in a model role becomes a dangling C++ pointer when the
@@ -1016,7 +994,7 @@ Item {
       required property var modelData
       screen: modelData
       // drawer: окно живёт, пока подложка не досворачивается.
-      visible: popupModel.count > 0 || drawerBody.h > 0.5
+      visible: popupModel.count > 0 || h > 0.5
 
       WlrLayershell.namespace: "omarchy-notifications"
       WlrLayershell.layer: WlrLayer.Overlay
@@ -1038,45 +1016,99 @@ Item {
       // rest of the (invisible) full-screen overlay never eats input.
       mask: Region { item: popupColumn }
 
-      // drawer: общая подложка. Вогнутый угол слева сверху уходит в бар, справа снизу — в край.
+      // drawer: геометрия общей подложки. attached — у угла вплотную, floating — с отступом.
+      readonly property bool attached: service.drawer.attached
+      readonly property real gap: attached ? 0 : 10
+      readonly property real flare: attached ? service.drawer.flare : 0
+      readonly property real bodyW: popupColumn.width + 2 * service.drawerPad
+      readonly property real bodyX: service.drawerCorner === "top-left" ? gap
+        : service.drawerCorner === "top-center" ? Math.round((width - bodyW) / 2)
+        : width - gap - bodyW
+      readonly property real bodyY: gap
+      readonly property real target: popupModel.count > 0 ? popupColumn.height + 2 * service.drawerPad : 0
+      property real h: target
+      Behavior on h { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+
+      // floating: карточка с рамкой и тенью.
+      Rectangle {
+        visible: service.drawerStyle && !popupWindow.attached && popupWindow.h > 0.5
+        x: popupWindow.bodyX
+        y: popupWindow.bodyY
+        width: popupWindow.bodyW
+        height: popupWindow.h
+        radius: Math.min(service.drawer.cornerRadius, height / 2)
+        color: service.drawer.color
+        border.width: service.drawer.borderWidth
+        border.color: service.drawer.borderColor
+        layer.enabled: true
+        layer.effect: MultiEffect { shadowEnabled: true; shadowColor: "#000000"; shadowOpacity: 0.4; shadowBlur: 0.8; shadowVerticalOffset: 3 }
+      }
+
+      // attached, угол справа / слева: вогнутый угол к бару и к краю экрана (слева — зеркально).
       Shape {
-        id: drawerBody
-        visible: service.drawerStyle
+        visible: service.drawerStyle && popupWindow.attached && service.drawerCorner !== "top-center"
         anchors.fill: parent
         preferredRendererType: Shape.CurveRenderer
-        readonly property real target: popupModel.count > 0 ? popupColumn.height + 2 * service.drawerPad : 0
-        property real h: target
-        Behavior on h { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-        readonly property real bw: popupColumn.width + 2 * service.drawerPad
+        transform: Scale { origin.x: popupWindow.width / 2; xScale: service.drawerCorner === "top-left" ? -1 : 1 }
 
         ShapePath {
           id: drawerPath
           readonly property real ww: popupWindow.width
-          readonly property real x0: ww - drawerBody.bw
-          readonly property real f: Math.min(service.drawerFlare, drawerBody.h)
-          readonly property real br: Math.max(0.01, Math.min(service.cornerRadius + 6, drawerBody.h / 2, drawerBody.bw / 2))
+          readonly property real x0: ww - popupWindow.bodyW
+          readonly property real fl: popupWindow.flare
+          readonly property real f: Math.min(fl, popupWindow.h)
+          readonly property real br: Math.max(0.01, Math.min(service.drawer.cornerRadius, popupWindow.h / 2, popupWindow.bodyW / 2))
 
-          fillColor: service.drawerColor
+          fillColor: service.drawer.color
           strokeWidth: -1
-          startX: drawerPath.x0 - service.drawerFlare
+          startX: drawerPath.x0 - drawerPath.fl
           startY: 0
 
           PathLine { x: drawerPath.ww; y: 0 }
-          PathLine { x: drawerPath.ww; y: drawerBody.h + drawerPath.f }
-          PathArc { x: drawerPath.ww - service.drawerFlare; y: drawerBody.h; radiusX: service.drawerFlare; radiusY: Math.max(0.01, drawerPath.f); direction: PathArc.Counterclockwise }
-          PathLine { x: drawerPath.x0 + drawerPath.br; y: drawerBody.h }
-          PathArc { x: drawerPath.x0; y: drawerBody.h - drawerPath.br; radiusX: drawerPath.br; radiusY: drawerPath.br }
+          PathLine { x: drawerPath.ww; y: popupWindow.h + drawerPath.f }
+          PathArc { x: drawerPath.ww - drawerPath.fl; y: popupWindow.h; radiusX: Math.max(0.01, drawerPath.fl); radiusY: Math.max(0.01, drawerPath.f); direction: PathArc.Counterclockwise }
+          PathLine { x: drawerPath.x0 + drawerPath.br; y: popupWindow.h }
+          PathArc { x: drawerPath.x0; y: popupWindow.h - drawerPath.br; radiusX: drawerPath.br; radiusY: drawerPath.br }
           PathLine { x: drawerPath.x0; y: drawerPath.f }
-          PathArc { x: drawerPath.x0 - service.drawerFlare; y: 0; radiusX: service.drawerFlare; radiusY: Math.max(0.01, drawerPath.f); direction: PathArc.Counterclockwise }
+          PathArc { x: drawerPath.x0 - drawerPath.fl; y: 0; radiusX: Math.max(0.01, drawerPath.fl); radiusY: Math.max(0.01, drawerPath.f); direction: PathArc.Counterclockwise }
+        }
+      }
+
+      // attached, по центру: как дашборд — вогнутые углы к бару с обеих сторон.
+      Shape {
+        visible: service.drawerStyle && popupWindow.attached && service.drawerCorner === "top-center"
+        anchors.fill: parent
+        preferredRendererType: Shape.CurveRenderer
+
+        ShapePath {
+          id: centerPath
+          readonly property real l: popupWindow.bodyX
+          readonly property real r: popupWindow.bodyX + popupWindow.bodyW
+          readonly property real fl: popupWindow.flare
+          readonly property real f: Math.min(fl, popupWindow.h)
+          readonly property real br: Math.max(0.01, Math.min(service.drawer.cornerRadius, (popupWindow.h - f) / 2))
+
+          fillColor: service.drawer.color
+          strokeWidth: -1
+          startX: centerPath.l - centerPath.fl
+          startY: 0
+
+          PathLine { x: centerPath.r + centerPath.fl; y: 0 }
+          PathArc { x: centerPath.r; y: centerPath.f; radiusX: Math.max(0.01, centerPath.fl); radiusY: Math.max(0.01, centerPath.f); direction: PathArc.Counterclockwise }
+          PathLine { x: centerPath.r; y: popupWindow.h - centerPath.br }
+          PathArc { x: centerPath.r - centerPath.br; y: popupWindow.h; radiusX: centerPath.br; radiusY: centerPath.br }
+          PathLine { x: centerPath.l + centerPath.br; y: popupWindow.h }
+          PathArc { x: centerPath.l; y: popupWindow.h - centerPath.br; radiusX: centerPath.br; radiusY: centerPath.br }
+          PathLine { x: centerPath.l; y: centerPath.f }
+          PathArc { x: centerPath.l - centerPath.fl; y: 0; radiusX: Math.max(0.01, centerPath.fl); radiusY: Math.max(0.01, centerPath.f); direction: PathArc.Counterclockwise }
         }
       }
 
       ColumnLayout {
         id: popupColumn
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: service.drawerStyle ? service.drawerPad : popupWindow.popupPlacement.margins.top
-        anchors.rightMargin: service.drawerStyle ? service.drawerPad : popupWindow.popupPlacement.margins.right
+        // drawer: внутри подложки; stock — стоковое место у правого верхнего угла.
+        x: service.drawerStyle ? popupWindow.bodyX + service.drawerPad : popupWindow.width - width - popupWindow.popupPlacement.margins.right
+        y: service.drawerStyle ? popupWindow.bodyY + service.drawerPad : popupWindow.popupPlacement.margins.top
         spacing: Style.space(8)
 
         Repeater {
@@ -1101,7 +1133,9 @@ Item {
             // Each card sizes itself based on mode (text vs media); the slot
             // tracks the card so the column auto-fits to whichever is widest.
             Layout.preferredWidth: card.implicitWidth
-            Layout.alignment: Qt.AlignRight
+            Layout.alignment: service.drawerStyle && service.drawerCorner === "top-left" ? Qt.AlignLeft : Qt.AlignRight
+            // drawer: не больше notifyMax тостов сразу (новые — сверху; остальные ждут своей очереди).
+            visible: !service.drawerStyle || service.drawerMax === 0 || index < service.drawerMax
             implicitHeight: card.implicitHeight
 
             readonly property real lifetime: service.durationFor(cardSlot.urgency, cardSlot.expireTimeout)
@@ -1143,7 +1177,8 @@ Item {
               urgency: cardSlot.urgency
               timestamp: cardSlot.timestamp
               cornerRadius: service.cornerRadius
-              flat: service.drawerStyle
+              flat: service.drawerStyle && service.drawerFlatCards
+              implicitWidth: service.drawerStyle ? service.drawerWidth : Style.space(380)
               fontFamily: service.shell && service.shell.bar ? service.shell.bar.fontFamily : ""
               glyph: cardSlot.glyph
 
