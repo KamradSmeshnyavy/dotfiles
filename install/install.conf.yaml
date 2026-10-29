@@ -127,6 +127,15 @@
     ~/.config/omarchy/hooks/post-boot.d/darkreader-sync:
       path: omarchy-themes/hooks/post-boot.d/darkreader-sync
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/hooks/post-boot.d/sound-login:
+      path: omarchy-themes/hooks/post-boot.d/sound-login
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/hooks/battery-low.d/sound-battery-low:
+      path: omarchy-themes/hooks/battery-low.d/sound-battery-low
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-sound:
+      path: omarchy-themes/scripts/omarchy-sound
+      if: "[ `uname` = Linux ]"
     # Шаблоны Omarchy (рендерятся в тему при смене; слоты — omarchy-app-themes)
     ~/.config/omarchy/themed/mpv-osc.conf.tpl:
       path: omarchy-themes/themed/mpv-osc.conf.tpl

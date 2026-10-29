@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Звук интерфейса по событию (имена — freedesktop sound theme spec): message-new-instant,
+# dialog-warning, audio-volume-change, service-login, battery-low, screen-capture, …
+# Файл ищется в apps/sounds/ текущей темы, затем в app-defaults/sounds/, затем в системной теме
+# freedesktop. Выключатель и громкость — ~/.config/omarchy/sounds.json {"sounds": bool, "soundVolume": 0..1}.
+#
+# Использование: omarchy-sound <событие>
+set -u
+
+event=${1:-}
+[[ $event =~ ^[a-z0-9-]+$ ]] || exit 0
+
+conf=$HOME/.config/omarchy/sounds.json
+enabled=true volume=0.6
+if [[ -f $conf ]]; then
+  enabled=$(jq -r 'if .sounds == false then "false" else "true" end' "$conf" 2>/dev/null || echo true)
+  volume=$(jq -r '.soundVolume // 0.6' "$conf" 2>/dev/null || echo 0.6)
+fi
+[[ $enabled == true ]] || exit 0
+
+# Тики громкости при зажатой клавише — не чаще раза в 80 мс.
+if [[ $event == audio-volume-change ]]; then
+  stamp=${XDG_RUNTIME_DIR:-/tmp}/omarchy-sound-volume
+  now=$(date +%s%3N)
+  last=0
+  [[ -f $stamp ]] && last=$(<"$stamp")
+  (( now - ${last:-0} < 80 )) && exit 0
+  echo "$now" >"$stamp"
+fi
+
+# battery-low нет в стандартной теме — подменяем ближайшим.
+declare -A FALLBACK=([battery-low]=dialog-warning [notify]=message-new-instant)
+
+dirs=(
+  "$HOME/.local/state/omarchy/current/theme/apps/sounds"
+  "$(dirname "$(readlink -f "$0")")/../app-defaults/sounds"
+  /usr/share/sounds/freedesktop/stereo
+)
+file=
+for name in "$event" "${FALLBACK[$event]:-}"; do
+  [[ -n $name ]] || continue
+  for dir in "${dirs[@]}"; do
+    for ext in oga ogg wav flac; do
+      [[ -f $dir/$name.$ext ]] && { file=$dir/$name.$ext; break 3; }
+    done
+  done
+done
+[[ -n $file ]] || exit 0
+
+setsid -f pw-play --volume "$volume" "$file" >/dev/null 2>&1

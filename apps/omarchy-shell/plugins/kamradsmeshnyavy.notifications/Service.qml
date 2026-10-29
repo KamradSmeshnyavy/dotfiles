@@ -241,6 +241,9 @@ Item {
 
     persistPopupFile(snapshot)
     watchForUpdates(notification, snapshot)
+    // drawer: звук показа (omarchy-sound, выключатель — sounds.json). Тихие уведомления DND сюда не доходят.
+    Quickshell.execDetached([service.home + "/.local/bin/omarchy-sound",
+      notification.urgency === NotificationUrgency.Critical ? "dialog-warning" : "message-new-instant"])
     // Qt.callLater avoids "QV4::Object::insertMember" crashes when a
     // Repeater is mid-incubation while we mutate its model.
     Qt.callLater(function() {

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Звук входа в систему (omarchy-sound, выключатель — ~/.config/omarchy/sounds.json).
+exec ~/.local/bin/omarchy-sound service-login

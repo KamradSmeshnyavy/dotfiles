@@ -129,6 +129,8 @@ Item {
     icon = next.icon
     duration = next.duration
     opened = true
+    // edge: тик громкости (omarchy-sound не чаще раза в 80 мс; выключатель — sounds.json).
+    if (iconKey.indexOf("volume") === 0) Quickshell.execDetached([root.home + "/.local/bin/omarchy-sound", "audio-volume-change"])
     if (duration > 0) hideTimer.restart()
     else hideTimer.stop()
   }

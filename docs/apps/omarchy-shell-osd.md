@@ -31,5 +31,22 @@ OSD со шкалой (громкость, яркость, микрофон — 
 |---|---|---|
 | `notifyStyle` | `drawer` | `drawer` или `stock` |
 
+## Звуки
+
+`omarchy-sound <событие>` (`omarchy-themes/scripts/omarchy-sound` → `~/.local/bin`) играет звук через
+`pw-play`. Имена событий — из freedesktop sound theme spec; файл ищется в `apps/sounds/` текущей темы,
+потом в `omarchy-themes/app-defaults/sounds/`, потом в `/usr/share/sounds/freedesktop/stereo`.
+Тема со своими звуками кладёт, например, `apps/sounds/message-new-instant.oga`.
+
+| Событие | Откуда |
+|---|---|
+| `message-new-instant` / `dialog-warning` | показ тоста / критического тоста (клон уведомлений; при DND молчит) |
+| `audio-volume-change` | OSD громкости (не чаще раза в 80 мс) |
+| `service-login` | хук `post-boot.d/sound-login` |
+| `battery-low` (→ `dialog-warning`) | хук `battery-low.d/sound-battery-low` |
+
+Customizer → Окна → **OSD и уведомления**: «Звуки: включены» и «Звуки: громкость»
+(`~/.config/omarchy/sounds.json`: `sounds`, `soundVolume`).
+
 Вернуть стоковые уведомления целиком: `omarchy plugin enable omarchy.notifications`.
 При включённом «Не беспокоить» на экран проходят только критические `notify-send` без `-a` и `omarchy-action`.

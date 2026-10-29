@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Звук низкого заряда батареи (omarchy-sound).
+exec ~/.local/bin/omarchy-sound battery-low
