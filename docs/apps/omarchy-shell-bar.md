@@ -17,6 +17,7 @@
 | `~/.config/omarchy/bar-skin.json` | активный скин; бар следит за файлом и меняется на лету |
 | `~/.config/omarchy/shell.json` `.bar` | позиция, секции виджетов, `transparent` (тоже на лету) |
 | `kamradsmeshnyavy.bar/skins/*.json` | пресеты скинов |
+| `~/.config/omarchy/bar-skins/*.json` → `apps/omarchy-shell/bar-skins/` | свои скины (★ в Bar Skin) |
 | `kamradsmeshnyavy.bar/layouts/*.json` | пресеты раскладок (`position`, `centerAnchor`, `layout`) |
 | `kamradsmeshnyavy.bar/BarSkin.qml` | чтение скина, дефолты, цвета-роли |
 | `kamradsmeshnyavy.bar/SkinFrame.qml` | подложка по форме, маска ввода, exclusive zone |
@@ -111,6 +112,9 @@
 ## Новый пресет
 
 - Скин: положить JSON в `skins/` плагина `kamradsmeshnyavy.bar`, он сразу появится в Bar Skin.
+- Свой скин: Bar Skin → «💾 Сохранить текущий скин…» — то, что сейчас на баре (с правками из Bar Tweaks),
+  ляжет в `~/.config/omarchy/bar-skins/<имя>.json` (в dotfiles — `apps/omarchy-shell/bar-skins/`) и появится
+  в списке со ★. Удалить — удалить файл. `my-glass-islands` — вид бара до рамки (стекло-острова, greek, compact).
   Или собрать в Bar Tweaks и скопировать `~/.config/omarchy/bar-skin.json`.
 - Раскладка: в Bar Layout строка «💾 Сохранить текущую как пресет…».
 
