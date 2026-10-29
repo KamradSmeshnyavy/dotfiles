@@ -84,6 +84,11 @@ check-links:
 publish-launcher path="~/src/omarchy-launcher-skins":
     {{justfile_directory()}}/scripts/publish-launcher {{path}}
 
+# Синхронизировать закладки Firefox / Helium / Chromium (-n — только показать, -y — закрыть браузеры без вопроса)
+[linux]
+bookmarks-sync *args:
+    {{justfile_directory()}}/scripts/bin/bookmarks-sync {{args}}
+
 # Плагины yazi из tui/yazi/package.toml
 [linux]
 yazi-plugins:

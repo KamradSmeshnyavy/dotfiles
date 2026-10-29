@@ -205,6 +205,9 @@
     ~/.local/bin/omarchy-customizer:
       path: scripts/bin/omarchy-customizer
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/bookmarks-sync:
+      path: scripts/bin/bookmarks-sync
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/yazi-dbus-filemanager.py:
       path: scripts/bin/yazi-dbus-filemanager.py
       if: "[ `uname` = Linux ]"

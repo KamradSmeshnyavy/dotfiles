@@ -1,0 +1,594 @@
+#!/usr/bin/python3
+"""Синхронизация закладок Firefox, Helium и Chromium.
+
+Собирает закладки всех браузеров, убирает дубли и папки взаимных импортов
+(«Imported From Firefox» и т.п.), сводит в одно дерево и записывает его во все браузеры.
+
+Состояние прошлой синхронизации — ~/.local/state/bookmarks-sync/state.json. С ним работает
+трёхстороннее слияние: закладка, которой нет в прошлом состоянии, добавляется везде; закладка,
+удалённая хотя бы в одном браузере, удаляется везде; перенос в другую папку и смена названия
+берутся из браузера, где их сделали. Без состояния (первый запуск, --reset) — объединение всего.
+
+Как пишется:
+  Firefox  — через Places API под Marionette (headless-экземпляр на рабочем профиле), чтобы
+             Firefox Sync получил нормальные удаления, а не правку places.sqlite вслепую.
+  Chromium, Helium — через временное расширение с chrome.bookmarks в копии профиля, затем файлы
+             закладок переносятся обратно. Helium хранит закладки зашифрованными
+             (EncryptedBookmarks2), JSON-файл у него устаревший — поэтому только так.
+
+Запущенные браузеры для записи закрываются (с вопросом, если нет --yes) и потом запускаются снова.
+"""
+import argparse, configparser, contextlib, http.server, json, os, re, shutil, signal, socket
+import sqlite3, subprocess, sys, tempfile, threading, time
+import urllib.parse as up
+from pathlib import Path
+
+HOME = Path.home()
+STATE_DIR = HOME / '.local/state/bookmarks-sync'
+
+CHROMIUMS = {
+    'helium': {'dir': HOME / '.config/net.imput.helium', 'bin': '/opt/helium-browser-bin/helium',
+               'launch': ['helium-browser']},
+    'chromium': {'dir': HOME / '.config/chromium', 'bin': '/usr/lib/chromium/chromium',
+                 'launch': ['chromium']},
+}
+ORDER = ['firefox', 'helium', 'chromium']  # приоритет при конфликтах и порядок элементов
+PINNED = ['work', 'study', 'relax', 'shopping']  # папки панели закладок, которые идут первыми
+
+# ── модель ───────────────────────────────────────────────────────────────────
+# Закладка: (root, path, title, url); root — bar | other | mobile (у Firefox ещё menu при
+# чтении), path — кортеж имён папок от корня.
+
+IMPORTED = re.compile(r'^Imported (from|From) ')
+ROOT_NAMES = {'toolbar': 'bar', 'Bookmarks bar': 'bar', 'menu': 'bar', 'Bookmarks Menu': 'bar',
+              'unfiled': 'other', 'Other bookmarks': 'other', 'Other Bookmarks': 'other',
+              'mobile': 'mobile', 'Mobile bookmarks': 'mobile'}
+TRACKING = re.compile(r'^(utm_.*|fbclid|gclid|yclid|_openstat|__cf_chl_.*)$')
+
+
+def canon_url(u):
+    p = up.urlparse(u)
+    if p.scheme not in ('http', 'https'):
+        return u
+    q = up.parse_qsl(p.query, keep_blank_values=True)
+    if p.netloc.endswith('google.com') and p.path == '/search':
+        q = [kv for kv in q if kv[0] == 'q']  # остальное — сессионный мусор
+    q = [kv for kv in q if not TRACKING.match(kv[0])]
+    return up.urlunparse(p._replace(path=p.path or '/', query=up.urlencode(q, quote_via=up.quote)
+                                    if q != up.parse_qsl(p.query, keep_blank_values=True) else p.query))
+
+
+def only_for(url):
+    if url.startswith(('about:', 'place:')):
+        return {'firefox'}
+    if url.startswith(('chrome:', 'helium:')):
+        return set(CHROMIUMS)
+    return None
+
+
+def normalize(root, path):
+    """Срезает папки импорта: «Imported from X/toolbar/Imported From Y/study» → bar, (study,)."""
+    root = 'bar' if root == 'menu' else root
+    path = list(path)
+    while path and IMPORTED.match(path[0]):
+        path.pop(0)
+        if path and path[0] in ROOT_NAMES:
+            root = ROOT_NAMES[path.pop(0)]
+    return root, tuple(path)
+
+
+def place_rank(root, path):
+    # дубль в нескольких папках остаётся в самой конкретной; корни — в последнюю очередь
+    return (len(path) == 0, root != 'bar', -len(path))
+
+
+def view(b, root):
+    # у Chromium пустой корень «Мобильные» скрыт — мобильные закладки живут в «Других»
+    return 'other' if b in CHROMIUMS and root == 'mobile' else root
+
+# ── Firefox ──────────────────────────────────────────────────────────────────
+
+def ff_base():
+    for d in (HOME / '.config/mozilla/firefox', HOME / '.mozilla/firefox'):
+        if (d / 'profiles.ini').exists():
+            return d
+
+
+def ff_profile():
+    base = ff_base()
+    if not base:
+        return None
+    ini = configparser.ConfigParser(interpolation=None)
+    ini.read(base / 'profiles.ini')
+    rel = next((ini[s]['Default'] for s in ini.sections() if s.startswith('Install')), None)
+    for s in ini.sections():
+        if s.startswith('Profile') and (rel is None and ini[s].get('Default') == '1'
+                                        or ini[s].get('Path') == rel):
+            d = ini[s]['Path']
+            return {'dir': base / d if ini[s].get('IsRelative', '1') == '1' else Path(d),
+                    'name': ini[s]['Name']}
+
+
+FF_ROOTS = {'toolbar_____': 'bar', 'menu________': 'menu', 'unfiled_____': 'other',
+            'mobile______': 'mobile'}
+
+
+def ff_read(prof):
+    with tempfile.TemporaryDirectory() as tmp:
+        for f in ('places.sqlite', 'places.sqlite-wal'):
+            if (prof['dir'] / f).exists():
+                shutil.copy(prof['dir'] / f, Path(tmp) / f)
+        db = sqlite3.connect(Path(tmp) / 'places.sqlite')
+        rows = db.execute('SELECT b.id, b.parent, b.type, b.title, b.guid, p.url FROM moz_bookmarks b '
+                          'LEFT JOIN moz_places p ON p.id = b.fk ORDER BY b.parent, b.position').fetchall()
+        db.close()
+    kids = {}
+    for r in rows:
+        kids.setdefault(r[1], []).append(r)
+    out = []
+
+    def walk(pid, root, path):
+        for _id, _, typ, title, _, url in kids.get(pid, []):
+            if typ == 1 and url:
+                out.append((root, path, title or '', url))
+            elif typ == 2:
+                walk(_id, root, path + (title or '',))
+    for r in rows:
+        if r[4] in FF_ROOTS:
+            walk(r[0], FF_ROOTS[r[4]], ())
+    return out
+
+
+class Marionette:
+    def __init__(self, port=2828, timeout=60):
+        deadline = time.time() + timeout
+        while True:
+            try:
+                self.s = socket.create_connection(('127.0.0.1', port))
+                break
+            except OSError:
+                if time.time() > deadline:
+                    raise
+                time.sleep(0.5)
+        self.n = 0
+        self._recv()
+        self.cmd('WebDriver:NewSession', {})
+        self.cmd('Marionette:SetContext', {'value': 'chrome'})
+
+    def _recv(self):
+        n = b''
+        while not n.endswith(b':'):
+            n += self.s.recv(1)
+        n, buf = int(n[:-1]), b''
+        while len(buf) < n:
+            buf += self.s.recv(n - len(buf))
+        return json.loads(buf)
+
+    def cmd(self, name, params):
+        self.n += 1
+        d = json.dumps([0, self.n, name, params]).encode()
+        self.s.sendall(str(len(d)).encode() + b':' + d)
+        r = self._recv()
+        if r[2]:
+            raise RuntimeError(f'{name}: {r[2].get("message")}')
+        return r[3]
+
+    def run(self, script, *args):
+        return self.cmd('WebDriver:ExecuteScript',
+                        {'script': script, 'args': list(args), 'scriptTimeout': 300000})['value']
+
+
+FF_APPLY_JS = r'''
+const { PlacesUtils } = ChromeUtils.importESModule("resource://gre/modules/PlacesUtils.sys.mjs");
+const { PlacesBackups } = ChromeUtils.importESModule("resource://gre/modules/PlacesBackups.sys.mjs");
+const [roots] = arguments;
+const bm = PlacesUtils.bookmarks;
+const conv = n => n.url ? { type: bm.TYPE_BOOKMARK, title: n.title, url: n.url }
+                        : { type: bm.TYPE_FOLDER, title: n.title, children: n.children.map(conv) };
+return (async () => {
+  await PlacesBackups.create(undefined, true);
+  await bm.eraseEverything();
+  const guids = { bar: bm.toolbarGuid, other: bm.unfiledGuid, mobile: bm.mobileGuid };
+  for (const [k, children] of Object.entries(roots))
+    if (children.length) await bm.insertTree({ guid: guids[k], children: children.map(conv) });
+  return (await PlacesBackups.getMostRecentBackup());
+})();
+'''
+
+
+def ff_apply(prof, roots):
+    env = dict(os.environ, MOZ_REMOTE_ALLOW_SYSTEM_ACCESS='1')
+    with contextlib.suppress(OSError), socket.create_connection(('127.0.0.1', 2828)):
+        sys.exit('порт Marionette 2828 занят — закройте другой экземпляр с --marionette')
+    p = subprocess.Popen(['firefox', '--headless', '--new-instance', '-P', prof['name'],
+                          '--marionette', '--remote-allow-system-access'],
+                         env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        m = Marionette()
+        backup = m.run(FF_APPLY_JS, roots)
+        with contextlib.suppress(Exception):
+            m.cmd('Marionette:Quit', {'flags': ['eAttemptQuit']})
+        p.wait(60)
+        return backup
+    finally:
+        if p.poll() is None:
+            p.terminate()
+            p.wait(30)
+
+# ── Chromium / Helium ───────────────────────────────────────────────────────
+
+EXT_JS = r'''
+const SRV = '__SRV__';
+const post = (p, body) => fetch(SRV + p, { method: 'POST', body: JSON.stringify(body) });
+const dump = n => n.url ? { title: n.title, url: n.url }
+                        : { title: n.title, children: (n.children || []).map(dump) };
+async function roots() {
+  const [top] = await chrome.bookmarks.getTree();
+  const pick = (type, i) => top.children.find(n => n.folderType === type && !n.syncing) || top.children[i];
+  return { bar: pick('bookmarks-bar', 0), other: pick('other', 1), mobile: pick('mobile', 2) };
+}
+async function create(parentId, nodes) {
+  for (const n of nodes) {
+    const c = await chrome.bookmarks.create({ parentId, title: n.title, ...(n.url ? { url: n.url } : {}) });
+    if (!n.url) await create(c.id, n.children);
+  }
+}
+async function run() {
+  const job = await (await fetch(SRV + '/job')).json();
+  let r = await roots();
+  if (job.apply) {
+    for (const k of ['bar', 'other', 'mobile'])
+      if (r[k]) for (const ch of await chrome.bookmarks.getChildren(r[k].id)) await chrome.bookmarks.removeTree(ch.id);
+    await create(r.bar.id, job.apply.bar);
+    await create(r.other.id, job.apply.other);
+    r = await roots();
+  }
+  const out = {};
+  for (const k of ['bar', 'other', 'mobile'])
+    out[k] = r[k] ? dump((await chrome.bookmarks.getSubTree(r[k].id))[0]).children : [];
+  await post('/result', out);
+}
+run().catch(e => post('/result', { error: String(e && e.stack || e) }));
+'''
+
+
+def bookmark_files(profile):
+    return [f for f in ('Bookmarks', *sorted(p.name for p in profile.glob('EncryptedBookmarks*')
+                                             if not p.name.endswith('.bak')))
+            if (profile / f).exists()]
+
+
+def chromium_session(name, data, job, timeout=90):
+    """Запускает браузер на каталоге data (копия профиля) с одноразовым расширением,
+    возвращает дамп дерева. Расширение каждый раз в новом каталоге: у распакованного
+    расширения браузер кэширует service worker по ID и может не увидеть правки."""
+    result, got = {}, threading.Event()
+
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            body = json.dumps(job).encode()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_POST(self):
+            result.update(json.loads(self.rfile.read(int(self.headers['Content-Length']))))
+            self.send_response(200)
+            self.end_headers()
+            got.set()
+
+        def log_message(self, *a):
+            pass
+
+    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    with tempfile.TemporaryDirectory(prefix='bookmarks-sync-ext-') as ext:
+        ext = Path(ext)
+        (ext / 'manifest.json').write_text(json.dumps({
+            'manifest_version': 3, 'name': 'bookmarks-sync', 'version': '1.0',
+            'permissions': ['bookmarks'], 'host_permissions': ['http://127.0.0.1/*'],
+            'background': {'service_worker': 'bg.js'}}))
+        (ext / 'bg.js').write_text(EXT_JS.replace('__SRV__', f'http://127.0.0.1:{srv.server_port}'))
+        p = subprocess.Popen([CHROMIUMS[name]['bin'], f'--user-data-dir={data}', f'--load-extension={ext}',
+                              '--headless=new', '--no-first-run', '--no-default-browser-check',
+                              '--disable-sync', 'about:blank'],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            if not got.wait(timeout):
+                raise RuntimeError(f'{name}: расширение не ответило за {timeout} с')
+            if job.get('apply'):
+                time.sleep(5)  # закладки пишутся на диск с задержкой ~2.5 с
+        finally:
+            p.terminate()
+            p.wait(30)
+            srv.shutdown()
+    if 'error' in result:
+        raise RuntimeError(f'{name}: {result["error"]}')
+    return result
+
+
+def profile_copy(name, tmp):
+    """Минимальная копия профиля: Local State (ключ шифрования) и файлы закладок."""
+    src, data = CHROMIUMS[name]['dir'], Path(tmp) / 'data'
+    (data / 'Default').mkdir(parents=True)
+    shutil.copy(src / 'Local State', data)
+    for f in bookmark_files(src / 'Default'):
+        shutil.copy(src / 'Default' / f, data / 'Default')
+    return data
+
+
+def chromium_flat(dump):
+    out = []
+
+    def walk(nodes, root, path):
+        for n in nodes:
+            if 'url' in n:
+                out.append((root, path, n['title'], n['url']))
+            else:
+                walk(n['children'], root, path + (n['title'],))
+    for root in ('bar', 'other', 'mobile'):
+        walk(dump.get(root, []), root, ())
+    return out
+
+
+def chromium_read(name):
+    profile = CHROMIUMS[name]['dir'] / 'Default'
+    if any(f.startswith('Encrypted') for f in bookmark_files(profile)):
+        with tempfile.TemporaryDirectory(prefix=f'bookmarks-sync-{name}-') as tmp:
+            return chromium_flat(chromium_session(name, profile_copy(name, tmp), {}))
+    d = json.loads((profile / 'Bookmarks').read_text())
+
+    def conv(n):
+        return ({'title': n['name'], 'url': n['url']} if n['type'] == 'url'
+                else {'title': n['name'], 'children': [conv(c) for c in n.get('children', [])]})
+    roots = d['roots']
+    return chromium_flat({'bar': conv(roots['bookmark_bar'])['children'],
+                          'other': conv(roots['other'])['children'],
+                          'mobile': conv(roots['synced'])['children'] if 'synced' in roots else []})
+
+
+def chromium_apply(name, roots, backup_dir):
+    profile = CHROMIUMS[name]['dir'] / 'Default'
+    before = bookmark_files(profile)
+    (backup_dir / name).mkdir(parents=True)
+    for f in before:
+        shutil.copy2(profile / f, backup_dir / name / f)
+    with tempfile.TemporaryDirectory(prefix=f'bookmarks-sync-{name}-') as tmp:
+        data = profile_copy(name, tmp)
+        chromium_session(name, data, {'apply': roots})
+        # проверка — новым запуском, т.е. по тому, что реально легло на диск
+        if chromium_flat(chromium_session(name, data, {})) != chromium_flat(roots):
+            raise RuntimeError(f'{name}: после записи дерево не совпало с целевым, профиль не тронут')
+        files = bookmark_files(data / 'Default')
+        if any(f.startswith('Encrypted') for f in before) and not any(f.startswith('Encrypted') for f in files):
+            raise RuntimeError(f'{name}: копия не записала зашифрованный файл закладок, профиль не тронут')
+        for f in files:
+            shutil.copy(data / 'Default' / f, profile / f)
+
+
+# ── процессы ─────────────────────────────────────────────────────────────────
+
+def lock_pid(name):
+    """PID процесса, держащего профиль (по lock-симлинку), или None."""
+    if name == 'firefox':
+        lock, rx = ff_profile()['dir'] / 'lock', r'\+(\d+)$'
+    else:
+        lock, rx = CHROMIUMS[name]['dir'] / 'SingletonLock', r'-(\d+)$'
+    with contextlib.suppress(OSError):
+        m = re.search(rx, os.readlink(lock))
+        if m and Path(f'/proc/{m[1]}').exists():
+            return int(m[1])
+
+
+def close(name):
+    pid = lock_pid(name)
+    os.kill(pid, signal.SIGTERM)
+    for _ in range(60):
+        if not Path(f'/proc/{pid}').exists():
+            time.sleep(1)  # дать дописать файлы
+            return
+        time.sleep(0.5)
+    sys.exit(f'{name} не закрылся за 30 с')
+
+
+def launch(name):
+    cmd = ['firefox'] if name == 'firefox' else CHROMIUMS[name]['launch']
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+# ── слияние ──────────────────────────────────────────────────────────────────
+
+def index(items):
+    """url → (root, path, title) после нормализации; порядок первого появления."""
+    by = {}
+    for root, path, title, url in items:
+        root, path = normalize(root, path)
+        url = canon_url(url)
+        cur = by.get(url)
+        if cur is None or place_rank(root, path) < place_rank(*cur[:2]):
+            by[url] = (root, path, cur[2] if cur and cur[2] else title)
+    return by
+
+
+def merge(views, state):
+    base = {u: (r, tuple(p), t) for r, p, t, u in state['items']} if state else {}
+    base_browsers = set(state['browsers']) if state else set()
+    seen, result, deleted = {}, {}, []
+    for b in views:
+        for u in views[b]:
+            seen.setdefault(u, len(seen))
+    for u in base:
+        seen.setdefault(u, len(seen))
+    for u in sorted(seen, key=seen.get):
+        allowed = only_for(u)
+        has = [b for b in views if u in views[b]]
+        if u in base:
+            if any(b in base_browsers and u not in views[b] and (allowed is None or b in allowed)
+                   for b in views):
+                deleted.append(u)
+                continue
+            val = base[u]
+            for b in has:  # views в порядке приоритета
+                r, p, t = views[b][u]
+                if (r, p, t) != (view(b, val[0]), val[1], val[2]):
+                    val = (val[0] if view(b, val[0]) == r else r, p, t)
+                    break
+        else:
+            val = min((views[b][u] for b in has), key=lambda v: place_rank(v[0], v[1]))
+        result[u] = val
+    return result, deleted
+
+
+def ordered(result, views):
+    """Список (root, path, title, url): папки и закладки в порядке первого появления."""
+    folder_pos, url_pos = {}, {}
+    for b in views:
+        for u, (r, p, _) in views[b].items():
+            url_pos.setdefault(u, len(url_pos))
+            for i in range(len(p) + 1):
+                folder_pos.setdefault((r, p[:i]), len(folder_pos))
+    for u, (r, p, _) in result.items():
+        url_pos.setdefault(u, len(url_pos))
+        for i in range(len(p) + 1):
+            folder_pos.setdefault((r, p[:i]), len(folder_pos))
+    return sorted(((r, p, t, u) for u, (r, p, t) in result.items()),
+                  key=lambda x: (folder_pos[(x[0], x[1])], url_pos[x[3]]))
+
+
+def tree_for(b, items):
+    """Дерево для браузера: {root: [узлы]}. В корне сначала папки из PINNED,
+    затем закладки, затем остальные папки."""
+    roots = {'bar': [], 'other': [], 'mobile': []}
+    folders = {}
+    for root, path, title, url in items:
+        allowed = only_for(url)
+        if allowed and b not in allowed:
+            continue
+        root = view(b, root)
+        parent = roots[root]
+        for i in range(1, len(path) + 1):
+            key = (root, path[:i])
+            if key not in folders:
+                folders[key] = {'title': path[i - 1], 'children': []}
+                parent.append(folders[key])
+            parent = folders[key]['children']
+        parent.append({'title': title, 'url': url})
+    def rank(n):
+        if 'url' in n:
+            return (len(PINNED), 0)
+        return (PINNED.index(n['title']), 0) if n['title'] in PINNED else (len(PINNED), 1)
+    for k in roots:
+        roots[k].sort(key=rank)
+    if b in CHROMIUMS:
+        roots['other'] += roots.pop('mobile')
+    return roots
+
+
+def tree_flat(roots):
+    out = []
+
+    def walk(nodes, root, path):
+        for n in nodes:
+            if 'url' in n:
+                out.append((root, path, n['title'], n['url']))
+            else:
+                walk(n['children'], root, path + (n['title'],))
+    for root, nodes in roots.items():
+        walk(nodes, root, ())
+    return out
+
+def save_state(browsers, items):
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    (STATE_DIR / 'state.json').write_text(json.dumps(
+        {'browsers': browsers, 'items': [[r, list(p), t, u] for r, p, t, u in items]},
+        ensure_ascii=False, indent=1))
+
+# ── main ─────────────────────────────────────────────────────────────────────
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    ap.add_argument('-n', '--dry-run', action='store_true', help='показать изменения и ничего не писать')
+    ap.add_argument('-y', '--yes', action='store_true', help='закрывать запущенные браузеры без вопроса')
+    ap.add_argument('--reset', action='store_true',
+                    help='забыть прошлое состояние: объединить всё, ничего не удалять')
+    ap.add_argument('--allow-mass-delete', action='store_true',
+                    help='разрешить удаление больше 10 закладок и четверти прошлого состояния')
+    ap.add_argument('--no-relaunch', action='store_true', help='не запускать закрытые браузеры обратно')
+    args = ap.parse_args()
+
+    browsers = []
+    ff = ff_profile()
+    if ff and shutil.which('firefox'):
+        browsers.append('firefox')
+    browsers += [b for b in CHROMIUMS if (CHROMIUMS[b]['dir'] / 'Default').is_dir()
+                 and Path(CHROMIUMS[b]['bin']).exists()]
+    if len(browsers) < 2:
+        sys.exit(f'нужно хотя бы два браузера, найдено: {browsers}')
+
+    state_file = STATE_DIR / 'state.json'
+    state = None if args.reset or not state_file.exists() else json.loads(state_file.read_text())
+
+    def read_all():
+        raw = {b: ff_read(ff) if b == 'firefox' else chromium_read(b) for b in browsers}
+        return raw, {b: index(raw[b]) for b in browsers}
+
+    raw, views = read_all()
+    result, deleted = merge(views, state)
+    items = ordered(result, views)
+    trees = {b: tree_for(b, items) for b in browsers}
+    todo = [b for b in browsers if raw[b] != tree_flat(trees[b])]
+
+    print(f'итог: {len(items)} закладок' + (', без прошлого состояния — объединение' if not state else ''))
+    for b in browsers:
+        have, want = {canon_url(x[3]) for x in raw[b]}, {x[3] for x in tree_flat(trees[b])}
+        print(f'  {b:9} {len(raw[b]):5} → {len(tree_flat(trees[b])):4}   '
+              f'+{len(want - have)} -{len(have - want)}' + ('' if b in todo else '   без изменений'))
+    for u in deleted:
+        print(f'  удалено в одном из браузеров, удаляю везде: {u}')
+    # пустое/битое чтение одного браузера выглядело бы как удаление всего — не верить ему
+    if state and len(deleted) > 10 and len(deleted) > len(state['items']) / 4 and not args.allow_mass_delete:
+        sys.exit(f'удаляется {len(deleted)} из {len(state["items"])} — подозрительно много; '
+                 'проверьте браузеры или запустите с --allow-mass-delete')
+    if args.dry_run:
+        return
+    if not todo:
+        save_state(browsers, items)
+        return
+
+    running = [b for b in todo if lock_pid(b)]
+    if running and not args.yes:
+        if not sys.stdin.isatty() or input(f'закрыть {", ".join(running)} для записи? [y/N] ').lower() != 'y':
+            sys.exit('отменено')
+    for b in running:
+        close(b)
+    if running:  # пока браузеры были открыты, закладки могли поменяться — пересобрать
+        raw, views = read_all()
+        result, deleted = merge(views, state)
+        items = ordered(result, views)
+        trees = {b: tree_for(b, items) for b in browsers}
+
+    backup_dir = STATE_DIR / 'backups' / time.strftime('%Y-%m-%d_%H%M%S')
+    try:
+        for b in browsers:
+            if raw[b] == tree_flat(trees[b]):
+                continue
+            if lock_pid(b):
+                sys.exit(f'{b} запущен — закройте его и повторите')
+            if b == 'firefox':
+                print(f'  firefox: записано, бэкап Firefox — {ff_apply(ff, trees[b])}')
+                if ff_read(ff) != tree_flat({k: trees[b][k] for k in ('bar', 'other', 'mobile')}):
+                    sys.exit('firefox: после записи дерево не совпало с целевым — '
+                             'восстановите бэкап через «Библиотека → Восстановить»')
+            else:
+                chromium_apply(b, trees[b], backup_dir)
+                print(f'  {b}: записано, бэкап — {backup_dir / b}')
+        save_state(browsers, items)
+    finally:
+        if not args.no_relaunch:
+            for b in running:
+                launch(b)
+
+
+if __name__ == '__main__':
+    main()
