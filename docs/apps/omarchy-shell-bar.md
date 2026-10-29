@@ -18,6 +18,7 @@
 | `~/.config/omarchy/shell.json` `.bar` | позиция, секции виджетов, `transparent` (тоже на лету) |
 | `kamradsmeshnyavy.bar/skins/*.json` | пресеты скинов |
 | `~/.config/omarchy/bar-skins/*.json` → `apps/omarchy-shell/bar-skins/` | свои скины (★ в Bar Skin) |
+| `~/.config/omarchy/bar-layouts/*.json` → `apps/omarchy-shell/bar-layouts/` | свои раскладки (★ в Bar Layout) |
 | `kamradsmeshnyavy.bar/layouts/*.json` | пресеты раскладок (`position`, `centerAnchor`, `layout`) |
 | `kamradsmeshnyavy.bar/BarSkin.qml` | чтение скина, дефолты, цвета-роли |
 | `kamradsmeshnyavy.bar/SkinFrame.qml` | подложка по форме, маска ввода, exclusive zone |
@@ -118,7 +119,8 @@
   ляжет в `~/.config/omarchy/bar-skins/<имя>.json` (в dotfiles — `apps/omarchy-shell/bar-skins/`) и появится
   в списке со ★. Удалить — `D` на строке своего скина (с подтверждением, файл уходит в корзину). `my-glass-islands` — вид бара до рамки (стекло-острова, greek, compact).
   Или собрать в Bar Tweaks и скопировать `~/.config/omarchy/bar-skin.json`.
-- Раскладка: в Bar Layout строка «💾 Сохранить текущую как пресет…».
+- Раскладка: в Bar Layout строка «💾 Сохранить текущую как пресет…» — ляжет в `~/.config/omarchy/bar-layouts/<имя>.json`
+  (в dotfiles — `apps/omarchy-shell/bar-layouts/`) и появится со ★; `D` удаляет (с подтверждением, в корзину).
 
 ## Обновление апстрима
 

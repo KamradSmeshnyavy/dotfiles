@@ -120,6 +120,9 @@
     ~/.config/omarchy/bar-skins:
       path: apps/omarchy-shell/bar-skins
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/bar-layouts:
+      path: apps/omarchy-shell/bar-layouts
+      if: "[ `uname` = Linux ]"
     # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
     ~/.config/omarchy/hooks/theme-set:
       path: omarchy-themes/hooks/theme-set
