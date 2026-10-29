@@ -47,9 +47,10 @@ function catalog(data, ru) {
     { name: "dnd", icon: "󰂛", desc: t("Toggle Do Not Disturb", "Включить / выключить «Не беспокоить»"), action: "omarchy-shell notifications toggleDnd" },
     { name: "shader", icon: "󰍹", desc: t("Toggle the screen shader", "Включить / выключить шейдер экрана"), action: customizer + "/scripts/crt-toggle.sh" },
     { name: "custom", icon: "󰸌", desc: t("Open the Customizer", "Открыть Customizer"), action: "omarchy-shell shell toggle kamradsmeshnyavy.customizer" },
-    { name: "lock", icon: "󰌾", desc: t("Lock the screen", "Заблокировать экран"), action: "omarchy-system-lock" }
+    { name: "lock", icon: "󰌾", desc: t("Lock the screen", "Заблокировать экран"), action: "omarchy-system-lock" },
+    { name: "power", icon: "󰐥", desc: t("Power menu", "Меню выключения"), action: "omarchy-shell widgets togglePower" }
   ]
-  var needs = { skin: "customizer", shader: "customizer", custom: "customizer", dash: "widgets" }
+  var needs = { skin: "customizer", shader: "customizer", custom: "customizer", dash: "widgets", power: "widgets" }
   list = list.filter(function(c) { return !needs[c.name] || (data.plugins && data.plugins[needs[c.name]]) })
   if (data.wallpaperTheme) {
     list.splice(1, 0, {

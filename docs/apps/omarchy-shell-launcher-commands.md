@@ -22,8 +22,9 @@
 | `>shader` | — | шейдер экрана (crt-toggle) |
 | `>custom` | — | Customizer |
 | `>lock` | — | `omarchy-system-lock` |
+| `>power` | — | меню выключения (виджеты) |
 
-`>skin`, `>shader`, `>custom` нужны плагин `kamradsmeshnyavy.customizer`, `>dash` — `kamradsmeshnyavy.widgets`;
+`>skin`, `>shader`, `>custom` нужны плагин `kamradsmeshnyavy.customizer`, `>dash` и `>power` — `kamradsmeshnyavy.widgets`;
 без них эти команды не показываются (так `Commands.js` можно публиковать через `just publish-launcher`).
 Списки тем и скинов читаются один раз за открытие меню при первом `>`. Подписи — на языке Customizer.
 Новая команда — запись в `catalog()` в `Commands.js`: `name`, `icon`, `desc`, и `action` либо `args()`.

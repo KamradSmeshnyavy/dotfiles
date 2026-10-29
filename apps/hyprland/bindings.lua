@@ -133,8 +133,10 @@ hl.unbind("SUPER + SHIFT + V")
 o.bind("SUPER + SHIFT + V", "Clipboard", "omarchy menu clipboard")
 
 -- Power Menu
--- hl.unbind("SUPER + ESCAPE")
--- o.bind("SUPER + ESCAPE", "Power menu", "omarchy system logout")
+-- Меню выключения из правого края / рамки (kamradsmeshnyavy.widgets) вместо стокового System-меню;
+-- оно по-прежнему в лаунчере (Super+Space → System). Вернуть: удалить эти две строки.
+hl.unbind("SUPER + ESCAPE")
+o.bind("SUPER + ESCAPE", "Power menu", "omarchy-shell widgets togglePower")
 
 o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.audio")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
