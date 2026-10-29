@@ -10,7 +10,7 @@
 
 > **🇬🇧 In English.** Arch Linux + [Omarchy](https://omarchy.org) (Hyprland) dotfiles in a custom
 > **Rose Pine Hacker24** theme. Beyond the usual configs it reworks the Omarchy shell itself with
-> Quickshell plugins: a top bar with 18 skins and a compact mode that expands on hover, an app launcher
+> Quickshell plugins: a top bar with 19 skins (including a caelestia-style screen frame) and a compact mode that expands on hover, an app launcher
 > with 35 skins (star map, terminal, orrery, aquarium…), a lock screen with 21 designs, wallpaper
 > transitions on a custom shader (24 effects), and a **Customizer** overlay (`Super+Shift+T`) that
 > live-previews all of it. Every TUI app — Neovim, Yazi, lazygit, btop, tmux, Kitty — follows the active
@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/b56f581c-844a-47e7-b27d-a467b0e2e1aa
 
 | Плагин | |
 | :--- | :--- |
-| [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) | бар: 18 скинов, 9 раскладок, compact-режим с раскрытием по наведению, workspaces с 20+ стилями подписей |
+| [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) | бар: 19 скинов (включая рамку экрана в стиле caelestia), 9 раскладок, compact-режим с раскрытием по наведению, workspaces с 20+ стилями подписей |
 | [omarchy-launcher-skins](https://github.com/KamradSmeshnyavy/omarchy-launcher-skins) | полноэкранные скины лаунчера: карта звёзд, CRT-терминал, планетарий, аквариум, таро, метро… |
 | [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) | 21 дизайн экрана блокировки поверх стокового PAM, с безопасным фолбэком |
 | [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) | 24 перехода обоев на одном своём шейдере |
