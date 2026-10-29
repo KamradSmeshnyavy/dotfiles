@@ -54,6 +54,9 @@ https://github.com/user-attachments/assets/b56f581c-844a-47e7-b27d-a467b0e2e1aa
 | :--- | :--- |
 | [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) | бар: 19 скинов (включая рамку экрана в стиле caelestia), 9 раскладок, compact-режим с раскрытием по наведению, workspaces с 20+ стилями подписей |
 | [omarchy-launcher-skins](https://github.com/KamradSmeshnyavy/omarchy-launcher-skins) | полноэкранные скины лаунчера: карта звёзд, CRT-терминал, планетарий, аквариум, таро, метро… |
+| [omarchy-desktop-widgets](https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets) | виджеты рабочего стола, дашборд, меню выключения и обзор столов в стиле бара |
+| [omarchy-edge-osd](https://github.com/KamradSmeshnyavy/omarchy-edge-osd) | громкость и яркость — слайдер, выезжающий из края экрана / рамки |
+| [omarchy-drawer-notifications](https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications) | уведомления в одной панели, прилипшей к бару, или плавающей карточкой |
 | [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) | 21 дизайн экрана блокировки поверх стокового PAM, с безопасным фолбэком |
 | [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) | 24 перехода обоев на одном своём шейдере |
 | [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles) | шесть стилей пикера тем и обоев |

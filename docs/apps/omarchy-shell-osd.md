@@ -1,5 +1,7 @@
 # OSD и уведомления omarchy-shell: у края экрана
 
+> Плагины — отдельные репо и сабмодули: [omarchy-edge-osd](https://github.com/KamradSmeshnyavy/omarchy-edge-osd), [omarchy-drawer-notifications](https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications).
+
 Клон стокового `omarchy.osd` (`omarchy plugin clone omarchy.osd`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/` →
 `~/.config/omarchy/plugins/kamradsmeshnyavy.osd`. Правки в `Osd.qml` помечены `// edge:`; сравнить со стоком —
 `diff -u $OMARCHY_PATH/shell/plugins/osd/Osd.qml apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/Osd.qml`.

@@ -75,5 +75,8 @@ dotfiles/
 `.lock` → omarchy-lock-designs, `.background` → omarchy-wallpaper-fx, `.image-picker` →
 omarchy-image-picker-styles, `.customizer` → omarchy-customizer (GPL-3.0: пресеты анимаций из HyDE/ML4W/end-4;
 в нём же шейдеры экрана, opacity/blur, перекраска обоев, хук `hypr/customizer.lua` и i18n — строки на
-английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
+английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`), `.widgets` →
+omarchy-desktop-widgets (виджеты, дашборд, меню выключения, обзор столов), `.osd` → omarchy-edge-osd,
+`.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
+`BarStyle.qml` одинаковый в widgets/osd/notifications — правку переносить во все три. Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.

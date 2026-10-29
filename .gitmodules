@@ -29,3 +29,12 @@
 [submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer"]
 	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer
 	url = https://github.com/KamradSmeshnyavy/omarchy-customizer
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets
+	url = https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.osd"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.osd
+	url = https://github.com/KamradSmeshnyavy/omarchy-edge-osd
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications
+	url = https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications

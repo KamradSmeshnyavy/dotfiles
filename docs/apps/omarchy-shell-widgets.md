@@ -1,5 +1,7 @@
 # Виджеты рабочего стола omarchy-shell
 
+> Плагин — отдельный репо и сабмодуль: [omarchy-desktop-widgets](https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets).
+
 Свой плагин `kamradsmeshnyavy.widgets` (`kind: service`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets/` →
 `~/.config/omarchy/plugins/kamradsmeshnyavy.widgets`. Включение: `omarchy plugin enable kamradsmeshnyavy.widgets`
 (после `omarchy-shell shell rescanPlugins`), правки QML — только после `omarchy restart shell`.
