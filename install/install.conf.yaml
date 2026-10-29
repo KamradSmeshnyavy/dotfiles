@@ -108,6 +108,9 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.image-picker:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.widgets:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets
+      if: "[ `uname` = Linux ]"
     # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
     ~/.config/omarchy/hooks/theme-set:
       path: omarchy-themes/hooks/theme-set

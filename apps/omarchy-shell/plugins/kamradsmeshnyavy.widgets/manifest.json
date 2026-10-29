@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "kamradsmeshnyavy.widgets",
+  "name": "Desktop Widgets",
+  "version": "1.0.0",
+  "author": "KamradSmeshnyavy",
+  "description": "Desktop widgets under the windows: clock, now playing, cava visualizer, system rings",
+  "kinds": [
+    "service"
+  ],
+  "entryPoints": {
+    "service": "Widgets.qml"
+  }
+}
