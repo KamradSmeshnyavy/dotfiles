@@ -18,5 +18,11 @@ hl.config({
 	},
 })
 
+-- Жесты тачпада: четыре пальца (три заняты drag_3fg). В стороны — рабочие столы,
+-- вверх — обзор столов, вниз — дашборд (оба — плагин kamradsmeshnyavy.widgets).
+hl.gesture({ fingers = 4, direction = "horizontal", action = "workspace" })
+hl.gesture({ fingers = 4, direction = "up", action = function() hl.exec_cmd("omarchy-shell widgets toggleOverview") end })
+hl.gesture({ fingers = 4, direction = "down", action = function() hl.exec_cmd("omarchy-shell widgets toggleDashboard") end })
+
 o.window("(Alacritty|kitty|foot)", { scroll_touchpad = 1.5 })
 o.window("com.mitchellh.ghostty", { scroll_touchpad = 0.2 })
