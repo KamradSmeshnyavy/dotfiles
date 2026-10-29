@@ -10,6 +10,11 @@ and system rings. Colours follow the Omarchy theme.
 | Visualizer | `bars`, `mirror`, `wave` along the bottom edge | `cava` raw output (pipewire), only while music plays |
 | System rings | CPU, RAM, temperature, battery | `/proc` and `/sys` every 2 s |
 
+Plus a **dashboard** that grows out from under the bar (`omarchy-shell widgets toggleDashboard`, e.g. on
+Super+Alt+D): player with the visualizer, month calendar, weather (open-meteo, no key — set `weatherCity`),
+CPU/RAM graphs. With a solid `frame`/`hug` bar it takes the bar colour and its concave corners merge into the
+strip; Esc or a click outside closes it.
+
 The windows sit on the Bottom layer: above the wallpaper, below windows. Clicks go through to the desktop
 except on the player buttons. cava and the `/proc` probe run once for all monitors.
 
@@ -38,7 +43,9 @@ Optional: `cava` for the visualizer.
   "edgeMargin": 56,
   "tint": "accent",      // a role (accent foreground muted), a colors.toml key or #hex
   "locale": "",          // date language; empty — `lang` from customizer.json, else the system one
-  "screens": "all"       // all | primary
+  "screens": "all",      // all | primary
+  "weatherCity": "",     // dashboard weather, e.g. "Berlin"
+  "weatherUnits": "celsius"
 }
 ```
 

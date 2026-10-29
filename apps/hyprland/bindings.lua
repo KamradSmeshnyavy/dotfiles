@@ -137,6 +137,8 @@ o.bind("SUPER + SHIFT + V", "Clipboard", "omarchy menu clipboard")
 -- o.bind("SUPER + ESCAPE", "Power menu", "omarchy system logout")
 
 o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.audio")
+-- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
+o.bind("SUPER + ALT + D", "Dashboard", "omarchy-shell widgets toggleDashboard")
 
 hl.unbind("SUPER + SHIFT + ALT + Z")
 o.bind("SUPER + SHIFT + CTRL + Z", "Reset zoom", "hyprctl keyword cursor:zoom_factor 1")

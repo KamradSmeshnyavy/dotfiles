@@ -1,11 +1,13 @@
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Services.Mpris
 import Quickshell.Wayland
 import QtQuick
 import qs.Commons as Commons
 
-// Виджеты рабочего стола: часы, now playing, визуализатор cava, кольца системы.
+// Виджеты рабочего стола: часы, now playing, визуализатор cava, кольца системы,
+// и дашборд, выезжающий из-под бара / рамки (Dashboard.qml, IPC widgets toggleDashboard).
 // Окна на слое Bottom — над обоями и под окнами, клики проходят насквозь (кроме
 // кнопок плеера). Настройки — ~/.config/omarchy/widgets.json (Customizer → Widgets),
 // применяются на лету. Данные (cava, /proc, MPRIS) собираются здесь один раз на все мониторы.
@@ -34,7 +36,9 @@ Item {
     edgeMargin: 56,
     tint: "accent",             // роль (accent foreground muted) или ключ colors.toml / #hex
     locale: "",                 // язык даты: "" — как в Customizer (customizer.json), иначе системный
-    screens: "all"              // all primary
+    screens: "all",             // all primary
+    weatherCity: "",            // город для погоды (open-meteo); пусто — блок погоды с подсказкой
+    weatherUnits: "celsius"     // celsius fahrenheit
   })
 
   property var raw: ({})
@@ -69,6 +73,8 @@ Item {
   readonly property string fontFamily: Commons.Style.font.family
 
   property string uiLang: ""
+  readonly property bool ru: String(locale.name).indexOf("ru") === 0
+  function tr(en, ruText) { return ru ? ruText : en }
   readonly property var locale: {
     var l = String(value("locale") || uiLang || "")
     return l !== "" ? Qt.locale(l) : Qt.locale()
@@ -126,14 +132,14 @@ Item {
   Timer {
     interval: 1000
     repeat: true
-    running: root.playing && root.flag("media")
+    running: root.playing && (root.flag("media") || root.dashboardOpen)
     onTriggered: if (root.player) root.player.positionChanged()
   }
 
   // ── cava ───────────────────────────────────────────────────────────────
   readonly property int bars: Math.max(8, Math.min(128, Math.round(num("visualizerBars"))))
   property var levels: []
-  readonly property bool cavaWanted: flag("visualizer") && (playing || flag("visualizerIdle"))
+  readonly property bool cavaWanted: (flag("visualizer") || dashboardOpen) && (playing || flag("visualizerIdle"))
   readonly property string cavaConfig: [
     "[general]", "bars = " + bars, "framerate = 30", "sleep_timer = 2",
     "[input]", "method = pipewire", "source = auto",
@@ -166,6 +172,98 @@ Item {
   property int battery: -1
   property string batteryStatus: ""
   property var cpuPrev: null
+  // История для графиков дашборда (по точке раз в 2 с).
+  readonly property int historyLength: 60
+  property var cpuHistory: []
+  property var memHistory: []
+
+  // ── Дашборд ────────────────────────────────────────────────────────────
+  property bool dashboardOpen: false
+  IpcHandler {
+    target: "widgets"
+    function toggleDashboard(): void { root.dashboardOpen = !root.dashboardOpen }
+    function openDashboard(): void { root.dashboardOpen = true }
+    function closeDashboard(): void { root.dashboardOpen = false }
+  }
+  onDashboardOpenChanged: if (dashboardOpen) weatherFetcher.refreshIfStale()
+
+  // Экран под курсором / с фокусом — дашборд открывается там.
+  readonly property var focusedScreen: {
+    var m = Hyprland.focusedMonitor
+    var list = Quickshell.screens
+    for (var i = 0; m && i < list.length; i++) if (list[i].name === m.name) return list[i]
+    return list.length > 0 ? list[0] : null
+  }
+
+  // Цвет и форма бара (bar-skin.json) — дашборд того же цвета, что бар и рамка.
+  property var barSkin: ({})
+  FileView {
+    path: root.home + "/.config/omarchy/bar-skin.json"
+    watchChanges: true
+    printErrors: false
+    onLoaded: { try { root.barSkin = JSON.parse(text() || "{}") || {} } catch (e) { root.barSkin = {} } }
+    onLoadFailed: root.barSkin = {}
+    onFileChanged: reload()
+  }
+  // Прозрачный бар (скины glass, islands, stock-transparent) — тогда цвет попапов темы.
+  readonly property color drawerColor: {
+    var spec = String(barSkin.background || "bar")
+    var c = spec === "bar" ? Commons.Color.bar.background : resolve(spec, Commons.Color.bar.background)
+    var a = Number(barSkin.backgroundAlpha)
+    if (isFinite(a) && a >= 0) c = Qt.rgba(c.r, c.g, c.b, a)
+    if (c.a < 0.6 || barSkin.shape === "islands") c = Commons.Color.popups.background
+    return Qt.rgba(c.r, c.g, c.b, Math.max(0.94, c.a))
+  }
+  readonly property int drawerFlare: barSkin.shape === "frame" || barSkin.shape === "hug"
+    ? Math.max(8, Number(barSkin.radius) || 0) : 14
+
+  // Погода: open-meteo (без ключа), раз в 20 минут, только пока открыт дашборд.
+  QtObject {
+    id: weatherFetcher
+    property double fetchedAt: 0
+    property string fetchedFor: ""
+    function refreshIfStale() {
+      var city = String(root.value("weatherCity") || "").trim()
+      if (city === "") { root.weather = null; return }
+      var key = city + "|" + root.value("weatherUnits")
+      if (key === fetchedFor && Date.now() - fetchedAt < 20 * 60 * 1000) return
+      fetchedFor = key
+      fetchedAt = Date.now()
+      get("https://geocoding-api.open-meteo.com/v1/search?count=1&language=" + (root.ru ? "ru" : "en") +
+          "&name=" + encodeURIComponent(city), function(geo) {
+        var place = geo && geo.results && geo.results[0]
+        if (!place) { root.weather = { error: root.tr("City not found: ", "Город не найден: ") + city }; return }
+        get("https://api.open-meteo.com/v1/forecast?latitude=" + place.latitude + "&longitude=" + place.longitude +
+            "&current=temperature_2m,weather_code,wind_speed_10m,apparent_temperature" +
+            "&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto" +
+            "&temperature_unit=" + root.value("weatherUnits"), function(f) {
+          if (!f || !f.current) { root.weather = { error: root.tr("No weather data", "Нет данных о погоде") }; return }
+          root.weather = {
+            city: place.name, temp: f.current.temperature_2m, feels: f.current.apparent_temperature,
+            code: f.current.weather_code, wind: f.current.wind_speed_10m,
+            max: f.daily.temperature_2m_max[0], min: f.daily.temperature_2m_min[0]
+          }
+        })
+      })
+    }
+    function get(url, done) {
+      var xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) return
+        var data = null
+        try { data = JSON.parse(xhr.responseText) } catch (e) {}
+        if (xhr.status !== 200) { weatherFetcher.fetchedAt = 0; root.weather = { error: root.tr("Weather unavailable", "Погода недоступна") }; return }
+        done(data)
+      }
+      xhr.open("GET", url)
+      xhr.send()
+    }
+  }
+  property var weather: null
+
+  Dashboard {
+    host: root
+  }
 
   Process {
     id: sysProbe
@@ -187,8 +285,10 @@ Item {
               root.cpu = dt > 0 ? Math.max(0, Math.min(1, 1 - (idle - root.cpuPrev.idle) / dt)) : root.cpu
             }
             root.cpuPrev = { total: total, idle: idle }
+            root.cpuHistory = root.cpuHistory.concat([root.cpu]).slice(-root.historyLength)
           } else if (f[0] === "mem" && f.length >= 3) {
             root.mem = Number(f[1]) > 0 ? 1 - Number(f[2]) / Number(f[1]) : 0
+            root.memHistory = root.memHistory.concat([root.mem]).slice(-root.historyLength)
           } else if (f[0] === "temp" && f.length >= 2) {
             root.temp = Number(f[1]) / 1000
           } else if (f[0] === "bat" && f.length >= 2) {
@@ -203,7 +303,7 @@ Item {
     interval: 2000
     repeat: true
     triggeredOnStart: true
-    running: root.flag("sysinfo")
+    running: root.flag("sysinfo") || root.dashboardOpen
     onTriggered: if (!sysProbe.running) sysProbe.running = true
   }
 
