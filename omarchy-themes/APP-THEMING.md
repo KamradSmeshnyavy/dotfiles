@@ -55,6 +55,14 @@ delta не задаёт `syntax-theme`, поэтому берёт `BAT_THEME` и
 Применяется сразу (`hyprctl setcursor`, gsettings) и сохраняется в `~/.local/state/omarchy/app-themes/cursor`,
 откуда его берёт `apps/hyprland/env.lua` при входе.
 
+## Тема из обоев
+
+`just theme-from-wallpaper [обои] [--scheme vibrant|expressive|…] [--mode light]` (`scripts/omarchy-wallpaper-theme`,
+в `PATH` как `omarchy-wallpaper-theme`) прогоняет обои через matugen и пишет тему
+`~/.config/omarchy/themes/dynamic`: только `colors.toml` (Material You + ANSI-цвета, смещённые к цвету обоев),
+`icons.theme` (Yaru по оттенку акцента) и сами обои. Остальное — терминалы, btop, nvim, Hyprland, шаблоны выше,
+слоты, браузеры — генерирует `omarchy-theme-set`. В Customizer → Тема — строки «🎨 Тема из обоев».
+
 ## Загрузка
 
 `just boot-theme` (`scripts/omarchy-boot-theme`, нужен sudo) перекрашивает шапку `/boot/limine.conf`

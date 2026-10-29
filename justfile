@@ -52,6 +52,11 @@ theme name="":
 app-themes:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
 
+# Тема «dynamic» из обоев через matugen (без пути — текущие; --scheme vibrant, --mode light, --no-apply)
+[linux]
+theme-from-wallpaper *args:
+    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-wallpaper-theme {{args}}
+
 # Limine и Plymouth в цветах текущей темы (нужен sudo; --dry-run — только показать изменения)
 [linux]
 boot-theme *args:

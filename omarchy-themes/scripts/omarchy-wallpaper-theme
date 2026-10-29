@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""
+Тема Omarchy «dynamic» из обоев (matugen, Material You).
+
+Использование: omarchy-wallpaper-theme [ОБОИ] [--scheme ТИП] [--mode dark|light] [--prefer P]
+                                       [--contrast -1..1] [--no-apply]
+
+Без ОБОЕВ берутся текущие. Пишет ~/.config/omarchy/themes/dynamic (colors.toml, icons.theme, обои)
+и применяет её через omarchy-theme-set: всё остальное (терминалы, btop, nvim, hyprland, TUI-слоты,
+браузеры) Omarchy и хук theme-set генерируют из colors.toml сами.
+"""
+import argparse, colorsys, json, os, shutil, subprocess, sys, tempfile
+from pathlib import Path
+
+HOME = Path.home()
+THEMES = HOME / ".config/omarchy/themes"
+TARGET = THEMES / "dynamic"
+MARKER = ".omarchy-wallpaper-theme"
+CURRENT_BG = HOME / ".local/state/omarchy/current/background"
+
+SCHEMES = ["tonal-spot", "content", "expressive", "fidelity", "fruit-salad", "monochrome",
+           "neutral", "rainbow", "vibrant", "smart"]
+
+# Цвета терминала: эталонные оттенки, matugen смещает их к цвету обоев (blend)
+ANSI = {
+    "red": "#e05561", "orange": "#e8875a", "yellow": "#e5c07b", "green": "#7fbf6a",
+    "cyan": "#56b6c2", "blue": "#61afef", "magenta": "#c678dd", "brown": "#a9765a",
+}
+
+# Иконки Yaru по оттенку акцента (hue в градусах → вариант)
+YARU = [(15, "red"), (40, "wartybrown"), (65, "yellow"), (90, "olive"), (150, "sage"),
+        (190, "prussiangreen"), (250, "blue"), (290, "purple"), (335, "magenta"), (360, "red")]
+
+
+def matugen(image, scheme, mode, prefer, contrast):
+    with tempfile.TemporaryDirectory() as tmp:
+        conf = Path(tmp) / "matugen.toml"
+        lines = ["[templates]", "", "[config.custom_colors]"]
+        lines += [f'{k} = {{ color = "{v}", blend = true }}' for k, v in ANSI.items()]
+        conf.write_text("\n".join(lines) + "\n")
+        cmd = ["matugen", "image", str(image), "-c", str(conf), "-m", mode, "-t", f"scheme-{scheme}",
+               "--prefer", prefer, "--json", "hex", "--dry-run", "-q"]
+        if contrast is not None:
+            cmd += ["--contrast", str(contrast)]
+        out = subprocess.run(cmd, capture_output=True, text=True)
+    if out.returncode != 0:
+        sys.exit(f"omarchy-wallpaper-theme: matugen: {out.stderr.strip()}")
+    colors = json.loads(out.stdout)["colors"]
+    return {k: v[mode]["color"] for k, v in colors.items()}
+
+
+def mix(a, b, t):
+    pa = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
+    pb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(x * (1 - t) + y * t):02x}" for x, y in zip(pa, pb))
+
+
+def palette(m, mode):
+    dark = mode == "dark"
+    extreme = "#000000" if dark else "#ffffff"
+    p = {
+        "accent": m["primary"],
+        "cursor": m["primary"],
+        "selection": m["surface_container_highest"],
+        "muted": m["outline_variant"] if dark else m["outline"],
+        "background": m["surface"],
+        "dark_background": mix(m["surface"], m["surface_container_lowest"], 0.5),
+        "darker_background": m["surface_container_lowest"],
+        "lighter_background": m["surface_container_high"],
+        "foreground": m["on_surface"],
+        "dark_foreground": m["outline"] if dark else m["on_surface_variant"],
+        "light_foreground": m["on_surface_variant"] if not dark else m["on_surface"],
+        "bright_foreground": mix(m["on_surface"], "#ffffff" if dark else "#000000", 0.5),
+    }
+    for name in ANSI:
+        p[name] = m[name]
+        # яркий вариант: на тон светлее в тёмной теме, на тон темнее в светлой
+        p[f"bright_{name}"] = m[f"on_{name}_container"] if dark else mix(m[name], extreme, 0.25)
+    del p["bright_orange"], p["bright_brown"]
+    return p
+
+
+def colors_toml(p, mode, image, scheme):
+    order = ["accent", "cursor", "selection", "muted", "", "background", "dark_background",
+             "darker_background", "lighter_background", "", "foreground", "dark_foreground",
+             "light_foreground", "bright_foreground", "", *ANSI, "",
+             *(f"bright_{k}" for k in ANSI if k not in ("orange", "brown"))]
+    out = [f"# Сгенерировано omarchy-wallpaper-theme из {image.name} (scheme-{scheme})",
+           f'mode = "{mode}"', ""]
+    out += [f'{k} = "{p[k]}"' if k else "" for k in order]
+    return "\n".join(out) + "\n"
+
+
+def yaru(hex_color, mode):
+    r, g, b = (int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    h, _, s = colorsys.rgb_to_hls(r, g, b)
+    name = "Yaru" if s < 0.15 else "Yaru-" + next(v for limit, v in YARU if h * 360 < limit)
+    if mode == "dark":
+        name += "-dark"
+    return name if (Path("/usr/share/icons") / name).is_dir() else ""
+
+
+def write_theme(image, p, mode, scheme):
+    THEMES.mkdir(parents=True, exist_ok=True)
+    build = Path(tempfile.mkdtemp(prefix=".dynamic-", dir=THEMES))
+    build.chmod(0o755)
+    (build / MARKER).write_text(f"{image}\n")
+    (build / "colors.toml").write_text(colors_toml(p, mode, image, scheme))
+    if icons := yaru(p["accent"], mode):
+        (build / "icons.theme").write_text(icons + "\n")
+    (build / "backgrounds").mkdir()
+    shutil.copy2(image, build / "backgrounds" / image.name)
+    (build / "README.md").write_text(
+        f"# dynamic\n\nТема из обоев `{image.name}` (matugen scheme-{scheme}, {mode}).\n"
+        "Пересоздаётся `just theme-from-wallpaper`, руками не править.\n")
+
+    if TARGET.is_symlink() or (TARGET.exists() and not (TARGET / MARKER).exists()):
+        shutil.rmtree(build)
+        sys.exit(f"omarchy-wallpaper-theme: {TARGET} создан не этим скриптом — не трогаю")
+    old = None
+    if TARGET.exists():
+        old = TARGET.with_name(f".dynamic-old-{os.getpid()}")
+        TARGET.rename(old)
+    build.rename(TARGET)
+    if old:
+        shutil.rmtree(old)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    ap.add_argument("image", nargs="?", type=Path)
+    ap.add_argument("--scheme", default="tonal-spot", choices=SCHEMES)
+    ap.add_argument("--mode", default="dark", choices=["dark", "light"])
+    ap.add_argument("--prefer", default="saturation",
+                    choices=["darkness", "lightness", "saturation", "less-saturation", "value"])
+    ap.add_argument("--contrast", type=float)
+    ap.add_argument("--no-apply", action="store_true", help="только записать тему")
+    args = ap.parse_args()
+
+    image = (args.image or CURRENT_BG).resolve()
+    if not image.is_file():
+        sys.exit(f"omarchy-wallpaper-theme: нет файла {image}")
+
+    p = palette(matugen(image, args.scheme, args.mode, args.prefer, args.contrast), args.mode)
+    write_theme(image, p, args.mode, args.scheme)
+    print(f"dynamic: {image.name}, scheme-{args.scheme}, {args.mode}, accent {p['accent']}")
+    if not args.no_apply:
+        subprocess.run(["omarchy-theme-set", "dynamic"], check=True)
+
+
+if __name__ == "__main__":
+    main()

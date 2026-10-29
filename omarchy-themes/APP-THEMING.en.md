@@ -57,6 +57,14 @@ A template lands in the theme only on `omarchy theme set` (`just theme <name>`),
 `mode = "light"`). Applied right away (`hyprctl setcursor`, gsettings) and saved to
 `~/.local/state/omarchy/app-themes/cursor`, which `apps/hyprland/env.lua` reads at login.
 
+## Theme from wallpaper
+
+`just theme-from-wallpaper [image] [--scheme vibrant|expressive|…] [--mode light]` (`scripts/omarchy-wallpaper-theme`,
+on `PATH` as `omarchy-wallpaper-theme`) runs the wallpaper through matugen and writes the theme
+`~/.config/omarchy/themes/dynamic`: just `colors.toml` (Material You + ANSI colours blended towards the wallpaper),
+`icons.theme` (Yaru by accent hue) and the wallpaper itself. Everything else — terminals, btop, nvim, Hyprland, the
+templates above, slots, browsers — `omarchy-theme-set` generates. Customizer → Theme has “🎨 Theme from wallpaper” rows.
+
 ## Boot
 
 `just boot-theme` (`scripts/omarchy-boot-theme`, needs sudo) recolours the header of `/boot/limine.conf`

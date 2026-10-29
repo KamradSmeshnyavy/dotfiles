@@ -128,6 +128,9 @@
     ~/.local/bin/helium-browser:
       path: omarchy-themes/scripts/helium-browser
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-wallpaper-theme:
+      path: omarchy-themes/scripts/omarchy-wallpaper-theme
+      if: "[ `uname` = Linux ]"
     ~/.config/systemd/user/omarchy-stylus-server.service:
       path: omarchy-themes/systemd/omarchy-stylus-server.service
       if: "[ `uname` = Linux ]"
