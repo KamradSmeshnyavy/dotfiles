@@ -114,6 +114,9 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.osd:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.osd
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.notifications:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/bar-skins:
       path: apps/omarchy-shell/bar-skins
       if: "[ `uname` = Linux ]"
