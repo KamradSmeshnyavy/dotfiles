@@ -38,6 +38,31 @@ the rest — ansi).
 
 Except for tmux, a new theme shows up in a new terminal window or on the app's next start.
 
+## GUI apps: Omarchy templates
+
+`omarchy-theme-set` itself renders `themed/*.tpl` (linked into `~/.config/omarchy/themed`) from `colors.toml` into
+the theme root — syntax `{{ accent }}`, `{{ accent_strip }}`, `{{ mix a b 30% }}`. The script points slots at them:
+
+| template | slot | wiring |
+|---|---|---|
+| `vesktop.css.tpl` | `~/.config/vesktop/themes/omarchy.css` | enable `omarchy.css` once in Vesktop → Themes |
+| `mpv-osc.conf.tpl` | `~/.config/mpv/script-opts/osc.conf` | read by mpv's built-in OSC |
+| `qt6ct-colors.conf.tpl` | `~/.config/qt6ct/colors/omarchy.conf` | needs the `qt6ct` package: then the script writes `qt6ct.conf` (Fusion + theme icons) and `env.lua` sets `QT_QPA_PLATFORMTHEME=qt6ct` |
+
+A template lands in the theme only on `omarchy theme set` (`just theme <name>`), not on `just app-themes`.
+
+## Cursor
+
+`<theme>/apps/cursor` — one line `NAME SIZE`; without it `app-defaults/cursor` (or `cursor-light` for
+`mode = "light"`). Applied right away (`hyprctl setcursor`, gsettings) and saved to
+`~/.local/state/omarchy/app-themes/cursor`, which `apps/hyprland/env.lua` reads at login.
+
+## Boot
+
+`just boot-theme` (`scripts/omarchy-boot-theme`, needs sudo) recolours the header of `/boot/limine.conf`
+(backup — `limine.conf.bak-boot-theme`) and the Plymouth screen (`omarchy-plymouth-set-by-theme`). Not run
+from the hook; `just boot-theme --dry-run` shows the diff.
+
 ## A new theme
 
 Put the files you need into `<theme>/apps/` — every other app stays on `app-defaults`.

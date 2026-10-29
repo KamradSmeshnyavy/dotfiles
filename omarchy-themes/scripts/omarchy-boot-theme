@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Загрузка в цветах текущей темы Omarchy: шапка /boot/limine.conf (меню и терминал Limine)
+# и экран Plymouth (omarchy-plymouth-set-by-theme). Нужен sudo, поэтому не запускается из хука theme-set.
+#
+# Использование: omarchy-boot-theme [--dry-run] [--no-plymouth]
+set -euo pipefail
+
+LIMINE=/boot/limine.conf
+THEME=$HOME/.local/state/omarchy/current/theme
+dry_run= plymouth=1
+for arg in "$@"; do
+  case $arg in
+    --dry-run) dry_run=1 ;;
+    --no-plymouth) plymouth= ;;
+    *) sed -n '2,5s/^# \{0,1\}//p' "$0" >&2; exit 1 ;;
+  esac
+done
+
+name=$(<"$HOME/.local/state/omarchy/current/theme.name")
+declare -A C
+while IFS=$'\t' read -r key value; do
+  C[$key]=$value
+done < <(omarchy-theme-color --file "$THEME/colors.toml" --all)
+
+# hex <ключ>… → RRGGBB без «#»; цвет не в виде #RRGGBB — ошибка, чтобы не сломать limine.conf
+hex() {
+  local key out=()
+  for key in "$@"; do
+    [[ ${C[$key]:-} =~ ^#([0-9A-Fa-f]{6})$ ]] || { echo "omarchy-boot-theme: $key = '${C[$key]:-}' — не #RRGGBB" >&2; exit 1; }
+    out+=("${BASH_REMATCH[1],,}")
+  done
+  local IFS=';'
+  echo "${out[*]}"
+}
+
+declare -A SET=(
+  [interface_branding_color]=$(hex accent)
+  [interface_help_color]=$(hex accent)
+  [interface_help_color_bright]=$(hex accent)
+  [term_background]=$(hex background)
+  [backdrop]=$(hex background)
+  [term_background_bright]=$(hex lighter_background)
+  [term_foreground]=$(hex foreground)
+  [term_foreground_bright]=$(hex bright_foreground)
+  [term_palette]=$(hex color0 color1 color2 color3 color4 color5 color6 color7)
+  [term_palette_bright]=$(hex color8 color9 color10 color11 color12 color13 color14 color15)
+)
+
+# Меняются только существующие строки шапки (до первой записи «/…»), записи меню не трогаются
+script=$(mktemp)
+trap 'rm -f -- "$script"' EXIT
+{
+  echo '/^\//,$b'
+  for key in "${!SET[@]}"; do
+    echo "s|^$key:.*|$key: ${SET[$key]}|"
+  done
+  echo "s|^# Terminal colors (.*)|# Terminal colors (Omarchy: $name)|"
+} >"$script"
+
+if [[ -n $dry_run ]]; then
+  diff -u --label "$LIMINE" --label "$LIMINE (тема $name)" "$LIMINE" <(sed -f "$script" "$LIMINE") || true
+  [[ -n $plymouth ]] && echo "Plymouth: omarchy-plymouth-set-by-theme $name"
+  exit 0
+fi
+
+sudo cp "$LIMINE" "$LIMINE.bak-boot-theme"
+sed -f "$script" "$LIMINE.bak-boot-theme" | sudo tee "$LIMINE" >/dev/null
+echo "Limine: цвета темы $name (копия: $LIMINE.bak-boot-theme)"
+
+if [[ -n $plymouth ]]; then
+  omarchy-plymouth-set-by-theme "$name"
+fi

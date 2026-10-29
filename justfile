@@ -52,6 +52,11 @@ theme name="":
 app-themes:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
 
+# Limine и Plymouth в цветах текущей темы (нужен sudo; --dry-run — только показать изменения)
+[linux]
+boot-theme *args:
+    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-boot-theme {{args}}
+
 # Что поменялось в стоковом Bar.qml относительно клона kamradsmeshnyavy.bar (правки скинов помечены `// skin:`)
 [linux]
 bar-upstream-diff:

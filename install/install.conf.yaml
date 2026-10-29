@@ -115,6 +115,16 @@
     ~/.config/omarchy/hooks/post-boot.d/darkreader-sync:
       path: omarchy-themes/hooks/post-boot.d/darkreader-sync
       if: "[ `uname` = Linux ]"
+    # Шаблоны Omarchy (рендерятся в тему при смене; слоты — omarchy-app-themes)
+    ~/.config/omarchy/themed/mpv-osc.conf.tpl:
+      path: omarchy-themes/themed/mpv-osc.conf.tpl
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themed/qt6ct-colors.conf.tpl:
+      path: omarchy-themes/themed/qt6ct-colors.conf.tpl
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themed/vesktop.css.tpl:
+      path: omarchy-themes/themed/vesktop.css.tpl
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/helium-browser:
       path: omarchy-themes/scripts/helium-browser
       if: "[ `uname` = Linux ]"

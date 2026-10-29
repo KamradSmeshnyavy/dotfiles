@@ -26,6 +26,14 @@ declare -A SLOTS=(
   [fzf.opts]=$STATE/app-themes/fzf.opts
 )
 
+# Файлы, которые omarchy-theme-set сам рендерит в корень темы из omarchy-themes/themed/*.tpl
+# (~/.config/omarchy/themed). У темы без colors.toml их нет — слот тогда не трогается.
+# qt6ct-colors.conf подключает write_qt6ct.
+declare -A TEMPLATED=(
+  [vesktop.css]=$HOME/.config/vesktop/themes/omarchy.css
+  [mpv-osc.conf]=$HOME/.config/mpv/script-opts/osc.conf
+)
+
 # Слоты, которые для темы без своего файла генерируются из её colors.toml
 declare -A GENERATED=()
 
@@ -49,26 +57,76 @@ generate() {
   generate_one fzf.opts omarchy-fzf-theme
 }
 
-link_slots() {
-  local name slot src rel
-  for name in "${!SLOTS[@]}"; do
-    slot=${SLOTS[$name]}
-    # ~/.config/<app> нет — приложение не настроено, слот не нужен
-    if [[ $slot == "$HOME/.config/"* ]]; then
-      rel=${slot#"$HOME/.config/"}
-      [[ -e $HOME/.config/${rel%%/*} ]] || continue
-    fi
+# link_slot <слот> <источник>
+link_slot() {
+  local slot=$1 src=$2 rel
+  # ~/.config/<app> нет — приложение не настроено, слот не нужен
+  if [[ $slot == "$HOME/.config/"* ]]; then
+    rel=${slot#"$HOME/.config/"}
+    [[ -e $HOME/.config/${rel%%/*} ]] || return 0
+  fi
 
+  if [[ -e $slot && ! -L $slot ]]; then
+    echo "omarchy-app-themes: $slot — обычный файл, не трогаю" >&2
+    return 0
+  fi
+  mkdir -p "$(dirname "$slot")"
+  ln -sfn "$src" "$slot"
+}
+
+link_slots() {
+  local name src
+  for name in "${!SLOTS[@]}"; do
     src=$THEME/apps/$name
     [[ -e $src ]] || src=${GENERATED[$name]:-$DEFAULTS/$name}
-
-    if [[ -e $slot && ! -L $slot ]]; then
-      echo "omarchy-app-themes: $slot — обычный файл, не трогаю" >&2
-      continue
-    fi
-    mkdir -p "$(dirname "$slot")"
-    ln -sfn "$src" "$slot"
+    link_slot "${SLOTS[$name]}" "$src"
   done
+  for name in "${!TEMPLATED[@]}"; do
+    [[ -e $THEME/$name ]] && link_slot "${TEMPLATED[$name]}" "$THEME/$name"
+  done
+}
+
+# Курсор: apps/cursor темы («ИМЯ РАЗМЕР»), иначе app-defaults/cursor (или cursor-light для mode = "light").
+# Строка сохраняется в state — по ней env.lua ставит XCURSOR_* при следующем входе.
+apply_cursor() {
+  local file=$THEME/apps/cursor name size dir found=
+  if [[ ! -f $file ]]; then
+    file=$DEFAULTS/cursor
+    grep -qE '^mode *= *"light"' "$THEME/colors.toml" 2>/dev/null && file=$DEFAULTS/cursor-light
+  fi
+  read -r name size <"$file" || return 0
+  size=${size:-24}
+  for dir in "$HOME/.local/share/icons" "$HOME/.icons" /usr/share/icons; do
+    [[ -d $dir/$name/cursors ]] && found=1
+  done
+  if [[ -z $found ]]; then
+    echo "omarchy-app-themes: курсор $name не установлен" >&2
+    return 0
+  fi
+
+  mkdir -p "$STATE/app-themes"
+  printf '%s %s\n' "$name" "$size" >"$STATE/app-themes/cursor"
+  hyprctl setcursor "$name" "$size" >/dev/null 2>&1 || true
+  gsettings set org.gnome.desktop.interface cursor-theme "$name" 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface cursor-size "$size" 2>/dev/null || true
+}
+
+# qt6ct.conf (генерируется, не в репо): палитра темы + иконки темы. Только если qt6ct установлен.
+write_qt6ct() {
+  command -v qt6ct >/dev/null || return 0
+  [[ -e $THEME/qt6ct-colors.conf ]] || return 0
+  local conf=$HOME/.config/qt6ct/qt6ct.conf icons=
+  [[ -f $THEME/icons.theme ]] && icons=$(<"$THEME/icons.theme")
+  mkdir -p "$HOME/.config/qt6ct/colors"
+  ln -sfn "$THEME/qt6ct-colors.conf" "$HOME/.config/qt6ct/colors/omarchy.conf"
+  {
+    echo "# Сгенерировано omarchy-app-themes при смене темы — правки перезапишутся"
+    echo "[Appearance]"
+    echo "color_scheme_path=$HOME/.config/qt6ct/colors/omarchy.conf"
+    echo "custom_palette=true"
+    echo "style=Fusion"
+    [[ -n $icons ]] && echo "icon_theme=$icons"
+  } >"$conf"
 }
 
 write_env() {
@@ -109,5 +167,7 @@ reload_tmux() {
 
 generate
 link_slots
+apply_cursor
+write_qt6ct
 write_env
 reload_tmux
