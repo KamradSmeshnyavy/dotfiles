@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "kamradsmeshnyavy.osd",
-  "name": "My On-screen display",
+  "name": "Edge OSD",
   "version": "1.0.0",
-  "description": "Quickshell volume, brightness, and status overlays.",
+  "description": "Omarchy volume and brightness OSD as a slider that slides out of the screen edge or the bar frame",
   "kinds": [
     "panel"
   ],
@@ -13,5 +13,7 @@
   },
   "omarchy": {
     "clonedFrom": "omarchy.osd"
-  }
+  },
+  "author": "KamradSmeshnyavy",
+  "homepage": "https://github.com/KamradSmeshnyavy/omarchy-edge-osd"
 }

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "kamradsmeshnyavy.notifications",
-  "name": "My Notifications",
+  "name": "Drawer Notifications",
   "version": "1.0.0",
-  "author": "Omarchy",
-  "description": "Notification daemon, popups, DND, and history",
+  "author": "KamradSmeshnyavy",
+  "description": "Omarchy notifications in one panel glued to the bar, or a floating card — corner, width, limit, bar style",
   "kinds": [
     "service"
   ],
@@ -14,5 +14,6 @@
   },
   "omarchy": {
     "clonedFrom": "omarchy.notifications"
-  }
+  },
+  "homepage": "https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications"
 }
