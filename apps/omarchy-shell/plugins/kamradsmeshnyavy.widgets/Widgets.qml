@@ -181,7 +181,10 @@ Item {
   property bool dashboardOpen: false
   // Меню выключения (PowerMenu.qml). Открытие одного закрывает другое.
   property bool powerOpen: false
-  onPowerOpenChanged: if (powerOpen) dashboardOpen = false
+  onPowerOpenChanged: if (powerOpen) { dashboardOpen = false; overviewOpen = false }
+  // Обзор рабочих столов (Overview.qml).
+  property bool overviewOpen: false
+  onOverviewOpenChanged: if (overviewOpen) { dashboardOpen = false; powerOpen = false }
   IpcHandler {
     target: "widgets"
     function toggleDashboard(): void { root.dashboardOpen = !root.dashboardOpen }
@@ -190,8 +193,11 @@ Item {
     function togglePower(): void { root.powerOpen = !root.powerOpen }
     function openPower(): void { root.powerOpen = true }
     function closePower(): void { root.powerOpen = false }
+    function toggleOverview(): void { root.overviewOpen = !root.overviewOpen }
+    function openOverview(): void { root.overviewOpen = true }
+    function closeOverview(): void { root.overviewOpen = false }
   }
-  onDashboardOpenChanged: if (dashboardOpen) { powerOpen = false; weatherFetcher.refreshIfStale() }
+  onDashboardOpenChanged: if (dashboardOpen) { powerOpen = false; overviewOpen = false; weatherFetcher.refreshIfStale() }
 
   // Экран под курсором / с фокусом — дашборд открывается там.
   readonly property var focusedScreen: {
@@ -272,6 +278,10 @@ Item {
   }
 
   PowerMenu {
+    host: root
+  }
+
+  Overview {
     host: root
   }
 

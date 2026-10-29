@@ -139,6 +139,8 @@ hl.unbind("SUPER + ESCAPE")
 o.bind("SUPER + ESCAPE", "Power menu", "omarchy-shell widgets togglePower")
 
 o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.audio")
+-- Обзор рабочих столов с живыми превью окон (kamradsmeshnyavy.widgets).
+o.bind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOverview")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
 o.bind("SUPER + ALT + D", "Dashboard", "omarchy-shell widgets toggleDashboard")
 
