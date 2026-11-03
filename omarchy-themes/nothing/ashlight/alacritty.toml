@@ -1,0 +1,44 @@
+# Nothing Ash Light — alacritty
+[colors.primary]
+background = "#f4f4f2"
+foreground = "#262524"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#f4f4f2"
+cursor = "#000000"
+
+[colors.search.matches]
+foreground = "#f4f4f2"
+background = "#9b1c2c"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#262524"
+background = "#f6d4d5"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#c41e24"
+green = "#1a1a1a"
+yellow = "#b33a4c"
+blue = "#000000"
+magenta = "#c4283f"
+cyan = "#44505a"
+white = "#d4d4d0"
+
+[colors.bright]
+black = "#86837f"
+red = "#a1191e"
+green = "#151515"
+yellow = "#93303e"
+blue = "#000000"
+magenta = "#a12134"
+cyan = "#38424a"
+white = "#bdbdb8"

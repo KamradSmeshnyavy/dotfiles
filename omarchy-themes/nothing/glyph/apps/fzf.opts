@@ -1,0 +1,5 @@
+# Nothing Glyph White — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#f4f4f2,bg+:#ffffff,fg:#4a4a48,fg+:#111111
+--color=hl:#d71921,hl+:#d71921,info:#7c7c78,prompt:#d71921
+--color=pointer:#d71921,marker:#2f7a1f,spinner:#1f5fa8,header:#7d6200
+--color=border:#d4d4d0,label:#111111,query:#111111,selected-bg:#f6d4d5

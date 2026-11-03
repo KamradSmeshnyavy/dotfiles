@@ -1,0 +1,10 @@
+[SddmGreeterTheme]
+Name=NIHIL
+Description=Dot-matrix monochrome login screen — ex nihilo
+Author=Adapted from Nihil-Shell by Pol Iglesias (MIT)
+Type=sddm-theme
+Version=1.0
+Website=https://nihilshell.com/
+MainScript=Main.qml
+ConfigFile=theme.conf
+QtVersion=6

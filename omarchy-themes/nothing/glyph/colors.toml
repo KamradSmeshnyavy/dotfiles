@@ -1,0 +1,39 @@
+# Nothing Glyph White — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#f6d4d5"
+selection_foreground = "#111111"
+selection_background = "#f6d4d5"
+muted = "#7c7c78"
+
+background = "#f4f4f2"
+dark_background = "#e9e9e6"
+darker_background = "#e9e9e6"
+lighter_background = "#ffffff"
+
+foreground = "#111111"
+dark_foreground = "#7c7c78"
+light_foreground = "#4a4a48"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#d4d4d0"
+
+red = "#c41e24"
+yellow = "#7d6200"
+orange = "#a65200"
+green = "#2f7a1f"
+cyan = "#0b6e78"
+blue = "#1f5fa8"
+magenta = "#7a35a8"
+brown = "#c99b6d"
+
+bright_red = "#a1191e"
+bright_yellow = "#665000"
+bright_green = "#276419"
+bright_cyan = "#095a62"
+bright_blue = "#194e8a"
+bright_magenta = "#642b8a"

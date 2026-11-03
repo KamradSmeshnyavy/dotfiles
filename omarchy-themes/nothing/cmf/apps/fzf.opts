@@ -1,0 +1,5 @@
+# Nothing CMF — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#0d0b09,bg+:#221e1a,fg:#b3a99e,fg+:#ece4da
+--color=hl:#ff6b1a,hl+:#ff6b1a,info:#7a7065,prompt:#ff6b1a
+--color=pointer:#ff6b1a,marker:#b5cc7a,spinner:#7fbfd4,header:#e8a7c8
+--color=border:#332d27,label:#ece4da,query:#ece4da,selected-bg:#3d2414

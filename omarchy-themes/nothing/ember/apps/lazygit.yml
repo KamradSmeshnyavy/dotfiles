@@ -1,0 +1,17 @@
+# Nothing Ember — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#ff6b1a", bold]
+    inactiveBorderColor: ["#332d27"]
+    searchingActiveBorderColor: ["#ffab78", bold]
+    optionsTextColor: ["#fff4e6"]
+    selectedLineBgColor: ["#221e1a"]
+    inactiveViewSelectedLineBgColor: ["#141210"]
+    cherryPickedCommitFgColor: ["#ff9450"]
+    cherryPickedCommitBgColor: ["#221e1a"]
+    markedBaseCommitFgColor: ["#fff4e6"]
+    markedBaseCommitBgColor: ["#221e1a"]
+    unstagedChangesColor: ["#ff4a3d"]
+    defaultFgColor: ["#e3d9cc"]
+  authorColors:
+    "*": "#b9a68e"

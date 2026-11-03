@@ -22,6 +22,7 @@ declare -A SLOTS=(
   [rmpc.ron]=$HOME/.config/rmpc/themes/omarchy.ron
   [nushell.nu]=$HOME/.config/nushell/themes/omarchy.nu
   [tmux.conf]=$HOME/.config/tmux/om-app-theme.conf
+  [fastfetch.jsonc]=$HOME/.config/fastfetch/config.jsonc
   # не в ~/.config: путь задан в FZF_DEFAULT_OPTS_FILE (env.nu, .zshrc)
   [fzf.opts]=$STATE/app-themes/fzf.opts
 )

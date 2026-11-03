@@ -1,0 +1,24 @@
+// Монохромная тема NIHIL для gitui; красный (#d71921) — только удаления и опасные действия.
+(
+    selected_tab: Some("#f2f2f2"),
+    command_fg: Some("#e6e6e6"),
+    selection_bg: Some("#2a2a2a"),
+    selection_fg: Some("#ffffff"),
+    cmdbar_bg: Some("#0e0e0e"),
+    cmdbar_extra_lines_bg: Some("#0e0e0e"),
+    disabled_fg: Some("#5e5e5e"),
+    diff_line_add: Some("#f2f2f2"),
+    diff_line_delete: Some("#d71921"),
+    diff_file_added: Some("#f2f2f2"),
+    diff_file_removed: Some("#d71921"),
+    diff_file_moved: Some("#a3a3a3"),
+    diff_file_modified: Some("#cfcfcf"),
+    commit_hash: Some("#a3a3a3"),
+    commit_time: Some("#7a7a7a"),
+    commit_author: Some("#e6e6e6"),
+    danger_fg: Some("#d71921"),
+    push_gauge_bg: Some("#f2f2f2"),
+    push_gauge_fg: Some("#000000"),
+    tag_fg: Some("#ffffff"),
+    branch_fg: Some("#cfcfcf")
+)

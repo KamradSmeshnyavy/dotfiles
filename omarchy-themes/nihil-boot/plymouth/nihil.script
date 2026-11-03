@@ -1,0 +1,160 @@
+// Загрузочный экран Plymouth темы NIHIL (адаптировано из Nihil-Shell, MIT, © 2026 Pol Iglesias).
+// 36 кадров зажигания светодиодной матрицы Arch + 60 кадров диагонального пробега луча Glyph.
+
+center_x = Window.GetWidth() / 2;
+center_y = Window.GetHeight() / 2;
+baseline_y = Window.GetHeight() * 0.88;
+message_y = Window.GetHeight() * 0.75;
+
+### BACKGROUND ###
+
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+### LOGO ###
+
+intro_frames = 36;
+loop_frames = 60;
+total_frames = intro_frames + loop_frames;
+
+logo.static = Image("logo.png");
+for (i = 0; i < total_frames; i++) {
+  logo.frames[i] = Image("frame-" + i + ".png");
+}
+
+logo.sprite = Sprite(logo.frames[0]);
+logo.sprite.SetPosition(
+  center_x - (logo.static.GetWidth() / 2),
+  center_y - (logo.static.GetHeight() / 2),
+  1
+);
+
+logo.animated = 1;
+logo.tick = 0;
+
+fun refresh_callback () {
+  if (logo.animated) {
+    step = Math.Int(logo.tick / 2);
+    if (step < intro_frames) {
+      frame_index = step;
+    } else {
+      frame_index = intro_frames + ((step - intro_frames) % loop_frames);
+    }
+    logo.sprite.SetImage(logo.frames[frame_index]);
+    logo.tick++;
+  }
+}
+
+fun stop_animation () {
+  logo.animated = 0;
+  logo.sprite.SetImage(logo.static);
+}
+
+fun start_animation () {
+  logo.animated = 1;
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+### PASSWORD (LUKS) ###
+
+prompt = null;
+bullets = null;
+bullet.image = Image.Text("•", 0.949, 0.949, 0.949);
+
+fun password_callback (prompt_text, bullet_count) {
+  stop_animation();
+
+  prompt.image = Image.Text(prompt_text, 0.949, 0.949, 0.949);
+  prompt.sprite = Sprite(prompt.image);
+  prompt.sprite.SetPosition(
+    center_x - (prompt.image.GetWidth() / 2),
+    baseline_y - prompt.image.GetHeight(),
+    1
+  );
+
+  gap = bullet.image.GetWidth() + 4;
+  total_width = bullet_count * gap;
+  start_x = center_x - (total_width / 2);
+
+  bullets = null;
+  for (i = 0; i < bullet_count; i++) {
+    bullets[i].sprite = Sprite(bullet.image);
+    bullets[i].sprite.SetPosition(
+      start_x + (i * gap),
+      baseline_y + bullet.image.GetHeight(),
+      1
+    );
+  }
+}
+
+Plymouth.SetDisplayPasswordFunction(password_callback);
+
+### QUESTION ###
+
+question = null;
+answer = null;
+
+fun question_callback (prompt_text, entry) {
+  stop_animation();
+
+  question = null;
+  answer = null;
+
+  question.image = Image.Text(prompt_text, 0.949, 0.949, 0.949);
+  question.sprite = Sprite(question.image);
+  question.sprite.SetPosition(
+    center_x - (question.image.GetWidth() / 2),
+    baseline_y - question.image.GetHeight(),
+    1
+  );
+
+  answer.image = Image.Text(entry, 0.949, 0.949, 0.949);
+  answer.sprite = Sprite(answer.image);
+  answer.sprite.SetPosition(
+    center_x - (answer.image.GetWidth() / 2),
+    baseline_y + answer.image.GetHeight(),
+    1
+  );
+}
+
+Plymouth.SetDisplayQuestionFunction(question_callback);
+
+### MESSAGE ###
+
+message = null;
+
+fun message_callback (text) {
+  message.image = Image.Text(text, 0.557, 0.557, 0.557);
+  message.sprite = Sprite(message.image);
+  message.sprite.SetPosition(
+    center_x - message.image.GetWidth() / 2,
+    message_y,
+    1
+  );
+}
+
+Plymouth.SetMessageFunction(message_callback);
+
+### NORMAL ###
+
+fun normal_callback () {
+  prompt = null;
+  bullets = null;
+  question = null;
+  answer = null;
+  message = null;
+  start_animation();
+}
+
+Plymouth.SetDisplayNormalFunction(normal_callback);
+
+### QUIT ###
+
+fun quit_callback () {
+  prompt = null;
+  bullets = null;
+  stop_animation();
+}
+
+Plymouth.SetQuitFunction(quit_callback);

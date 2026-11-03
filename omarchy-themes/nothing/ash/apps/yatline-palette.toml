@@ -1,0 +1,12 @@
+# Nothing Ash — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d71921"
+magenta = "#e8636b"
+red = "#ff4d55"
+yellow = "#ff8a8a"
+green = "#b9b0a6"
+cyan = "#a3a8ad"
+blue = "#ffffff"
+foreground = "#d6d3cf"
+background = "#000000"
+dark_background = "#0b0b0b"
+lighter_background = "#1a1a1a"

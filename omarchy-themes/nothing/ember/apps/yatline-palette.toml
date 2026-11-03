@@ -1,0 +1,12 @@
+# Nothing Ember — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#ff6b1a"
+magenta = "#ff9450"
+red = "#ff4a3d"
+yellow = "#ffab78"
+green = "#d4bb98"
+cyan = "#b9a68e"
+blue = "#fff4e6"
+foreground = "#e3d9cc"
+background = "#0d0b09"
+dark_background = "#141210"
+lighter_background = "#221e1a"

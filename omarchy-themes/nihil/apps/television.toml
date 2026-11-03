@@ -1,0 +1,25 @@
+# Монохромная тема NIHIL для Television (без декоративного красного)
+background = '#000000'
+border_fg = '#2a2a2a'
+text_fg = '#e6e6e6'
+dimmed_text_fg = '#7a7a7a'
+# input
+input_text_fg = '#f2f2f2'
+result_count_fg = '#a3a3a3'
+# results
+result_name_fg = '#e6e6e6'
+result_line_number_fg = '#7a7a7a'
+result_value_fg = '#a3a3a3'
+selection_fg = '#ffffff'
+selection_bg = '#1a1a1a'
+match_fg = '#ffffff'
+# preview
+preview_title_fg = '#f2f2f2'
+# modes
+channel_mode_fg = '#000000'
+channel_mode_bg = '#f2f2f2'
+remote_control_mode_fg = '#000000'
+remote_control_mode_bg = '#cfcfcf'
+action_picker_mode_fg = '#000000'
+action_picker_mode_bg = '#a3a3a3'
+send_to_channel_mode_fg = '#7a7a7a'

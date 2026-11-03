@@ -39,23 +39,16 @@ theme = theme.conf
 confirm-close-surface=false
 # font-family
 # font-family = RecMonoCasual Nerd Font
-font-family = Maple Mono NF CN
+font-family = Nihil Pixel
 # font-family = "Maple Mono NF CN"
 font-size = 12
 window-title-font-family = Maple Mono NF CN
-# ss01: != and ===
-font-feature = "ss01"
-# ss02: <= and >=
-font-feature = "ss02"
-# ss03: -> and ~>
-font-feature = "ss03"
-# ss04: <> and </>
-font-feature = "ss04"
-# liga: //, ..., ||
-font-feature = "liga"
+# >>> omarchy-font-profile: font-feature
+# лигатуры шрифтов Nihil
+font-feature = calt
+# <<< omarchy-font-profile
 # font-thicken = true
 font-thicken-strength = 255
-font-feature = -calt, -liga, -dlig
 
 # background
 # background-opacity = 0.80

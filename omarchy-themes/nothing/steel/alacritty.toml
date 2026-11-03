@@ -1,0 +1,44 @@
+# Nothing Steel — alacritty
+[colors.primary]
+background = "#000000"
+foreground = "#dde3e8"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#000000"
+cursor = "#d2e6f6"
+
+[colors.search.matches]
+foreground = "#000000"
+background = "#ff8a8a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#dde3e8"
+background = "#1d2a36"
+
+[colors.normal]
+black = "#262c32"
+red = "#ff4d55"
+green = "#d2e6f6"
+yellow = "#ffb8b3"
+blue = "#d2e6f6"
+magenta = "#b8cfe2"
+cyan = "#7d9cb5"
+white = "#97a1aa"
+
+[colors.bright]
+black = "#5f6a74"
+red = "#ff747a"
+green = "#dcecf8"
+yellow = "#ffc8c4"
+blue = "#dcecf8"
+magenta = "#c8dae8"
+cyan = "#9ab2c5"
+white = "#ffffff"

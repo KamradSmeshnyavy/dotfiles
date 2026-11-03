@@ -1,0 +1,44 @@
+# Nothing Signal — alacritty
+[colors.primary]
+background = "#000000"
+foreground = "#e8e6e3"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#000000"
+cursor = "#7aa8ff"
+
+[colors.search.matches]
+foreground = "#000000"
+background = "#f2cc60"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#e8e6e3"
+background = "#3a1214"
+
+[colors.normal]
+black = "#2a2a2a"
+red = "#ff5d5d"
+green = "#9fd28a"
+yellow = "#f2cc60"
+blue = "#7aa8ff"
+magenta = "#c49bff"
+cyan = "#8fd6d0"
+white = "#a3a09c"
+
+[colors.bright]
+black = "#6e6e6e"
+red = "#ff8181"
+green = "#b4dca4"
+yellow = "#f5d783"
+blue = "#97bbff"
+magenta = "#d1b1ff"
+cyan = "#a8dfda"
+white = "#ffffff"

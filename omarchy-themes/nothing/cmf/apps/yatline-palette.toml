@@ -1,0 +1,12 @@
+# Nothing CMF — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#ff6b1a"
+magenta = "#c9a2f0"
+red = "#ff5a4f"
+yellow = "#e8a7c8"
+green = "#b5cc7a"
+cyan = "#9fd1bd"
+blue = "#7fbfd4"
+foreground = "#ece4da"
+background = "#0d0b09"
+dark_background = "#141210"
+lighter_background = "#221e1a"

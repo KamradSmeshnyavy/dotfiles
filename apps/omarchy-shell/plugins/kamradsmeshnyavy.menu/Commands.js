@@ -44,13 +44,18 @@ function catalog(data, ru) {
       }
     },
     { name: "dash", icon: "󰕮", desc: t("Toggle the dashboard", "Открыть / закрыть дашборд"), action: "omarchy-shell widgets toggleDashboard" },
+    { name: "settings", icon: "󰒓", desc: t("Toggle the control panel", "Открыть / закрыть панель настроек"), action: "omarchy-shell widgets toggleSettings" },
     { name: "dnd", icon: "󰂛", desc: t("Toggle Do Not Disturb", "Включить / выключить «Не беспокоить»"), action: "omarchy-shell notifications toggleDnd" },
     { name: "shader", icon: "󰍹", desc: t("Toggle the screen shader", "Включить / выключить шейдер экрана"), action: customizer + "/scripts/crt-toggle.sh" },
     { name: "custom", icon: "󰸌", desc: t("Open the Customizer", "Открыть Customizer"), action: "omarchy-shell shell toggle kamradsmeshnyavy.customizer" },
     { name: "lock", icon: "󰌾", desc: t("Lock the screen", "Заблокировать экран"), action: "omarchy-system-lock" },
+    { name: "suspend", icon: "󰒲", desc: t("Suspend the system", "Усыпить систему"), action: "systemctl suspend" },
+    { name: "logout", icon: "󰍃", desc: t("End Hyprland session", "Завершить сессию"), action: "omarchy-system-logout" },
+    { name: "reboot", icon: "󰜉", desc: t("Reboot the machine", "Перезагрузить компьютер"), action: "omarchy-system-reboot" },
+    { name: "poweroff", icon: "󰐥", desc: t("Power off the machine", "Выключить компьютер"), action: "omarchy-system-shutdown" },
     { name: "power", icon: "󰐥", desc: t("Power menu", "Меню выключения"), action: "omarchy-shell widgets togglePower" }
   ]
-  var needs = { skin: "customizer", shader: "customizer", custom: "customizer", dash: "widgets", power: "widgets" }
+  var needs = { skin: "customizer", shader: "customizer", custom: "customizer", dash: "widgets", settings: "widgets", power: "widgets" }
   list = list.filter(function(c) { return !needs[c.name] || (data.plugins && data.plugins[needs[c.name]]) })
   if (data.wallpaperTheme) {
     list.splice(1, 0, {

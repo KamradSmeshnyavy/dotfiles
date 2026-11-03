@@ -78,5 +78,9 @@ omarchy-image-picker-styles, `.customizer` → omarchy-customizer (GPL-3.0: пр
 английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`), `.widgets` →
 omarchy-desktop-widgets (виджеты, дашборд, меню выключения, обзор столов), `.osd` → omarchy-edge-osd,
 `.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
-`BarStyle.qml` одинаковый в widgets/osd/notifications — правку переносить во все три. Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
+`BarStyle.qml` одинаковый в widgets/osd/notifications — правку переносить во все три. Так же `nihil/Palette.qml`
+(палитра стиля Nihil, `docs/apps/omarchy-shell-nihil.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer:
+цвета Nihil — только через него, не hex.
+Клоны стоковых виджетов бара в стиле Nihil — `kamradsmeshnyavy.{tray,network,bluetooth,audio}` (в dotfiles,
+правки помечены `// nihil:`, палитру импортируют из `kamradsmeshnyavy.bar/nihil`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.

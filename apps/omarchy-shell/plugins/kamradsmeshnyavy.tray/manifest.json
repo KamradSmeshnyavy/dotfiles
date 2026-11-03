@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "kamradsmeshnyavy.tray",
+  "name": "Nihil tray",
+  "version": "1.0.0",
+  "author": "KamradSmeshnyavy (clone of Omarchy)",
+  "description": "System tray in the Nihil style: Omarchy menus, monochrome icons, no drawer by default",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Tray.qml"
+  },
+  "barWidget": {
+    "displayName": "Nihil tray",
+    "description": "System tray in the Nihil style: Omarchy menus, monochrome icons, no drawer by default",
+    "category": "Status",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.tray"
+  }
+}

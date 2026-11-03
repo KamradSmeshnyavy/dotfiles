@@ -1,0 +1,39 @@
+# Nothing Steel — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#1d2a36"
+selection_foreground = "#dde3e8"
+selection_background = "#1d2a36"
+muted = "#5f6a74"
+
+background = "#000000"
+dark_background = "#0a0c0e"
+darker_background = "#000000"
+lighter_background = "#171b1f"
+
+foreground = "#dde3e8"
+dark_foreground = "#5f6a74"
+light_foreground = "#97a1aa"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#262c32"
+
+red = "#ff4d55"
+yellow = "#ffb8b3"
+orange = "#ffb8b3"
+green = "#d2e6f6"
+cyan = "#7d9cb5"
+blue = "#d2e6f6"
+magenta = "#b8cfe2"
+brown = "#8c6562"
+
+bright_red = "#ff747a"
+bright_yellow = "#ffc8c4"
+bright_green = "#dcecf8"
+bright_cyan = "#9ab2c5"
+bright_blue = "#dcecf8"
+bright_magenta = "#c8dae8"

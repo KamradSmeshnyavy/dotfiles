@@ -1,0 +1,39 @@
+# Nothing Ember — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#ff6b1a"
+cursor = "#ff6b1a"
+selection = "#3d2414"
+selection_foreground = "#e3d9cc"
+selection_background = "#3d2414"
+muted = "#766b60"
+
+background = "#0d0b09"
+dark_background = "#141210"
+darker_background = "#0d0b09"
+lighter_background = "#221e1a"
+
+foreground = "#e3d9cc"
+dark_foreground = "#766b60"
+light_foreground = "#a99d90"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#ff6b1a"
+hyprland_inactive_border = "#332d27"
+
+red = "#ff4a3d"
+yellow = "#ffc94f"
+orange = "#ffc94f"
+green = "#f0e6d8"
+cyan = "#b9a68e"
+blue = "#fff4e6"
+magenta = "#ff9450"
+brown = "#927430"
+
+bright_red = "#ff7268"
+bright_yellow = "#ffd576"
+bright_green = "#f3ece1"
+bright_cyan = "#c8baa7"
+bright_blue = "#fff6ec"
+bright_magenta = "#ffac76"

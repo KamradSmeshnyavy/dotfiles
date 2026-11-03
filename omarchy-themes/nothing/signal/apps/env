@@ -1,0 +1,4 @@
+# Переменные окружения темы (KEY=VALUE, {theme} — путь к текущей теме)
+# bat и delta рисуют на ANSI-цветах терминала — они подобраны вручную в kitty/ghostty.
+BAT_THEME=ansi
+GLAMOUR_STYLE={theme}/apps/glow.json

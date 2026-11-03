@@ -1,0 +1,12 @@
+# Nothing Glyph White — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d71921"
+magenta = "#7a35a8"
+red = "#c41e24"
+yellow = "#7d6200"
+green = "#2f7a1f"
+cyan = "#0b6e78"
+blue = "#1f5fa8"
+foreground = "#111111"
+background = "#f4f4f2"
+dark_background = "#e9e9e6"
+lighter_background = "#ffffff"

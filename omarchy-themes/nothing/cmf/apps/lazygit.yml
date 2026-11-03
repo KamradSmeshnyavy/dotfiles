@@ -1,0 +1,17 @@
+# Nothing CMF — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#ff6b1a", bold]
+    inactiveBorderColor: ["#332d27"]
+    searchingActiveBorderColor: ["#e8a7c8", bold]
+    optionsTextColor: ["#7fbfd4"]
+    selectedLineBgColor: ["#221e1a"]
+    inactiveViewSelectedLineBgColor: ["#141210"]
+    cherryPickedCommitFgColor: ["#c9a2f0"]
+    cherryPickedCommitBgColor: ["#221e1a"]
+    markedBaseCommitFgColor: ["#7fbfd4"]
+    markedBaseCommitBgColor: ["#221e1a"]
+    unstagedChangesColor: ["#ff5a4f"]
+    defaultFgColor: ["#ece4da"]
+  authorColors:
+    "*": "#9fd1bd"

@@ -1,0 +1,5 @@
+# Nothing Steel — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#000000,bg+:#171b1f,fg:#97a1aa,fg+:#dde3e8
+--color=hl:#d71921,hl+:#d71921,info:#5f6a74,prompt:#d71921
+--color=pointer:#d71921,marker:#93b6d2,spinner:#d2e6f6,header:#ff8a8a
+--color=border:#262c32,label:#dde3e8,query:#dde3e8,selected-bg:#1d2a36

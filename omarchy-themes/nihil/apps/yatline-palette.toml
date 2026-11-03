@@ -1,0 +1,12 @@
+# Палитра yatline для NIHIL (строго оттенки серого + сигнальный красный для ошибок)
+accent = "#f2f2f2"
+magenta = "#cfcfcf"
+red = "#d71921"
+yellow = "#ffffff"
+green = "#b5b5b5"
+cyan = "#a3a3a3"
+blue = "#e6e6e6"
+foreground = "#e6e6e6"
+background = "#000000"
+dark_background = "#0e0e0e"
+lighter_background = "#1a1a1a"

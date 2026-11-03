@@ -33,6 +33,7 @@ Item {
     "medieval": "MedievalView.qml",
     "ironman": "IronmanView.qml",
     // Originals.
+    "nihil": "NihilView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

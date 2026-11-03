@@ -1,0 +1,39 @@
+# Nothing Ash — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#3a1214"
+selection_foreground = "#d6d3cf"
+selection_background = "#3a1214"
+muted = "#686664"
+
+background = "#000000"
+dark_background = "#0b0b0b"
+darker_background = "#000000"
+lighter_background = "#1a1a1a"
+
+foreground = "#d6d3cf"
+dark_foreground = "#686664"
+light_foreground = "#9c9894"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#2a2a2a"
+
+red = "#ff4d55"
+yellow = "#ffb8b3"
+orange = "#ffb8b3"
+green = "#f2f0ed"
+cyan = "#a3a8ad"
+blue = "#ffffff"
+magenta = "#e8636b"
+brown = "#8c6562"
+
+bright_red = "#ff747a"
+bright_yellow = "#ffc8c4"
+bright_green = "#f5f3f1"
+bright_cyan = "#b7bbbf"
+bright_blue = "#ffffff"
+bright_magenta = "#ed858c"

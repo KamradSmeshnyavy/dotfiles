@@ -1,0 +1,17 @@
+# Nothing Signal — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#2a2a2a"]
+    searchingActiveBorderColor: ["#f2cc60", bold]
+    optionsTextColor: ["#7aa8ff"]
+    selectedLineBgColor: ["#1a1a1a"]
+    inactiveViewSelectedLineBgColor: ["#0b0b0b"]
+    cherryPickedCommitFgColor: ["#c49bff"]
+    cherryPickedCommitBgColor: ["#1a1a1a"]
+    markedBaseCommitFgColor: ["#7aa8ff"]
+    markedBaseCommitBgColor: ["#1a1a1a"]
+    unstagedChangesColor: ["#ff5d5d"]
+    defaultFgColor: ["#e8e6e3"]
+  authorColors:
+    "*": "#8fd6d0"

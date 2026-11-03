@@ -1,0 +1,12 @@
+# Nothing Signal — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d71921"
+magenta = "#c49bff"
+red = "#ff5d5d"
+yellow = "#f2cc60"
+green = "#9fd28a"
+cyan = "#8fd6d0"
+blue = "#7aa8ff"
+foreground = "#e8e6e3"
+background = "#000000"
+dark_background = "#0b0b0b"
+lighter_background = "#1a1a1a"

@@ -1,0 +1,5 @@
+# Nothing Ember — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#0d0b09,bg+:#221e1a,fg:#a99d90,fg+:#e3d9cc
+--color=hl:#ff6b1a,hl+:#ff6b1a,info:#766b60,prompt:#ff6b1a
+--color=pointer:#ff6b1a,marker:#d4bb98,spinner:#fff4e6,header:#ffab78
+--color=border:#332d27,label:#e3d9cc,query:#e3d9cc,selected-bg:#3d2414

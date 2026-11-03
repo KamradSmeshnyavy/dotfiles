@@ -3,15 +3,15 @@
   // * │               VSCode Workbench                        │
   // * ╰───────────────────────────────────────────────────────╯
   "workbench.colorCustomizations": {
-    "editorCursor.foreground": "#b4befe",
-    "editorIndentGuide.activeBackground1": "#F5C2E7"
+    // "editorCursor.foreground": "#b4befe",
+    // "editorIndentGuide.activeBackground1": "#F5C2E7"
   },
   "editor.tokenColorCustomizations": {
     "textMateRules": [
       {
         "scope": "markup.list",
         "settings": {
-          "foreground": "#b2bcfb"
+          // "foreground": "#b2bcfb"
         }
       },
       {
@@ -95,7 +95,7 @@
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "editor.cursorBlinking": "smooth",
   "editor.cursorStyle": "block",
-  "editor.fontFamily": "Maple Mono NF CN, Google Sans Code, Hack Nerd Font, SF Mono, SF Pro, Monaspace Radon, JetbrainsMono Nerd Font, Monaspace Argon, MonoLisa, Segoe UI Variable, Noto Sans SC, Monaspace Xenon, Franklin Gothic, Cascadia Code, Kristen ITC, Monaspace Neon, DejaVu Sans Mono, Inconsolata, Monaspace Krypton",
+  "editor.fontFamily": "Nihil Pixel, Google Sans Code, Hack Nerd Font, SF Mono, SF Pro, Monaspace Radon, JetbrainsMono Nerd Font, Monaspace Argon, MonoLisa, Segoe UI Variable, Noto Sans SC, Monaspace Xenon, Franklin Gothic, Cascadia Code, Kristen ITC, Monaspace Neon, DejaVu Sans Mono, Inconsolata, Monaspace Krypton",
   "editor.fontLigatures": true,
   "editor.fontVariations": true,
   "editor.fontSize": 16,
@@ -134,7 +134,7 @@
   "terminal.integrated.hideOnStartup": "always",
   "terminal.integrated.middleClickBehavior": "paste",
   "terminal.integrated.mouseWheelZoom": true,
-  "terminal.integrated.fontFamily": "Maple Mono NF CN, MesloLGS NF, SF Mono, Monaco, 'Courier New', monospace",
+  "terminal.integrated.fontFamily": "Nihil Pixel, MesloLGS NF, SF Mono, Monaco, 'Courier New', monospace",
   "terminal.integrated.lineHeight": 1.2,
   "terminal.integrated.fontWeight": "650",
   "terminal.integrated.defaultProfile.osx": "zsh",
@@ -245,15 +245,15 @@
   "debug.console.historySuggestions": true,
   "debug.console.closeOnEnd": true,
   "debug.allowBreakpointsEverywhere": true,
-  "debug.console.fontFamily": "Maple Mono NF CN",
+  "debug.console.fontFamily": "Nihil Pixel",
   // * ╭───────────────────────────────────────────────────────╮
   // * │                    VSCode UI                          │
   // * ╰───────────────────────────────────────────────────────╯
   "material-icon-theme.activeIconPack": "angular_ngrx",
   "material-icon-theme.saturation": 1,
   "material-icon-theme.opacity": 1,
-  "material-icon-theme.folders.color": "#9eb5f3",
-  "material-icon-theme.files.color": "#42a5f5",
+  // "material-icon-theme.folders.color": "#9eb5f3",
+  // "material-icon-theme.files.color": "#42a5f5",
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.folders.theme": "specific",
   "catppuccin.extraBordersEnabled": true,
@@ -268,7 +268,7 @@
   "animations.CursorAnimation": true,
   "animations.Install-Method": "Custom UI Style",
   "animations.CursorAnimationOptions": {
-    "Color": "#6d8be0",
+    // "Color": "#6d8be0",
     "TrailLength": 8,
     "CursorStyle": "block"
   },
@@ -335,7 +335,7 @@
         "╰",
         "*"
       ],
-      "color": "#b4befe",
+      // "color": "#b4befe",
       "bold": true
     },
     {
@@ -343,21 +343,21 @@
         "TODO",
         "Note"
       ],
-      "color": "#1e1e2e",
+      // "color": "#1e1e2e",
       "strikethrough": false,
       "bold": true,
-      "backgroundColor": "#f9e2af",
+      // "backgroundColor": "#f9e2af",
     },
     {
       "tag": [
         "#region",
         "#endregion"
       ],
-      "color": "#1e1e2e",
+      // "color": "#1e1e2e",
       "strikethrough": false,
       "bold": true,
       "italic": true,
-      "backgroundColor": "#cba6f7",
+      // "backgroundColor": "#cba6f7",
     }
   ],
   "errorLens.fontStyleItalic": true,
@@ -472,7 +472,7 @@
   "piclist.customType": "<img src=\"$url\" alt=\"$fileName\"/>",
   "markdown.preview.linkify": false,
   "markdown.preview.typographer": true,
-  "markdown.preview.fontFamily": "Maple Mono NF CN",
+  "markdown.preview.fontFamily": "Nihil Pixel",
   "markdown.preview.scrollEditorWithPreview": false,
   "markdown.copyFiles.destination": {
     "*": "./assets/${documentBaseName}.${fileExtName}"
@@ -541,15 +541,15 @@
   "vim.leader": "=",
   "vim.easymotion": true,
   "vim.easymotionDimBackground": true,
-  "vim.easymotionMarkerBackgroundColor": "#1e1e2e",
-  "vim.easymotionMarkerForegroundColorOneChar": "#f38ba8",
-  "vim.easymotionMarkerForegroundColorTwoCharFirst": "#fab387",
-  "vim.easymotionMarkerForegroundColorTwoCharSecond": "#f9e2af",
-  "vim.easymotionIncSearchForegroundColor": "#a6e3a1",
-  "vim.easymotionDimColor": "#6c7086",
-  "vim.easymotionMarkerFontWeight": "bold",
-  "vim.searchHighlightColor": "#585b70",
-  "vim.searchMatchColor": "#6c7086",
+  // "vim.easymotionMarkerBackgroundColor": "#1e1e2e",
+  // "vim.easymotionMarkerForegroundColorOneChar": "#f38ba8",
+  // "vim.easymotionMarkerForegroundColorTwoCharFirst": "#fab387",
+  // "vim.easymotionMarkerForegroundColorTwoCharSecond": "#f9e2af",
+  // "vim.easymotionIncSearchForegroundColor": "#a6e3a1",
+  // "vim.easymotionDimColor": "#6c7086",
+  // "vim.easymotionMarkerFontWeight": "bold",
+  // "vim.searchHighlightColor": "#585b70",
+  // "vim.searchMatchColor": "#6c7086",
   "vim.sneak": true,
   "vim.showMarksInGutter": true,
   "vim.shell": "/opt/homebrew/bin/nu",

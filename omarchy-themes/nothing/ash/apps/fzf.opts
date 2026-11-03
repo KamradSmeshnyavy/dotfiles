@@ -1,0 +1,5 @@
+# Nothing Ash — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#000000,bg+:#1a1a1a,fg:#9c9894,fg+:#d6d3cf
+--color=hl:#d71921,hl+:#d71921,info:#686664,prompt:#d71921
+--color=pointer:#d71921,marker:#b9b0a6,spinner:#ffffff,header:#ff8a8a
+--color=border:#2a2a2a,label:#d6d3cf,query:#d6d3cf,selected-bg:#3a1214

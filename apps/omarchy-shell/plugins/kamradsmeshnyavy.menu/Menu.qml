@@ -1675,6 +1675,12 @@ Item {
           root.select(6)
           event.accepted = true
         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Right) {
+          if (root.skinActive && (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
+              && skinLoader.item && typeof skinLoader.item.handleEnter === "function"
+              && skinLoader.item.handleEnter()) {
+            event.accepted = true
+            return
+          }
           if (root.dmenuActive) {
             if (root.mode === "input") root.applyDmenuSelection(root.filterText)
             else if (displayModel.count > 0) root.activateIndex(root.cursorActive ? root.selectedIndex : 0)

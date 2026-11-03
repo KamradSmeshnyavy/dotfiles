@@ -1,0 +1,184 @@
+{
+  "name": "nothing-hacking",
+  "theme": "nothing-steel",
+  "wallpaper": "~/.local/state/omarchy/current/theme/backgrounds/1-galaxy.png",
+  "anims": "NIHIL",
+  "opacity": "nihil",
+  "blur": "nihil",
+  "shader": "off",
+  "hyprGeometry": {
+    "gapsIn": 4,
+    "gapsOut": 8,
+    "borderSize": 1,
+    "rounding": 12,
+    "shadow": false
+  },
+  "barSkinData": {
+    "note": "NIHIL bezel frame (44px bar, 8px frame, 20px inner corners, 1px hairline border, LED workspaces); colours from the Nihil palette — theme or mono",
+    "note_ru": "Рамка-бортик NIHIL (бар 44px, рамка 8px, скруглённые углы 20px, тонкий контур 1px, LED-воркспейсы); цвета из палитры Nihil — тема или монохром",
+    "shape": "frame",
+    "height": 44,
+    "frameWidth": 8,
+    "radius": 20,
+    "padding": 16,
+    "spacing": 10,
+    "background": "nihil.bg",
+    "backgroundAlpha": 1,
+    "border": "nihil.line",
+    "borderWidth": 1,
+    "borderAlpha": 1,
+    "text": "nihil.fg",
+    "active": "nihil.signal",
+    "moduleStyle": "plain",
+    "wsLabelStyle": "leds",
+    "wsWindowIcons": false,
+    "wsShowEmpty": true,
+    "compact": "off",
+    "transparent": false,
+    "wsMaxIcons": 3
+  },
+  "barLayoutData": {
+    "position": "left",
+    "centerAnchor": "active-app",
+    "layout": {
+      "left": [
+        {
+          "id": "nihil-mark",
+          "type": "qml",
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/NihilMark.qml"
+        },
+        {
+          "id": "omarchy.workspaces"
+        }
+      ],
+      "center": [
+        {
+          "id": "active-app",
+          "type": "qml",
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/ActiveAppIcon.qml"
+        }
+      ],
+      "right": [
+        {
+          "id": "kamradsmeshnyavy.tray",
+          "pinned": [],
+          "hidden": []
+        },
+        {
+          "id": "omarchy.agents"
+        },
+        {
+          "id": "omarchy.monitor"
+        },
+        {
+          "id": "kamradsmeshnyavy.network"
+        },
+        {
+          "id": "kamradsmeshnyavy.bluetooth"
+        },
+        {
+          "id": "kamradsmeshnyavy.audio"
+        },
+        {
+          "id": "battery-gauge",
+          "type": "qml",
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/BatteryGauge.qml"
+        },
+        {
+          "id": "dot-clock",
+          "type": "qml",
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/DotClock.qml"
+        },
+        {
+          "id": "privacy-led",
+          "type": "qml",
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/PrivacyLed.qml"
+        }
+      ]
+    }
+  },
+  "barTransparent": false,
+  "lock": {
+    "design": "nihil",
+    "clock24": true,
+    "showSeconds": false,
+    "showDate": true,
+    "wallpaperBlur": 0,
+    "wallpaperDim": 0.45
+  },
+  "launcher": {
+    "skin": "nihil",
+    "backdrop": 0.82
+  },
+  "wallpaperFx": {
+    "type": "fade",
+    "duration": 500,
+    "easing": "OutCubic"
+  },
+  "imagePicker": {
+    "style": "cards",
+    "cardRadius": 14,
+    "selectedBorder": 1,
+    "dim": 0.55,
+    "autoCache": true
+  },
+  "widgets": {
+    "widgetStyle": "nihil",
+    "edgeHover": false,
+    "clock": false,
+    "clockStyle": "big",
+    "media": false,
+    "visualizer": true,
+    "sysinfo": false,
+    "dashStyle": "nihil",
+    "dashFollowBar": true,
+    "dashAttach": "attached",
+    "dashBackground": "nihil.bg",
+    "dashAlpha": 1,
+    "dashRadius": 14,
+    "dashBorder": true,
+    "dashMedia": true,
+    "dashCalendar": true,
+    "dashWeather": true,
+    "dashStats": true,
+    "dashAnimation": "slide",
+    "dashDuration": 240
+  },
+  "osd": {
+    "osdStyle": "nihil",
+    "osdFollowBar": true,
+    "osdAttach": "attached",
+    "osdBackground": "nihil.bg",
+    "osdAlpha": 1,
+    "osdRadius": 14,
+    "osdSide": "right",
+    "osdAlign": "center",
+    "osdShowValue": true
+  },
+  "notifications": {
+    "notifyStyle": "stock",
+    "notifyFollowBar": true,
+    "notifyBackground": "nihil.bg",
+    "notifyAlpha": 1,
+    "notifyRadius": 14,
+    "notifyCards": "nihil",
+    "notifyCorner": "top-right",
+    "notifyWidth": 360
+  },
+  "sounds": {
+    "sounds": true,
+    "soundPack": "nihil",
+    "soundVolume": 0.6,
+    "windowSounds": true
+  },
+  "glyph": {
+    "glyphEnabled": true,
+    "glyphCriticalRed": true,
+    "glyphCharger": true,
+    "glyphColor": "nihil.fg",
+    "glyphCriticalColor": "nihil.danger",
+    "glyphDuration": 1100,
+    "glyphThickness": 2.5,
+    "glyphInsetMode": "auto"
+  }
+}

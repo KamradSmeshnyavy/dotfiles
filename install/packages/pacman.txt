@@ -37,3 +37,6 @@ wezterm
 yazi
 zoxide
 zsh
+otf-geist-mono-nerd
+ttf-terminus-nerd
+ttf-nerd-fonts-symbols

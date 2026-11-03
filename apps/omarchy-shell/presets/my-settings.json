@@ -1,0 +1,54 @@
+{
+  "name": "My Settings",
+  "name_ru": "Мои настройки",
+  "note": "Personal setup: rose-pine-hacker24 theme, bridge wallpaper, my-glass-islands bar with favorite layout, Mahaveer - me-1 animations, soft opacity without blur, calendar lock screen, and board launcher.",
+  "note_ru": "Личная конфигурация: тема rose-pine-hacker24, обои bridge, скин бара my-glass-islands с раскладкой favorite, анимации Mahaveer - me-1, прозрачность soft без блюра, экран блокировки calendar и лаунчер board.",
+  "theme": "rose-pine-hacker24",
+  "wallpaper": "~/.config/omarchy/themes/rose-pine-hacker24/backgrounds/bridge.png",
+  "anims": "Mahaveer - me-1",
+  "opacity": "soft",
+  "blur": "off",
+  "shader": "off",
+  "hyprGeometry": null,
+  "barSkin": "my-glass-islands",
+  "barLayout": "favorite",
+  "barTransparent": false,
+  "lock": {
+    "design": "calendar"
+  },
+  "launcher": {
+    "skin": "board"
+  },
+  "wallpaperFx": {
+    "type": "grow",
+    "duration": 1950,
+    "easing": "InOutCubic",
+    "angle": 345,
+    "origin": "random"
+  },
+  "imagePicker": {
+    "style": "slices",
+    "autoCache": true
+  },
+  "widgets": {
+    "widgetStyle": "default",
+    "edgeHover": false,
+    "clock": false,
+    "clockStyle": "big",
+    "media": false,
+    "sysinfo": false,
+    "dashStyle": "default",
+    "dashAnimation": "grow"
+  },
+  "osd": {},
+  "notifications": {},
+  "sounds": {
+    "sounds": true,
+    "soundPack": "theme",
+    "soundVolume": 0.6,
+    "windowSounds": false
+  },
+  "glyph": {
+    "glyphEnabled": false
+  }
+}

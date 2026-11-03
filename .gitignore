@@ -6,7 +6,11 @@ history.txt
 mics/yasb/*.py
 elevated-state.json
 lazy-lock.json
+# кэш lazygit (PR текущей машины)
+tui/lazygit/github_pull_requests.json
 *.bak
+__pycache__/
+*.py[cod]
 # mac
 .DS_Store
 # chrome extension
@@ -33,6 +37,7 @@ tui/gitui/theme.ron
 tui/rmpc/themes/omarchy.ron
 shells/nushell/themes/omarchy.nu
 tui/tmux/om-app-theme.conf
+tui/fastfetch/config.jsonc
 tui/yazi/plugins/yatline-omarchy.yazi/main.lua
 tui/yazi/flavors/omarchy.yazi
 # генерируется omarchy-tmux-theme при каждой смене темы

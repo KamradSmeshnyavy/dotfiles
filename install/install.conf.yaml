@@ -108,6 +108,19 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.image-picker:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
       if: "[ `uname` = Linux ]"
+    # Клоны стоковых виджетов бара в стиле Nihil (правки помечены // nihil:).
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.tray:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.tray
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.network:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.network
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.bluetooth:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.bluetooth
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.audio:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.audio
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/plugins/kamradsmeshnyavy.widgets:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets
       if: "[ `uname` = Linux ]"
@@ -122,6 +135,9 @@
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/bar-layouts:
       path: apps/omarchy-shell/bar-layouts
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/customizer/presets:
+      path: apps/omarchy-shell/presets
       if: "[ `uname` = Linux ]"
     # Linux (omarchy) theme sync: Dark Reader + Stylus follow the omarchy theme
     ~/.config/omarchy/hooks/theme-set:
@@ -208,6 +224,9 @@
     ~/.local/bin/omarchy-customizer:
       path: scripts/bin/omarchy-customizer
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-font-profile:
+      path: scripts/bin/omarchy-font-profile
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/bookmarks-sync:
       path: scripts/bin/bookmarks-sync
       if: "[ `uname` = Linux ]"
@@ -223,6 +242,34 @@
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/black-arch-pastel:
       path: omarchy-themes/black-arch-pastel
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-signal:
+      path: omarchy-themes/nothing/signal
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-cmf:
+      path: omarchy-themes/nothing/cmf
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-glyph:
+      path: omarchy-themes/nothing/glyph
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-ash:
+      path: omarchy-themes/nothing/ash
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-ember:
+      path: omarchy-themes/nothing/ember
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-steel:
+      path: omarchy-themes/nothing/steel
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-ashlight:
+      path: omarchy-themes/nothing/ashlight
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nihil:
+      path: omarchy-themes/nihil
+      if: "[ `uname` = Linux ]"
+    # Шрифты стиля Nihil (Doto, Space Grotesk, Space Mono) живут в плагине customizer.
+    ~/.local/share/fonts/nihil:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/fonts
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nord-own:
       path: omarchy-themes/nord
@@ -292,3 +339,4 @@
       if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]
+    - ['[ "$(uname)" != Linux ] || ! command -v fc-cache >/dev/null || fc-cache -f ~/.local/share/fonts/nihil']

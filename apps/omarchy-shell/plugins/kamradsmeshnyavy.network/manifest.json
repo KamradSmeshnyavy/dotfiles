@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "kamradsmeshnyavy.network",
+  "name": "Nihil Wi-Fi",
+  "version": "1.0.0",
+  "author": "KamradSmeshnyavy (clone of Omarchy)",
+  "description": "Omarchy network panel in the Nihil style",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Nihil Wi-Fi",
+    "description": "Omarchy network panel in the Nihil style",
+    "category": "Network",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.network"
+  }
+}

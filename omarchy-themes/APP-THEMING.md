@@ -23,6 +23,7 @@
 | `rmpc.ron` | `~/.config/rmpc/themes/omarchy.ron` | `theme: "omarchy"` |
 | `nushell.nu` | `~/.config/nushell/themes/omarchy.nu` | `source` в `config.nu` |
 | `tmux.conf` | `~/.config/tmux/om-app-theme.conf` | `tmux.conf` после `om-theme.conf`; перечитывается сразу |
+| `fastfetch.jsonc` | `~/.config/fastfetch/config.jsonc` | fastfetch читает сам |
 | `fzf.opts` | `~/.local/state/omarchy/app-themes/fzf.opts` | `FZF_DEFAULT_OPTS_FILE` в `env.nu` / `.zshrc` |
 
 Если у темы нет `apps/yatline.lua` или `apps/fzf.opts`, скрипт генерирует их из её `colors.toml`

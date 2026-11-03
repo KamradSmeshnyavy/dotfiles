@@ -1,0 +1,44 @@
+# Nothing Ash — alacritty
+[colors.primary]
+background = "#000000"
+foreground = "#d6d3cf"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#000000"
+cursor = "#ffffff"
+
+[colors.search.matches]
+foreground = "#000000"
+background = "#ff8a8a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#d6d3cf"
+background = "#3a1214"
+
+[colors.normal]
+black = "#2a2a2a"
+red = "#ff4d55"
+green = "#f2f0ed"
+yellow = "#ffb8b3"
+blue = "#ffffff"
+magenta = "#e8636b"
+cyan = "#a3a8ad"
+white = "#9c9894"
+
+[colors.bright]
+black = "#686664"
+red = "#ff747a"
+green = "#f5f3f1"
+yellow = "#ffc8c4"
+blue = "#ffffff"
+magenta = "#ed858c"
+cyan = "#b7bbbf"
+white = "#ffffff"

@@ -23,6 +23,7 @@ to `app-defaults/<file>` (the previous behaviour: terminal colours or the app's 
 | `rmpc.ron` | `~/.config/rmpc/themes/omarchy.ron` | `theme: "omarchy"` |
 | `nushell.nu` | `~/.config/nushell/themes/omarchy.nu` | `source` in `config.nu` |
 | `tmux.conf` | `~/.config/tmux/om-app-theme.conf` | `tmux.conf`, after `om-theme.conf`; reloaded immediately |
+| `fastfetch.jsonc` | `~/.config/fastfetch/config.jsonc` | read by fastfetch itself |
 | `fzf.opts` | `~/.local/state/omarchy/app-themes/fzf.opts` | `FZF_DEFAULT_OPTS_FILE` in `env.nu` / `.zshrc` |
 
 If a theme has no `apps/yatline.lua` or `apps/fzf.opts`, the script generates them from its `colors.toml`

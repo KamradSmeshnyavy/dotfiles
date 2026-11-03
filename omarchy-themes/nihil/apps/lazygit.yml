@@ -1,0 +1,30 @@
+# Монохромная тема NIHIL для lazygit; красный (#d71921) — только незафиксированные изменения/опасность.
+gui:
+  theme:
+    activeBorderColor:
+      - "#f2f2f2"
+      - bold
+    inactiveBorderColor:
+      - "#2a2a2a"
+    searchingActiveBorderColor:
+      - "#ffffff"
+      - bold
+    optionsTextColor:
+      - "#a3a3a3"
+    selectedLineBgColor:
+      - "#1a1a1a"
+    inactiveViewSelectedLineBgColor:
+      - "#0e0e0e"
+      - bold
+    cherryPickedCommitFgColor:
+      - "#000000"
+    cherryPickedCommitBgColor:
+      - "#f2f2f2"
+    markedBaseCommitFgColor:
+      - "#000000"
+    markedBaseCommitBgColor:
+      - "#cfcfcf"
+    unstagedChangesColor:
+      - "#d71921"
+    defaultFgColor:
+      - "#e6e6e6"

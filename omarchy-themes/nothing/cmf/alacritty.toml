@@ -1,0 +1,44 @@
+# Nothing CMF — alacritty
+[colors.primary]
+background = "#0d0b09"
+foreground = "#ece4da"
+
+[colors.cursor]
+text = "#0d0b09"
+cursor = "#ff6b1a"
+
+[colors.vi_mode_cursor]
+text = "#0d0b09"
+cursor = "#7fbfd4"
+
+[colors.search.matches]
+foreground = "#0d0b09"
+background = "#e8a7c8"
+
+[colors.search.focused_match]
+foreground = "#0d0b09"
+background = "#ff6b1a"
+
+[colors.selection]
+text = "#ece4da"
+background = "#3d2414"
+
+[colors.normal]
+black = "#332d27"
+red = "#ff5a4f"
+green = "#b5cc7a"
+yellow = "#f7c35f"
+blue = "#7fbfd4"
+magenta = "#c9a2f0"
+cyan = "#9fd1bd"
+white = "#b3a99e"
+
+[colors.bright]
+black = "#7a7065"
+red = "#ff7e76"
+green = "#c5d797"
+yellow = "#f9d082"
+blue = "#9bcddd"
+magenta = "#d5b6f3"
+cyan = "#b4dbcc"
+white = "#ffffff"

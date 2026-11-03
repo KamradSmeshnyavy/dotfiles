@@ -1,0 +1,17 @@
+# Nothing Ash — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#2a2a2a"]
+    searchingActiveBorderColor: ["#ff8a8a", bold]
+    optionsTextColor: ["#ffffff"]
+    selectedLineBgColor: ["#1a1a1a"]
+    inactiveViewSelectedLineBgColor: ["#0b0b0b"]
+    cherryPickedCommitFgColor: ["#e8636b"]
+    cherryPickedCommitBgColor: ["#1a1a1a"]
+    markedBaseCommitFgColor: ["#ffffff"]
+    markedBaseCommitBgColor: ["#1a1a1a"]
+    unstagedChangesColor: ["#ff4d55"]
+    defaultFgColor: ["#d6d3cf"]
+  authorColors:
+    "*": "#a3a8ad"

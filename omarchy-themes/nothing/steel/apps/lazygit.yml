@@ -1,0 +1,17 @@
+# Nothing Steel — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#262c32"]
+    searchingActiveBorderColor: ["#ff8a8a", bold]
+    optionsTextColor: ["#d2e6f6"]
+    selectedLineBgColor: ["#171b1f"]
+    inactiveViewSelectedLineBgColor: ["#0a0c0e"]
+    cherryPickedCommitFgColor: ["#b8cfe2"]
+    cherryPickedCommitBgColor: ["#171b1f"]
+    markedBaseCommitFgColor: ["#d2e6f6"]
+    markedBaseCommitBgColor: ["#171b1f"]
+    unstagedChangesColor: ["#ff4d55"]
+    defaultFgColor: ["#dde3e8"]
+  authorColors:
+    "*": "#7d9cb5"

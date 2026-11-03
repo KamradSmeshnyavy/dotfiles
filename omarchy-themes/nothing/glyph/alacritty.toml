@@ -1,0 +1,44 @@
+# Nothing Glyph White — alacritty
+[colors.primary]
+background = "#f4f4f2"
+foreground = "#111111"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#f4f4f2"
+cursor = "#1f5fa8"
+
+[colors.search.matches]
+foreground = "#f4f4f2"
+background = "#7d6200"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#111111"
+background = "#f6d4d5"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#c41e24"
+green = "#2f7a1f"
+yellow = "#7d6200"
+blue = "#1f5fa8"
+magenta = "#7a35a8"
+cyan = "#0b6e78"
+white = "#d4d4d0"
+
+[colors.bright]
+black = "#7c7c78"
+red = "#a1191e"
+green = "#276419"
+yellow = "#665000"
+blue = "#194e8a"
+magenta = "#642b8a"
+cyan = "#095a62"
+white = "#bdbdb8"

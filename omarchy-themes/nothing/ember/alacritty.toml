@@ -1,0 +1,44 @@
+# Nothing Ember — alacritty
+[colors.primary]
+background = "#0d0b09"
+foreground = "#e3d9cc"
+
+[colors.cursor]
+text = "#0d0b09"
+cursor = "#ff6b1a"
+
+[colors.vi_mode_cursor]
+text = "#0d0b09"
+cursor = "#fff4e6"
+
+[colors.search.matches]
+foreground = "#0d0b09"
+background = "#ffab78"
+
+[colors.search.focused_match]
+foreground = "#0d0b09"
+background = "#ff6b1a"
+
+[colors.selection]
+text = "#e3d9cc"
+background = "#3d2414"
+
+[colors.normal]
+black = "#332d27"
+red = "#ff4a3d"
+green = "#f0e6d8"
+yellow = "#ffc94f"
+blue = "#fff4e6"
+magenta = "#ff9450"
+cyan = "#b9a68e"
+white = "#a99d90"
+
+[colors.bright]
+black = "#766b60"
+red = "#ff7268"
+green = "#f3ece1"
+yellow = "#ffd576"
+blue = "#fff6ec"
+magenta = "#ffac76"
+cyan = "#c8baa7"
+white = "#ffffff"

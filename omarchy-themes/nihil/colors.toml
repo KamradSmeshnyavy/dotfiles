@@ -1,0 +1,39 @@
+# NIHIL — монохромная тема в духе Nothing OS (порт poligle/Nihil-Shell, MIT).
+# Иерархия строится оттенками серого на OLED-чёрном; красный (#d71921) — только для ошибок и прерываний.
+mode = "dark"
+
+accent = "#f2f2f2"
+cursor = "#f2f2f2"
+selection = "#1a1a1a"
+selection_foreground = "#ffffff"
+selection_background = "#2a2a2a"
+muted = "#7a7a7a"
+
+background = "#000000"
+dark_background = "#0e0e0e"
+darker_background = "#000000"
+lighter_background = "#1a1a1a"
+
+foreground = "#e6e6e6"
+dark_foreground = "#7a7a7a"
+light_foreground = "#a3a3a3"
+bright_foreground = "#f2f2f2"
+
+hyprland_active_border = "#7a7a7a"
+hyprland_inactive_border = "#2a2a2a"
+
+red = "#d71921"
+yellow = "#ffffff"
+orange = "#cfcfcf"
+green = "#9e9e9e"
+cyan = "#8a8a8a"
+blue = "#f2f2f2"
+magenta = "#b5b5b5"
+brown = "#6e6e6e"
+
+bright_red = "#d71921"
+bright_yellow = "#ffffff"
+bright_green = "#b5b5b5"
+bright_cyan = "#a3a3a3"
+bright_blue = "#ffffff"
+bright_magenta = "#cfcfcf"

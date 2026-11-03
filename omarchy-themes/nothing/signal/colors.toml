@@ -1,0 +1,39 @@
+# Nothing Signal — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#3a1214"
+selection_foreground = "#e8e6e3"
+selection_background = "#3a1214"
+muted = "#6e6e6e"
+
+background = "#000000"
+dark_background = "#0b0b0b"
+darker_background = "#000000"
+lighter_background = "#1a1a1a"
+
+foreground = "#e8e6e3"
+dark_foreground = "#6e6e6e"
+light_foreground = "#a3a09c"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#2a2a2a"
+
+red = "#ff5d5d"
+yellow = "#f2cc60"
+orange = "#ffa45c"
+green = "#9fd28a"
+cyan = "#8fd6d0"
+blue = "#7aa8ff"
+magenta = "#c49bff"
+brown = "#8c5a33"
+
+bright_red = "#ff8181"
+bright_yellow = "#f5d783"
+bright_green = "#b4dca4"
+bright_cyan = "#a8dfda"
+bright_blue = "#97bbff"
+bright_magenta = "#d1b1ff"

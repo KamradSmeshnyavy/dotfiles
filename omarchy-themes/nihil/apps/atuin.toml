@@ -1,0 +1,13 @@
+# Монохромная тема NIHIL для Atuin; красный (#d71921) — только для ошибок.
+[theme]
+name = "omarchy"
+
+[colors]
+AlertInfo = "#f2f2f2"
+AlertWarn = "#cfcfcf"
+AlertError = "#d71921"
+Annotation = "#a3a3a3"
+Base = "#e6e6e6"
+Guidance = "#7a7a7a"
+Important = "#ffffff"
+Title = "#f2f2f2"

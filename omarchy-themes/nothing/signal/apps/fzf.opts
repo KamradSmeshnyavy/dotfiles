@@ -1,0 +1,5 @@
+# Nothing Signal — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#000000,bg+:#1a1a1a,fg:#a3a09c,fg+:#e8e6e3
+--color=hl:#d71921,hl+:#d71921,info:#6e6e6e,prompt:#d71921
+--color=pointer:#d71921,marker:#9fd28a,spinner:#7aa8ff,header:#f2cc60
+--color=border:#2a2a2a,label:#e8e6e3,query:#e8e6e3,selected-bg:#3a1214
