@@ -143,6 +143,10 @@
     ~/.config/omarchy/hooks/theme-set:
       path: omarchy-themes/hooks/theme-set
       if: "[ `uname` = Linux ]"
+    # omarchy font set → шрифты GUI-приложений (omarchy-app-themes)
+    ~/.config/omarchy/hooks/font-set:
+      path: omarchy-themes/hooks/font-set
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/hooks/post-boot.d/darkreader-sync:
       path: omarchy-themes/hooks/post-boot.d/darkreader-sync
       if: "[ `uname` = Linux ]"

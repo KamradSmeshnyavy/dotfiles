@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""
+gtk.css для GTK4/libadwaita (CSS-переменные) или GTK3 (именованные цвета adw-gtk3) из colors.toml.
+
+Использование: omarchy-gtk-theme <каталог темы> <выходной gtk.css> [--gtk3]
+
+GTK3-вариант работает с темой adw-gtk3 (пакет adw-gtk-theme): omarchy-app-themes ставит её вместо
+Adwaita, если она установлена. Шрифт GTK — gsettings font-name (omarchy-font-profile).
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from theme_palette import Palette, hex_to_rgb  # noqa: E402
+
+
+def rgba(c, a):
+    r, g, b = (round(v * 255) for v in hex_to_rgb(c))
+    return f"rgba({r}, {g}, {b}, {a})"
+
+
+def roles(p):
+    shade = rgba("#000000", 0.36 if p.dark else 0.07)
+    return {
+        "accent_bg_color": p.accent,
+        "accent_fg_color": p.on_accent,
+        "accent_color": p.accent,
+        "destructive_bg_color": p.red,
+        "destructive_fg_color": p.text_on(p.red),
+        "destructive_color": p.red,
+        "success_bg_color": p.green,
+        "success_fg_color": p.text_on(p.green),
+        "success_color": p.green,
+        "warning_bg_color": p.yellow,
+        "warning_fg_color": p.text_on(p.yellow),
+        "warning_color": p.yellow,
+        "error_bg_color": p.red,
+        "error_fg_color": p.text_on(p.red),
+        "error_color": p.red,
+        "window_bg_color": p.bg,
+        "window_fg_color": p.fg,
+        "view_bg_color": p.bg_dark,
+        "view_fg_color": p.fg,
+        "headerbar_bg_color": p.bg_darker,
+        "headerbar_fg_color": p.fg,
+        "headerbar_border_color": p.fg,
+        "headerbar_backdrop_color": p.bg,
+        "headerbar_shade_color": shade,
+        "headerbar_darker_shade_color": shade,
+        "sidebar_bg_color": p.bg_darker,
+        "sidebar_fg_color": p.fg,
+        "sidebar_backdrop_color": p.bg_dark,
+        "sidebar_border_color": p.overlay,
+        "sidebar_shade_color": shade,
+        "secondary_sidebar_bg_color": p.bg_dark,
+        "secondary_sidebar_fg_color": p.fg,
+        "secondary_sidebar_backdrop_color": p.bg_dark,
+        "secondary_sidebar_border_color": p.overlay,
+        "secondary_sidebar_shade_color": shade,
+        "card_bg_color": p.surface,
+        "card_fg_color": p.fg,
+        "card_shade_color": shade,
+        "dialog_bg_color": p.bg_dark,
+        "dialog_fg_color": p.fg,
+        "popover_bg_color": p.bg_dark,
+        "popover_fg_color": p.fg,
+        "popover_shade_color": shade,
+        "thumbnail_bg_color": p.surface,
+        "thumbnail_fg_color": p.fg,
+        "shade_color": shade,
+        "scrollbar_outline_color": rgba("#000000", 0.5 if p.dark else 0.1),
+    }
+
+
+def css(p, gtk3):
+    r = roles(p)
+    head = "/* Сгенерировано omarchy-gtk-theme из colors.toml текущей темы Omarchy */\n"
+    defines = "".join(f"@define-color {k} {v};\n" for k, v in r.items())
+    if gtk3:
+        return head + defines
+    variables = "".join(f"  --{k.replace('_', '-')}: {v};\n" for k, v in r.items())
+    return head + ":root {\n" + variables + "}\n"
+
+
+if __name__ == "__main__":
+    args = [a for a in sys.argv[1:] if a != "--gtk3"]
+    if len(args) != 2:
+        sys.exit(__doc__)
+    Path(args[1]).write_text(css(Palette(Path(args[0])), "--gtk3" in sys.argv), encoding="utf-8")

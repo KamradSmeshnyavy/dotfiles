@@ -2,7 +2,7 @@
 
 [🇷🇺 Русский](APP-THEMING.md)
 
-`scripts/omarchy-app-themes` (run from `hooks/theme-set`) colours the apps Omarchy itself doesn't touch.
+`scripts/omarchy-app-themes` (run from `hooks/theme-set` and `hooks/font-set`) colours the apps Omarchy itself doesn't touch.
 
 ## Slots
 
@@ -46,11 +46,47 @@ the theme root — syntax `{{ accent }}`, `{{ accent_strip }}`, `{{ mix a b 30% 
 
 | template | slot | wiring |
 |---|---|---|
-| `vesktop.css.tpl` | `~/.config/vesktop/themes/omarchy.css` | enable `omarchy.css` once in Vesktop → Themes |
+| `vesktop.css.tpl` | `~/.config/vesktop/themes/omarchy.css` | the script enables `omarchy.css` + `omarchy-fonts.css` itself (see below) |
 | `mpv-osc.conf.tpl` | `~/.config/mpv/script-opts/osc.conf` | read by mpv's built-in OSC |
 | `qt6ct-colors.conf.tpl` | `~/.config/qt6ct/colors/omarchy.conf` | needs the `qt6ct` package: then the script writes `qt6ct.conf` (Fusion + theme icons) and `env.lua` sets `QT_QPA_PLATFORMTHEME=qt6ct` |
 
 A template lands in the theme only on `omarchy theme set` (`just theme <name>`), not on `just app-themes`.
+
+## GUI apps: generators
+
+A theme may ship its own hand-made `apps/<file>`; otherwise the script builds it from `colors.toml` into
+`~/.local/state/omarchy/app-themes/generated-<file>`. All generators share colour roles (background, surface,
+selection, accent…) from `scripts/theme_palette.py`. Fonts come from fontconfig (`sans-serif`, `monospace`), so the
+script also runs after `omarchy font set` (hook `hooks/font-set`) and `omarchy-font-profile`.
+
+| theme file | generator | target | visible |
+|---|---|---|---|
+| `gtk4.css` | `omarchy-gtk-theme` | `~/.config/gtk-4.0/gtk.css` (libadwaita variables) | new GTK4 windows (Nautilus, portals) |
+| `gtk3.css` | `omarchy-gtk-theme --gtk3` | `~/.config/gtk-3.0/gtk.css` (`@define-color`) | new windows; needs the `adw-gtk3` theme (package `adw-gtk-theme`), which the script selects instead of Adwaita |
+| `ghidra.theme` | `omarchy-ghidra-theme` | `~/.config/ghidra/ghidra_*/themes/omarchy.theme` + `Theme=` in `preferences` | next Ghidra start; `preferences` is left alone while Ghidra runs |
+| `telegram.tdesktop-theme` | `omarchy-telegram-theme` | `~/.local/state/omarchy/app-themes/omarchy.tdesktop-theme` | immediately, after one manual apply (below) |
+
+Ghidra: FlatLaf colours (`[laf.color]Panel.background` etc. — `system.color.bg.control` does not paint panels),
+listing, decompiler, bookmarks; `font.standard` / `font.monospaced` use the system fonts at size 13.
+
+**Telegram** keeps the theme internally but watches the applied theme file (`QFileSystemWatcher`) and reloads it.
+So apply it once: `omarchy-app-themes telegram` opens Telegram's "Forward to…" with the file → send it to Saved
+Messages → click the file → Apply. After that the file is updated in place on every theme change.
+Telegram 7 opens a `.tdesktop-theme` passed on the command line as "Forward to…", not as a preview.
+Palette keys live in `scripts/data/telegram-palette.tsv` (from lib_ui; refresh with
+`omarchy-telegram-theme --update-palette`): greys of the default light theme map onto the background…text ramp,
+colours onto the nearest theme colour by hue, outgoing messages onto the accent. Media viewer and calls
+(dark by design) are left alone.
+
+**Vesktop**: the script writes `omarchy-fonts.css` (system fonts); `enabledThemes` = `omarchy.css` +
+`omarchy-fonts.css` is set only while Vesktop is closed. Vencord misses content changes behind a symlink, so the
+script runs `touch -h` on the link and the theme changes without a restart. Stock `discord` takes no CSS.
+
+**Qt**: `qt6ct.conf` gets fonts too (`[Fonts]`). Needs the `qt6ct` package and a re-login. Telegram is Qt but draws
+itself.
+
+Not recoloured: Signal and Bitwarden (light/dark only — they follow `color-scheme`), Spotify (spicetify only),
+LibreOffice/OnlyOffice (partly, via GTK3).
 
 ## Cursor
 

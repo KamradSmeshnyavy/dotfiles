@@ -40,3 +40,6 @@ zsh
 otf-geist-mono-nerd
 ttf-terminus-nerd
 ttf-nerd-fonts-symbols
+# GUI-приложения в цветах темы (omarchy-app-themes): GTK3 через adw-gtk3, Qt через qt6ct
+adw-gtk-theme
+qt6ct

@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""
+Тема Ghidra (.theme) из colors.toml темы Omarchy и текущих шрифтов (fonts.json / fontconfig).
+
+Использование: omarchy-ghidra-theme <каталог темы> <выходной .theme>
+
+Ключи — те же, что меняют готовые темы Ghidra: системные цвета FlatLaf, листинг, декомпилятор,
+закладки, обзор; плюс font.standard / font.monospaced.
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from theme_palette import Palette, fonts, mix  # noqa: E402
+
+
+def theme(p, f):
+    comment = p.muted
+    c = {
+        # окно и компоненты FlatLaf
+        "[color]system.color.bg.control": p.bg_dark,
+        "[color]system.color.bg.view": p.bg,
+        "[color]system.color.bg.selected.view": p.selection,
+        "[color]system.color.fg.view": p.fg,
+        "[color]system.color.fg.selected.view": p.selection_fg,
+        "[color]system.color.bg.tooltip": p.surface,
+        "[laf.color]Table.selectionInactiveBackground": mix(p.selection, p.bg, 0.4),
+        # панели FlatLaf не берут system.color.bg.control — свои ключи
+        "[laf.color]Panel.background": p.bg_dark,
+        "[laf.color]OptionPane.background": p.bg_dark,
+        "[laf.color]ToolBar.background": p.bg_dark,
+        "[laf.color]MenuBar.background": p.bg_darker,
+        "[laf.color]PopupMenu.background": p.bg_dark,
+        "[laf.color]Menu.background": p.bg_dark,
+        "[laf.color]MenuItem.background": p.bg_dark,
+        "[laf.color]MenuItem.selectionBackground": p.selection,
+        "[laf.color]Menu.selectionBackground": p.selection,
+        "[laf.color]TabbedPane.background": p.bg_dark,
+        "[laf.color]TabbedPane.hoverColor": p.surface,
+        "[laf.color]TabbedPane.focusColor": p.surface,
+        "[laf.color]SplitPane.background": p.bg_dark,
+        "[laf.color]ScrollBar.track": p.bg_dark,
+        "[laf.color]ScrollBar.thumb": p.overlay,
+        "[laf.color]TableHeader.background": p.surface,
+        "[laf.color]Button.background": p.surface,
+        "[laf.color]Button.hoverBackground": p.overlay,
+        "[laf.color]ComboBox.buttonBackground": p.surface,
+        "[laf.color]Component.borderColor": p.overlay,
+        "[laf.color]Separator.foreground": p.overlay,
+        "[laf.color]TitledBorder.titleColor": p.fg_muted,
+        "[laf.color]Label.foreground": p.fg,
+        "[laf.color]Component.focusedBorderColor": p.accent,
+        "[laf.color]TabbedPane.underlineColor": p.accent,
+        "[laf.color]ProgressBar.foreground": p.accent,
+        "[laf.color]Button.default.background": p.accent,
+        "[laf.color]Button.default.foreground": p.on_accent,
+        "color.bg": p.bg,
+        "color.fg": p.fg,
+        "color.bg.tree": p.bg,
+        "color.bg.filterfield": p.surface,
+        "color.fg.filterfield": p.fg,
+        "color.bg.header.active": p.accent,
+        "color.fg.header.active": p.on_accent,
+        "color.bg.header.inactive": p.surface,
+        "color.fg.header.inactive": p.fg_muted,
+        "color.bg.selection": p.selection,
+        "color.bg.highlight": p.overlay,
+        "color.bg.currentline": p.surface,
+        "color.bg.undefined": p.surface,
+        "color.fg.consoletextpane": p.fg,
+        "color.fg.interpreterconsole.error": p.red,
+        # листинг
+        "color.bg.listing.highlighter.default": p.tint(p.yellow, 0.3),
+        "color.fg.listing.address": p.fg_muted,
+        "color.fg.listing.bytes": p.cyan,
+        "color.fg.listing.mnemonic": p.accent,
+        "color.fg.listing.mnemonic.override": p.orange,
+        "color.fg.listing.register": p.magenta,
+        "color.fg.listing.constant": p.yellow,
+        "color.fg.listing.label.primary": p.blue,
+        "color.fg.listing.label.local": p.green,
+        "color.fg.listing.function.name": p.blue,
+        "color.fg.listing.function.tag": p.cyan,
+        "color.fg.listing.function.variable": p.fg_dim,
+        "color.fg.listing.function.param.dynamic": p.fg_dim,
+        "color.fg.listing.block.start": p.accent,
+        "color.fg.listing.xref": p.green,
+        "color.fg.listing.xref.read": p.cyan,
+        "color.fg.listing.xref.write": p.orange,
+        "color.fg.listing.ext.entrypoint": p.magenta,
+        "color.fg.listing.ext.ref.resolved": p.cyan,
+        "color.fg.listing.ext.ref.unresolved": p.red,
+        "color.fg.listing.flow.arrow.active": p.accent,
+        "color.fg.listing.flow.arrow.inactive": p.muted,
+        "color.fg.listing.flow.arrow.selected": p.fg_bright,
+        "color.fg.listing.underline": p.accent,
+        # декомпилятор
+        "color.bg.decompiler.current.variable": p.tint(p.accent, 0.25),
+        "color.bg.decompiler.highlights.default": p.tint(p.yellow, 0.3),
+        "color.fg.decompiler.keyword": p.accent,
+        "color.fg.decompiler.function.name": p.blue,
+        "color.fg.decompiler.type": p.cyan,
+        "color.fg.decompiler.variable": p.fg,
+        "color.fg.decompiler.parameter": p.magenta,
+        "color.fg.decompiler.global": p.orange,
+        "color.fg.decompiler.constant": p.yellow,
+        "color.fg.decompiler.comment": comment,
+        # закладки и полоса обзора
+        "color.bg.plugin.bookmark.analysis": p.muted,
+        "color.bg.plugin.bookmark.default": p.fg_dim,
+        "color.bg.plugin.bookmark.error": p.red,
+        "color.bg.plugin.bookmark.info": p.cyan,
+        "color.bg.plugin.bookmark.note": p.green,
+        "color.bg.plugin.bookmark.warning": p.yellow,
+        "color.bg.plugin.overview.address.data": p.cyan,
+        "color.bg.plugin.overview.address.external.ref": p.magenta,
+        "color.bg.plugin.overview.address.function": p.accent,
+        "color.bg.plugin.overview.address.instruction": p.blue,
+        "color.bg.plugin.overview.address.undefined": p.surface,
+        "color.bg.plugin.overview.address.uninitialized": p.muted,
+    }
+    for kind in ("auto", "eol", "plate", "post", "pre", "repeatable", "ref.repeatable"):
+        c[f"color.fg.listing.comment.{kind}"] = comment
+
+    laf = "Flat Dark" if p.dark else "Flat Light"
+    # без комментариев: файл читает импорт тем Ghidra, первая строка — name
+    lines = [
+        "name = Omarchy",
+        f"lookAndFeel = {laf}",
+        f"useDarkDefaults = {'true' if p.dark else 'false'}",
+    ]
+    lines += [f"{k} = {v}" for k, v in sorted(c.items())]
+    size = f["size"] + 2  # Ghidra считает кегль в пикселях Java — 11pt выглядит мелко
+    lines += [
+        f"font.standard = {f['sans']}-PLAIN-{size}",
+        f"font.monospaced = {f['mono']}-PLAIN-{size}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    Path(sys.argv[2]).write_text(theme(Palette(Path(sys.argv[1])), fonts()), encoding="utf-8")

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Темы CLI/TUI-приложений, которые Omarchy сам не перекрашивает.
+# Темы CLI/TUI- и GUI-приложений, которые Omarchy сам не перекрашивает.
+# `omarchy-app-themes telegram` — один раз отправить тему Omarchy в Telegram (см. apply_telegram).
 # Каждый слот — симлинк на apps/<файл> текущей темы, а если его нет — на сгенерированный файл
 # (yatline.lua из colors.toml) или на app-defaults/<файл>.
 # apps/env (KEY=VALUE, {theme} → путь к текущей теме) превращается в app-theme.zsh и app-theme.json (nushell).
@@ -38,14 +39,15 @@ declare -A TEMPLATED=(
 # Слоты, которые для темы без своего файла генерируются из её colors.toml
 declare -A GENERATED=()
 
-# generate_one <файл в apps/> <генератор>: только если у темы нет своего файла
+# generate_one <файл в apps/> <генератор> [аргументы]: только если у темы нет своего файла
 generate_one() {
   local name=$1 generator=$2 out tmp
+  shift 2
   [[ -e $THEME/apps/$name || ! -f $THEME/colors.toml ]] && return
   out=$STATE/app-themes/generated-$name
   mkdir -p "$STATE/app-themes"
   tmp=$(mktemp "$STATE/app-themes/.$name.XXXXXX") || return
-  if "$SCRIPTS/$generator" "$THEME" "$tmp"; then
+  if "$SCRIPTS/$generator" "$THEME" "$tmp" "$@"; then
     mv -f "$tmp" "$out"
     GENERATED[$name]=$out
   else
@@ -56,6 +58,25 @@ generate_one() {
 generate() {
   generate_one yatline.lua omarchy-yatline-theme
   generate_one fzf.opts omarchy-fzf-theme
+  # GUI-приложения (применяются в apply_gui ниже)
+  generate_one gtk4.css omarchy-gtk-theme
+  generate_one gtk3.css omarchy-gtk-theme --gtk3
+  generate_one ghidra.theme omarchy-ghidra-theme
+  generate_one telegram.tdesktop-theme omarchy-telegram-theme
+}
+
+# source_of <файл в apps/>: свой файл темы или сгенерированный (пусто, если нет ни того, ни другого)
+source_of() {
+  if [[ -e $THEME/apps/$1 ]]; then
+    echo "$THEME/apps/$1"
+  else
+    echo "${GENERATED[$1]:-}"
+  fi
+}
+
+# font_family sans-serif|monospace — текущий шрифт из fontconfig
+font_family() {
+  fc-match "$1" -f '%{family}' 2>/dev/null | cut -d, -f1
 }
 
 # link_slot <слот> <источник>
@@ -127,7 +148,108 @@ write_qt6ct() {
     echo "custom_palette=true"
     echo "style=Fusion"
     [[ -n $icons ]] && echo "icon_theme=$icons"
+    echo
+    echo "[Fonts]"
+    # формат QFont::toString (Qt 6): семейство, кегль, -1, styleHint, вес 400, …
+    echo "general=\"$(font_family sans-serif),11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1\""
+    echo "fixed=\"$(font_family monospace),11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1\""
   } >"$conf"
+}
+
+# GTK3/GTK4: gtk.css со цветами темы. GTK3 перекрашивается только темой adw-gtk3 (adw-gtk-theme) —
+# она ставится вместо Adwaita, которую выбрал omarchy-theme-set-gnome. Видно в новых окнах.
+apply_gtk() {
+  local src mode=dark
+  grep -qE '^mode *= *"light"' "$THEME/colors.toml" 2>/dev/null && mode=light
+  src=$(source_of gtk4.css)
+  [[ -n $src ]] && link_slot "$HOME/.config/gtk-4.0/gtk.css" "$src"
+  src=$(source_of gtk3.css)
+  [[ -n $src ]] && link_slot "$HOME/.config/gtk-3.0/gtk.css" "$src"
+  if [[ -d /usr/share/themes/adw-gtk3-dark ]]; then
+    local name=adw-gtk3-dark
+    [[ $mode == light ]] && name=adw-gtk3
+    gsettings set org.gnome.desktop.interface gtk-theme "$name" 2>/dev/null || true
+  fi
+}
+
+# Ghidra: themes/omarchy.theme в каждой версии конфига + Theme= в preferences. Ghidra читает файл
+# темы при запуске; пока она запущена, preferences не трогаем (перезапишет при выходе).
+apply_ghidra() {
+  local src dir prefs tmp
+  src=$(source_of ghidra.theme)
+  [[ -n $src ]] || return 0
+  for dir in "$HOME"/.config/ghidra/ghidra_*/; do
+    [[ -d $dir ]] || continue
+    dir=${dir%/}
+    link_slot "$dir/themes/omarchy.theme" "$src"
+    prefs=$dir/preferences
+    [[ -f $prefs ]] || continue
+    grep -qxF "Theme=File\\:$dir/themes/omarchy.theme" "$prefs" && continue
+    if pgrep -f 'ghidra\.Ghidra' >/dev/null; then
+      echo "omarchy-app-themes: Ghidra запущена — тема Omarchy выберется после её закрытия и новой смены темы" >&2
+      continue
+    fi
+    tmp=$(mktemp "$dir/.preferences.XXXXXX") || continue
+    { grep -v '^Theme=' "$prefs"; printf 'Theme=File\\:%s\n' "$dir/themes/omarchy.theme"; } >"$tmp"
+    mv -f "$tmp" "$prefs"
+  done
+}
+
+# Telegram: тема — постоянный файл omarchy.tdesktop-theme, обновляется на месте (cp, тот же inode).
+# Применённую из файла тему Telegram отслеживает (QFileSystemWatcher) и перечитывает сам, поэтому
+# применить нужно один раз: `omarchy-app-themes telegram` открывает «Переслать…» с этим файлом —
+# отправить в «Избранное», нажать на файл → «Применить».
+apply_telegram() {
+  local src dest=$STATE/app-themes/omarchy.tdesktop-theme
+  src=$(source_of telegram.tdesktop-theme)
+  [[ -n $src ]] || return 0
+  cmp -s "$src" "$dest" || cp -f "$src" "$dest"
+  if [[ ${1:-} == open ]]; then
+    command -v Telegram >/dev/null || { echo "omarchy-app-themes: Telegram не установлен" >&2; return 1; }
+    setsid -f Telegram -- "$dest" >/dev/null 2>&1 </dev/null
+  fi
+}
+
+# Vesktop (Vencord): omarchy.css (цвета, шаблон themed/vesktop.css.tpl) + omarchy-fonts.css (шрифты).
+# Список включённых тем пишется, только когда Vesktop закрыт (иначе он перезапишет его при выходе).
+apply_vesktop() {
+  local dir=$HOME/.config/vesktop settings tmp
+  [[ -d $dir ]] || return 0
+  mkdir -p "$dir/themes"
+  tmp=$(mktemp "$dir/themes/.fonts.XXXXXX") || return 0
+  cat >"$tmp" <<CSS
+/**
+ * @name Omarchy fonts
+ * @description Шрифты системы (fontconfig), пишет omarchy-app-themes
+ * @author omarchy-app-themes
+ * @version 1.0.0
+ */
+:root {
+  --font-primary: "$(font_family sans-serif)", sans-serif;
+  --font-display: "$(font_family sans-serif)", sans-serif;
+  --font-headline: "$(font_family sans-serif)", sans-serif;
+  --font-code: "$(font_family monospace)", monospace;
+}
+CSS
+  chmod 644 "$tmp"
+  mv -f "$tmp" "$dir/themes/omarchy-fonts.css"
+  # omarchy.css — симлинк на файл темы: Vencord следит за каталогом и смену содержимого за ссылкой
+  # не видит, а изменение самой ссылки — видит (перекрашивает без перезапуска)
+  [[ -L $dir/themes/omarchy.css ]] && touch -h "$dir/themes/omarchy.css"
+
+  settings=$dir/settings/settings.json
+  [[ -f $settings ]] || return 0
+  jq -e '.enabledThemes == ["omarchy.css", "omarchy-fonts.css"]' "$settings" >/dev/null 2>&1 && return 0
+  if pgrep -x vesktop >/dev/null; then
+    echo "omarchy-app-themes: Vesktop запущен — включите omarchy.css и omarchy-fonts.css в Settings → Themes" >&2
+    return 0
+  fi
+  tmp=$(mktemp "$dir/settings/.settings.XXXXXX") || return 0
+  if jq '.enabledThemes = ["omarchy.css", "omarchy-fonts.css"]' "$settings" >"$tmp"; then
+    mv -f "$tmp" "$settings"
+  else
+    mv -f "$tmp" "$tmp.failed"
+  fi
 }
 
 write_env() {
@@ -167,8 +289,16 @@ reload_tmux() {
 }
 
 generate
+if [[ ${1:-} == telegram ]]; then
+  apply_telegram open
+  exit
+fi
 link_slots
 apply_cursor
 write_qt6ct
+apply_gtk
+apply_ghidra
+apply_telegram
+apply_vesktop
 write_env
 reload_tmux

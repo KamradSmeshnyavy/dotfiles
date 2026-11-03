@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""
+Тема Telegram Desktop (.tdesktop-theme) из colors.toml темы Omarchy.
+
+Использование:
+  omarchy-telegram-theme <каталог темы> <выходной .tdesktop-theme>
+  omarchy-telegram-theme --update-palette   # перекачать список ключей из lib_ui
+
+Все ключи палитры с собственным значением (data/telegram-palette.tsv) пересчитываются: серые светлой
+темы по умолчанию — на шкалу фон…текст темы, цветные — на ближайший по оттенку цвет темы (исходящие
+сообщения — на акцент), основные ключи заданы явно. Ключи-ссылки Telegram выводит сам.
+Окна, тёмные по замыслу (просмотр медиа, звонки, тосты), не трогаются.
+"""
+import io
+import struct
+import sys
+import urllib.request
+import zipfile
+import zlib
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from theme_palette import Palette, hls, mix  # noqa: E402
+
+DATA = Path(__file__).resolve().parent / "data" / "telegram-palette.tsv"
+SOURCE = "https://raw.githubusercontent.com/desktop-app/lib_ui/master/ui/colors.palette"
+KEEP = ("mediaview", "call", "groupCall", "toast", "videoPlay")
+
+
+def update_palette():
+    import re
+
+    with urllib.request.urlopen(SOURCE, timeout=30) as r:
+        text = r.read().decode()
+    rows = re.findall(r"^([A-Za-z0-9]+):\s*([#A-Za-z0-9]+)", text, re.M)
+    if len(rows) < 300:
+        sys.exit(f"omarchy-telegram-theme: в {SOURCE} нашлось только {len(rows)} ключей")
+    header = (
+        "# Ключи палитры Telegram Desktop и значения по умолчанию (светлая тема).\n"
+        f"# Источник: {SOURCE} — обновить: omarchy-telegram-theme --update-palette\n"
+    )
+    DATA.write_text(header + "".join(f"{k}\t{v}\n" for k, v in rows), encoding="utf-8")
+    print(f"{DATA}: {len(rows)} ключей")
+
+
+def defaults():
+    for line in DATA.read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith("#"):
+            key, value = line.split("\t")
+            yield key, value
+
+
+def split_alpha(v):
+    v = v.lstrip("#")
+    return "#" + v[:6], (v[6:8] if len(v) == 8 else "")
+
+
+def remap(p, key, value):
+    base, alpha = split_alpha(value)
+    if alpha:
+        # полупрозрачные: тени и затемнения (чёрный/белый) оставить, цветные — перекрасить
+        h, l, s = hls(base)
+        if s < 0.15:
+            return value
+        return p.by_hue(base) + alpha
+    h, l, s = hls(base)
+    out_family = key.startswith(("msgOut", "historyOut", "historySendingOut"))
+    if s < 0.15 or (l > 0.95 and s < 0.5):
+        return p.gray(l)
+    target = p.accent if out_family else p.by_hue(base)
+    if l > 0.88:  # бледная подложка (наведение, выделение)
+        return p.tint(target, 0.14)
+    if l > 0.75:
+        return p.tint(target, 0.32)
+    return target
+
+
+def palette(p):
+    out_bg = p.tint(p.accent, 0.22 if p.dark else 0.12)
+    return {
+        "windowBg": p.bg,
+        "windowFg": p.fg,
+        "windowBgOver": p.surface,
+        "windowBgRipple": p.overlay,
+        "windowSubTextFg": p.fg_muted,
+        "windowSubTextFgOver": p.fg_dim,
+        "windowBoldFg": p.fg_bright,
+        "windowBoldFgOver": p.fg_bright,
+        "windowBgActive": p.accent,
+        "windowFgActive": p.on_accent,
+        "windowActiveTextFg": p.accent,
+        "windowShadowFgFallback": p.surface,
+        "activeButtonBg": p.accent,
+        "activeButtonBgOver": mix(p.accent, p.fg_bright, 0.12),
+        "activeButtonBgRipple": mix(p.accent, p.bg, 0.2),
+        "activeButtonSecondaryFg": mix(p.on_accent, p.accent, 0.25),
+        "activeLineFg": p.accent,
+        "activeLineFgError": p.red,
+        "lightButtonBgOver": p.tint(p.accent, 0.12),
+        "lightButtonBgRipple": p.tint(p.accent, 0.22),
+        "attentionButtonFg": p.red,
+        "attentionButtonFgOver": p.red,
+        "attentionButtonBgOver": p.tint(p.red, 0.14),
+        "attentionButtonBgRipple": p.tint(p.red, 0.24),
+        "menuIconFg": p.fg_muted,
+        "menuIconFgOver": p.fg_dim,
+        "menuSeparatorFg": p.overlay,
+        "menuFgDisabled": p.muted,
+        "filterInputBorderFg": p.accent,
+        "titleBg": p.bg_darker,
+        "titleBgActive": p.bg_darker,
+        "titleFg": p.fg_muted,
+        "titleFgActive": p.fg,
+        "dialogsBgActive": p.accent,
+        "sideBarBg": p.bg_darker,
+        "sideBarBgActive": p.surface,
+        "sideBarBgRipple": p.overlay,
+        "sideBarTextFg": p.fg_muted,
+        "sideBarTextFgActive": p.accent,
+        "sideBarIconFg": p.fg_muted,
+        "sideBarIconFgActive": p.accent,
+        "sideBarBadgeBg": p.accent,
+        "sideBarBadgeFg": p.on_accent,
+        "msgInBg": p.surface,
+        "msgInBgSelected": p.selection,
+        "msgOutBg": out_bg,
+        "msgOutBgSelected": mix(out_bg, p.selection, 0.5),
+        "msgInDateFg": p.fg_muted,
+        "msgOutDateFg": mix(p.fg_muted, p.accent, 0.4),
+        "msgServiceFg": p.fg_bright,
+        "historyOutIconFg": p.accent,
+        "historyTextInFg": p.fg,
+        "historyTextOutFg": p.fg,
+        "historyComposeAreaBg": p.bg_dark,
+        "historyUnreadBarBg": p.surface,
+        "historyUnreadBarFg": p.accent,
+        "scrollBg": p.overlay + "53",
+        "scrollBgOver": p.overlay + "7a",
+        "scrollBarBg": p.muted + "7a",
+        "scrollBarBgOver": p.fg_muted + "7a",
+        "checkboxFg": p.muted,
+    }
+
+
+def tiled_png(color, size=16):
+    """Однотонный PNG size×size — фон чата (tiled.png)."""
+    rgb = bytes(int(color[i : i + 2], 16) for i in (1, 3, 5))
+    raw = b"".join(b"\x00" + rgb * size for _ in range(size))
+
+    def chunk(tag, data):
+        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data))
+
+    ihdr = struct.pack(">IIBBBBB", size, size, 8, 2, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
+
+
+def build(theme_dir, out):
+    p = Palette(theme_dir)
+    explicit = palette(p)
+    lines = ["// Сгенерировано omarchy-telegram-theme из colors.toml текущей темы Omarchy"]
+    for key, value in defaults():
+        if key in explicit:
+            lines.append(f"{key}: {explicit.pop(key)};")
+        elif value.startswith("#") and not key.startswith(KEEP):
+            lines.append(f"{key}: {remap(p, key, value)};")
+    # явные ключи, которых нет в списке по умолчанию (переименованы в новых версиях) — не пишем
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("colors.tdesktop-theme", "\n".join(lines) + "\n")
+        z.writestr("tiled.png", tiled_png(p.bg))
+    Path(out).write_bytes(buf.getvalue())
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] == ["--update-palette"]:
+        update_palette()
+    elif len(sys.argv) == 3:
+        build(Path(sys.argv[1]), sys.argv[2])
+    else:
+        sys.exit(__doc__)

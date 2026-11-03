@@ -61,6 +61,16 @@
   --brand-500: {{ accent }};
   --brand-560: {{ accent }};
   --brand-experiment: {{ accent }};
+  --brand-260: {{ mix accent foreground 40% }};
+  --brand-360: {{ mix accent foreground 20% }};
+  --brand-400: {{ accent }};
+  --brand-430: {{ accent }};
+  --brand-460: {{ accent }};
+  --brand-530: {{ accent }};
+  --brand-600: {{ mix accent background 20% }};
+  --bg-brand: {{ accent }};
+  --control-brand-foreground: {{ accent }};
+  --control-brand-foreground-new: {{ accent }};
   --button-filled-brand-background: {{ accent }};
   --button-filled-brand-text: {{ background }};
   --text-brand: {{ accent }};
@@ -75,4 +85,10 @@
   --scrollbar-thin-thumb: {{ selection }};
   --scrollbar-auto-thumb: {{ selection }};
   --scrollbar-auto-track: {{ dark_background }};
+}
+
+/* Кнопка «Домой» на панели серверов красится не переменной, а своим классом */
+[data-list-item-id="guildsnav___home"] [class*="childWrapper"] {
+  background-color: {{ accent }} !important;
+  color: {{ background }} !important;
 }

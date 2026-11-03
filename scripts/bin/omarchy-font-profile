@@ -267,6 +267,8 @@ apply() {
   kitty_variants "$profile"
   ghostty_features "$profile"
   set_mono "$mono"
+  # Qt (qt6ct), Ghidra, Vesktop берут шрифты из fontconfig — после set_mono
+  "$THEMES/omarchy-app-themes" >/dev/null 2>&1 || true
   notify "Font profile: $profile"
 }
 

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# omarchy font set → шрифты GUI-приложений (Qt, Ghidra, Vesktop) из fontconfig
+~/dotfiles/omarchy-themes/scripts/omarchy-app-themes >/dev/null 2>&1 || true
