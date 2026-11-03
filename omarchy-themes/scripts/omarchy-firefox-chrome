@@ -1,0 +1,202 @@
+#!/usr/bin/python3 -I
+"""
+Интерфейс Firefox (userChrome / userContent) в цветах текущей темы Omarchy.
+
+В профиле Firefox (по умолчанию из profiles.ini) поддерживается каталог chrome/:
+  userChrome.css, userContent.css, userColors.css → apps/browser/configs/firefox/chrome/ (симлинки);
+  omarchy/colors.css  — переменные --om-* из colors.toml темы и шрифты профиля;
+  omarchy/style.css   — @import вида: stock.css (профиль шрифтов stock — прежний вид)
+                        или nihil.css (nothing / dot / pixel — в стиле Nothing / Nihil);
+  omarchy/content.css — страницы about: (при nihil заголовки набраны Nihil Dot);
+  omarchy/{base,stock,nihil}.css → файлы вида в dotfiles (симлинки).
+
+Chrome-CSS Firefox читает только при запуске: новая тема видна после перезапуска
+(omarchy-darkreader показывает уведомление «Перезапустить»). Писать можно и при открытом
+Firefox — файлы он держит не открытыми.
+
+Использование:
+  omarchy-firefox-chrome          # из хука theme-set и omarchy-font-profile
+  omarchy-firefox-chrome colors   # напечатать colors.css
+"""
+import configparser
+import json
+import os
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+HOME = Path.home()
+THEME = HOME / ".local/state/omarchy/current/theme/colors.toml"
+FONTS_JSON = HOME / ".config/omarchy/fonts.json"
+FIREFOX_ROOT = HOME / ".config/mozilla/firefox"
+SRC = Path(__file__).resolve().parents[2] / "apps/browser/configs/firefox/chrome"
+
+
+def firefox_profile():
+    ini = configparser.ConfigParser()
+    if not ini.read(FIREFOX_ROOT / "profiles.ini"):
+        return None
+    for sec in ini.sections():
+        if sec.startswith("Install") and ini[sec].get("Default"):
+            return FIREFOX_ROOT / ini[sec]["Default"]
+    return None
+
+
+def hex_rgb(value):
+    h = value.strip().lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def mix(a, b, amount):
+    ra, rb = hex_rgb(a), hex_rgb(b)
+    return "#" + "".join(f"{round(x * (1 - amount) + y * amount):02x}" for x, y in zip(ra, rb))
+
+
+def colors():
+    with open(THEME, "rb") as f:
+        data = tomllib.load(f)
+    col = data.get("colors", data)
+
+    def pick(*keys, default):
+        for k in keys:
+            v = col.get(k)
+            if isinstance(v, str) and v.startswith("#") and len(v) == 7:
+                return v.lower()
+        return default
+
+    bg = pick("background", default="#1e1e2e")
+    fg = pick("foreground", default="#cdd6f4")
+    accent = pick("accent", "blue", "color4", default=fg)
+    return {
+        "bg": bg,
+        "fg": fg,
+        "accent": accent,
+        "muted": pick("muted", "dark_foreground", "color8", default=mix(bg, fg, 0.55)),
+        "dim": mix(bg, fg, 0.72),
+        "surface": pick("lighter_background", default=mix(bg, fg, 0.06)),
+        "surface-hi": pick("selection", "selection_background", default=mix(bg, fg, 0.16)),
+        "deep": pick("dark_background", default=mix(bg, "#000000", 0.2)),
+        "line": mix(bg, fg, 0.16),
+        "line-soft": mix(bg, fg, 0.09),
+        "on-accent": bg,
+        "urgent": pick("urgent", "red", "color1", default=accent),
+        "red": pick("red", "color1", default=accent),
+        "yellow": pick("yellow", "color3", default=accent),
+        "green": pick("green", "color2", default=accent),
+        "blue": pick("blue", "color4", default=accent),
+        "magenta": pick("magenta", "color5", default=accent),
+        "cyan": pick("cyan", "color6", default=accent),
+        "light": str(data.get("mode", col.get("mode", ""))).lower() == "light",
+    }
+
+
+def fonts():
+    try:
+        cfg = json.loads(FONTS_JSON.read_text())
+    except (OSError, ValueError):
+        cfg = {}
+    profile = cfg.get("profile") or "stock"
+    sans = cfg.get("sans") or "Maple Mono NF CN"
+    mono = cfg.get("mono") or "Maple Mono NF CN"
+    return profile, sans, mono
+
+
+def colors_css():
+    c = colors()
+    profile, sans, mono = fonts()
+    lines = ["/* omarchy-firefox-chrome: цвета темы и шрифты профиля. Файл генерируется. */",
+             "*|*:root {"]
+    lines += [f"  --om-{k}: {v};" for k, v in c.items() if k != "light"]
+    lines += [f'  --om-font-sans: "{sans}", sans-serif;',
+              f'  --om-font-mono: "{mono}", monospace;',
+              '  --om-font-dot: "Nihil Dot", "Doto", monospace;',
+              f"  --om-scheme: {'light' if c['light'] else 'dark'};",
+              "}"]
+    return "\n".join(lines) + "\n", profile
+
+
+# Страницы about: в стиле Nihil: заголовки точками, поиск — моно-шрифтом, прямые углы.
+NIHIL_CONTENT = """/* omarchy-firefox-chrome: страницы about: в стиле Nihil. */
+@-moz-document url("about:newtab"), url("about:home"), url-prefix("about:preferences"), url-prefix("about:addons") {
+  h1, h2, .main-heading, .section-title, .wordmark-text {
+    font-family: var(--om-font-dot) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .search-wrapper input, .search-handoff-button {
+    font-family: var(--om-font-mono) !important;
+    border-radius: 0 !important;
+  }
+  .top-site-outer .tile, .top-site-outer .top-site-icon, .card-outer, button, input, select {
+    border-radius: 0 !important;
+  }
+}
+"""
+
+
+def committed(source):
+    """Версия файла в git HEAD: старые копии в профиле совпадают с ней, а не с правленым файлом."""
+    import subprocess
+    root = source.parents[5]
+    r = subprocess.run(["git", "-C", str(root), "show", f"HEAD:{source.relative_to(root)}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def link(target, source):
+    """target → source; существующий обычный файл заменяется, только если совпадает с source."""
+    if target.is_symlink() and os.path.realpath(target) == str(source):
+        return
+    if target.exists() and not target.is_symlink() and target.read_bytes() not in (source.read_bytes(), committed(source)):
+        print(f"{target}: свой файл, не заменяю", file=sys.stderr)
+        return
+    tmp = target.with_name(f"{target.name}.{os.getpid()}.{time.time_ns()}.tmp")
+    tmp.symlink_to(source)
+    os.replace(tmp, target)
+
+
+def write(path, text):
+    if path.is_file() and not path.is_symlink() and path.read_text() == text:
+        return
+    tmp = path.with_name(path.name + ".omarchy-tmp")
+    tmp.write_text(text)
+    os.replace(tmp, path)
+
+
+def sync():
+    profile = firefox_profile()
+    if not profile or not profile.is_dir():
+        return
+    chrome = profile / "chrome"
+    out = chrome / "omarchy"
+    out.mkdir(parents=True, exist_ok=True)
+    for name in ("userChrome.css", "userContent.css", "userColors.css"):
+        link(chrome / name, SRC / name)
+    for name in ("base.css", "stock.css", "nihil.css"):
+        link(out / name, SRC / name)
+    css, font_profile = colors_css()
+    write(out / "colors.css", css)
+    style = "stock.css" if font_profile == "stock" else "nihil.css"
+    write(out / "style.css", f'/* omarchy-firefox-chrome: вид по профилю шрифтов ({font_profile}). */\n'
+                             f'@import "{style}";\n')
+    content = "/* omarchy-firefox-chrome: профиль шрифтов stock — без своих правил. */\n"
+    if style == "nihil.css":
+        content = NIHIL_CONTENT
+    write(out / "content.css", content)
+
+
+def main(argv):
+    cmd = argv[1] if len(argv) > 1 else "sync"
+    if cmd == "sync":
+        sync()
+    elif cmd == "colors":
+        print(colors_css()[0], end="")
+    else:
+        print(__doc__.strip(), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

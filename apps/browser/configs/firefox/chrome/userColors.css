@@ -1,21 +1,23 @@
+/* Цвета страниц about: (новая вкладка, режим чтения) — из темы Omarchy (--om-* в
+   omarchy/colors.css). Светлый и тёмный наборы одинаковы: светлая ли страница, решает тема. */
 :root {
-	--dark_color1: #30333d;
-	--dark_color2: #292b34;
-	--dark_color3: #585e74;
-	--dark_color4: #30333d;
+	--dark_color1: var(--om-bg);
+	--dark_color2: var(--om-surface);
+	--dark_color3: var(--om-line);
+	--dark_color4: var(--om-surface-hi);
 
-	--word_color1: #ccaced;
-	--word_color2: #c0c0c0;
-	--word_color3: #dfd7d7;
+	--word_color1: var(--om-accent);
+	--word_color2: var(--om-dim);
+	--word_color3: var(--om-fg);
 
-	--light_color1: #e1e0e6;
-	--light_color2: #adabb9;
-	--light_color3: #9795a3;
-	--light_color4: #878492;
+	--light_color1: var(--om-bg);
+	--light_color2: var(--om-surface);
+	--light_color3: var(--om-line);
+	--light_color4: var(--om-surface-hi);
 
-	--other_color1: #332e56;
-	--other_color2: #4b4757;
-	--other_color3: #33313c;
+	--other_color1: var(--om-accent);
+	--other_color2: var(--om-dim);
+	--other_color3: var(--om-fg);
 }
 /*================ LIGHT THEME ================*/
 @media {
@@ -52,15 +54,15 @@
 /*============== PRIVATE THEME ==============*/
 @media {
 :root[privatebrowsingmode=temporary] {
-	--base_color1: #291D4F;
-	--base_color2: #3C3376;
-	--base_color3: #4F499D;
-	--base_color4: #625FC4;
+	--base_color1: var(--om-deep);
+	--base_color2: var(--om-surface);
+	--base_color3: var(--om-line);
+	--base_color4: var(--om-surface-hi);
 
-	--outer_color1: #E571F0;
-	--outer_color2: #D9CAF1;
-	--outer_color3: #FFF5FF;
+	--outer_color1: var(--om-accent);
+	--outer_color2: var(--om-dim);
+	--outer_color3: var(--om-fg);
 
-	--orbit_color: #B39FE3;
+	--orbit_color: var(--om-accent);
 }
 }

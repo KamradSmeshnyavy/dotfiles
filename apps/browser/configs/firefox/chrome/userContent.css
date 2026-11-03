@@ -1,4 +1,7 @@
 /*================ IMPORT COLORS ================*/
+/* omarchy/colors.css и omarchy/content.css пишет omarchy-firefox-chrome (тема и профиль шрифтов). */
+@import "omarchy/colors.css";
+@import "omarchy/content.css";
 @import "userColors.css";
 
 /*================== FIREFOX BG COLOR ==================*/
@@ -9,7 +12,7 @@ html:not(#ublock0-epicker) body,
 #newtab-customize-overlay {
   background-color: var(--light_color1) !important;}
 html {--in-content-page-background: var(--light_color1) !important;}
-.wordmark {fill: #201841 !important;}
+.wordmark {fill: var(--om-fg) !important;}
 .SnippetBaseContainer {background-color: var(--light_color2) !important;
   color: var(--other_color3) !important;}
 .ASRouterButton {border-radius: 3px !important;}
@@ -19,7 +22,7 @@ html:not(#ublock0-epicker) body[lwt-newtab-brighttext],
 #newtab-customize-overlay[lwt-newtab-brighttext] {
   background-color: var(--dark_color1) !important;}
 html[lwt-newtab-brighttext] {--in-content-page-background: var(--dark_color1) !important;}
-[lwt-newtab-brighttext] .wordmark {fill: #fefafe !important;}
+[lwt-newtab-brighttext] .wordmark {fill: var(--om-fg) !important;}
 [lwt-newtab-brighttext] .SnippetBaseContainer {background-color: var(--dark_color2) !important;
   color: var(--word_color3) !important;}
 [lwt-newtab-brighttext] .ASRouterButton {border-radius: 3px !important;}
@@ -101,7 +104,7 @@ html[lwt-newtab-brighttext] {--in-content-page-background: var(--dark_color1) !i
     --icon-fill: var(--word_color3) !important;
     background: var(--dark_color1) !important;
     --blue-40:var(--word_color1) !important;
-    --blue-40-a30:rgba(144,89,255,0.3) !important;
+    --blue-40-a30:color-mix(in srgb, var(--om-accent) 30%, transparent) !important;
     --active-color:var(--word_color1) !important;
 }
 /*Light*/
@@ -115,7 +118,7 @@ html[lwt-newtab-brighttext] {--in-content-page-background: var(--dark_color1) !i
     --icon-fill: var(--other_color3) !important;
     background: var(--light_color1) !important;
     --blue-40:var(--other_color1) !important;
-    --blue-40-a30:rgba(51,46,86,0.3) !important;
+    --blue-40-a30:color-mix(in srgb, var(--om-accent) 30%, transparent) !important;
     --active-color:var(--other_color1) !important;
 
 }

@@ -24,8 +24,9 @@ user_pref("media.hardware-video-decoding.enabled", true);
 user_pref("media.hardware-video-decoding.force-enabled", true);
 user_pref("media.av1.enabled", true);
 
-// --- OLED Power Savings (Force Dark Mode) ---
-user_pref("layout.css.prefers-color-scheme.content-override", 0);
+// --- Светлые или тёмные сайты ---
+// layout.css.prefers-color-scheme.content-override ставит omarchy-darkreader в prefs.js по теме
+// (тёмная тема — 0, светлая — 1), как у Helium. Здесь не задаётся: user.js перебил бы её при каждом запуске.
 
 // --- Disable UI Animations ---
 user_pref("toolkit.cosmeticAnimations.enabled", false);

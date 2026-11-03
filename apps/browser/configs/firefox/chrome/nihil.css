@@ -1,0 +1,152 @@
+/* Вид nihil — Firefox в стиле Nothing OS / Nihil (профили шрифтов nothing, dot, pixel).
+   Плоский фон, волосяные линии, прямые углы, моно-подписи. Активная вкладка отмечена
+   горящей точкой цвета акцента, остальные — погасшей. Цвета — только --om-* темы. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 0px !important;
+  --tab-min-height: 30px !important;
+  --tab-block-margin: 0px !important;
+  --toolbarbutton-border-radius: 0px !important;
+  --toolbarbutton-outer-padding: 2px !important;
+  --toolbar-field-border-radius: 0px !important;
+  --urlbar-container-height: 34px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --arrowpanel-menuitem-border-radius: 0px !important;
+  --panel-border-radius: 0px !important;
+  --tab-selected-bgcolor: transparent !important;
+  --tab-selected-shadow: none !important;
+}
+
+/* --- вкладки ------------------------------------------------------------ */
+#TabsToolbar {
+  background: var(--om-bg) !important;
+  border-bottom: 1px solid var(--om-line-soft) !important;
+}
+.tabbrowser-tab { padding-inline: 0 !important; }
+.tabbrowser-tab .tab-background {
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-block: 0 !important;
+}
+.tabbrowser-tab:hover .tab-background { background: var(--om-line-soft) !important; }
+.tabbrowser-tab[selected] .tab-background {
+  background: var(--om-bg) !important;
+  box-shadow: inset 0 -1px 0 var(--om-fg) !important;
+}
+.tabbrowser-tab::after { display: none !important; }
+.tabbrowser-tab:not(:first-of-type) .tab-stack { border-inline-start: 1px solid var(--om-line-soft); }
+
+.tab-label {
+  font-family: var(--om-font-mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--om-muted) !important;
+}
+.tabbrowser-tab[selected] .tab-label { color: var(--om-fg) !important; }
+
+/* LED: погасшая точка у каждой вкладки, горящая — у активной, мигающая — со звуком. */
+.tab-content::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  background: var(--om-line);
+}
+.tabbrowser-tab[selected] .tab-content::before {
+  background: var(--om-accent);
+  box-shadow: 0 0 6px var(--om-accent);
+}
+.tabbrowser-tab[soundplaying] .tab-content::before { background: var(--om-accent); animation: om-led 1.2s steps(2) infinite; }
+@keyframes om-led { 50% { opacity: 0.25; } }
+.tab-icon-image, .tab-throbber { opacity: 0.75; }
+.tabbrowser-tab[selected] .tab-icon-image { opacity: 1; }
+.tab-close-button { display: none !important; }
+.tabbrowser-tab:hover .tab-close-button { display: flex !important; fill: var(--om-muted) !important; }
+
+/* --- адресная строка -------------------------------------------------- */
+#nav-bar, #PersonalToolbar {
+  background: var(--om-bg) !important;
+  border-bottom: 1px solid var(--om-line-soft) !important;
+  box-shadow: none !important;
+}
+#urlbar-background, #urlbar .urlbar-background {
+  background: var(--om-bg) !important;
+  border: 1px solid var(--om-line) !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+#urlbar:is([focused], [open]) :is(#urlbar-background, .urlbar-background) { border-color: var(--om-accent) !important; }
+#urlbar-input, #urlbar .urlbar-input, .urlbarView-row, #urlbar .searchmode-switcher {
+  font-family: var(--om-font-mono) !important;
+  font-size: 12px !important;
+}
+#urlbar .searchmode-switcher { border-radius: 0 !important; }
+#urlbar-input, #urlbar .urlbar-input { color: var(--om-fg) !important; }
+:is(#urlbar-input, #urlbar .urlbar-input)::placeholder { color: var(--om-muted) !important; text-transform: uppercase; letter-spacing: 0.06em; }
+.urlbarView-url { color: var(--om-muted) !important; }
+.urlbarView-row[selected] { background: var(--om-surface-hi) !important; border-radius: 0 !important; }
+.urlbarView-row[selected] .urlbarView-title { color: var(--om-fg) !important; }
+#identity-box, #tracking-protection-icon-container { opacity: 0.7; }
+#identity-icon-box, #identity-permission-box, #urlbar .urlbar-page-action { border-radius: 0 !important; }
+
+/* --- кнопки ----------------------------------------------------------- */
+toolbarbutton .toolbarbutton-icon,
+toolbarbutton .toolbarbutton-badge-stack {
+  border-radius: 0 !important;
+}
+toolbarbutton:hover:not([disabled]) > .toolbarbutton-icon,
+toolbarbutton:hover:not([disabled]) > .toolbarbutton-badge-stack {
+  background: var(--om-surface) !important;
+}
+toolbarbutton[open] > .toolbarbutton-icon,
+toolbarbutton[checked] > .toolbarbutton-icon {
+  background: var(--om-surface-hi) !important;
+}
+.toolbarbutton-badge {
+  background: var(--om-accent) !important;
+  color: var(--om-on-accent) !important;
+  border-radius: 0 !important;
+  font-family: var(--om-font-mono) !important;
+  box-shadow: none !important;
+}
+
+/* --- панели и меню ---------------------------------------------------- */
+panel, menupopup {
+  --panel-border-radius: 0px !important;
+  font-family: var(--om-font-sans) !important;
+}
+.panel-header, .subviewbutton-iconic > .toolbarbutton-text, .panel-subview-body .subviewbutton { border-radius: 0 !important; }
+.panel-header > h1, .panel-header h1 span {
+  font-family: var(--om-font-dot) !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+toolbarseparator, menuseparator { border-color: var(--om-line-soft) !important; }
+menu[_moz-menuactive], menuitem[_moz-menuactive] {
+  background: var(--om-surface-hi) !important;
+  color: var(--om-fg) !important;
+}
+
+/* --- боковая панель --------------------------------------------------- */
+#sidebar-box, #sidebar-header, sidebar-main {
+  background: var(--om-bg) !important;
+  border-color: var(--om-line-soft) !important;
+}
+#sidebar-header { font-family: var(--om-font-mono) !important; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* --- поиск по странице ------------------------------------------------- */
+findbar {
+  background: var(--om-bg) !important;
+  border-top: 1px solid var(--om-line-soft) !important;
+  font-family: var(--om-font-mono) !important;
+}
+.findbar-textbox { border-radius: 0 !important; background: var(--om-surface) !important; color: var(--om-fg) !important; }

@@ -1,14 +1,16 @@
 #!/bin/bash
-# Launches Helium after applying the Dark Reader settings of the current Omarchy theme.
-# Dark Reader reads its settings only at startup, and a quick close/reopen can slip past
-# the background waiter of omarchy-darkreader, so the theme is written right before launch.
+# Launches Helium after applying the Dark Reader and Surfingkeys settings of the current Omarchy
+# theme. Both read their settings only at startup, and a quick close/reopen can slip past the
+# background waiter of omarchy-darkreader, so the theme is written right before launch.
+# Stylus: `omarchy-stylus helium-launch` starts Helium and, if the style set changed since the
+# last launch, asks Stylus to check its updates at once over a CDP pipe (no port is opened).
 # Installed as ~/.local/bin/helium-browser, which comes before /usr/bin in PATH.
 
+SCRIPTS="$HOME/dotfiles/omarchy-themes/scripts"
+
 if ! pgrep -u "$UID" -x helium >/dev/null; then
-  "$HOME/dotfiles/omarchy-themes/scripts/omarchy-darkreader" apply >/dev/null 2>&1 || true
-  # Stylus: one update check right after start if the theme changed since the last launch.
-  "$HOME/dotfiles/omarchy-themes/scripts/omarchy-stylus" prime >/dev/null 2>&1 || true
-  "$HOME/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys" apply >/dev/null 2>&1 || true
+  "$SCRIPTS/omarchy-darkreader" apply >/dev/null 2>&1 || true
+  "$SCRIPTS/omarchy-surfingkeys" apply >/dev/null 2>&1 || true
 fi
 
-exec /usr/bin/helium-browser "$@"
+exec "$SCRIPTS/omarchy-stylus" helium-launch "$@"

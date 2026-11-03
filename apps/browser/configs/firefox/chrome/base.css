@@ -1,0 +1,137 @@
+/* Общее для обоих видов: системные переменные Firefox → цвета темы Omarchy (--om-* из colors.css).
+   Без @namespace xul: с ним селекторы без типа (.class, #id) совпадают только с XUL-элементами,
+   а корень окна и адресная строка в Firefox 15x — HTML. `*|*:root` оставлен на всякий случай. */
+
+*|*:root {
+  color-scheme: var(--om-scheme) !important;
+  --toolbox-bgcolor: var(--om-bg) !important;
+  --toolbox-bgcolor-inactive: var(--om-bg) !important;
+  --toolbox-textcolor: var(--om-fg) !important;
+  --toolbox-textcolor-inactive: var(--om-dim) !important;
+  --toolbar-bgcolor: var(--om-bg) !important;
+  --toolbar-color: var(--om-fg) !important;
+  --toolbarbutton-icon-fill: var(--om-dim) !important;
+  --toolbarbutton-icon-fill-attention: var(--om-accent) !important;
+  --toolbarbutton-hover-background: var(--om-surface) !important;
+  --toolbarbutton-active-background: var(--om-surface-hi) !important;
+  --tab-selected-bgcolor: var(--om-surface) !important;
+  --tab-selected-textcolor: var(--om-fg) !important;
+  --tab-hover-background-color: var(--om-line-soft) !important;
+  --tabs-border-color: transparent !important;
+  --toolbar-field-background-color: var(--om-surface) !important;
+  --toolbar-field-color: var(--om-fg) !important;
+  --toolbar-field-border-color: var(--om-line-soft) !important;
+  --toolbar-field-focus-background-color: var(--om-deep) !important;
+  --toolbar-field-focus-color: var(--om-fg) !important;
+  --toolbar-field-focus-border-color: var(--om-accent) !important;
+  --urlbar-box-bgcolor: var(--om-surface) !important;
+  --urlbar-box-hover-bgcolor: var(--om-surface-hi) !important;
+  --urlbar-box-active-bgcolor: var(--om-surface-hi) !important;
+  --urlbar-box-text-color: var(--om-dim) !important;
+  --arrowpanel-background: var(--om-bg) !important;
+  --arrowpanel-color: var(--om-fg) !important;
+  --arrowpanel-border-color: var(--om-line) !important;
+  --panel-separator-color: var(--om-line-soft) !important;
+  --panel-item-hover-bgcolor: var(--om-surface) !important;
+  --panel-item-active-bgcolor: var(--om-surface-hi) !important;
+  --menu-background-color: var(--om-bg) !important;
+  --menu-color: var(--om-fg) !important;
+  --menu-border-color: var(--om-line) !important;
+  --menuitem-hover-background-color: var(--om-surface-hi) !important;
+  --menuitem-disabled-color: var(--om-muted) !important;
+  --sidebar-background-color: var(--om-bg) !important;
+  --sidebar-text-color: var(--om-fg) !important;
+  --sidebar-border-color: var(--om-line-soft) !important;
+  --focus-outline-color: var(--om-accent) !important;
+  --button-primary-bgcolor: var(--om-accent) !important;
+  --button-primary-color: var(--om-on-accent) !important;
+  --autocomplete-popup-background: var(--om-bg) !important;
+  --autocomplete-popup-color: var(--om-fg) !important;
+  --autocomplete-popup-highlight-background: var(--om-surface-hi) !important;
+  --autocomplete-popup-highlight-color: var(--om-fg) !important;
+  --chrome-content-separator-color: var(--om-line-soft) !important;
+
+  /* Имена Firefox 15x (дизайн-токены); старые выше оставлены для прежних версий. */
+  --toolbox-background-color: var(--om-bg) !important;
+  --toolbox-background-color-inactive: var(--om-bg) !important;
+  --toolbox-background-color-gradient-leading: var(--om-bg) !important;
+  --toolbox-background-color-gradient-trailing: var(--om-bg) !important;
+  --toolbox-text-color: var(--om-fg) !important;
+  --toolbox-text-color-current: var(--om-fg) !important;
+  --toolbox-text-color-inactive: var(--om-dim) !important;
+  --toolbar-background-color: var(--om-bg) !important;
+  --toolbar-text-color: var(--om-fg) !important;
+  --toolbarseparator-color: var(--om-line) !important;
+  --toolbarbutton-background-color-hover: var(--om-surface) !important;
+  --toolbarbutton-background-color-active: var(--om-surface-hi) !important;
+  --button-background-color-toolbar-hover: var(--om-surface) !important;
+  --button-background-color-toolbar-active: var(--om-surface-hi) !important;
+  --button-background-color-toolbar-selected: var(--om-surface-hi) !important;
+  --button-background-color-primary: var(--om-accent) !important;
+  --button-background-color-primary-hover: color-mix(in srgb, var(--om-accent) 88%, var(--om-fg)) !important;
+  --button-background-color-primary-active: color-mix(in srgb, var(--om-accent) 76%, var(--om-fg)) !important;
+  --button-text-color-primary: var(--om-on-accent) !important;
+  --tab-background-color-hover: var(--om-line-soft) !important;
+  --tab-background-color-selected: var(--om-surface) !important;
+  --tab-border-color-selected: transparent !important;
+  --tab-border-color-selected-leading: transparent !important;
+  --tab-border-color-selected-trailing: transparent !important;
+  --tab-text-color: var(--om-dim) !important;
+  --tab-text-color-hover: var(--om-fg) !important;
+  --tab-text-color-selected: var(--om-fg) !important;
+  --tabpanel-background-color: var(--om-bg) !important;
+  --toolbar-field-background-color-focus: var(--om-deep) !important;
+  --toolbar-field-border-color-focus: var(--om-accent) !important;
+  --toolbar-field-text-color: var(--om-fg) !important;
+  --toolbar-field-text-color-focus: var(--om-fg) !important;
+  --urlbar-background-color: var(--om-surface) !important;
+  --urlbar-background-color-focus: var(--om-deep) !important;
+  --urlbarview-background-color-selected: var(--om-surface-hi) !important;
+  --urlbarview-result-button-selected-color: var(--om-fg) !important;
+  --urlbarview-tail150-overlay-background: var(--om-bg) !important;
+  --urlbarview-tail150-overlay-color: var(--om-fg) !important;
+  --panel-background-color: var(--om-bg) !important;
+  --panel-text-color: var(--om-fg) !important;
+  --panel-border-color: var(--om-line) !important;
+  --popup-background-color: var(--om-bg) !important;
+  --lwt-tab-line-color: var(--om-accent) !important;
+  --lwt-text-color: var(--om-fg) !important;
+  --lwt-toolbar-field-highlight: var(--om-accent) !important;
+  --lwt-toolbar-field-highlight-text: var(--om-on-accent) !important;
+}
+
+#navigator-toolbox {
+  background: var(--om-bg) !important;
+  color: var(--om-fg) !important;
+  border-bottom-color: var(--om-line-soft) !important;
+}
+
+/* Значки панелей берут цвет текста: так они следуют теме, а не GTK. */
+toolbarbutton, .urlbar-icon, #PanelUI-menu-button {
+  fill: var(--om-dim) !important;
+  color: var(--om-fg) !important;
+}
+toolbarbutton:hover:not([disabled]), .urlbar-icon:hover { fill: var(--om-fg) !important; }
+toolbarbutton[open], toolbarbutton[checked] { fill: var(--om-accent) !important; }
+
+menupopup, panel {
+  --panel-background: var(--om-bg) !important;
+  --panel-color: var(--om-fg) !important;
+  --panel-border-color: var(--om-line) !important;
+}
+
+/* Автоскрытие тулбокса: вкладки и адресная строка сворачиваются в полоску у верхнего края и
+   раскрываются при наведении, сдвигая страницу вниз, как полноэкранный режим Firefox. Открыто,
+   пока в фокусе адресная строка или открыто меню кнопки. */
+*|*:root:not([sizemode="fullscreen"], [customizing]) #navigator-toolbox {
+  max-height: 4px;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 150ms ease, opacity 150ms ease !important;
+  transition-delay: 300ms !important;
+}
+*|*:root:not([sizemode="fullscreen"], [customizing]) #navigator-toolbox:is(:hover, :focus-within, :has([open="true"])) {
+  max-height: 200px;
+  opacity: 1;
+  transition-delay: 0ms !important;
+}

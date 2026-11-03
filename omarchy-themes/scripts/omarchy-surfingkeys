@@ -1,22 +1,24 @@
 #!/usr/bin/python3 -I
 """
-Тема Surfingkeys в Helium в цветах текущей темы Omarchy.
+Тема Surfingkeys в Helium и Firefox в цветах текущей темы Omarchy.
 
 Тема Surfingkeys — блок конфига от `const hintsCss` до конца `settings.theme = `...`;`.
 Если в теме Omarchy есть surfingkeys.js без метки omarchyGenerated, берётся он как есть.
 Иначе он генерируется из browser-templates/surfingkeys/rose-pine.js: меняются только
 цвета под colors.toml, и сохраняется в каталог темы (если это не git-клон и есть права
-на запись), иначе в ~/.local/state/omarchy/surfingkeys/generated/. Шрифт при применении
-всегда Maple Mono NF CN.
+на запись), иначе в ~/.local/state/omarchy/surfingkeys/generated/. Шрифт при применении —
+моноширинный профиля шрифтов (~/.config/omarchy/fonts.json, omarchy-font-profile).
 
-Surfingkeys хранит весь конфиг строкой `snippets` в chrome.storage.local и читает его
-только при загрузке, поэтому блок темы заменяется прямо в хранилище, пока Helium закрыт
-(обёртка helium-browser вызывает `apply` перед запуском). Остальной конфиг — биндинги и
+Surfingkeys хранит весь конфиг строкой `snippets` и читает его только при загрузке, поэтому
+блок темы заменяется прямо в хранилище, пока браузер закрыт: в Helium — chrome.storage.local
+(LevelDB), в Firefox — storage.sync (storage-sync-v2.sqlite, JSON). Обёртка helium-browser
+вызывает `apply` перед запуском, для Firefox — waiter omarchy-darkreader после закрытия.
+Если блока темы в конфиге нет, он дописывается в конец. Остальной конфиг — биндинги и
 правки из интерфейса Surfingkeys — не меняется.
 
 Использование:
   omarchy-surfingkeys sync               # из хука theme-set
-  omarchy-surfingkeys apply              # перед запуском Helium
+  omarchy-surfingkeys apply [браузер]    # пока браузер закрыт (helium, firefox; без аргумента — оба)
   omarchy-surfingkeys generate [colors]  # напечатать сгенерированный блок темы
 """
 import hashlib
@@ -44,7 +46,11 @@ STORE = HOME / ".config/net.imput.helium/Default/Local Extension Settings/gfblio
 GENERATED_MARK = "// omarchyGenerated"
 BEGIN = "// >>> omarchy surfingkeys theme"
 END = "// <<< omarchy surfingkeys theme"
-FONT = ("JetBrains Mono NL", "Maple Mono NF CN")
+# Шрифты в шаблонах и готовых файлах тем — меняются на моноширинный профиля шрифтов.
+TEMPLATE_FONTS = ("JetBrains Mono NL", "Maple Mono NF CN")
+FONTS_JSON = HOME / ".config/omarchy/fonts.json"
+FIREFOX_ROOT = HOME / ".config/mozilla/firefox"
+FIREFOX_EXT_ID = "{a8332c60-5b6d-41ee-bfc8-e9bb331d34ad}"
 
 # Цвета шаблона Rosé Pine → роль в colors.toml (или смесь фона и текста).
 ROSE_PINE = {
@@ -158,7 +164,10 @@ def resolve():
     else:
         text = generate(THEME_DIR / "colors.toml")
         source = f"{save_generated(name, text)} (сгенерирован)"
-    block = text.removeprefix(GENERATED_MARK + "\n").replace(*FONT).rstrip("\n")
+    block = text.removeprefix(GENERATED_MARK + "\n").rstrip("\n")
+    mono = load_json(FONTS_JSON, {}).get("mono") or "Maple Mono NF CN"
+    for font in TEMPLATE_FONTS:
+        block = block.replace(font, mono)
     STATE.mkdir(parents=True, exist_ok=True)
     PENDING.write_text(block + "\n")
     log(f"тема '{name}': {source}")
@@ -166,10 +175,20 @@ def resolve():
 
 # --- Helium: LevelDB Local Extension Settings -------------------------------
 
-def helium_running():
-    r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", "helium"],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return r.returncode == 0
+def running(browser):
+    for proc in {"helium": ["helium"], "firefox": ["firefox", "firefox-bin"]}[browser]:
+        r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", proc],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if r.returncode == 0:
+            return True
+    return False
+
+
+def backup_path(label):
+    stamp = f"{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns() // 1000 % 1_000_000:06d}"
+    path = STATE / "backups" / f"{stamp}-{label}"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def replace_theme(snippets, block):
@@ -184,49 +203,137 @@ def replace_theme(snippets, block):
             theme = snippets.index("settings.theme = `", start)
             end = snippets.index("\n`;", theme) + len("\n`;")
         except ValueError:
-            return None
+            # Блока темы нет (конфиг из своих биндингов) — тема дописывается в конец.
+            return snippets.rstrip("\n") + "\n\n" + wrapped + "\n"
     return snippets[:start] + wrapped + snippets[end:]
 
 
-def apply():
-    if not PENDING.is_file():
-        return
-    block = PENDING.read_text().rstrip("\n")
-    digest = hashlib.sha256(block.encode()).hexdigest()[:16]
-    if load_json(APPLIED, {}).get("digest") == digest:
-        return
-    if helium_running():
-        log("helium запущен, применится при следующем запуске")
-        return
+def apply_helium(block):
     import plyvel  # из пакета python-plyvel
 
     try:
         db = plyvel.DB(str(STORE), create_if_missing=False)
     except plyvel.Error as e:
-        log(f"хранилище Surfingkeys недоступно ({e})")
-        return
+        log(f"helium: хранилище Surfingkeys недоступно ({e})")
+        return False
     try:
         raw = db.get(b"snippets")
         if raw is None:
-            log("в Surfingkeys нет snippets, пропуск")
-            return
+            log("helium: в Surfingkeys нет snippets, пропуск")
+            return True
         old = json.loads(raw)
         new = replace_theme(old, block)
-        if new is None:
-            log("в snippets не найден блок темы (const hintsCss … settings.theme), пропуск")
-            return
         if new != old:
             db.close()
-            stamp = f"{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns() // 1000 % 1_000_000:06d}"
-            backup = STATE / "backups" / f"{stamp}-surfingkeys"
-            backup.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(STORE, backup, ignore=shutil.ignore_patterns("LOCK"))
+            shutil.copytree(STORE, backup_path("surfingkeys"), ignore=shutil.ignore_patterns("LOCK"))
             db = plyvel.DB(str(STORE), create_if_missing=False)
             db.put(b"snippets", json.dumps(new, ensure_ascii=False).encode())
     finally:
         db.close()
-    APPLIED.write_text(json.dumps({"digest": digest}) + "\n")
-    log("применено")
+    return True
+
+
+def firefox_profile():
+    import configparser
+    ini = configparser.ConfigParser()
+    if not ini.read(FIREFOX_ROOT / "profiles.ini"):
+        return None
+    for sec in ini.sections():
+        if sec.startswith("Install") and ini[sec].get("Default"):
+            return FIREFOX_ROOT / ini[sec]["Default"]
+    return None
+
+
+def apply_firefox_local(profile, block):
+    """storage.local Surfingkeys в Firefox — IndexedDB webExtensions-storage-local. Именно её Surfingkeys
+    читает при запуске (loadRawSettings); storage.sync — только копия для синхронизации."""
+    import re
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import firefox_idb as fi
+    m = re.search(re.escape(FIREFOX_EXT_ID) + r'\\?":\\?"([0-9a-f-]{36})', (profile / "prefs.js").read_text())
+    if not m:
+        return True
+    idb = profile / "storage/default" / f"moz-extension+++{m.group(1)}^userContextId=4294967295" / "idb"
+    con = fi.open_db(idb, "webExtensions-storage-local") if idb.is_dir() else None
+    if not con:
+        log("firefox: storage.local Surfingkeys не найден")
+        return True
+    key = fi.string_key("snippets")
+    try:
+        row = con.execute("SELECT data, file_ids FROM object_data WHERE key = ?", (key,)).fetchone()
+        if not row:
+            log("firefox: в storage.local Surfingkeys нет snippets, пропуск")
+            return True
+        old = fi.read_value(row[0], row[1], fi.files_dir(con))
+        new = replace_theme(old, block)
+        if new == old:
+            return True
+        shutil.copytree(idb, backup_path("firefox-local-idb"))
+        with con:
+            con.execute("UPDATE object_data SET data = ?, file_ids = NULL WHERE key = ?",
+                        (fi.snap(fi.encode(new)), key))
+            fi.flush_refcounts(con)
+    except Exception as e:
+        log(f"firefox: storage.local не записан ({e!r})")
+        return False
+    finally:
+        con.close()
+    return True
+
+
+def apply_firefox(block):
+    """Surfingkeys в Firefox: storage.local (IndexedDB, из него читает сам Surfingkeys) и storage.sync
+    (строка JSON в storage-sync-v2.sqlite)."""
+    import sqlite3
+    profile = firefox_profile()
+    if not profile:
+        return True
+    if not apply_firefox_local(profile, block):
+        return False
+    db_path = profile / "storage-sync-v2.sqlite"
+    if not db_path.is_file():
+        return True
+    try:
+        with sqlite3.connect(db_path, timeout=5) as con:
+            row = con.execute("SELECT data FROM storage_sync_data WHERE ext_id = ?", (FIREFOX_EXT_ID,)).fetchone()
+            data = json.loads(row[0]) if row and row[0] else None
+            if not data or not isinstance(data.get("snippets"), str):
+                log("firefox: в Surfingkeys нет snippets, пропуск")
+                return True
+            new = replace_theme(data["snippets"], block)
+            if new == data["snippets"]:
+                return True
+            shutil.copy2(db_path, backup_path("firefox-sync").with_suffix(".sqlite"))
+            data["snippets"] = new
+            con.execute("UPDATE storage_sync_data SET data = ?, sync_change_counter = sync_change_counter + 1 "
+                        "WHERE ext_id = ?", (json.dumps(data, ensure_ascii=False, separators=(",", ":")), FIREFOX_EXT_ID))
+    except sqlite3.Error as e:
+        log(f"firefox: база занята ({e})")
+        return False
+    return True
+
+
+APPLY = {"helium": apply_helium, "firefox": apply_firefox}
+
+
+def apply(browsers=None):
+    if not PENDING.is_file():
+        return
+    block = PENDING.read_text().rstrip("\n")
+    digest = hashlib.sha256(block.encode()).hexdigest()[:16]
+    applied = load_json(APPLIED, {})
+    if "digest" in applied:  # старый формат: одна отметка для Helium
+        applied = {"helium": applied["digest"]}
+    for browser in browsers or APPLY:
+        if applied.get(browser) == digest:
+            continue
+        if running(browser):
+            log(f"{browser} запущен, применится после закрытия")
+            continue
+        if APPLY[browser](block):
+            applied[browser] = digest
+            APPLIED.write_text(json.dumps(applied) + "\n")
+            log(f"{browser}: применено")
 
 
 def main(argv):
@@ -234,8 +341,8 @@ def main(argv):
     if cmd == "sync":
         resolve()
         apply()
-    elif cmd == "apply":
-        apply()
+    elif cmd == "apply" and all(b in APPLY for b in argv[2:]):
+        apply(argv[2:] or None)
     elif cmd == "generate":
         path = Path(argv[2]) if len(argv) > 2 else THEME_DIR / "colors.toml"
         print(generate(path), end="")

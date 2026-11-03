@@ -1,4 +1,5 @@
 #!/bin/bash
-# Apply Dark Reader / Surfingkeys themes still pending from a theme change made while Helium was open.
+# Apply Dark Reader / Surfingkeys / Stylus themes still pending from a theme change made while Helium or Firefox was open.
 ~/dotfiles/omarchy-themes/scripts/omarchy-darkreader apply 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys apply 2>/dev/null || true
+~/dotfiles/omarchy-themes/scripts/omarchy-stylus prime 2>/dev/null || true

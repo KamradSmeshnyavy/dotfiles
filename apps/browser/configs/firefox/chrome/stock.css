@@ -1,0 +1,72 @@
+/* Вид stock — прежний userChrome, цвета теперь из темы Omarchy (--om-*), а не rose-pine.
+   Подключается как <профиль>/chrome/omarchy/stock.css, поэтому картинки — из ../ */
+@import "base.css";
+
+*|*:root {
+  --uc-bg-color: var(--om-bg);
+  --uc-tab-fg-color: var(--om-cyan);
+  --mff-icon-color: var(--om-cyan);
+  --mff-tab-selected-bg: var(--om-surface-hi);
+  --mff-urlbar-color: var(--om-blue);
+  --mff-urlbar-results-color: var(--om-yellow);
+  --mff-urlbar-results-url-color: var(--om-blue);
+  --mff-font: var(--om-font-mono);
+  --tab-border-radius: 0px !important;
+  --toolbarbutton-icon-fill: var(--mff-icon-color) !important;
+  --tab-selected-bgcolor: var(--mff-tab-selected-bg) !important;
+}
+
+#fullscr-toggler { background-color: transparent !important; }
+
+#back-button > .toolbarbutton-icon {
+  --backbutton-background: transparent !important;
+  border: none !important;
+}
+#back-button { list-style-image: url("../left-arrow.svg") !important; }
+#forward-button { list-style-image: url("../right-arrow.svg") !important; }
+
+.tabbrowser-tab:not([fadein]),
+#tracking-protection-icon-container,
+#identity-box {
+  display: none !important;
+  border: none !important;
+}
+#urlbar-background, #urlbar .urlbar-background, .titlebar-buttonbox-container, #nav-bar, #PersonalToolbar, .tabbrowser-tab:not([selected]) .tab-background {
+  background: var(--uc-bg-color) !important;
+  border: none !important;
+}
+#urlbar[breakout][breakout-extend] {
+  left: 10% !important;
+  width: 80% !important;
+}
+#urlbar[breakout][breakout-extend] > #urlbar-input-container {
+  height: var(--urlbar-height) !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+}
+#urlbar-background, #urlbar .urlbar-background { box-shadow: none !important; }
+.tabbrowser-tab::after { display: none !important; }
+.tab-close-button.close-icon { display: none !important; }
+.tabbrowser-tab:hover .tab-close-button.close-icon { display: block !important; }
+
+#urlbar-input, #urlbar .urlbar-input {
+  text-align: center !important;
+  color: var(--mff-urlbar-color) !important;
+  font-family: var(--mff-font) !important;
+  font-weight: 700 !important;
+}
+:is(#urlbar-input, #urlbar .urlbar-input):focus { text-align: left !important; }
+#urlbar-container { margin-left: 3vw !important; }
+.urlbarView-title { color: var(--mff-urlbar-results-color) !important; font-family: var(--mff-font) !important; }
+.urlbarView-url { color: var(--mff-urlbar-results-url-color) !important; }
+
+.tab-text.tab-label {
+  color: var(--uc-tab-fg-color) !important;
+  font-family: var(--mff-font) !important;
+}
+#navigator-toolbox { border-bottom: 0 !important; background: var(--uc-bg-color) !important; }
+
+.urlbar-icon > image, .urlbar-icon, .toolbarbutton-text {
+  fill: var(--mff-icon-color) !important;
+  color: var(--mff-icon-color) !important;
+}

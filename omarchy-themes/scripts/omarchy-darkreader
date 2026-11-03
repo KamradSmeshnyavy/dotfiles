@@ -1,6 +1,8 @@
 #!/usr/bin/python3 -I
 """
-Синхронизирует Dark Reader в Helium с текущей темой Omarchy.
+Синхронизирует Dark Reader в Helium и Firefox с текущей темой Omarchy, а заодно
+настройки самих браузеров: светлые или тёмные сайты (prefers-color-scheme) по теме и
+шрифты страниц по профилю шрифтов (omarchy-font-profile).
 
 Если в теме есть dark-reader.json, применяется он. Иначе файл генерируется из
 настроек Dark Reader Efterklang (browser-templates/efterklang/Dark-Reader-Settings.json),
@@ -13,19 +15,22 @@
   * {"theme": {...}} — меняется только тема, остальные настройки браузера остаются.
 
 У Dark Reader нет внешнего API, настройки он читает только при старте, поэтому
-они пишутся прямо в хранилище расширения, пока Helium закрыт. Если Helium открыт,
-в фоне ждём его закрытия и применяем после.
+они пишутся прямо в хранилище расширения, пока браузер закрыт. Если браузер открыт,
+приходит уведомление с кнопкой «Перезапустить»: браузер закрывается, настройки
+применяются (вместе с `omarchy-stylus prime`), и он запускается снова с прежними вкладками.
+Без кнопки всё применится при следующем закрытии.
 
 Использование:
   omarchy-darkreader sync               # из хука theme-set
   omarchy-darkreader apply              # применить отложенные настройки, если Helium закрыт
   omarchy-darkreader generate [colors]  # напечатать сгенерированный файл
-  omarchy-darkreader wait helium        # (внутреннее) дождаться закрытия и применить
+  omarchy-darkreader wait <браузер>     # (внутреннее) дождаться закрытия и применить
 """
 import fcntl
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -47,14 +52,44 @@ TEMPLATE = Path(__file__).resolve().parent.parent / "browser-templates/efterklan
 # Метка сгенерированного файла: такой файл пересоздаётся при каждой смене темы,
 # чтобы следовать за шаблоном. Файл без метки считается написанным руками.
 GENERATED_MARK = "omarchyGenerated"
-# Шрифт на всех страницах во всех темах.
-FONT = {"useFont": True, "fontFamily": "Maple Mono NF CN"}
+# Шрифт на всех страницах во всех темах — sans профиля шрифтов (omarchy-font-profile → fonts.json).
+FONTS_JSON = HOME / ".config/omarchy/fonts.json"
+
+
+def page_font():
+    try:
+        return json.loads(FONTS_JSON.read_text()).get("sans") or "Maple Mono NF CN"
+    except (OSError, ValueError):
+        return "Maple Mono NF CN"
+
+
+FONT = {"useFont": True, "fontFamily": page_font()}
+
+
+def browser_prefs():
+    """Настройки самих браузеров: светлая ли тема (как решает Omarchy для gsettings) и шрифты профиля."""
+    try:
+        mode = subprocess.run(["omarchy-theme-color", "--file", str(THEME_DIR / "colors.toml"), "mode"],
+                              capture_output=True, text=True, timeout=5).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        mode = ""
+    fonts = load_json(FONTS_JSON, {})
+    return {"light": mode == "light", "sans": fonts.get("sans") or "Maple Mono NF CN",
+            "mono": fonts.get("mono") or "Maple Mono NF CN"}
 # Служебные данные установки расширения не переносим.
 SKIP_KEYS = {"installation", GENERATED_MARK}
 
 HELIUM_PROFILE = HOME / ".config/net.imput.helium/Default"
 HELIUM_EXT_ID = "eimadpbcbfnmbkopoojfekhnkhdbieeh"
-BROWSERS = {"helium": {"name": "Helium", "processes": ["helium"]}}
+BROWSERS = {
+    # restart — запуск после «Перезапустить» с восстановлением вкладок (у Firefox ещё
+    # browser.sessionstore.resume_session_once, см. relaunch).
+    "helium": {"name": "Helium", "processes": ["helium"], "restart": ["helium-browser", "--restore-last-session"]},
+    "firefox": {"name": "Firefox", "processes": ["firefox", "firefox-bin"], "restart": ["firefox"]},
+}
+SCRIPTS = Path(__file__).resolve().parent
+FIREFOX_ROOT = HOME / ".config/mozilla/firefox"
+FIREFOX_EXT_ID = "addon@darkreader.org"
 
 
 def log(msg):
@@ -63,14 +98,6 @@ def log(msg):
     with open(LOG, "a") as f:
         f.write(line + "\n")
     print(line, file=sys.stderr)
-
-
-def notify(headline, body=""):
-    cmd = ["omarchy-notification-send", headline] + ([body] if body else [])
-    try:
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
-    except (OSError, subprocess.SubprocessError):
-        pass
 
 
 def load_json(path, default):
@@ -167,8 +194,10 @@ def resolve():
     full = "schemeVersion" in doc or len(doc) > 1
     settings = {k: v for k, v in doc.items() if k not in SKIP_KEYS}
     settings["theme"] = {**settings["theme"], **FONT}
-    digest = hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest()[:16]
-    pending = {"theme_name": name, "source": source, "full": full, "digest": digest, "settings": settings}
+    prefs = browser_prefs()
+    digest = hashlib.sha256(json.dumps([settings, prefs], sort_keys=True).encode()).hexdigest()[:16]
+    pending = {"theme_name": name, "source": source, "full": full, "digest": digest, "settings": settings,
+               "browser": prefs}
     STATE.mkdir(parents=True, exist_ok=True)
     PENDING.write_text(json.dumps(pending, indent=2, ensure_ascii=False) + "\n")
     log(f"тема '{name}': {source}, {'все настройки' if full else 'только theme'}")
@@ -234,10 +263,145 @@ def apply_helium(pending):
         log("helium: настройки Dark Reader не найдены, пропуск")
     else:
         log(f"helium: применено ({'; '.join(written)})")
+    return helium_prefs(pending.get("browser"))
+
+
+def helium_prefs(prefs):
+    """Шрифты страниц Helium (Настройки → Внешний вид → Шрифты) — в Preferences, пока Helium закрыт.
+    Светлые или тёмные сайты Helium сам берёт из gsettings, который ставит Omarchy."""
+    path = HELIUM_PROFILE / "Preferences"
+    if not prefs or not path.is_file():
+        return True
+    try:
+        data = json.loads(path.read_text())
+    except (OSError, ValueError) as e:
+        log(f"helium: Preferences не прочитан ({e})")
+        return False
+    fonts = data.setdefault("webkit", {}).setdefault("webprefs", {}).setdefault("fonts", {})
+    want = {"standard": prefs["sans"], "sansserif": prefs["sans"], "serif": prefs["sans"], "fixed": prefs["mono"]}
+    if all(fonts.get(k, {}).get("Zyyy") == v for k, v in want.items()):
+        return True
+    shutil.copy2(path, backup_dir("helium-Preferences"))
+    for key, family in want.items():
+        fonts.setdefault(key, {})["Zyyy"] = family
+    tmp = path.with_name("Preferences.omarchy-tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
+    os.replace(tmp, path)
+    log(f"helium: шрифты страниц {prefs['sans']} / {prefs['mono']}")
     return True
 
 
-APPLY = {"helium": apply_helium}
+# --- Firefox: storage.sync = storage-sync-v2.sqlite (JSON на расширение) ------------
+# Dark Reader в Firefox держит настройки в storage.sync (syncSettings: true) — это обычная
+# SQLite-база с JSON, писать её можно, пока Firefox закрыт.
+
+def firefox_profile():
+    """Профиль по умолчанию из profiles.ini (секция Install… → Default, иначе Default=1)."""
+    import configparser
+    ini = configparser.ConfigParser()
+    if not ini.read(FIREFOX_ROOT / "profiles.ini"):
+        return None
+    for sec in ini.sections():
+        if sec.startswith("Install") and ini[sec].get("Default"):
+            return FIREFOX_ROOT / ini[sec]["Default"]
+    for sec in ini.sections():
+        if ini[sec].get("Default") == "1" and ini[sec].get("Path"):
+            rel = ini[sec].get("IsRelative", "1") == "1"
+            return (FIREFOX_ROOT / ini[sec]["Path"]) if rel else Path(ini[sec]["Path"])
+    return None
+
+
+class _JsonStore:
+    """Обёртка с get(bytes) как у plyvel — чтобы updates_for работал и для Firefox."""
+    def __init__(self, data):
+        self.data = data
+
+    def get(self, key):
+        v = self.data.get(key.decode())
+        return None if v is None else json.dumps(v).encode()
+
+
+def set_user_prefs(prefs_js, values):
+    """Заменяет или дописывает строки user_pref(...) в prefs.js (Firefox закрыт)."""
+    lines = prefs_js.read_text().splitlines() if prefs_js.is_file() else []
+    out, seen = [], set()
+    for line in lines:
+        m = re.match(r'user_pref\("([^"]+)",', line)
+        if m and m.group(1) in values:
+            if m.group(1) in seen:
+                continue
+            seen.add(m.group(1))
+            line = f'user_pref("{m.group(1)}", {json.dumps(values[m.group(1)], ensure_ascii=False)});'
+        out.append(line)
+    out += [f'user_pref("{k}", {json.dumps(v, ensure_ascii=False)});' for k, v in values.items() if k not in seen]
+    tmp = prefs_js.with_name("prefs.js.omarchy-tmp")
+    tmp.write_text("\n".join(out) + "\n")
+    os.replace(tmp, prefs_js)
+
+
+def firefox_prefs(profile, prefs):
+    """Светлые или тёмные сайты — по теме, как в Helium (0 — тёмные, 1 — светлые), и шрифты страниц."""
+    if not prefs:
+        return True
+    values = {"layout.css.prefers-color-scheme.content-override": 1 if prefs["light"] else 0}
+    for lang in ("x-western", "x-cyrillic"):
+        values[f"font.name.sans-serif.{lang}"] = prefs["sans"]
+        values[f"font.name.serif.{lang}"] = prefs["sans"]
+        values[f"font.name.monospace.{lang}"] = prefs["mono"]
+    prefs_js = profile / "prefs.js"
+    current = prefs_js.read_text() if prefs_js.is_file() else ""
+    if all(f'user_pref("{k}", {json.dumps(v, ensure_ascii=False)});' in current for k, v in values.items()):
+        return True
+    try:
+        if prefs_js.is_file():
+            shutil.copy2(prefs_js, backup_dir("firefox-prefs").with_suffix(".js"))
+        set_user_prefs(prefs_js, values)
+    except OSError as e:
+        log(f"firefox: prefs.js не записан ({e})")
+        return False
+    log(f"firefox: сайты {'светлые' if prefs['light'] else 'тёмные'}, шрифты {prefs['sans']} / {prefs['mono']}")
+    return True
+
+
+def apply_firefox(pending):
+    import sqlite3
+    profile = firefox_profile()
+    if profile and not firefox_prefs(profile, pending.get("browser")):
+        return False
+    db_path = profile / "storage-sync-v2.sqlite" if profile else None
+    if not db_path or not db_path.is_file():
+        log("firefox: профиль или storage-sync-v2.sqlite не найдены, пропуск")
+        return True
+    try:
+        con = sqlite3.connect(db_path, timeout=5)
+        row = con.execute("SELECT data FROM storage_sync_data WHERE ext_id = ?", (FIREFOX_EXT_ID,)).fetchone()
+    except sqlite3.Error as e:
+        log(f"firefox: база занята ({e})")
+        return False
+    if not row or not row[0]:
+        con.close()
+        log("firefox: настройки Dark Reader не найдены, пропуск")
+        return True
+    data = json.loads(row[0])
+    updates = updates_for(_JsonStore(data), pending["settings"], pending["full"], True)
+    if not updates:
+        con.close()
+        return True
+    con.close()
+    shutil.copy2(db_path, backup_dir("firefox-sync").with_suffix(".sqlite"))
+    data.update(updates)
+    try:
+        with sqlite3.connect(db_path, timeout=5) as con:
+            con.execute("UPDATE storage_sync_data SET data = ?, sync_change_counter = sync_change_counter + 1 "
+                        "WHERE ext_id = ?", (json.dumps(data, ensure_ascii=False, separators=(",", ":")), FIREFOX_EXT_ID))
+    except sqlite3.Error as e:
+        log(f"firefox: запись не удалась ({e})")
+        return False
+    log(f"firefox: применено ({len(updates)} ключей)")
+    return True
+
+
+APPLY = {"helium": apply_helium, "firefox": apply_firefox}
 
 
 # --- команды ----------------------------------------------------------------
@@ -276,13 +440,9 @@ def spawn_waiter(browser):
 
 def cmd_sync():
     pending = resolve()
-    waiting = []
     for browser in APPLY:
         if apply_one(browser, pending) == "running":
-            spawn_waiter(browser)
-            waiting.append(BROWSERS[browser]["name"])
-    if waiting:
-        notify("Dark Reader", f"Тема применится после перезапуска: {', '.join(waiting)}")
+            spawn_waiter(browser)  # он же покажет уведомление «Перезапустить»
 
 
 def cmd_apply():
@@ -294,6 +454,53 @@ def cmd_apply():
             spawn_waiter(browser)
 
 
+def ask_restart(browser):
+    """Уведомление с кнопкой; процесс notify-send печатает «restart», если её нажали."""
+    name = BROWSERS[browser]["name"]
+    try:
+        return subprocess.Popen(
+            ["notify-send", "--app-name=Omarchy", "--wait", "-t", "0", "-A", "restart=Перезапустить",
+             f"{name}: тема и шрифты", "Применятся после перезапуска браузера. Вкладки сохранятся."],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+    except OSError:
+        return None
+
+
+def main_pid(browser):
+    for proc in BROWSERS[browser]["processes"]:
+        r = subprocess.run(["pgrep", "-o", "-u", str(os.getuid()), "-x", proc], capture_output=True, text=True)
+        if r.returncode == 0 and r.stdout.strip():
+            return int(r.stdout.split()[0])
+    return None
+
+
+def close_browser(browser):
+    """SIGTERM главному процессу — оба браузера на него завершаются штатно и сохраняют сессию."""
+    pid = main_pid(browser)
+    if pid:
+        try:
+            os.kill(pid, 15)
+        except OSError:
+            pass
+
+
+def apply_others(browser):
+    """Stylus и Surfingkeys того же браузера — пока он закрыт (Firefox: стили сразу в базу Stylus)."""
+    for cmd in (["omarchy-stylus", "prime", browser], ["omarchy-surfingkeys", "apply", browser]):
+        subprocess.run([str(SCRIPTS / cmd[0]), *cmd[1:]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                       timeout=300)
+
+
+def relaunch(browser):
+    if browser == "firefox":
+        profile = firefox_profile()
+        if profile:
+            set_user_prefs(profile / "prefs.js", {"browser.sessionstore.resume_session_once": True})
+    subprocess.Popen(["uwsm-app", "--"] + BROWSERS[browser]["restart"], stdin=subprocess.DEVNULL,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    log(f"{browser}: перезапущен")
+
+
 def cmd_wait(browser):
     STATE.mkdir(parents=True, exist_ok=True)
     with open(STATE / f"{browser}.lock", "w") as lock:
@@ -301,18 +508,32 @@ def cmd_wait(browser):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             return  # уже ждёт другой процесс; он возьмёт свежий pending.json
+        ask = ask_restart(browser)
+        restart = False
         while True:
             while is_running(browser):
+                if ask and not restart and ask.poll() is not None:
+                    restart = ask.stdout.read().strip() == "restart"
+                    ask = None
+                    if restart:
+                        close_browser(browser)
                 time.sleep(1)
+            if ask:
+                ask.terminate()  # закрыли сами — кнопка больше не нужна
+                ask = None
+            state = "done"
             for _ in range(15):
                 pending = load_json(PENDING, None)
                 if not pending or "settings" not in pending:
-                    return
+                    break
                 state = apply_one(browser, pending)
                 if state in ("done", "running"):
                     break
                 time.sleep(2)  # LevelDB ещё может быть заблокирован
             if state != "running":  # браузер успели открыть снова — ждём дальше
+                apply_others(browser)
+                if restart:
+                    relaunch(browser)
                 return
 
 
