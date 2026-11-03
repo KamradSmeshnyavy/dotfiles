@@ -53,10 +53,10 @@ layers:
     exitCommand: "echo 0 > /tmp/mouseless_state && hyprctl keyword cursor:inactive_timeout 3 && hyprctl keyword cursor:hide_on_key_press true && notify-send 'Mouseless' 'Mouse mode deactivated'"
     bindings:
       # Movement (Vim-style to match user's Hyprland config)
-      h: move -1  0
-      j: move  0  1
-      k: move  0 -1
-      l: move  1  0
+      s: move -1  0
+      d: move  0  1
+      e: move  0 -1
+      f: move  1  0
 
       # Fast movement (Space is under thumb, leaves Shift free for passing through)
       space: speed 4.0
@@ -66,19 +66,19 @@ layers:
 
       # Модификаторы на домашнем ряду — та же раскладка, что у homerow mods в kanata,
       # чтобы мышей можно было кликать с Ctrl / Shift / Alt / Super.
-      a: leftctrl
-      s: leftalt
-      d: leftshift
-      f: leftmeta
+      semicolon: leftctrl
+      l: leftalt
+      k: leftshift
+      j: leftmeta
 
       # Клики под левую рукую в противоположность движениям
-      w: button left
-      e: button middle
-      r: button right
+      u: button left
+      i: button middle
+      o: button right
 
       # Scroll by holding keys
-      u: scroll up
-      m: scroll down
+      "y": scroll up
+      "n": scroll down
 
       # f21 = выключить (kanata: lmet в слое mouse). f20 здесь уже включено — глотаем.
       # Отдельный esc здесь был бы рассинхроном: mouseless вышел бы,
