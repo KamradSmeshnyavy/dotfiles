@@ -358,8 +358,9 @@ DOT = '"DotMatrix Dot", "Doto", monospace'
 STOCK_FONT = "Maple Mono NF CN"   # шрифт stock-профиля (omarchy-font-profile): его на сайтах не навязываем
 # Заголовки точками у профилей DOT-MATRIX (как в оболочке: nothing — только крупные).
 DOT_HEADINGS = {"nothing": "h1, h2", "dot": "h1, h2, h3, th, [role=heading]", "pixel": "h1, h2, h3, th, [role=heading]",
-                "dots": "h1, h2, h3, h4, h5, h6, th, [role=heading]"}
-# dots — «точки везде»: ещё и элементы интерфейса сайтов (с текстом внутри них, кроме иконочных шрифтов).
+                "dot-accents": "h1, h2, h3, h4, h5, h6, th, [role=heading]",
+                "dots-all": "h1, h2, h3, h4, h5, h6, th, [role=heading]"}
+# dot-accents / dots-all: ещё и элементы интерфейса сайтов (с текстом внутри них, кроме иконочных шрифтов).
 DOT_CONTROLS = ("button, [role=button], [role=tab], [role=menuitem], [role=option], nav a, label, legend, summary, "
                 "caption, input[type=submit], input[type=button], input[type=reset], select")
 # Текст страницы шрифтом интерфейса профиля. Иконочные шрифты (Font Awesome, Material, Nerd-иконки, svg-спрайты
@@ -384,8 +385,6 @@ def font_rules(cfg):
     """CSS шрифтов по ~/.config/omarchy/fonts.json: текст — sans профиля, заголовки — title (у DOT-MATRIX —
     DotMatrix Dot), код — mono. Шрифты stock (Maple) не навязываются: paper-shell меняет только оболочку."""
     profile = cfg.get("profile") or "stock"
-    if profile.startswith("dots"):  # dots, dots-halftone — одни правила, шрифт берётся из профиля
-        profile = "dots"
     sans, mono = cfg.get("sans") or STOCK_FONT, cfg.get("mono") or STOCK_FONT
     title = cfg.get("title") or sans
     css = []
@@ -393,11 +392,12 @@ def font_rules(cfg):
     if text_on:
         sel = ", ".join(f"{t}{NOT_ICON}" for t in TEXT.split(", "))
         css.append(f'{sel} {{ font-family: "{sans}", sans-serif !important; }}')
-    # dots — точками абсолютно всё: и заголовки, и элементы тем же DotMatrix Dots, что и текст.
-    dot = f'"{sans}", {DOT}' if profile == "dots" else DOT
+    # dots-all — точками абсолютно всё: и заголовки, и элементы тем же DotMatrix LED, что и текст;
+    # dot-accents — заголовки и элементы DotMatrix Dot, текст профиля.
+    dot = f'"{sans}", {DOT}' if profile == "dots-all" else DOT
     if profile in DOT_HEADINGS:
         css.append(f"{lifted(DOT_HEADINGS[profile])} {{ font-family: {dot} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
-        if profile == "dots":
+        if profile in ("dot-accents", "dots-all"):
             ctl = [x.strip() for x in DOT_CONTROLS.split(",")]
             sel = ", ".join([f"{x}{LIFT}" for x in ctl] + [f"{x} *{NOT_ICON}{LIFT}" for x in ctl])
             # Мелкий текст точками бледный — Black (900), как подписи точечного слоя в оболочке.

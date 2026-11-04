@@ -78,13 +78,13 @@ QtObject {
 
   // Шрифты. ~/.config/omarchy/fonts.json — профиль шрифтов системы (omarchy-font-profile):
   //   stock — Space Grotesk / Space Mono как в Nihil-Shell; nothing / dot / pixel — sans и mono профиля
-  //   (Geist, GeistMono / Terminess, с кириллицей). dot / pixel / dots включают точечный слой (dotLayer):
+  //   (Geist, GeistMono / Terminess, с кириллицей). dot / pixel / dot-accents / dots-all — точечный слой (dotLayer):
   //   DotMatrix Dot во всём крупном и коротком — заголовках, номерах, метках.
   // DotMatrix Dot — Doto с кириллицей (kamradsmeshnyavy.customizer/fonts); без него — Doto, потом шрифт Omarchy.
   property var fontProfile: ({ profile: "stock" })
-  readonly property bool dotLayer: fontProfile.profile === "dot" || fontProfile.profile === "pixel" || String(fontProfile.profile).indexOf("dots") === 0
-  // dots — «точки везде»: ещё и заголовки карточек, уведомлений, пункты меню (fontHeading), не только крупное.
-  readonly property bool dotEverywhere: String(fontProfile.profile).indexOf("dots") === 0
+  readonly property bool dotLayer: fontProfile.profile === "dot" || fontProfile.profile === "pixel" || fontProfile.profile === "dot-accents" || fontProfile.profile === "dots-all"
+  // dot-accents / dots-all: ещё и заголовки карточек, уведомлений, пункты меню (fontHeading), не только крупное.
+  readonly property bool dotEverywhere: fontProfile.profile === "dot-accents" || fontProfile.profile === "dots-all"
   readonly property var families: Qt.fontFamilies()
   function family(name, fallback) {
     if (families.indexOf(name) >= 0) return name
