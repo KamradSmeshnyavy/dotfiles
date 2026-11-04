@@ -5,10 +5,11 @@
 В профиле Firefox (по умолчанию из profiles.ini) поддерживается каталог chrome/:
   userChrome.css, userContent.css, userColors.css → apps/browser/configs/firefox/chrome/ (симлинки);
   omarchy/colors.css  — переменные --om-* из colors.toml темы и шрифты профиля;
-  omarchy/style.css   — @import вида: stock.css (профиль шрифтов stock — прежний вид)
-                        или nihil.css (nothing / dot / pixel — в стиле Nothing / Nihil);
+  omarchy/style.css   — @import вида: по стилю Customizer (~/.config/omarchy/style.json: id → <id>.css —
+                        flat, glass, fluent, paper, neumorph, brutal, retro, neon; nihil → nihil.css), без стиля —
+                        по профилю шрифтов: nihil.css у nothing / dot / pixel, иначе stock.css (прежний вид);
   omarchy/content.css — страницы about: (при nihil заголовки набраны Nihil Dot);
-  omarchy/{base,stock,nihil}.css → файлы вида в dotfiles (симлинки).
+  omarchy/*.css → файлы видов в dotfiles (симлинки), omarchy/paper(-dark).png — текстура стиля Paper.
 
 Chrome-CSS Firefox читает только при запуске: новая тема видна после перезапуска
 (omarchy-darkreader показывает уведомление «Перезапустить»). Писать можно и при открытом
@@ -29,6 +30,10 @@ from pathlib import Path
 HOME = Path.home()
 THEME = HOME / ".local/state/omarchy/current/theme/colors.toml"
 FONTS_JSON = HOME / ".config/omarchy/fonts.json"
+STYLE_JSON = HOME / ".config/omarchy/style.json"
+TEXTURES = HOME / ".config/omarchy/plugins/kamradsmeshnyavy.customizer/textures"
+# Файлы в SRC, которые не виды: их Firefox подключает сам (userChrome / userContent / userColors).
+NOT_VIEWS = {"userChrome.css", "userContent.css", "userColors.css"}
 FIREFOX_ROOT = HOME / ".config/mozilla/firefox"
 SRC = Path(__file__).resolve().parents[2] / "apps/browser/configs/firefox/chrome"
 
@@ -99,18 +104,28 @@ def fonts():
     profile = cfg.get("profile") or "stock"
     sans = cfg.get("sans") or "Maple Mono NF CN"
     mono = cfg.get("mono") or "Maple Mono NF CN"
-    return profile, sans, mono
+    title = cfg.get("title") or sans
+    return profile, sans, mono, title
+
+
+def style_id():
+    try:
+        return str(json.loads(STYLE_JSON.read_text()).get("id") or "")
+    except (OSError, ValueError):
+        return ""
 
 
 def colors_css():
     c = colors()
-    profile, sans, mono = fonts()
+    profile, sans, mono, title = fonts()
     lines = ["/* omarchy-firefox-chrome: цвета темы и шрифты профиля. Файл генерируется. */",
              "*|*:root {"]
     lines += [f"  --om-{k}: {v};" for k, v in c.items() if k != "light"]
     lines += [f'  --om-font-sans: "{sans}", sans-serif;',
               f'  --om-font-mono: "{mono}", monospace;',
+              f'  --om-font-title: "{title}", "{sans}", sans-serif;',
               '  --om-font-dot: "Nihil Dot", "Doto", monospace;',
+              f'  --om-texture: url("{"paper.png" if c["light"] else "paper-dark.png"}");',
               f"  --om-scheme: {'light' if c['light'] else 'dark'};",
               "}"]
     return "\n".join(lines) + "\n", profile
@@ -173,14 +188,23 @@ def sync():
     out.mkdir(parents=True, exist_ok=True)
     for name in ("userChrome.css", "userContent.css", "userColors.css"):
         link(chrome / name, SRC / name)
-    for name in ("base.css", "stock.css", "nihil.css"):
-        link(out / name, SRC / name)
+    for src in sorted(SRC.glob("*.css")):
+        if src.name not in NOT_VIEWS:
+            link(out / src.name, src)
+    for name in ("paper.png", "paper-dark.png"):
+        if (TEXTURES / name).exists():
+            link(out / name, (TEXTURES / name).resolve())
     css, font_profile = colors_css()
     write(out / "colors.css", css)
-    # Вид Nihil — только у профилей шрифтов Nihil; остальные (stock, paper-*, retro) — прежний вид.
-    style = "nihil.css" if font_profile in ("nothing", "dot", "pixel") else "stock.css"
-    write(out / "style.css", f'/* omarchy-firefox-chrome: вид по профилю шрифтов ({font_profile}). */\n'
-                             f'@import "{style}";\n')
+    # Вид — по стилю Customizer, если у него есть файл; иначе по профилю шрифтов (Nihil — только у профилей
+    # Nihil; остальные — прежний вид).
+    sid = style_id()
+    if sid and (SRC / f"{sid}.css").exists():
+        style, why = f"{sid}.css", f"стилю {sid}"
+    else:
+        style = "nihil.css" if font_profile in ("nothing", "dot", "pixel") else "stock.css"
+        why = f"профилю шрифтов {font_profile}"
+    write(out / "style.css", f'/* omarchy-firefox-chrome: вид по {why}. */\n@import "{style}";\n')
     content = "/* omarchy-firefox-chrome: профиль шрифтов stock — без своих правил. */\n"
     if style == "nihil.css":
         content = NIHIL_CONTENT

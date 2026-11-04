@@ -1,0 +1,19 @@
+/* Вид «Fluent» — Firefox в стиле Customizer «Fluent» (Пресеты → Стиль). Слои с глубиной: умеренные скругления, тени вкладок и адресной строки.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 8px !important;
+  --toolbarbutton-border-radius: 6px !important;
+  --toolbar-field-border-radius: 8px !important;
+  --arrowpanel-border-radius: 8px !important;
+  --arrowpanel-menuitem-border-radius: 6px !important;
+  --panel-border-radius: 8px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 36px !important;
+}
+
+.tabbrowser-tab .tab-background { margin-block: 3px !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-surface) !important; box-shadow: 0 1px 4px rgba(0,0,0,.3) !important; }
+#urlbar-background, #urlbar .urlbar-background { box-shadow: 0 1px 3px rgba(0,0,0,.25) !important; border: 1px solid var(--om-line-soft) !important; }
+#urlbar[focused] .urlbar-background { box-shadow: inset 0 -2px 0 var(--om-accent), 0 2px 8px rgba(0,0,0,.3) !important; }

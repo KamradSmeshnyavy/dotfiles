@@ -1,0 +1,20 @@
+/* Вид «Neon» — Firefox в стиле Customizer «Neon» (Пресеты → Стиль). Неон: тёмные панели, свечение акцента вокруг активной вкладки и адресной строки.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 6px !important;
+  --toolbarbutton-border-radius: 6px !important;
+  --toolbar-field-border-radius: 8px !important;
+  --arrowpanel-border-radius: 6px !important;
+  --arrowpanel-menuitem-border-radius: 6px !important;
+  --panel-border-radius: 6px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 36px !important;
+}
+
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-bg) !important; border: 1px solid var(--om-accent) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--om-accent) 60%, transparent), inset 0 0 6px color-mix(in srgb, var(--om-accent) 30%, transparent) !important; }
+.tabbrowser-tab[selected] .tab-label, .tabbrowser-tab[visuallyselected] .tab-label { color: var(--om-accent) !important; text-shadow: 0 0 6px var(--om-accent) !important; }
+#urlbar-background, #urlbar .urlbar-background { border: 1px solid color-mix(in srgb, var(--om-accent) 60%, transparent) !important; box-shadow: none !important; }
+#urlbar[focused] .urlbar-background { box-shadow: 0 0 14px color-mix(in srgb, var(--om-accent) 70%, transparent) !important; }

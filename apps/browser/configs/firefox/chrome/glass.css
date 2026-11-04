@@ -1,0 +1,21 @@
+/* Вид «Стекло» — Firefox в стиле Customizer «Стекло» (Пресеты → Стиль). Скруглённое полупрозрачное стекло, мягкие тени, вкладки-капсулы.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 12px !important;
+  --toolbarbutton-border-radius: 10px !important;
+  --toolbar-field-border-radius: 14px !important;
+  --arrowpanel-border-radius: 12px !important;
+  --arrowpanel-menuitem-border-radius: 10px !important;
+  --panel-border-radius: 12px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 38px !important;
+}
+
+#navigator-toolbox { background: color-mix(in srgb, var(--om-bg) 78%, transparent) !important; }
+.tabbrowser-tab .tab-background { margin-block: 4px !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: color-mix(in srgb, var(--om-surface-hi) 70%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--om-fg) 14%, transparent) !important; box-shadow: 0 2px 8px rgba(0,0,0,.25) !important; }
+#urlbar-background, #urlbar .urlbar-background { background: color-mix(in srgb, var(--om-surface) 70%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--om-fg) 12%, transparent) !important; }

@@ -83,6 +83,15 @@ it closes. No wrapper is needed (the desktop entry runs `/usr/lib/firefox/firefo
   - No `@namespace xul` in these files. With it, selectors without a type (`.urlbar-background`) only
     match XUL elements, and the urlbar is HTML now.
 
+### Firefox views by style
+
+`omarchy-firefox-chrome` picks the userChrome view from the Customizer style (`~/.config/omarchy/style.json` id):
+`chrome/<id>.css` — flat, glass, fluent, paper, neumorph, brutal, retro, neon (nihil → `nihil.css`). Without a style it
+falls back to the font profile (Nihil profiles → `nihil.css`, otherwise `stock.css`). All views sit on `base.css` and the
+theme's `--om-*`; `--om-font-title` is the profile's title font, `--om-texture` the Paper grain (light / dark variant,
+linked into `chrome/omarchy/`). Visual check: a throwaway `--profile <scratch> --no-remote --new-instance` with only
+`chrome/` + `user.js`, then grim the window — it does not touch profiles.ini.
+
 ## New machine
 
 1. `install/install.py` links everything above (Linux entries in `install/install.conf.yaml`).

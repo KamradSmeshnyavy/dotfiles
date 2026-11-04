@@ -1,0 +1,21 @@
+/* Вид «Retro 9x» — Firefox в стиле Customizer «Retro 9x» (Пресеты → Стиль). Ретро-десктоп: объёмный кант (светлый сверху-слева, тёмный снизу-справа), пиксельный шрифт профиля.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 0px !important;
+  --toolbarbutton-border-radius: 0px !important;
+  --toolbar-field-border-radius: 0px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --arrowpanel-menuitem-border-radius: 0px !important;
+  --panel-border-radius: 0px !important;
+  --tab-min-height: 30px !important;
+  --urlbar-container-height: 32px !important;
+}
+
+.tabbrowser-tab .tab-background { margin-block: 3px !important; border: 2px solid !important;
+  border-color: color-mix(in srgb, white 35%, var(--om-bg)) color-mix(in srgb, black 50%, var(--om-bg)) var(--om-bg) color-mix(in srgb, white 35%, var(--om-bg)) !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-surface-hi) !important; }
+#urlbar-background, #urlbar .urlbar-background { border: 2px solid !important; box-shadow: none !important;
+  border-color: color-mix(in srgb, black 50%, var(--om-bg)) color-mix(in srgb, white 35%, var(--om-bg)) color-mix(in srgb, white 35%, var(--om-bg)) color-mix(in srgb, black 50%, var(--om-bg)) !important; }
+toolbarbutton .toolbarbutton-icon { image-rendering: pixelated !important; }

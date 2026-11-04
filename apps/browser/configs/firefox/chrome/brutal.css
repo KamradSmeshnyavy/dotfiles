@@ -1,0 +1,19 @@
+/* Вид «Brutalism» — Firefox в стиле Customizer «Brutalism» (Пресеты → Стиль). Брутализм: толстые рамки цвета текста, жёсткие смещённые тени, прямые углы.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 0px !important;
+  --toolbarbutton-border-radius: 0px !important;
+  --toolbar-field-border-radius: 0px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --arrowpanel-menuitem-border-radius: 0px !important;
+  --panel-border-radius: 0px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 38px !important;
+}
+
+.tabbrowser-tab .tab-background { margin-block: 4px !important; border: 2px solid var(--om-fg) !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-accent) !important; box-shadow: 3px 3px 0 var(--om-fg) !important; }
+.tabbrowser-tab[selected] .tab-label, .tabbrowser-tab[visuallyselected] .tab-label { color: var(--om-on-accent) !important; font-weight: 800 !important; }
+#urlbar-background, #urlbar .urlbar-background { border: 2px solid var(--om-fg) !important; box-shadow: 4px 4px 0 var(--om-fg) !important; }

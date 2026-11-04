@@ -1,0 +1,20 @@
+/* Вид «Flat» — Firefox в стиле Customizer «Flat» (Пресеты → Стиль). Прямые углы, сплошные цвета, без теней; активная вкладка — полоса акцента снизу.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 0px !important;
+  --toolbarbutton-border-radius: 0px !important;
+  --toolbar-field-border-radius: 0px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --arrowpanel-menuitem-border-radius: 0px !important;
+  --panel-border-radius: 0px !important;
+  --tab-min-height: 32px !important;
+  --urlbar-container-height: 34px !important;
+}
+
+.tabbrowser-tab .tab-background { box-shadow: none !important; border: 0 !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-surface) !important; box-shadow: inset 0 -2px 0 var(--om-accent) !important; }
+#urlbar-background, #urlbar .urlbar-background { border: 1px solid var(--om-line-soft) !important; box-shadow: none !important; }
+#urlbar[focused] .urlbar-background { border-color: var(--om-accent) !important; }
+menupopup, panel { --panel-shadow-margin: 0px !important; }

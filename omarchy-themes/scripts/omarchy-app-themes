@@ -156,15 +156,28 @@ write_qt6ct() {
   } >"$conf"
 }
 
-# GTK3/GTK4: gtk.css со цветами темы. GTK3 перекрашивается только темой adw-gtk3 (adw-gtk-theme) —
-# она ставится вместо Adwaita, которую выбрал omarchy-theme-set-gnome. Видно в новых окнах.
+# styled <gtk4|gtk3> <источник>: цвета темы + форма стиля Customizer (omarchy-style-form,
+# ~/.config/omarchy/style.json). Без стиля — источник как есть.
+styled() {
+  local kind=$1 src=$2 form out tmp
+  form=$("$SCRIPTS/omarchy-style-form" "$kind" "$THEME" 2>/dev/null) || form=""
+  [[ -n $form ]] || { echo "$src"; return; }
+  out=$STATE/app-themes/styled-$kind.css
+  tmp=$(mktemp "$STATE/app-themes/.styled-$kind.XXXXXX") || { echo "$src"; return; }
+  { cat "$src"; printf '%s\n' "$form"; } >"$tmp" && mv -f "$tmp" "$out"
+  echo "$out"
+}
+
+# GTK3/GTK4: gtk.css со цветами темы и формой стиля. GTK3 перекрашивается только темой adw-gtk3
+# (adw-gtk-theme) — она ставится вместо Adwaita, которую выбрал omarchy-theme-set-gnome. Видно в новых окнах.
 apply_gtk() {
   local src mode=dark
   grep -qE '^mode *= *"light"' "$THEME/colors.toml" 2>/dev/null && mode=light
+  mkdir -p "$STATE/app-themes"
   src=$(source_of gtk4.css)
-  [[ -n $src ]] && link_slot "$HOME/.config/gtk-4.0/gtk.css" "$src"
+  [[ -n $src ]] && link_slot "$HOME/.config/gtk-4.0/gtk.css" "$(styled gtk4 "$src")"
   src=$(source_of gtk3.css)
-  [[ -n $src ]] && link_slot "$HOME/.config/gtk-3.0/gtk.css" "$src"
+  [[ -n $src ]] && link_slot "$HOME/.config/gtk-3.0/gtk.css" "$(styled gtk3 "$src")"
   if [[ -d /usr/share/themes/adw-gtk3-dark ]]; then
     local name=adw-gtk3-dark
     [[ $mode == light ]] && name=adw-gtk3
@@ -252,6 +265,21 @@ CSS
   fi
 }
 
+# kitty / ghostty: style.conf с отступами окна и формой курсора стиля (omarchy-style-form). kitty подключает
+# его через globinclude, ghostty — config-file = ?style.conf; без стиля файл пустой. Перечитываются сигналом.
+apply_terminals() {
+  local app conf form
+  for app in kitty ghostty; do
+    [[ -d $HOME/.config/$app ]] || continue
+    conf=$HOME/.config/$app/style.conf
+    form=$("$SCRIPTS/omarchy-style-form" "$app" "$THEME" 2>/dev/null) || form=""
+    [[ -f $conf && $(cat "$conf") == "$form" ]] && continue
+    printf '%s\n' "$form" >"$conf"
+  done
+  pkill -USR1 -x kitty 2>/dev/null || true
+  pkill -SIGUSR2 -x ghostty 2>/dev/null || true
+}
+
 write_env() {
   local env_file=$THEME/apps/env
   [[ -f $env_file ]] || env_file=$DEFAULTS/env
@@ -300,5 +328,6 @@ apply_gtk
 apply_ghidra
 apply_telegram
 apply_vesktop
+apply_terminals
 write_env
 reload_tmux

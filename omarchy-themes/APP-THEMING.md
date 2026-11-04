@@ -84,6 +84,17 @@ Telegram 7 не открывает `.tdesktop-theme` из командной с�
 Не перекрашиваются: Signal и Bitwarden (только светлая/тёмная — следуют `color-scheme`), Spotify (только через
 spicetify), LibreOffice/OnlyOffice (частично — GTK3).
 
+## Форма стиля Customizer
+
+Стиль (Customizer → Пресеты → Стиль) пишет `~/.config/omarchy/style.json` с id стиля. `scripts/omarchy-style-form`
+добавляет поверх цветов темы форму стиля: радиусы, рамки, тени кнопок и карточек, фактуру (paper),
+3D-кант (retro), двойные тени (neumorph), жёсткую тень (brutal), свечение (neon).
+- GTK4 / GTK3: `omarchy-app-themes` пишет `styled-gtk{4,3}.css` = gtk.css темы + форма и ставит слот на него;
+  без стиля слот, как раньше, указывает на файл темы.
+- kitty / ghostty: `style.conf` (отступы окна, форма курсора), подключён в конфигах (`globinclude style.conf`,
+  `config-file = ?style.conf`), в `.gitignore`; перечитываются сигналом.
+- Customizer после смены стиля сам вызывает `omarchy-app-themes` и `omarchy-firefox-chrome`.
+
 ## Курсор
 
 `<тема>/apps/cursor` — строка `ИМЯ РАЗМЕР`; без неё `app-defaults/cursor` (или `cursor-light` для `mode = "light"`).

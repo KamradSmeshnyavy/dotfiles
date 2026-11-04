@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""
+Слой формы стиля Customizer для приложений: радиусы, рамки, тени, фактура — поверх цветов темы.
+
+Использование: omarchy-style-form <gtk4|gtk3|kitty|ghostty> <каталог темы>
+
+Стиль — ~/.config/omarchy/style.json (пишет Customizer → Пресеты → Стиль): id стиля и токены панелей.
+Нет файла или неизвестный стиль — пустой вывод (вид как без стилей). Цвета — роли theme_palette.Palette,
+поэтому слой ложится на любую тему: светлую и тёмную.
+  gtk4 / gtk3 — CSS, который omarchy-app-themes дописывает к gtk.css темы;
+  kitty       — style.conf (globinclude в kitty.conf): отступы окна и форма курсора;
+  ghostty     — style.conf (config-file = ?style.conf): то же.
+"""
+import json
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from theme_palette import Palette, hex_to_rgb, mix  # noqa: E402
+
+HOME = Path.home()
+STYLE_JSON = HOME / ".config/omarchy/style.json"
+TEXTURES = HOME / ".config/omarchy/plugins/kamradsmeshnyavy.customizer/textures"
+
+
+def rgba(c, a):
+    r, g, b = (round(v * 255) for v in hex_to_rgb(c))
+    return f"rgba({r}, {g}, {b}, {a})"
+
+
+# Форма стилей: радиус, рамка, тени. bevel — 3D-кант (светлый сверху-слева, тёмный снизу-справа).
+FORMS = {
+    "nihil":    {"r": 0,  "border": 1, "shadow": "none",  "pad": 10, "cursor": "block"},
+    "flat":     {"r": 0,  "border": 1, "shadow": "none",  "pad": 8,  "cursor": "block"},
+    "glass":    {"r": 12, "border": 1, "shadow": "soft",  "pad": 14, "cursor": "beam", "glass": True},
+    "fluent":   {"r": 8,  "border": 1, "shadow": "soft",  "pad": 12, "cursor": "beam"},
+    "paper":    {"r": 4,  "border": 1, "shadow": "paper", "pad": 16, "cursor": "underline", "texture": True},
+    "neumorph": {"r": 14, "border": 0, "shadow": "neu",   "pad": 16, "cursor": "beam"},
+    "brutal":   {"r": 0,  "border": 2, "shadow": "hard",  "pad": 10, "cursor": "block"},
+    "retro":    {"r": 0,  "border": 2, "shadow": "bevel", "pad": 6,  "cursor": "block"},
+    "neon":     {"r": 6,  "border": 1, "shadow": "glow",  "pad": 12, "cursor": "beam"},
+}
+
+
+def style():
+    try:
+        sid = str(json.loads(STYLE_JSON.read_text()).get("id") or "")
+    except (OSError, ValueError):
+        sid = ""
+    return sid, FORMS.get(sid)
+
+
+def shadows(p, f, pressed=False):
+    """box-shadow кнопок / карточек под стиль."""
+    k = f["shadow"]
+    black = "#000000"
+    if k == "soft":
+        return f"0 1px 3px {rgba(black, 0.35 if p.dark else 0.12)}"
+    if k == "paper":
+        return f"1px 2px 0 {rgba(black, 0.25 if p.dark else 0.12)}"
+    if k == "neu":
+        lo, hi = mix(p.bg, black, 0.45), mix(p.bg, "#ffffff", 0.08 if p.dark else 0.7)
+        if pressed:
+            return f"inset 3px 3px 6px {rgba(lo, 0.7)}, inset -3px -3px 6px {rgba(hi, 0.7)}"
+        return f"4px 4px 10px {rgba(lo, 0.75)}, -4px -4px 10px {rgba(hi, 0.75)}"
+    if k == "hard":
+        return "none" if pressed else f"3px 3px 0 {p.fg}"
+    if k == "glow":
+        return f"0 0 8px {rgba(p.accent, 0.55)}"
+    return "none"
+
+
+def border(p, f, pressed=False):
+    w = f["border"]
+    if w == 0:
+        return "none"
+    if f["shadow"] == "bevel":
+        light, dark = mix(p.bg, "#ffffff", 0.35), mix(p.bg, "#000000", 0.5)
+        tl, br = (dark, light) if pressed else (light, dark)
+        return f"{w}px solid; border-color: {tl} {br} {br} {tl}"
+    if f["shadow"] == "hard":
+        return f"{w}px solid {p.fg}"
+    if f["shadow"] == "glow":
+        return f"{w}px solid {rgba(p.accent, 0.7)}"
+    return f"{w}px solid {rgba(p.fg, 0.14 if f['shadow'] != 'paper' else 0.35)}"
+
+
+def gtk_css(p, f, sid, gtk3):
+    r = f["r"]
+    small = max(0, r - 4) if r else 0
+    tex = ""
+    if f.get("texture"):
+        name = "paper-dark.png" if p.dark else "paper.png"
+        if (TEXTURES / name).exists():
+            tex = f'  background-image: url("file://{TEXTURES / name}");\n  background-repeat: repeat;\n'
+    win_bg = ""
+    if f.get("glass"):
+        win_bg = f"  background-color: {rgba(p.bg, 0.86)};\n"
+    out = [f"\n/* omarchy-style-form: форма стиля «{sid}» поверх цветов темы. */\n"]
+    if tex or win_bg:
+        out.append("window.background, .background {\n" + win_bg + tex + "}\n")
+    out.append(
+        f"button, entry, spinbutton, dropdown > button, combobox > box > button, menubutton > button,\n"
+        f"switch, scale trough, progressbar trough {{\n  border-radius: {small}px;\n}}\n")
+    out.append(
+        f"button:not(.flat):not(.circular), entry, spinbutton {{\n"
+        f"  border: {border(p, f)};\n  box-shadow: {shadows(p, f)};\n}}\n")
+    out.append(
+        f"button:not(.flat):active, button:not(.flat):checked {{\n"
+        f"  border: {border(p, f, True)};\n  box-shadow: {shadows(p, f, True)};\n}}\n")
+    cards = ".card, list.boxed-list, .boxed-list, frame, popover > contents, popover.background > contents"
+    if gtk3:
+        cards = ".card, list.boxed-list, frame > border, popover, menu, .menu"
+    out.append(f"{cards} {{\n  border-radius: {r}px;\n  border: {border(p, f)};\n  box-shadow: {shadows(p, f)};\n}}\n")
+    if f["shadow"] == "neu":
+        # Неоморфизм: без рамок, фон кнопок = фон окна, рельеф только тенями.
+        out.append(f"button:not(.flat), entry {{\n  background: {p.bg};\n  background-image: none;\n}}\n")
+    if f["shadow"] == "glow":
+        out.append(f"button:focus, entry:focus-within, entry:focus {{\n  box-shadow: 0 0 12px {rgba(p.accent, 0.8)};\n}}\n")
+    return "".join(out)
+
+
+def kitty_conf(f, sid):
+    return (f"# omarchy-style-form: стиль «{sid}» (не править — пишет Customizer)\n"
+            f"window_padding_width {f['pad']}\ncursor_shape {f['cursor']}\n")
+
+
+def ghostty_conf(f, sid):
+    cursor = {"beam": "bar", "underline": "underline"}.get(f["cursor"], "block")
+    return (f"# omarchy-style-form: стиль «{sid}» (не править — пишет Customizer)\n"
+            f"window-padding-x = {f['pad']}\nwindow-padding-y = {f['pad']}\ncursor-style = {cursor}\n")
+
+
+def main(argv):
+    if len(argv) != 3 or argv[1] not in ("gtk4", "gtk3", "kitty", "ghostty"):
+        sys.exit(__doc__)
+    sid, f = style()
+    if not f:
+        return
+    target = argv[1]
+    if target in ("gtk4", "gtk3"):
+        sys.stdout.write(gtk_css(Palette(Path(argv[2])), f, sid, target == "gtk3"))
+    elif target == "kitty":
+        sys.stdout.write(kitty_conf(f, sid))
+    else:
+        sys.stdout.write(ghostty_conf(f, sid))
+
+
+if __name__ == "__main__":
+    main(sys.argv)

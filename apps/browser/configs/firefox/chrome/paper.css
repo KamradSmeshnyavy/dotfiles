@@ -1,0 +1,20 @@
+/* Вид «Бумага» — Firefox в стиле Customizer «Бумага» (Пресеты → Стиль). Бумага: зерно на панели, карандашные рамки, рукописные вкладки (шрифт профиля).
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 4px !important;
+  --toolbarbutton-border-radius: 3px !important;
+  --toolbar-field-border-radius: 4px !important;
+  --arrowpanel-border-radius: 4px !important;
+  --arrowpanel-menuitem-border-radius: 3px !important;
+  --panel-border-radius: 4px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 36px !important;
+}
+
+#navigator-toolbox { background-image: var(--om-texture) !important; background-repeat: repeat !important; }
+.tabbrowser-tab .tab-label { font-family: var(--om-font-title) !important; font-size: 1.15em !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-surface) !important; border: 1px solid color-mix(in srgb, var(--om-fg) 40%, transparent) !important;
+  border-bottom-color: transparent !important; box-shadow: 1px 2px 0 rgba(0,0,0,.15) !important; transform: rotate(-0.4deg); }
+#urlbar-background, #urlbar .urlbar-background { background: var(--om-surface) !important; border: 1px dashed color-mix(in srgb, var(--om-fg) 45%, transparent) !important; box-shadow: none !important; }

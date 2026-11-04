@@ -1,0 +1,20 @@
+/* Вид «Neumorphism» — Firefox в стиле Customizer «Neumorphism» (Пресеты → Стиль). Мягкий рельеф: без рамок, двойные тени, вдавленная адресная строка.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 14px !important;
+  --toolbarbutton-border-radius: 12px !important;
+  --toolbar-field-border-radius: 16px !important;
+  --arrowpanel-border-radius: 14px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --panel-border-radius: 14px !important;
+  --tab-min-height: 36px !important;
+  --urlbar-container-height: 40px !important;
+}
+
+.tabbrowser-tab .tab-background { margin-block: 5px !important; border: 0 !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background { background: var(--om-bg) !important;
+  box-shadow: 4px 4px 10px color-mix(in srgb, black 45%, var(--om-bg)), -3px -3px 8px color-mix(in srgb, white 10%, var(--om-bg)) !important; }
+#urlbar-background, #urlbar .urlbar-background { background: var(--om-bg) !important; border: 0 !important;
+  box-shadow: inset 3px 3px 7px color-mix(in srgb, black 45%, var(--om-bg)), inset -3px -3px 7px color-mix(in srgb, white 10%, var(--om-bg)) !important; }
