@@ -253,7 +253,7 @@ apply() {
   IFS='|' read -r _ _ sans mono title _ <<<"$line"
 
   [[ $sans == Geist ]] && { install_geist || { notify "Could not download Geist"; exit 1; }; }
-  if [[ $mono == DOT-MATRIX* ]] && ! has_font "$mono"; then
+  if [[ $mono == DotMatrix* ]] && ! has_font "$mono"; then
     notify "Building $mono…"
     build_fonts || { notify "Could not build $mono"; exit 1; }
   fi

@@ -121,6 +121,12 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.audio:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.audio
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.monitor:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.monitor
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/plugins/kamradsmeshnyavy.agents:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.agents
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/plugins/kamradsmeshnyavy.widgets:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets
       if: "[ `uname` = Linux ]"

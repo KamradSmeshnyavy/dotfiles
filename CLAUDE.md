@@ -82,6 +82,6 @@ omarchy-desktop-widgets (виджеты, дашборд, меню выключе
 токены стиля из `~/.config/omarchy/style.json`, их пишет Customizer → Пресеты → Стиль). Так же `dotmatrix/Palette.qml`
 (палитра стиля DOT-MATRIX, `docs/apps/omarchy-shell-dotmatrix.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer:
 цвета DOT-MATRIX — только через него, не hex.
-Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio}` (в dotfiles,
+Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio,monitor,agents}` (в dotfiles,
 правки помечены `// dotmatrix:`, палитру импортируют из `kamradsmeshnyavy.bar/dotmatrix`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.
