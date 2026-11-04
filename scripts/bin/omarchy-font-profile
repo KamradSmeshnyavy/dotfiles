@@ -15,11 +15,12 @@
 #             заголовки страниц); текст и код как в nothing.
 #   pixel   — как dot, а терминал и код пиксельные (Nihil Pixel).
 #   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
-#   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat; терминал и код — Maple.
-#   paper-hand  — Caveat везде, кроме терминала и кода.
+#   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat, терминал и код —
+#                 рукописный моноширинный Monaspace Radon.
+#   paper-hand  — Caveat везде, терминал и код — Monaspace Radon.
 #   paper-all   — абсолютно всё в Caveat, включая терминал и код (шрифт не моноширинный).
 #   retro       — интерфейс Pixelify Sans, терминал и код Nihil Pixel — стиль Retro.
-# Caveat, Pangolin и Pixelify Sans (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
+# Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
 # Nihil Mono — Geist Mono с включёнными лигатурами; Nihil Pixel — Terminess (Terminus) с русскими «в д и й»,
 # курсивом в ячейке и пиксельными лигатурами. Собираются из официальных шрифтов скриптами
@@ -50,8 +51,8 @@ PROFILES=(
   "dot|nihil|Geist|Nihil Mono||Dot layer: Nihil Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
   "pixel|nihil|Geist|Nihil Pixel||Dot layer plus pixel terminal and code (Nihil Pixel, ligatures)"
   "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
-  "paper-ui|paper|Pangolin|$STOCK_FONT|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles; terminal and code stay Maple"
-  "paper-hand|paper|Caveat|$STOCK_FONT|Caveat|Handwritten Caveat everywhere except the terminal and code"
+  "paper-ui|paper|Pangolin|Monaspace Radon Var|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles, handwritten monospaced Monaspace Radon for the terminal and code"
+  "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
   "paper-all|paper|Caveat|Caveat|Caveat|Absolutely everything in Caveat, terminal and code included (not monospaced)"
   "retro|retro|Pixelify Sans|Nihil Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (Nihil Pixel)"
 )
