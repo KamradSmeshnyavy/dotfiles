@@ -74,9 +74,9 @@ shaders-wallpaper:
       -o {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag.qsb \
       {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag
 
-# Собрать Nihil Mono (Geist Mono + лигатуры) и Nihil Pixel (Terminus: русские «в д и й», курсив, лигатуры)
+# Собрать DotMatrix Mono (Geist Mono + лигатуры) и DotMatrix Pixel (Terminus: русские «в д и й», курсив, лигатуры)
 [linux]
-nihil-fonts:
+dotmatrix-fonts:
     {{justfile_directory()}}/scripts/bin/omarchy-font-profile build-fonts
 
 # Ссылки на dotfiles, которых нет в install/install.conf.yaml (сделаны вручную)

@@ -8,8 +8,8 @@ import qs.Ui
 import qs.Commons
 import qs.Commons as Commons
 import "Model.js" as Model
-// nihil: цвета, шрифты и карточка — палитра Nihil-бара (kamradsmeshnyavy.bar/nihil/Palette.qml).
-import "../kamradsmeshnyavy.bar/nihil" as Nihil
+// dotmatrix: цвета, шрифты и карточка — палитра DOT-MATRIX-бара (kamradsmeshnyavy.bar/dotmatrix/Palette.qml).
+import "../kamradsmeshnyavy.bar/dotmatrix" as DotMatrix
 
 Panel {
   id: root
@@ -180,10 +180,10 @@ Panel {
   readonly property string toggleHint: anyAudible ? "Mute" : "Unmute"
 
   readonly property color hoverFill: bar
-    ? Style.hoverFillFor(bar.foreground, Nihil.Palette.signal)
+    ? Style.hoverFillFor(bar.foreground, DotMatrix.Palette.signal)
     : "transparent"
   readonly property color selectedFill: bar
-    ? Style.selectedFillFor(bar.foreground, Nihil.Palette.signal)
+    ? Style.selectedFillFor(bar.foreground, DotMatrix.Palette.signal)
     : "transparent"
 
   function sectionCount(section) {
@@ -634,7 +634,7 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    slotSize: 22  // nihil: плотнее стоковой ячейки 27px — значки в баре идут кучно
+    slotSize: 22  // dotmatrix: плотнее стоковой ячейки 27px — значки в баре идут кучно
     text: root.outputIcon()
     onPressed: function(b) {
       if (b === Qt.RightButton) root.toggleAllMuted()
@@ -653,9 +653,9 @@ Panel {
 
   KeyboardPanel {
     id: panel
-    // nihil: карточка в палитре Nihil — фон, радиус 18, рамка 1px.
-    borderSpec: Border.flat(Nihil.Palette.line, 1)
-    Component.onCompleted: Nihil.Palette.restyleCard(panel, 18)
+    // dotmatrix: карточка в палитре DOT-MATRIX — фон, радиус 18, рамка 1px.
+    borderSpec: Border.flat(DotMatrix.Palette.line, 1)
+    Component.onCompleted: DotMatrix.Palette.restyleCard(panel, 18)
     anchorItem: button
     owner: root
     bar: root.bar
@@ -720,8 +720,8 @@ Panel {
               id: heroIcon
               textFormat: Text.PlainText
               text: root.outputIcon()
-              color: Nihil.Palette.fg
-              font.family: Nihil.Palette.fontSans
+              color: DotMatrix.Palette.fg
+              font.family: DotMatrix.Palette.fontSans
               font.pixelSize: Style.font.display
               opacity: root.outputMuted ? 0.5 : 1.0
               anchors.left: parent.left
@@ -735,7 +735,7 @@ Panel {
               id: powerSwitch
               checked: root.anyAudible
               hasCursor: root.headerHasCursor
-              foreground: Nihil.Palette.fg
+              foreground: DotMatrix.Palette.fg
               anchors.right: parent.right
               anchors.verticalCenter: parent.verticalCenter
               onHovered: function(on) { if (on) root.setHeaderCursor() }
@@ -744,7 +744,7 @@ Panel {
               PanelToolTip {
                 visible: powerSwitch.containsMouse
                 text: root.toggleHint
-                fontFamily: Nihil.Palette.fontSans
+                fontFamily: DotMatrix.Palette.fontSans
               }
             }
 
@@ -759,10 +759,10 @@ Panel {
 
               Text {
                 text: "Audio"
-                color: Nihil.Palette.fg
-                font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+                color: DotMatrix.Palette.fg
+                font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
                 font.pixelSize: Style.font.title
-                font.weight: Nihil.Palette.titleWeight(Font.Bold)
+                font.weight: DotMatrix.Palette.titleWeight(Font.Bold)
                 elide: Text.ElideRight
                 width: parent.width
               }
@@ -774,8 +774,8 @@ Panel {
                   outputSlider.dragging ? outputSlider.liveValue : root.outputVolume,
                   root.outputMuted
                 ).toUpperCase()
-                color: Qt.darker(Nihil.Palette.fg, 1.4)
-                font.family: Nihil.Palette.fontSans
+                color: Qt.darker(DotMatrix.Palette.fg, 1.4)
+                font.family: DotMatrix.Palette.fontSans
                 font.pixelSize: Style.font.caption
                 font.bold: true
                 font.letterSpacing: 1.2
@@ -787,7 +787,7 @@ Panel {
 
           // ---- Output devices ----
           PanelSeparator {
-            foreground: Nihil.Palette.fg
+            foreground: DotMatrix.Palette.fg
           }
 
           Column {
@@ -801,9 +801,9 @@ Panel {
               PanelSectionHeader {
                 id: outputHeader
                 text: "OUTPUT"
-                foreground: Nihil.Palette.fg
-                fontFamily: Nihil.Palette.fontMono
-                font.letterSpacing: 1.4  // nihil: метка раздела
+                foreground: DotMatrix.Palette.fg
+                fontFamily: DotMatrix.Palette.fontMono
+                font.letterSpacing: 1.4  // dotmatrix: метка раздела
                 font.bold: false
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -813,8 +813,8 @@ Panel {
                 id: outputPercent
                 textFormat: Text.PlainText
                 text: Math.round((outputSlider.dragging ? outputSlider.liveValue : root.outputVolume) * 100) + "%"
-                color: Qt.darker(Nihil.Palette.fg, 1.4)
-                font.family: Nihil.Palette.fontSans
+                color: Qt.darker(DotMatrix.Palette.fg, 1.4)
+                font.family: DotMatrix.Palette.fontSans
                 font.pixelSize: Style.font.caption
                 font.bold: true
                 anchors.right: parent.right
@@ -830,7 +830,7 @@ Panel {
               height: outputSlider.implicitHeight + Style.spacing.controlGap
               hasCursor: root.cursorActive && root.focusSection === "output" && root.selectedIndex === -1
               onHasCursorChanged: if (hasCursor) root.ensureCursorVisible(outputSliderRow)
-              foreground: Nihil.Palette.fg
+              foreground: DotMatrix.Palette.fg
               outline: true
 
               PanelSlider {
@@ -875,7 +875,7 @@ Panel {
           // ---- Input ----
           PanelSeparator {
             visible: root.displayAudioSources.length > 0 || !!root.source
-            foreground: Nihil.Palette.fg
+            foreground: DotMatrix.Palette.fg
           }
 
           Column {
@@ -890,9 +890,9 @@ Panel {
               PanelSectionHeader {
                 id: microphoneHeader
                 text: "INPUT"
-                foreground: Nihil.Palette.fg
-                fontFamily: Nihil.Palette.fontMono
-                font.letterSpacing: 1.4  // nihil: метка раздела
+                foreground: DotMatrix.Palette.fg
+                fontFamily: DotMatrix.Palette.fontMono
+                font.letterSpacing: 1.4  // dotmatrix: метка раздела
                 font.bold: false
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -902,8 +902,8 @@ Panel {
                 id: microphonePercent
                 textFormat: Text.PlainText
                 text: Math.round((inputSlider.dragging ? inputSlider.liveValue : root.inputVolume) * 100) + "%"
-                color: Qt.darker(Nihil.Palette.fg, 1.4)
-                font.family: Nihil.Palette.fontSans
+                color: Qt.darker(DotMatrix.Palette.fg, 1.4)
+                font.family: DotMatrix.Palette.fontSans
                 font.pixelSize: Style.font.caption
                 font.bold: true
                 anchors.right: parent.right
@@ -920,7 +920,7 @@ Panel {
               height: inputControls.implicitHeight + Style.spacing.controlGap
               hasCursor: root.cursorActive && root.focusSection === "input" && root.selectedIndex === -1
               onHasCursorChanged: if (hasCursor) root.ensureCursorVisible(inputSliderRow)
-              foreground: Nihil.Palette.fg
+              foreground: DotMatrix.Palette.fg
               outline: true
 
               Column {
@@ -948,13 +948,13 @@ Panel {
                 Rectangle {
                   width: parent.width
                   height: Math.max(Style.space(5), Style.spacing.xs)
-                  color: Util.alpha(Nihil.Palette.fg, 0.18)
+                  color: Util.alpha(DotMatrix.Palette.fg, 0.18)
                   opacity: root.inputMuted ? 0.35 : 1.0
 
                   Rectangle {
                     height: parent.height
                     width: parent.width * Math.max(0, Math.min(1, inputPeakMonitor.peak))
-                    color: Nihil.Palette.fg
+                    color: DotMatrix.Palette.fg
                     Behavior on width { NumberAnimation { duration: 70 } }
                   }
                 }
@@ -985,7 +985,7 @@ Panel {
           // ---- Per-app streams ----
           PanelSeparator {
             visible: root.displayAudioStreams.length > 0
-            foreground: Nihil.Palette.fg
+            foreground: DotMatrix.Palette.fg
           }
 
           Column {
@@ -995,9 +995,9 @@ Panel {
 
             PanelSectionHeader {
               text: "SOURCES"
-              foreground: Nihil.Palette.fg
-              fontFamily: Nihil.Palette.fontMono
-              font.letterSpacing: 1.4  // nihil: метка раздела
+              foreground: DotMatrix.Palette.fg
+              fontFamily: DotMatrix.Palette.fontMono
+              font.letterSpacing: 1.4  // dotmatrix: метка раздела
               font.bold: false
             }
 
@@ -1032,7 +1032,7 @@ Panel {
     hasCursor: root.cursorActive && root.focusSection === "output" && root.selectedIndex === rowIndex
     onHasCursorChanged: if (hasCursor) root.ensureCursorVisible(sinkRow)
     current: isActive
-    foreground: Nihil.Palette.fg
+    foreground: DotMatrix.Palette.fg
     fill: root.hoverFill
     currentFill: root.selectedFill
     implicitHeight: sinkInner.implicitHeight + Style.spacing.xl
@@ -1049,10 +1049,10 @@ Panel {
       Text {
         textFormat: Text.PlainText
         text: root.sinkGlyph(sinkRow.node)
-        color: Nihil.Palette.fg
-        font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+        color: DotMatrix.Palette.fg
+        font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
         font.pixelSize: Style.font.title
-        font.weight: Nihil.Palette.titleWeight(Font.Normal)
+        font.weight: DotMatrix.Palette.titleWeight(Font.Normal)
         width: Style.space(22)
         horizontalAlignment: Text.AlignHCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -1061,8 +1061,8 @@ Panel {
       Text {
         textFormat: Text.PlainText
         text: root.nodeLabel(sinkRow.node)
-        color: Nihil.Palette.fg
-        font.family: Nihil.Palette.fontSans
+        color: DotMatrix.Palette.fg
+        font.family: DotMatrix.Palette.fontSans
         font.pixelSize: Style.font.body
         font.bold: sinkRow.isActive
         elide: Text.ElideRight
@@ -1094,7 +1094,7 @@ Panel {
     hasCursor: root.cursorActive && root.focusSection === "input" && root.selectedIndex === rowIndex
     onHasCursorChanged: if (hasCursor) root.ensureCursorVisible(sourceRow)
     current: isActive
-    foreground: Nihil.Palette.fg
+    foreground: DotMatrix.Palette.fg
     fill: root.hoverFill
     currentFill: root.selectedFill
     implicitHeight: sourceInner.implicitHeight + Style.spacing.xl
@@ -1111,10 +1111,10 @@ Panel {
       Text {
         textFormat: Text.PlainText
         text: root.sourceGlyph(sourceRow.node)
-        color: Nihil.Palette.fg
-        font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+        color: DotMatrix.Palette.fg
+        font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
         font.pixelSize: Style.font.title
-        font.weight: Nihil.Palette.titleWeight(Font.Normal)
+        font.weight: DotMatrix.Palette.titleWeight(Font.Normal)
         width: Style.space(22)
         horizontalAlignment: Text.AlignHCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -1123,8 +1123,8 @@ Panel {
       Text {
         textFormat: Text.PlainText
         text: root.nodeLabel(sourceRow.node)
-        color: Nihil.Palette.fg
-        font.family: Nihil.Palette.fontSans
+        color: DotMatrix.Palette.fg
+        font.family: DotMatrix.Palette.fontSans
         font.pixelSize: Style.font.body
         font.bold: sourceRow.isActive
         elide: Text.ElideRight
@@ -1162,7 +1162,7 @@ Panel {
     hasCursor: root.cursorActive && root.focusSection === "streams" && root.selectedIndex === rowIndex
     onHasCursorChanged: if (hasCursor) root.ensureCursorVisible(streamRow)
     current: isActive
-    foreground: Nihil.Palette.fg
+    foreground: DotMatrix.Palette.fg
     fill: root.hoverFill
     currentFill: root.selectedFill
     implicitHeight: streamColumn.implicitHeight + Style.spacing.xl
@@ -1184,10 +1184,10 @@ Panel {
           id: streamMuteIcon
           textFormat: Text.PlainText
           text: streamRow.streamMuted ? "󰝟" : "󰕾"
-          color: Nihil.Palette.fg
-          font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+          color: DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
           font.pixelSize: Style.font.title
-          font.weight: Nihil.Palette.titleWeight(Font.Normal)
+          font.weight: DotMatrix.Palette.titleWeight(Font.Normal)
           width: Style.space(22)
           horizontalAlignment: Text.AlignHCenter
           anchors.verticalCenter: parent.verticalCenter
@@ -1206,8 +1206,8 @@ Panel {
         Text {
           textFormat: Text.PlainText
           text: root.streamLabel(streamRow.node)
-          color: Nihil.Palette.fg
-          font.family: Nihil.Palette.fontSans
+          color: DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.body
           font.bold: streamRow.isActive
           elide: Text.ElideRight
@@ -1219,8 +1219,8 @@ Panel {
           id: streamPct
           textFormat: Text.PlainText
           text: Math.round(streamRow.streamVolume * 100) + "%"
-          color: Qt.darker(Nihil.Palette.fg, 1.5)
-          font.family: Nihil.Palette.fontSans
+          color: Qt.darker(DotMatrix.Palette.fg, 1.5)
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.caption
           font.bold: true
           width: Style.space(36)

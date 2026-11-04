@@ -31,7 +31,7 @@ def rgba(c, a):
 
 # Форма стилей: радиус, рамка, тени. bevel — 3D-кант (светлый сверху-слева, тёмный снизу-справа).
 FORMS = {
-    "nihil":    {"r": 0,  "border": 1, "shadow": "none",  "pad": 10, "cursor": "block"},
+    "dotmatrix":    {"r": 0,  "border": 1, "shadow": "none",  "pad": 10, "cursor": "block"},
     "flat":     {"r": 0,  "border": 1, "shadow": "none",  "pad": 8,  "cursor": "block"},
     "glass":    {"r": 12, "border": 1, "shadow": "soft",  "pad": 14, "cursor": "beam", "glass": True},
     "fluent":   {"r": 8,  "border": 1, "shadow": "soft",  "pad": 12, "cursor": "beam"},

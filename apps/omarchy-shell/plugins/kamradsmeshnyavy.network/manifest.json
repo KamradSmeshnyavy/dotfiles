@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "kamradsmeshnyavy.network",
-  "name": "Nihil Wi-Fi",
+  "name": "DOT-MATRIX Wi-Fi",
   "version": "1.0.0",
   "author": "KamradSmeshnyavy (clone of Omarchy)",
-  "description": "Omarchy network panel in the Nihil style",
+  "description": "Omarchy network panel in the DOT-MATRIX style",
   "kinds": [
     "bar-widget"
   ],
@@ -12,8 +12,8 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "Nihil Wi-Fi",
-    "description": "Omarchy network panel in the Nihil style",
+    "displayName": "DOT-MATRIX Wi-Fi",
+    "description": "Omarchy network panel in the DOT-MATRIX style",
     "category": "Network",
     "allowMultiple": false
   },

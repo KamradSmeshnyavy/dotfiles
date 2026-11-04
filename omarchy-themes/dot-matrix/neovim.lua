@@ -1,4 +1,4 @@
--- NIHIL base16 для Neovim (порт home/nvim.nix из poligle/Nihil-Shell, MIT).
+-- DOT-MATRIX base16 для Neovim (порт home/nvim.nix из poligle/Nihil-Shell, MIT).
 -- Красный (#d71921) зарезервирован для ошибок и удалений, поэтому идентификаторы
 -- и теги используют основной цвет текста (#e6e6e6), а ключевые слова — жирный #b5b5b5.
 return {
@@ -46,7 +46,7 @@ return {
 			},
 		},
 		init = function()
-			local function nihil_highlights()
+			local function dotmatrix_highlights()
 				local fg = "#e6e6e6"
 				for _, group in ipairs({
 					"Identifier",
@@ -66,8 +66,8 @@ return {
 			end
 
 			vim.api.nvim_create_autocmd({ "VimEnter", "ColorScheme" }, {
-				group = vim.api.nvim_create_augroup("NihilHighlights", { clear = true }),
-				callback = nihil_highlights,
+				group = vim.api.nvim_create_augroup("DotMatrixHighlights", { clear = true }),
+				callback = dotmatrix_highlights,
 			})
 		end,
 	},

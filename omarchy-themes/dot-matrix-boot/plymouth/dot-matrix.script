@@ -1,4 +1,4 @@
-// Загрузочный экран Plymouth темы NIHIL (адаптировано из Nihil-Shell, MIT, © 2026 Pol Iglesias).
+// Загрузочный экран Plymouth темы DOT-MATRIX (адаптировано из Nihil-Shell, MIT, © 2026 Pol Iglesias).
 // 36 кадров зажигания светодиодной матрицы Arch + 60 кадров диагонального пробега луча Glyph.
 
 center_x = Window.GetWidth() / 2;

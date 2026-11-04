@@ -8,8 +8,8 @@ import qs.Ui
 import qs.Commons
 import qs.Commons as Commons
 import "Model.js" as Model
-// nihil: цвета, шрифты и карточка — палитра Nihil-бара (kamradsmeshnyavy.bar/nihil/Palette.qml).
-import "../kamradsmeshnyavy.bar/nihil" as Nihil
+// dotmatrix: цвета, шрифты и карточка — палитра DOT-MATRIX-бара (kamradsmeshnyavy.bar/dotmatrix/Palette.qml).
+import "../kamradsmeshnyavy.bar/dotmatrix" as DotMatrix
 
 Panel {
   id: root
@@ -107,10 +107,10 @@ Panel {
   readonly property string toggleHint: root.adapter && root.adapter.enabled ? "Turn Bluetooth off" : "Turn Bluetooth on"
 
   readonly property color hoverFill: bar
-    ? Style.hoverFillFor(bar.foreground, Nihil.Palette.signal)
+    ? Style.hoverFillFor(bar.foreground, DotMatrix.Palette.signal)
     : "transparent"
   readonly property color selectedFill: bar
-    ? Style.selectedFillFor(bar.foreground, Nihil.Palette.signal)
+    ? Style.selectedFillFor(bar.foreground, DotMatrix.Palette.signal)
     : "transparent"
 
   function sectionCount(section) {
@@ -655,7 +655,7 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    slotSize: 22  // nihil: плотнее стоковой ячейки 27px — значки в баре идут кучно
+    slotSize: 22  // dotmatrix: плотнее стоковой ячейки 27px — значки в баре идут кучно
     text: root.icon
     onPressed: function(b) {
       if (b === Qt.RightButton) root.toggleBluetooth()
@@ -665,9 +665,9 @@ Panel {
 
   KeyboardPanel {
     id: panel
-    // nihil: карточка в палитре Nihil — фон, радиус 18, рамка 1px.
-    borderSpec: Border.flat(Nihil.Palette.line, 1)
-    Component.onCompleted: Nihil.Palette.restyleCard(panel, 18)
+    // dotmatrix: карточка в палитре DOT-MATRIX — фон, радиус 18, рамка 1px.
+    borderSpec: Border.flat(DotMatrix.Palette.line, 1)
+    Component.onCompleted: DotMatrix.Palette.restyleCard(panel, 18)
     anchorItem: button
     owner: root
     bar: root.bar
@@ -709,8 +709,8 @@ Panel {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             text: root.icon
-            color: Nihil.Palette.fg
-            font.family: Nihil.Palette.fontSans
+            color: DotMatrix.Palette.fg
+            font.family: DotMatrix.Palette.fontSans
             font.pixelSize: Style.font.display
             opacity: root.adapter && root.adapter.enabled ? 1.0 : 0.5
           }
@@ -722,7 +722,7 @@ Panel {
             visible: !!root.adapter
             checked: !!root.adapter && root.adapter.enabled
             hasCursor: root.headerHasCursor
-            foreground: Nihil.Palette.fg
+            foreground: DotMatrix.Palette.fg
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             onHovered: function(on) { if (on) root.setHeaderCursor() }
@@ -731,7 +731,7 @@ Panel {
             PanelToolTip {
               visible: powerSwitch.containsMouse
               text: root.toggleHint
-              fontFamily: Nihil.Palette.fontSans
+              fontFamily: DotMatrix.Palette.fontSans
             }
           }
 
@@ -746,10 +746,10 @@ Panel {
 
             Text {
               text: "Bluetooth"
-              color: Nihil.Palette.fg
-              font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+              color: DotMatrix.Palette.fg
+              font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
               font.pixelSize: Style.font.title
-              font.weight: Nihil.Palette.titleWeight(Font.Bold)
+              font.weight: DotMatrix.Palette.titleWeight(Font.Bold)
               elide: Text.ElideRight
               width: parent.width
             }
@@ -758,8 +758,8 @@ Panel {
               id: heroStatus
               textFormat: Text.PlainText
               text: root.heroStatusText.toUpperCase()
-              color: Qt.darker(Nihil.Palette.fg, 1.4)
-              font.family: Nihil.Palette.fontSans
+              color: Qt.darker(DotMatrix.Palette.fg, 1.4)
+              font.family: DotMatrix.Palette.fontSans
               font.pixelSize: Style.font.caption
               font.bold: true
               font.letterSpacing: 1.2
@@ -772,7 +772,7 @@ Panel {
         // Scrollable device list — capped so a noisy neighborhood doesn't
         // grow the popup past the screen.
         PanelSeparator {
-          foreground: Nihil.Palette.fg
+          foreground: DotMatrix.Palette.fg
         }
 
         Column {
@@ -783,9 +783,9 @@ Panel {
 
           PanelSectionHeader {
             text: "CONNECTED"
-            foreground: Nihil.Palette.fg
-            fontFamily: Nihil.Palette.fontMono
-            font.letterSpacing: 1.4  // nihil: метка раздела
+            foreground: DotMatrix.Palette.fg
+            fontFamily: DotMatrix.Palette.fontMono
+            font.letterSpacing: 1.4  // dotmatrix: метка раздела
             font.bold: false
           }
 
@@ -805,7 +805,7 @@ Panel {
 
         PanelSeparator {
           visible: root.connectedDevices.length > 0 && root.scrollRows.length > 0
-          foreground: Nihil.Palette.fg
+          foreground: DotMatrix.Palette.fg
         }
 
         // ListView, not a Flickable: it owns the scroll position, so it keeps
@@ -851,16 +851,16 @@ Panel {
               PanelSeparator {
                 visible: index > 0 && sectionTitle !== ""
                 height: visible ? implicitHeight : 0
-                foreground: Nihil.Palette.fg
+                foreground: DotMatrix.Palette.fg
               }
 
               PanelSectionHeader {
                 visible: sectionTitle !== ""
                 height: visible ? implicitHeight : 0
                 text: sectionTitle
-                foreground: Nihil.Palette.fg
-                fontFamily: Nihil.Palette.fontMono
-                font.letterSpacing: 1.4  // nihil: метка раздела
+                foreground: DotMatrix.Palette.fg
+                fontFamily: DotMatrix.Palette.fontMono
+                font.letterSpacing: 1.4  // dotmatrix: метка раздела
                 font.bold: false
               }
 
@@ -881,8 +881,8 @@ Panel {
           text: !root.adapter ? "No Bluetooth adapter"
               : !root.adapter.enabled ? "Turn Bluetooth on to scan"
               : "Scanning for devices…"
-          color: Qt.darker(Nihil.Palette.fg, 1.5)
-          font.family: Nihil.Palette.fontSans
+          color: Qt.darker(DotMatrix.Palette.fg, 1.5)
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.bodySmall
           wrapMode: Text.WordWrap
           width: parent.width
@@ -916,7 +916,7 @@ Panel {
 
     hasCursor: rowSelected && !root.actionFocused
     current: isConnected
-    foreground: Nihil.Palette.fg
+    foreground: DotMatrix.Palette.fg
     fill: root.hoverFill
     currentFill: root.selectedFill
 
@@ -934,9 +934,9 @@ Panel {
     }
 
     readonly property color statusColor: {
-      if (isConnected) return Nihil.Palette.fg
-      if (action !== "" || devState === 3 || dev.pairing === true) return Nihil.Palette.fg
-      return Qt.darker(Nihil.Palette.fg, 1.5)
+      if (isConnected) return DotMatrix.Palette.fg
+      if (action !== "" || devState === 3 || dev.pairing === true) return DotMatrix.Palette.fg
+      return Qt.darker(DotMatrix.Palette.fg, 1.5)
     }
 
     implicitHeight: rowContent.implicitHeight + Style.spacing.rowPaddingX
@@ -971,7 +971,7 @@ Panel {
     PanelToolTip {
       visible: row.actionTooltip !== "" && rowMouse.containsMouse && !root.actionFocused
       text: row.actionTooltip
-      fontFamily: Nihil.Palette.fontSans
+      fontFamily: DotMatrix.Palette.fontSans
     }
 
     Item {
@@ -988,7 +988,7 @@ Panel {
         textFormat: Text.PlainText
         text: row.isConnected ? "󰂱" : "󰂯"
         color: row.statusColor
-        font.family: Nihil.Palette.fontSans
+        font.family: DotMatrix.Palette.fontSans
         font.pixelSize: Style.font.heading
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
@@ -1006,8 +1006,8 @@ Panel {
         Text {
           textFormat: Text.PlainText
           text: root.deviceLabel(row.dev) || "Device"
-          color: Nihil.Palette.fg
-          font.family: Nihil.Palette.fontSans
+          color: DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.body
           elide: Text.ElideRight
           width: parent.width
@@ -1017,7 +1017,7 @@ Panel {
           visible: row.statusText !== ""
           text: row.statusText
           color: row.statusColor
-          font.family: Nihil.Palette.fontSans
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.caption
           elide: Text.ElideRight
           width: parent.width
@@ -1031,9 +1031,9 @@ Panel {
         visible: row.showForgetButton
         iconText: "󰅙"
         tooltipText: "Forget"
-        foreground: Nihil.Palette.fg
-        hoverColor: Nihil.Palette.fg
-        fontFamily: Nihil.Palette.fontSans
+        foreground: DotMatrix.Palette.fg
+        hoverColor: DotMatrix.Palette.fg
+        fontFamily: DotMatrix.Palette.fontSans
         hasCursor: row.rowSelected && root.actionFocused
         onHovered: function(isHovered) {
           if (!isHovered) {

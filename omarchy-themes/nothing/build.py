@@ -19,7 +19,7 @@ from palettes import PALETTES, check
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EFTER = os.path.join(HERE, "..", "catppuccin-mocha-efter")
-NIHIL = os.path.join(HERE, "..", "nihil")
+DOT-MATRIX = os.path.join(HERE, "..", "dotmatrix")
 
 
 # ── Цветовые утилиты ──────────────────────────────────────────────────────
@@ -433,8 +433,8 @@ def env(p):
 
 
 def fastfetch(p):
-    text = open(os.path.join(NIHIL, "apps", "fastfetch.jsonc")).read()
-    # Точечный Arch-логотип nihil; горящие точки — красным ANSI (у варианта он близок к сигналу), ключи — серые.
+    text = open(os.path.join(DOT-MATRIX, "apps", "fastfetch.jsonc")).read()
+    # Точечный Arch-логотип dotmatrix; горящие точки — красным ANSI (у варианта он близок к сигналу), ключи — серые.
     text = text.replace('"1": "white"', '"1": "red"', 1)
     return re.sub(r"#d71921", p["accent"], text, flags=re.I)
 
@@ -850,7 +850,7 @@ def unlock_png(dst, color):
 
 
 WALLPAPERS = {
-    # вариант: [(имя файла nihil, цвет точек — роль или hex)]
+    # вариант: [(имя файла dotmatrix, цвет точек — роль или hex)]
     "signal": [("01-night.png", "fg"), ("blackhole.png", "accent"), ("galaxy.png", "fg"), ("02-arch.png", "accent")],
     "cmf": [("01-night.png", "accent"), ("tokyo.png", "number"), ("space.png", "fg"), ("02-arch.png", "accent")],
     "glyph": [("01-night.png", "fg"), ("antenna.png", "accent"), ("galaxy.png", "fg"), ("02-arch.png", "accent")],
@@ -870,7 +870,7 @@ def wallpapers(variant, p, out_dir):
         if os.path.exists(dst):
             continue
         # Светлая тема: фон светлый, точки тёмные — инверсия яркости исходника.
-        recolor_png(os.path.join(NIHIL, "backgrounds", src), dst, p["bg"], dot)
+        recolor_png(os.path.join(DOT-MATRIX, "backgrounds", src), dst, p["bg"], dot)
 
 
 # ── Сборка ────────────────────────────────────────────────────────────────

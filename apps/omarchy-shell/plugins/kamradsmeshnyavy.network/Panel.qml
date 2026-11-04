@@ -8,8 +8,8 @@ import qs.Ui
 import qs.Commons
 import qs.Commons as Commons
 import "Model.js" as Model
-// nihil: цвета, шрифты и карточка — палитра Nihil-бара (kamradsmeshnyavy.bar/nihil/Palette.qml).
-import "../kamradsmeshnyavy.bar/nihil" as Nihil
+// dotmatrix: цвета, шрифты и карточка — палитра DOT-MATRIX-бара (kamradsmeshnyavy.bar/dotmatrix/Palette.qml).
+import "../kamradsmeshnyavy.bar/dotmatrix" as DotMatrix
 
 Panel {
   id: root
@@ -292,8 +292,8 @@ Panel {
   // `selectedIndex`). Mouse hover and keyboard nav both mutate this state
   // at the root; items never read containsMouse for visuals. See
   // CursorSurface for the shared chrome shared by rows and pills.
-  readonly property color hoverFill: bar ? Style.hoverFillFor(bar.foreground, Nihil.Palette.signal) : "transparent"
-  readonly property color selectedFill: bar ? Style.selectedFillFor(bar.foreground, Nihil.Palette.signal) : "transparent"
+  readonly property color hoverFill: bar ? Style.hoverFillFor(bar.foreground, DotMatrix.Palette.signal) : "transparent"
+  readonly property color selectedFill: bar ? Style.selectedFillFor(bar.foreground, DotMatrix.Palette.signal) : "transparent"
 
   // scannerEnabled lives on the shared WifiDevice, which has no reference
   // counting, and a bar widget is instantiated once per monitor. Tracking the
@@ -960,7 +960,7 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    slotSize: 22  // nihil: плотнее стоковой ячейки 27px — значки в баре идут кучно
+    slotSize: 22  // dotmatrix: плотнее стоковой ячейки 27px — значки в баре идут кучно
     text: root.icon
 
     onPressed: function(b) {
@@ -981,9 +981,9 @@ Panel {
   // here is the wifi-specific UI inside.
   KeyboardPanel {
     id: panel
-    // nihil: карточка в палитре Nihil — фон, радиус 18, рамка 1px.
-    borderSpec: Border.flat(Nihil.Palette.line, 1)
-    Component.onCompleted: Nihil.Palette.restyleCard(panel, 18)
+    // dotmatrix: карточка в палитре DOT-MATRIX — фон, радиус 18, рамка 1px.
+    borderSpec: Border.flat(DotMatrix.Palette.line, 1)
+    Component.onCompleted: DotMatrix.Palette.restyleCard(panel, 18)
     anchorItem: button
     owner: root
     bar: root.bar
@@ -1099,8 +1099,8 @@ Panel {
           id: heroIcon
           textFormat: Text.PlainText
           text: root.icon
-          color: Nihil.Palette.fg
-          font.family: Nihil.Palette.fontSans
+          color: DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.display
           opacity: root.networkManagerAvailable ? 1.0 : 0.5
           anchors.left: parent.left
@@ -1120,8 +1120,8 @@ Panel {
             visible: root.canShareWifi
             iconText: "󰐲"
             tooltipText: "Show QR code"
-            foreground: Nihil.Palette.fg
-            fontFamily: Nihil.Palette.fontSans
+            foreground: DotMatrix.Palette.fg
+            fontFamily: DotMatrix.Palette.fontSans
             iconSize: Style.font.subtitle * 1.5
             horizontalPadding: Style.space(5)
             verticalPadding: Style.space(2)
@@ -1136,8 +1136,8 @@ Panel {
             visible: root.canRunSpeedTest
             iconText: "󰓅"
             tooltipText: "Run a speed test"
-            foreground: Nihil.Palette.fg
-            fontFamily: Nihil.Palette.fontSans
+            foreground: DotMatrix.Palette.fg
+            fontFamily: DotMatrix.Palette.fontSans
             iconSize: Style.font.subtitle * 1.5
             horizontalPadding: Style.space(5)
             verticalPadding: Style.space(2)
@@ -1152,7 +1152,7 @@ Panel {
             visible: root.canToggleWifi
             checked: Networking.wifiEnabled
             hasCursor: root.toggleHeaderHasCursor
-            foreground: Nihil.Palette.fg
+            foreground: DotMatrix.Palette.fg
             Layout.alignment: Qt.AlignVCenter
             onHovered: function(on) { if (on) root.setHeaderCursor(root.toggleHeaderIndex) }
             onToggled: root.toggleNetwork()
@@ -1160,7 +1160,7 @@ Panel {
             PanelToolTip {
               visible: powerSwitch.containsMouse
               text: root.toggleHint
-              fontFamily: Nihil.Palette.fontSans
+              fontFamily: DotMatrix.Palette.fontSans
             }
           }
         }
@@ -1189,10 +1189,10 @@ Panel {
             readonly property string detail: root.headerDetail()
 
             text: heroSsid.detail !== "" ? heroSsid.title + " (" + heroSsid.detail + ")" : heroSsid.title
-            color: Nihil.Palette.fg
-            font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+            color: DotMatrix.Palette.fg
+            font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
             font.pixelSize: Style.font.title
-            font.weight: Nihil.Palette.titleWeight(Font.Bold)
+            font.weight: DotMatrix.Palette.titleWeight(Font.Bold)
             elide: Text.ElideRight
           }
 
@@ -1211,8 +1211,8 @@ Panel {
               return ""
             }
             visible: text !== ""
-            color: Qt.darker(Nihil.Palette.fg, 1.4)
-            font.family: Nihil.Palette.fontSans
+            color: Qt.darker(DotMatrix.Palette.fg, 1.4)
+            font.family: DotMatrix.Palette.fontSans
             font.pixelSize: Style.font.caption
             font.bold: true
             font.letterSpacing: 1.2
@@ -1241,12 +1241,12 @@ Panel {
           InfoLabel { text: "Ping" }
           DetailValue {
             text: root.formatPingLatency(root.internetPingLatency)
-            color: root.internetPingPacketLoss > 0 ? Nihil.Palette.danger : Nihil.Palette.fg
+            color: root.internetPingPacketLoss > 0 ? DotMatrix.Palette.danger : DotMatrix.Palette.fg
           }
           InfoLabel { text: "Packet Loss" }
           DetailValue {
             text: root.formatPacketLoss(root.internetPingPacketLoss)
-            color: root.internetPingPacketLoss > 0 ? Nihil.Palette.danger : Nihil.Palette.fg
+            color: root.internetPingPacketLoss > 0 ? DotMatrix.Palette.danger : DotMatrix.Palette.fg
           }
 
           InfoLabel { text: "Receiving" }
@@ -1278,7 +1278,7 @@ Panel {
       // on more than one band -- a single-band AP has nothing to toggle.
       PanelSeparator {
         visible: root.canSelectBand
-        foreground: Nihil.Palette.fg
+        foreground: DotMatrix.Palette.fg
       }
 
       Column {
@@ -1296,9 +1296,9 @@ Panel {
           PanelSectionHeader {
             id: bandHeader
             text: root.bandSectionTitle
-            foreground: Nihil.Palette.fg
-            fontFamily: Nihil.Palette.fontMono
-            font.letterSpacing: 1.4  // nihil: метка раздела
+            foreground: DotMatrix.Palette.fg
+            fontFamily: DotMatrix.Palette.fontMono
+            font.letterSpacing: 1.4  // dotmatrix: метка раздела
             font.bold: false
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
@@ -1313,9 +1313,9 @@ Panel {
             PanelSectionHeader {
               id: bandAutoLabel
               text: "AUTOMATIC"
-              foreground: Nihil.Palette.fg
-              fontFamily: Nihil.Palette.fontMono
-              font.letterSpacing: 1.4  // nihil: метка раздела
+              foreground: DotMatrix.Palette.fg
+              fontFamily: DotMatrix.Palette.fontMono
+              font.letterSpacing: 1.4  // dotmatrix: метка раздела
               font.bold: false
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -1334,7 +1334,7 @@ Panel {
               checked: !root.bandPinned
               busy: root.bandBusy
               hasCursor: root.cursorActive && root.focusSection === "band" && root.bandAutoFocused
-              foreground: Nihil.Palette.fg
+              foreground: DotMatrix.Palette.fg
               onToggled: root.toggleBandAuto()
 
               onHovered: function(isHovered) {
@@ -1349,7 +1349,7 @@ Panel {
                 text: root.bandPinned
                   ? "Let Wi-Fi pick the band"
                   : "Stay on " + root.bandLabel(root.bandCurrent)
-                fontFamily: Nihil.Palette.fontSans
+                fontFamily: DotMatrix.Palette.fontSans
               }
             }
           }
@@ -1411,7 +1411,7 @@ Panel {
 
       // DNS provider selection.
       PanelSeparator {
-        foreground: Nihil.Palette.fg
+        foreground: DotMatrix.Palette.fg
       }
 
       Column {
@@ -1420,9 +1420,9 @@ Panel {
 
         PanelSectionHeader {
           text: "DNS PROVIDER"
-          foreground: Nihil.Palette.fg
-          fontFamily: Nihil.Palette.fontMono
-          font.letterSpacing: 1.4  // nihil: метка раздела
+          foreground: DotMatrix.Palette.fg
+          fontFamily: DotMatrix.Palette.fontMono
+          font.letterSpacing: 1.4  // dotmatrix: метка раздела
           font.bold: false
         }
 
@@ -1472,15 +1472,15 @@ Panel {
       // Wi-Fi networks (only if a Wi-Fi station is available).
       PanelSeparator {
         visible: root.wifiStationAvailable
-        foreground: Nihil.Palette.fg
+        foreground: DotMatrix.Palette.fg
       }
 
       PanelSectionHeader {
         visible: root.wifiStationAvailable && root.scanning
         text: "SCANNING WI-FI…"
-        foreground: Nihil.Palette.fg
-        fontFamily: Nihil.Palette.fontMono
-        font.letterSpacing: 1.4  // nihil: метка раздела
+        foreground: DotMatrix.Palette.fg
+        fontFamily: DotMatrix.Palette.fontMono
+        font.letterSpacing: 1.4  // dotmatrix: метка раздела
         font.bold: false
       }
 
@@ -1523,9 +1523,9 @@ Panel {
             PanelSectionHeader {
               visible: sectionTitle !== ""
               text: sectionTitle
-              foreground: Nihil.Palette.fg
-              fontFamily: Nihil.Palette.fontMono
-              font.letterSpacing: 1.4  // nihil: метка раздела
+              foreground: DotMatrix.Palette.fg
+              fontFamily: DotMatrix.Palette.fontMono
+              font.letterSpacing: 1.4  // dotmatrix: метка раздела
               font.bold: false
               height: visible ? implicitHeight : 0
             }
@@ -1555,8 +1555,8 @@ Panel {
     text: root.bandLabel(band)
     tooltipText: root.bandTooltip(band)
     fontSize: Style.font.bodySmall
-    foreground: Nihil.Palette.fg
-    fontFamily: Nihil.Palette.fontSans
+    foreground: DotMatrix.Palette.fg
+    fontFamily: DotMatrix.Palette.fontSans
     horizontalPadding: Style.spacing.controlPaddingX
     verticalPadding: Style.spacing.controlPaddingY + Style.space(2)
     bordered: true
@@ -1586,8 +1586,8 @@ Panel {
 
     text: provider
     fontSize: Style.font.bodySmall
-    foreground: Nihil.Palette.fg
-    fontFamily: Nihil.Palette.fontSans
+    foreground: DotMatrix.Palette.fg
+    fontFamily: DotMatrix.Palette.fontSans
     horizontalPadding: Style.spacing.controlPaddingX
     verticalPadding: Style.spacing.controlPaddingY + Style.space(2)
     bordered: true
@@ -1628,7 +1628,7 @@ Panel {
 
     hasCursor: root.cursorActive && isSelected && !root.wifiActionFocused
     current: isConnected
-    foreground: Nihil.Palette.fg
+    foreground: DotMatrix.Palette.fg
     fill: root.hoverFill
     currentFill: root.selectedFill
     // Gate on the matching *Kind/*Reason being non-empty so a hidden-SSID
@@ -1676,10 +1676,10 @@ Panel {
     }
 
     readonly property color statusColor: {
-      if (isFailed) return Nihil.Palette.danger
-      if (isBusy) return Nihil.Palette.fg
-      if (isConnected) return Nihil.Palette.fg
-      return Qt.darker(Nihil.Palette.fg, 1.5)
+      if (isFailed) return DotMatrix.Palette.danger
+      if (isBusy) return DotMatrix.Palette.fg
+      if (isConnected) return DotMatrix.Palette.fg
+      return Qt.darker(DotMatrix.Palette.fg, 1.5)
     }
 
     implicitHeight: rowBody.implicitHeight + (isPasswordOpen ? passwordPanel.implicitHeight + Style.spacing.md : 0)
@@ -1734,9 +1734,9 @@ Panel {
         textFormat: Text.PlainText
         text: row.net ? root.wifiIconFor(row.net.signal) : ""
         color: row.statusColor
-        font.family: Nihil.Palette.fontTitle  // nihil: точечный слой
+        font.family: DotMatrix.Palette.fontTitle  // dotmatrix: точечный слой
         font.pixelSize: Style.font.title
-        font.weight: Nihil.Palette.titleWeight(Font.Normal)
+        font.weight: DotMatrix.Palette.titleWeight(Font.Normal)
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
       }
@@ -1760,16 +1760,16 @@ Panel {
           anchors.verticalCenter: parent.verticalCenter
           horizontalAlignment: Text.AlignHCenter
           text: row.forgetVisible ? "󰅙" : "󰌾"
-          color: row.forgetVisible ? Nihil.Palette.danger : Qt.darker(Nihil.Palette.fg, 1.4)
-          font.family: Nihil.Palette.fontSans
+          color: row.forgetVisible ? DotMatrix.Palette.danger : Qt.darker(DotMatrix.Palette.fg, 1.4)
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.subtitle
         }
 
         BorderSurface {
           anchors.fill: parent
           visible: row.forgetFocused
-          color: Style.hoverFillFor(Nihil.Palette.danger, Nihil.Palette.danger)
-          borderSpec: Border.controlSpec("hover-cursor", Nihil.Palette.danger, Nihil.Palette.danger)
+          color: Style.hoverFillFor(DotMatrix.Palette.danger, DotMatrix.Palette.danger)
+          borderSpec: Border.controlSpec("hover-cursor", DotMatrix.Palette.danger, DotMatrix.Palette.danger)
           radius: Style.cornerRadius
           z: -1
         }
@@ -1788,7 +1788,7 @@ Panel {
         PanelToolTip {
           visible: rightMouse.containsMouse || row.forgetFocused
           text: "Forget network"
-          fontFamily: Nihil.Palette.fontSans
+          fontFamily: DotMatrix.Palette.fontSans
         }
       }
 
@@ -1804,8 +1804,8 @@ Panel {
         Text {
           textFormat: Text.PlainText
           text: row.net ? (row.net.ssid || "Hidden") : ""
-          color: Nihil.Palette.fg
-          font.family: Nihil.Palette.fontSans
+          color: DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.body
           elide: Text.ElideRight
           width: parent.width
@@ -1821,7 +1821,7 @@ Panel {
           visible: row.statusText !== ""
           height: visible ? implicitHeight : 0
           color: row.statusColor
-          font.family: Nihil.Palette.fontSans
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.caption
           elide: Text.ElideRight
           width: parent.width
@@ -1866,7 +1866,7 @@ Panel {
         placeholderText: "Identity (user@domain)"
         font.family: Style.font.family
         font.pixelSize: Style.font.body
-        foreground: Nihil.Palette.fg
+        foreground: DotMatrix.Palette.fg
         horizontalPadding: Style.spacing.controlGap
         verticalPadding: Style.spacing.controlPaddingY
         enabled: !row.isBusy
@@ -1892,7 +1892,7 @@ Panel {
         placeholderText: "Passphrase"
         font.family: Style.font.family
         font.pixelSize: Style.font.body
-        foreground: Nihil.Palette.fg
+        foreground: DotMatrix.Palette.fg
         horizontalPadding: Style.spacing.controlGap
         verticalPadding: Style.spacing.controlPaddingY
         enabled: !row.isBusy
@@ -1913,8 +1913,8 @@ Panel {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         height: Style.spacing.controlHeight
-        color: Style.normalFillFor(Nihil.Palette.fg)
-        borderSpec: Border.controlSpec("normal", Nihil.Palette.fg, Nihil.Palette.signal)
+        color: Style.normalFillFor(DotMatrix.Palette.fg)
+        borderSpec: Border.controlSpec("normal", DotMatrix.Palette.fg, DotMatrix.Palette.signal)
         radius: Style.cornerRadius
 
         Text {
@@ -1923,8 +1923,8 @@ Panel {
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           text: row.isFailed ? "Wrong password" : "Connecting..."
-          color: row.isFailed ? Nihil.Palette.danger : Nihil.Palette.fg
-          font.family: Nihil.Palette.fontSans
+          color: row.isFailed ? DotMatrix.Palette.danger : DotMatrix.Palette.fg
+          font.family: DotMatrix.Palette.fontSans
           font.pixelSize: Style.font.bodySmall
         }
       }
@@ -1940,8 +1940,8 @@ Panel {
         enabled: row.net && pwField.text.length > 0 && (!row.isEnterprise || idField.text.length > 0)
         iconText: "󰄬"
         tooltipText: "Connect"
-        foreground: Nihil.Palette.fg
-        fontFamily: Nihil.Palette.fontSans
+        foreground: DotMatrix.Palette.fg
+        fontFamily: DotMatrix.Palette.fontSans
         onClicked: row.submitCredentials()
       }
     }
@@ -1967,22 +1967,22 @@ Panel {
     PanelToolTip {
       visible: valueMouse.enabled && valueMouse.containsMouse
       text: tooltipText
-      fontFamily: Nihil.Palette.fontSans
+      fontFamily: DotMatrix.Palette.fontSans
     }
   }
 
   component InfoLabel: Text {
     textFormat: Text.PlainText
-    color: Nihil.Palette.fg
+    color: DotMatrix.Palette.fg
     opacity: 0.6
-    font.family: Nihil.Palette.fontSans
+    font.family: DotMatrix.Palette.fontSans
     font.pixelSize: Style.font.bodySmall
   }
 
   component InfoValue: Text {
     textFormat: Text.PlainText
-    color: Nihil.Palette.fg
-    font.family: Nihil.Palette.fontSans
+    color: DotMatrix.Palette.fg
+    font.family: DotMatrix.Palette.fontSans
     font.pixelSize: Style.font.bodySmall
   }
 }

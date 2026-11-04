@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 
-// Drawer: the NIHIL launcher's structure (NihilView.qml — adapted from poligle/Nihil-Shell, MIT License,
+// Drawer: the DOT-MATRIX launcher's structure (DotMatrixView.qml — adapted from poligle/Nihil-Shell, MIT License,
 // Copyright (c) 2026 Pol Iglesias) in the finish of a Customizer style. Same layout and keys: a drawer at
 // the bottom edge, a search field, a 7-column app grid, ">" actions with a second Enter for power actions,
 // "=" calculator, a hint line. Only the finish changes, chosen by the skin name drawer-<look>:
@@ -26,7 +26,7 @@ SkinBase {
     ? root.variant : "flat"
   function pick(map) { return map[root.look] !== undefined ? map[root.look] : map["flat"] }
 
-  // ── логика (как в NihilView) ─────────────────────────────────────────
+  // ── логика (как в DotMatrixView) ─────────────────────────────────────────
   readonly property string trimmedQuery: String(root.query || "").replace(/^\s+/, "")
   readonly property bool calcMode: trimmedQuery.indexOf("=") === 0
   readonly property bool actionsMode: trimmedQuery.indexOf(">") === 0

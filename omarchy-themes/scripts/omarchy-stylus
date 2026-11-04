@@ -353,7 +353,7 @@ def stub(name, url):
 
 
 FONTS_JSON = HOME / ".config/omarchy/fonts.json"
-DOT = '"Nihil Dot", "Doto", monospace'
+DOT = '"DotMatrix Dot", "Doto", monospace'
 # Что набирать точками / пикселями по профилю шрифтов (omarchy-font-profile).
 FONT_RULES = {
     "nothing": {"dot": "h1, h2"},
@@ -363,7 +363,7 @@ FONT_RULES = {
 
 
 def fonts_style():
-    """Usercss «Nihil fonts» на все сайты. У stock правил нет, но стиль остаётся (пустым), а не
+    """Usercss «DOT-MATRIX fonts» на все сайты. У stock правил нет, но стиль остаётся (пустым), а не
     заглушкой: у заглушки версия 0.0.0, и Stylus отказался бы ставить её поверх 1.0.x."""
     cfg = load_json(FONTS_JSON, {})
     profile = cfg.get("profile") or "stock"
@@ -373,7 +373,7 @@ def fonts_style():
         css.append(f"{rules['dot']} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
     if "code" in rules:
         css.append(f'{rules["code"]} {{ font-family: "{cfg.get("mono", "monospace")}", monospace !important; }}')
-    name = "nihil-fonts"
+    name = "dotmatrix-fonts"
     url = style_url(name)
     # Комментарий без правил Stylus счёл бы пустым стилем — для stock одна безвредная переменная.
     body = "\n  ".join(css) or "html { --omarchy-font-profile: stock; }"
@@ -384,12 +384,12 @@ def fonts_style():
     m = re.search(r"^@version (\S+)$", old, re.M)
     same = old.endswith(f"{{\n  {body}\n}}\n") and f"({profile})" in old
     version = m.group(1) if m and same and m.group(1) != "1.0.0" else f"1.0.{int(time.time())}"
-    code = (f"/* ==UserStyle==\n@name Nihil fonts\n@namespace omarchy\n@version {version}\n"
+    code = (f"/* ==UserStyle==\n@name DOT-MATRIX fonts\n@namespace omarchy\n@version {version}\n"
             f"@description Шрифты по профилю omarchy-font-profile ({profile})\n@updateURL {url}\n"
             f"==/UserStyle== */\n@-moz-document regexp(\".*\") {{\n  {body}\n}}\n")
     style = {
-        "name": "Nihil fonts", "enabled": True, "sourceCode": code, "updateUrl": url, "updatable": True,
-        "usercssData": {"name": "Nihil fonts", "namespace": "omarchy", "version": version, "updateURL": url},
+        "name": "DOT-MATRIX fonts", "enabled": True, "sourceCode": code, "updateUrl": url, "updatable": True,
+        "usercssData": {"name": "DOT-MATRIX fonts", "namespace": "omarchy", "version": version, "updateURL": url},
         "sections": [{"code": body, "regexps": [".*"]}],
         "originalDigest": hashlib.sha1(code.encode()).hexdigest(),
     }
@@ -433,7 +433,7 @@ def build():
 
     name, code, style = fonts_style()
     write_atomic(WWW / f"{name}.user.css", code)
-    used[name] = "Nihil fonts"
+    used[name] = "DOT-MATRIX fonts"
     styles.append(style)
 
     # Стили из прошлых наборов, которых сейчас нет: пустая заглушка вместо кода.

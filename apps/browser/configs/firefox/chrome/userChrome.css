@@ -1,6 +1,6 @@
 /* Загрузчик интерфейса Firefox. Цвета темы Omarchy и вид по профилю шрифтов
    собирает omarchy-themes/scripts/omarchy-firefox-chrome в <профиль>/chrome/omarchy/:
-   colors.css — переменные --om-*, style.css — @import "stock.css" или "nihil.css".
+   colors.css — переменные --om-*, style.css — @import "stock.css" или "dotmatrix.css".
    @import должен идти до любых правил, поэтому здесь больше ничего нет. */
 @import "omarchy/colors.css";
 @import "omarchy/style.css";

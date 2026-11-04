@@ -1,4 +1,4 @@
-# NIHIL — монохромная тема в духе Nothing OS (порт poligle/Nihil-Shell, MIT).
+# DOT-MATRIX — монохромная тема в духе Nothing OS (порт poligle/Nihil-Shell, MIT).
 # Иерархия строится оттенками серого на OLED-чёрном; красный (#d71921) — только для ошибок и прерываний.
 mode = "dark"
 

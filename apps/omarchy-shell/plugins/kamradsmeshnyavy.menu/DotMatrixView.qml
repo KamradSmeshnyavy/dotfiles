@@ -4,11 +4,11 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import "nihil" as Nihil
+import "dotmatrix" as DotMatrix
 
-// NIHIL bottom hardware drawer launcher (adapted from poligle/Nihil-Shell, MIT License,
+// DOT-MATRIX bottom hardware drawer launcher (adapted from poligle/Nihil-Shell, MIT License,
 // Copyright (c) 2026 Pol Iglesias):
-//   - Bump in the Nihil background colour growing out of the bottom bezel with 14px concave fillets
+//   - Bump in the DOT-MATRIX background colour growing out of the bottom bezel with 14px concave fillets
 //   - 7-column desaturated monochrome app grid (regains colour on selection/hover)
 //   - ">" command list with 2-click red (theme urgent) confirmation for destructive power actions
 //   - "=" calculator in 56px Doto Bold LED digits (Enter copies via wl-copy)
@@ -106,7 +106,7 @@ SkinBase {
   function handleEnter() {
     if (calcMode) {
       if (calcResult !== "" && calcResult !== "ERR") {
-        Quickshell.execDetached(["sh", "-c", "printf '%s' \"$1\" | wl-copy 2>/dev/null || true", "nihil-calc", calcResult])
+        Quickshell.execDetached(["sh", "-c", "printf '%s' \"$1\" | wl-copy 2>/dev/null || true", "dotmatrix-calc", calcResult])
         root.dismissRequested()
       }
       return true
@@ -187,7 +187,7 @@ SkinBase {
       "except Exception:\n" +
       "  print(\"\")\n" +
       "' \"$1\"; fi",
-      "nihil-calc-eval",
+      "dotmatrix-calc-eval",
       calcProc.expr
     ]
     stdout: StdioCollector {
@@ -223,7 +223,7 @@ SkinBase {
   // Subtle backdrop wash outside the bottom drawer.
   Rectangle {
     anchors.fill: parent
-    color: Nihil.Palette.bg
+    color: DotMatrix.Palette.bg
     opacity: Math.max(0, Math.min(0.45, (root.backdrop - 0.5) * 0.7)) * root.openProgress
   }
 
@@ -253,7 +253,7 @@ SkinBase {
     readonly property real tr: Math.max(0, Math.min(root.cornerRadius, (root.curHeight - fy) / 2))
 
     ShapePath {
-      fillColor: Nihil.Palette.bg
+      fillColor: DotMatrix.Palette.bg
       strokeWidth: -1
       startX: root.leftX - root.flare
       startY: root.height
@@ -291,7 +291,7 @@ SkinBase {
 
     ShapePath {
       fillColor: "transparent"
-      strokeColor: Nihil.Palette.line
+      strokeColor: DotMatrix.Palette.line
       strokeWidth: root.curHeight > 1 ? 1 : -1
       startX: root.leftX - root.flare
       startY: root.baseY
@@ -359,9 +359,9 @@ SkinBase {
         anchors.rightMargin: 28
         height: 44
         radius: 22
-        color: Nihil.Palette.surface
+        color: DotMatrix.Palette.surface
         border.width: 1
-        border.color: Nihil.Palette.line
+        border.color: DotMatrix.Palette.line
 
         Text {
           id: modeGlyph
@@ -371,9 +371,9 @@ SkinBase {
           text: root.calcMode
             ? String.fromCodePoint(0xF00EC)
             : (root.actionsMode ? String.fromCodePoint(0xF018D) : String.fromCodePoint(0xF0349))
-          font.family: Nihil.Palette.fontIcon
+          font.family: DotMatrix.Palette.fontIcon
           font.pixelSize: 16
-          color: root.query.length > 0 ? Nihil.Palette.fg : Nihil.Palette.muted
+          color: root.query.length > 0 ? DotMatrix.Palette.fg : DotMatrix.Palette.muted
         }
 
         Text {
@@ -387,11 +387,11 @@ SkinBase {
           text: root.query.length > 0
             ? root.query
             : "Search  ·  > actions  ·  = calculate"
-          // Точечный слой: введённый запрос — Nihil Dot крупнее, подсказка остаётся моно.
-          font.family: root.query.length > 0 && Nihil.Palette.dotLayer ? Nihil.Palette.fontDot : Nihil.Palette.fontMono
-          font.pixelSize: root.query.length > 0 && Nihil.Palette.dotLayer ? 18 : 13
-          font.weight: root.query.length > 0 ? Nihil.Palette.titleWeight(Font.Normal) : Font.Normal
-          color: root.query.length > 0 ? Nihil.Palette.fg : Nihil.Palette.muted
+          // Точечный слой: введённый запрос — DotMatrix Dot крупнее, подсказка остаётся моно.
+          font.family: root.query.length > 0 && DotMatrix.Palette.dotLayer ? DotMatrix.Palette.fontDot : DotMatrix.Palette.fontMono
+          font.pixelSize: root.query.length > 0 && DotMatrix.Palette.dotLayer ? 18 : 13
+          font.weight: root.query.length > 0 ? DotMatrix.Palette.titleWeight(Font.Normal) : Font.Normal
+          color: root.query.length > 0 ? DotMatrix.Palette.fg : DotMatrix.Palette.muted
         }
 
         Text {
@@ -402,10 +402,10 @@ SkinBase {
           anchors.verticalCenter: parent.verticalCenter
           textFormat: Text.PlainText
           text: root.subtitle.toUpperCase()
-          font.family: Nihil.Palette.fontMono
+          font.family: DotMatrix.Palette.fontMono
           font.pixelSize: 10
           font.letterSpacing: 1.5
-          color: Nihil.Palette.muted
+          color: DotMatrix.Palette.muted
         }
       }
 
@@ -447,9 +447,9 @@ SkinBase {
             anchors.fill: parent
             anchors.margins: 4
             radius: 18
-            color: cell.selected ? Nihil.Palette.surfaceHi : (cellArea.containsMouse ? Nihil.Palette.surface : "transparent")
+            color: cell.selected ? DotMatrix.Palette.surfaceHi : (cellArea.containsMouse ? DotMatrix.Palette.surface : "transparent")
             border.width: cell.selected ? 1 : 0
-            border.color: Nihil.Palette.line
+            border.color: DotMatrix.Palette.line
           }
 
           Item {
@@ -471,7 +471,7 @@ SkinBase {
               fontFamily: root.fontFamily
               load: cell.nearViewport || root.count <= 56
               fallback: cell.label.length > 0 ? cell.label.charAt(0).toUpperCase() : "•"
-              color: cell.selected || cellArea.containsMouse ? Nihil.Palette.fg : Nihil.Palette.dim
+              color: cell.selected || cellArea.containsMouse ? DotMatrix.Palette.fg : DotMatrix.Palette.dim
 
               layer.enabled: cell.kind === "app"
               layer.effect: MultiEffect {
@@ -491,10 +491,10 @@ SkinBase {
             elide: Text.ElideRight
             textFormat: Text.PlainText
             text: cell.label.toUpperCase()
-            font.family: Nihil.Palette.fontMono
+            font.family: DotMatrix.Palette.fontMono
             font.pixelSize: 10
             font.letterSpacing: 0.8
-            color: cell.selected ? Nihil.Palette.fg : Nihil.Palette.muted
+            color: cell.selected ? DotMatrix.Palette.fg : DotMatrix.Palette.muted
           }
 
           MouseArea {
@@ -515,10 +515,10 @@ SkinBase {
         anchors.centerIn: appGrid
         textFormat: Text.PlainText
         text: root.emptyText().toUpperCase()
-        font.family: Nihil.Palette.fontMono
+        font.family: DotMatrix.Palette.fontMono
         font.pixelSize: 11
         font.letterSpacing: 1.6
-        color: Nihil.Palette.muted
+        color: DotMatrix.Palette.muted
       }
 
       // 2. ">" Actions List with 2-click red confirm
@@ -554,9 +554,9 @@ SkinBase {
           width: actionsList.width
           height: 44
           radius: 14
-          color: isArmed ? Nihil.Palette.danger : (selected ? Nihil.Palette.surfaceHi : (actArea.containsMouse ? Nihil.Palette.surface : "transparent"))
+          color: isArmed ? DotMatrix.Palette.danger : (selected ? DotMatrix.Palette.surfaceHi : (actArea.containsMouse ? DotMatrix.Palette.surface : "transparent"))
           border.width: selected && !isArmed ? 1 : 0
-          border.color: Nihil.Palette.line
+          border.color: DotMatrix.Palette.line
 
           Text {
             id: actGlyph
@@ -565,9 +565,9 @@ SkinBase {
             anchors.verticalCenter: parent.verticalCenter
             textFormat: Text.PlainText
             text: actRow.icon
-            font.family: Nihil.Palette.fontIcon
+            font.family: DotMatrix.Palette.fontIcon
             font.pixelSize: 16
-            color: actRow.isArmed ? Nihil.Palette.onSignal : (actRow.isDanger ? Nihil.Palette.danger : (actRow.selected ? Nihil.Palette.fg : Nihil.Palette.dim))
+            color: actRow.isArmed ? DotMatrix.Palette.onSignal : (actRow.isDanger ? DotMatrix.Palette.danger : (actRow.selected ? DotMatrix.Palette.fg : DotMatrix.Palette.dim))
           }
 
           Text {
@@ -579,10 +579,10 @@ SkinBase {
             elide: Text.ElideRight
             textFormat: Text.PlainText
             text: actRow.label
-            font.family: Nihil.Palette.fontSans
+            font.family: DotMatrix.Palette.fontSans
             font.pixelSize: 14
             font.weight: actRow.selected ? Font.Medium : Font.Normal
-            color: actRow.isArmed ? Nihil.Palette.onSignal : (actRow.selected ? Nihil.Palette.fg : Nihil.Palette.dim)
+            color: actRow.isArmed ? DotMatrix.Palette.onSignal : (actRow.selected ? DotMatrix.Palette.fg : DotMatrix.Palette.dim)
           }
 
           Text {
@@ -592,10 +592,10 @@ SkinBase {
             anchors.verticalCenter: parent.verticalCenter
             textFormat: Text.PlainText
             text: (actRow.isArmed ? "ENTER AGAIN" : actRow.detail).toUpperCase()
-            font.family: Nihil.Palette.fontMono
+            font.family: DotMatrix.Palette.fontMono
             font.pixelSize: 10
             font.letterSpacing: 1.4
-            color: actRow.isArmed ? Nihil.Palette.onSignal : Nihil.Palette.muted
+            color: actRow.isArmed ? DotMatrix.Palette.onSignal : DotMatrix.Palette.muted
           }
 
           MouseArea {
@@ -620,10 +620,10 @@ SkinBase {
           anchors.horizontalCenter: parent.horizontalCenter
           textFormat: Text.PlainText
           text: (root.calcExpr.length > 0 ? root.calcExpr : "TYPE AN EXPRESSION").toUpperCase()
-          font.family: Nihil.Palette.fontMono
+          font.family: DotMatrix.Palette.fontMono
           font.pixelSize: 11
           font.letterSpacing: 1.6
-          color: Nihil.Palette.muted
+          color: DotMatrix.Palette.muted
         }
 
         Text {
@@ -633,10 +633,10 @@ SkinBase {
           elide: Text.ElideRight
           textFormat: Text.PlainText
           text: root.calcResult !== "" ? root.calcResult : "0"
-          font.family: Nihil.Palette.fontDot
+          font.family: DotMatrix.Palette.fontDot
           font.weight: Font.Bold
           font.pixelSize: 56
-          color: root.calcResult !== "" ? Nihil.Palette.fg : Nihil.Palette.unlit
+          color: root.calcResult !== "" ? DotMatrix.Palette.fg : DotMatrix.Palette.unlit
         }
       }
 
@@ -652,10 +652,10 @@ SkinBase {
           : (root.actionsMode
              ? "↑↓ SELECT  ·  ENTER RUN  ·  ESC CLOSE"
              : "ARROWS MOVE  ·  ENTER OPEN  ·  > ACTIONS  ·  = CALC  ·  ESC CLOSE")
-        font.family: Nihil.Palette.fontMono
+        font.family: DotMatrix.Palette.fontMono
         font.pixelSize: 10
         font.letterSpacing: 1.5
-        color: Nihil.Palette.muted
+        color: DotMatrix.Palette.muted
       }
     }
   }

@@ -211,9 +211,9 @@
   "style.launcher.minimal": {
     "icon":"\udb81\udd70",
     "label":"Minimal",
-    "description":"List, Nihil, Board, Hexgrid, Drum, Metro",
+    "description":"List, DOT-MATRIX, Board, Hexgrid, Drum, Metro",
     "aliases":["skin-minimal"],
-    "checked":"grep -qE '\"skin\":\"(list|nihil|board|hexgrid|drum|metro)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+    "checked":"grep -qE '\"skin\":\"(list|dotmatrix|board|hexgrid|drum|metro)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.minimal.list": {
     "icon":"\uf03a",
@@ -222,12 +222,12 @@
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"list\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"list\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
-  "style.launcher.minimal.nihil": {
+  "style.launcher.minimal.dotmatrix": {
     "icon":"\udb82\udcc7",
-    "label":"Nihil",
+    "label":"DOT-MATRIX",
     "description":"Nothing monochrome bottom drawer \u00b7 Doto calc",
-    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"nihil\"}' > ~/.config/omarchy/extensions/menu-skin.json",
-    "checked":"grep -q '\"skin\":\"nihil\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"dotmatrix\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"dotmatrix\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.minimal.board": {
     "icon":"\udb81\udd70",

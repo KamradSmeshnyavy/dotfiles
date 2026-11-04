@@ -1,2 +1,2 @@
-module nihil
+module dotmatrix
 singleton Palette 1.0 Palette.qml

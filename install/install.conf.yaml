@@ -108,7 +108,7 @@
     ~/.config/omarchy/plugins/kamradsmeshnyavy.image-picker:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.image-picker
       if: "[ `uname` = Linux ]"
-    # Клоны стоковых виджетов бара в стиле Nihil (правки помечены // nihil:).
+    # Клоны стоковых виджетов бара в стиле DOT-MATRIX (правки помечены // dotmatrix:).
     ~/.config/omarchy/plugins/kamradsmeshnyavy.tray:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.tray
       if: "[ `uname` = Linux ]"
@@ -268,11 +268,11 @@
     ~/.config/omarchy/themes/nothing-ashlight:
       path: omarchy-themes/nothing/ashlight
       if: "[ `uname` = Linux ]"
-    ~/.config/omarchy/themes/nihil:
-      path: omarchy-themes/nihil
+    ~/.config/omarchy/themes/dot-matrix:
+      path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"
-    # Шрифты стиля Nihil (Doto, Space Grotesk, Space Mono) живут в плагине customizer.
-    ~/.local/share/fonts/nihil:
+    # Шрифты стиля DOT-MATRIX (Doto, Space Grotesk, Space Mono) живут в плагине customizer.
+    ~/.local/share/fonts/dotmatrix:
       path: apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/fonts
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nord-own:
@@ -343,4 +343,4 @@
       if: "[ `uname` = Linux ]"
 - shell:
     - [bat cache --build]
-    - ['[ "$(uname)" != Linux ] || ! command -v fc-cache >/dev/null || fc-cache -f ~/.local/share/fonts/nihil']
+    - ['[ "$(uname)" != Linux ] || ! command -v fc-cache >/dev/null || fc-cache -f ~/.local/share/fonts/dotmatrix']

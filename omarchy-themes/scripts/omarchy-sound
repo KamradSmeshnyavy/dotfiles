@@ -19,7 +19,7 @@ if [[ -f $conf ]]; then
 fi
 [[ $enabled == true ]] || exit 0
 
-# Пакеты звуков стилей (nihil, classic, flat, glass, paper, …) живут в плагине kamradsmeshnyavy.customizer:
+# Пакеты звуков стилей (dotmatrix, classic, flat, glass, paper, …) живут в плагине kamradsmeshnyavy.customizer:
 # всё, у чего там есть каталог sounds/<пакет>, играет его play-sound.sh.
 customizer="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer"
 customizer_play="$customizer/scripts/play-sound.sh"

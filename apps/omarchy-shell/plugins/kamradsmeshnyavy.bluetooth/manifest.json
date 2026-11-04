@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "kamradsmeshnyavy.bluetooth",
-  "name": "Nihil Bluetooth",
+  "name": "DOT-MATRIX Bluetooth",
   "version": "1.0.0",
   "author": "KamradSmeshnyavy (clone of Omarchy)",
-  "description": "Omarchy Bluetooth panel in the Nihil style",
+  "description": "Omarchy Bluetooth panel in the DOT-MATRIX style",
   "kinds": [
     "bar-widget"
   ],
@@ -12,8 +12,8 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "Nihil Bluetooth",
-    "description": "Omarchy Bluetooth panel in the Nihil style",
+    "displayName": "DOT-MATRIX Bluetooth",
+    "description": "Omarchy Bluetooth panel in the DOT-MATRIX style",
     "category": "Network",
     "allowMultiple": false
   },

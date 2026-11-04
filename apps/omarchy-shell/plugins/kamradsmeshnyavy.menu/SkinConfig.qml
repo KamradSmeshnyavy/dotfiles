@@ -33,7 +33,7 @@ Item {
     "medieval": "MedievalView.qml",
     "ironman": "IronmanView.qml",
     // Originals.
-    "nihil": "NihilView.qml",
+    "dotmatrix": "DotMatrixView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
@@ -43,7 +43,7 @@ Item {
     "lanterns": "LanternsView.qml",
     "aquarium": "AquariumView.qml",
     "sketchbook": "SketchbookView.qml",
-    // Шторка Nihil в отделке стилей Customizer: один файл, вариант — после «drawer-».
+    // Шторка DOT-MATRIX в отделке стилей Customizer: один файл, вариант — после «drawer-».
     "drawer-flat": "DrawerView.qml",
     "drawer-glass": "DrawerView.qml",
     "drawer-fluent": "DrawerView.qml",
@@ -69,7 +69,7 @@ Item {
     var n = String(name || "")
     if (/-hack$/.test(n)) return "hack"
     if (/-term$/.test(n)) return "term"
-    // drawer-<стиль>: шторка Nihil в отделке стиля Customizer (DrawerView.qml).
+    // drawer-<стиль>: шторка DOT-MATRIX в отделке стиля Customizer (DrawerView.qml).
     if (/^drawer-/.test(n)) return n.slice(7)
     return ""
   }

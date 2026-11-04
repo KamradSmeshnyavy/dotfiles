@@ -1,4 +1,4 @@
--- Рамки окон NIHIL: тонкие матовые линии без градиентов (muted / line).
+-- Рамки окон DOT-MATRIX: тонкие матовые линии без градиентов (muted / line).
 local active_border_color = "rgb(7a7a7a)"
 local inactive_border_color = "rgb(2a2a2a)"
 

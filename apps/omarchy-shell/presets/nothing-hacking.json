@@ -2,9 +2,9 @@
   "name": "nothing-hacking",
   "theme": "nothing-steel",
   "wallpaper": "~/.local/state/omarchy/current/theme/backgrounds/1-galaxy.png",
-  "anims": "NIHIL",
-  "opacity": "nihil",
-  "blur": "nihil",
+  "anims": "DOT-MATRIX",
+  "opacity": "dotmatrix",
+  "blur": "dotmatrix",
   "shader": "off",
   "hyprGeometry": {
     "gapsIn": 4,
@@ -15,21 +15,21 @@
     "noGaps": true
   },
   "barSkinData": {
-    "note": "NIHIL bezel frame (44px bar, 8px frame, 20px inner corners, 1px hairline border, LED workspaces); colours from the Nihil palette — theme or mono",
-    "note_ru": "Рамка-бортик NIHIL (бар 44px, рамка 8px, скруглённые углы 20px, тонкий контур 1px, LED-воркспейсы); цвета из палитры Nihil — тема или монохром",
+    "note": "DOT-MATRIX bezel frame (44px bar, 8px frame, 20px inner corners, 1px hairline border, LED workspaces); colours from the DOT-MATRIX palette — theme or mono",
+    "note_ru": "Рамка-бортик DOT-MATRIX (бар 44px, рамка 8px, скруглённые углы 20px, тонкий контур 1px, LED-воркспейсы); цвета из палитры DOT-MATRIX — тема или монохром",
     "shape": "frame",
     "height": 44,
     "frameWidth": 8,
     "radius": 20,
     "padding": 16,
     "spacing": 10,
-    "background": "nihil.bg",
+    "background": "dotmatrix.bg",
     "backgroundAlpha": 1,
-    "border": "nihil.line",
+    "border": "dotmatrix.line",
     "borderWidth": 1,
     "borderAlpha": 1,
-    "text": "nihil.fg",
-    "active": "nihil.signal",
+    "text": "dotmatrix.fg",
+    "active": "dotmatrix.signal",
     "moduleStyle": "plain",
     "wsLabelStyle": "leds",
     "wsWindowIcons": false,
@@ -44,9 +44,9 @@
     "layout": {
       "left": [
         {
-          "id": "nihil-mark",
+          "id": "dotmatrix-mark",
           "type": "qml",
-          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/NihilMark.qml"
+          "source": "~/.config/omarchy/plugins/kamradsmeshnyavy.bar/modules/DotMatrixMark.qml"
         },
         {
           "id": "omarchy.workspaces"
@@ -100,7 +100,7 @@
   },
   "barTransparent": false,
   "lock": {
-    "design": "nihil",
+    "design": "dotmatrix",
     "clock24": true,
     "showSeconds": false,
     "showDate": true,
@@ -108,7 +108,7 @@
     "wallpaperDim": 0.45
   },
   "launcher": {
-    "skin": "nihil",
+    "skin": "dotmatrix",
     "backdrop": 0.82
   },
   "wallpaperFx": {
@@ -124,17 +124,17 @@
     "autoCache": true
   },
   "widgets": {
-    "widgetStyle": "nihil",
+    "widgetStyle": "dotmatrix",
     "edgeHover": false,
     "clock": false,
     "clockStyle": "big",
     "media": false,
     "visualizer": true,
     "sysinfo": false,
-    "dashStyle": "nihil",
+    "dashStyle": "dotmatrix",
     "dashFollowBar": true,
     "dashAttach": "attached",
-    "dashBackground": "nihil.bg",
+    "dashBackground": "dotmatrix.bg",
     "dashAlpha": 1,
     "dashRadius": 14,
     "dashBorder": true,
@@ -146,10 +146,10 @@
     "dashDuration": 240
   },
   "osd": {
-    "osdStyle": "nihil",
+    "osdStyle": "dotmatrix",
     "osdFollowBar": true,
     "osdAttach": "attached",
-    "osdBackground": "nihil.bg",
+    "osdBackground": "dotmatrix.bg",
     "osdAlpha": 1,
     "osdRadius": 14,
     "osdSide": "right",
@@ -159,16 +159,16 @@
   "notifications": {
     "notifyStyle": "stock",
     "notifyFollowBar": true,
-    "notifyBackground": "nihil.bg",
+    "notifyBackground": "dotmatrix.bg",
     "notifyAlpha": 1,
     "notifyRadius": 14,
-    "notifyCards": "nihil",
+    "notifyCards": "dotmatrix",
     "notifyCorner": "top-right",
     "notifyWidth": 360
   },
   "sounds": {
     "sounds": true,
-    "soundPack": "nihil",
+    "soundPack": "dotmatrix",
     "soundVolume": 0.6,
     "windowSounds": true
   },
@@ -176,8 +176,8 @@
     "glyphEnabled": true,
     "glyphCriticalRed": true,
     "glyphCharger": true,
-    "glyphColor": "nihil.fg",
-    "glyphCriticalColor": "nihil.danger",
+    "glyphColor": "dotmatrix.fg",
+    "glyphCriticalColor": "dotmatrix.danger",
     "glyphDuration": 1100,
     "glyphThickness": 2.5,
     "glyphInsetMode": "auto"

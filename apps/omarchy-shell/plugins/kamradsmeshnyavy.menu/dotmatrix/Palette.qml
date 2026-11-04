@@ -4,15 +4,15 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons as Commons
 
-// NIHIL (dot-matrix) palette and fonts. The same file ships in every plugin that
-// draws the Nihil style (widgets, osd, notifications, bar, menu, lock): change all
+// DOT-MATRIX (dot-matrix) palette and fonts. The same file ships in every plugin that
+// draws the DOT-MATRIX style (widgets, osd, notifications, bar, menu, lock): change all
 // copies together.
 //
-// ~/.config/omarchy/nihil.json {"palette": "theme" | "mono"}
+// ~/.config/omarchy/dotmatrix.json {"palette": "theme" | "mono"}
 //   theme (default) — roles from the current omarchy theme, follow theme switches;
 //   mono            — the original Nothing look (black, white, red) on any theme.
-// Every role can be overridden in the same file (Customizer → Widgets → Nihil palette):
-//   "nihilBg": "accent" | "blue" | "#1e1e2e" | "default" …  — a shell role, a colors.toml key or hex;
+// Every role can be overridden in the same file (Customizer → Widgets → DOT-MATRIX palette):
+//   "dotmatrixBg": "accent" | "blue" | "#1e1e2e" | "default" …  — a shell role, a colors.toml key or hex;
 //   missing or "default" keeps the automatic colour below.
 // Fonts fall back to the omarchy font when Doto / Space Mono / Space Grotesk are missing.
 QtObject {
@@ -41,28 +41,28 @@ QtObject {
     return auto
   }
 
-  readonly property color bg: pick("nihilBg", mono ? "#000000" : Commons.Color.background)
-  readonly property color fg: pick("nihilFg", mono ? "#f2f2f2" : Commons.Color.foreground)
-  readonly property color dim: pick("nihilDim", mono ? "#8e8e8e" : alpha(fg, 0.62))
-  readonly property color muted: pick("nihilMuted", mono ? "#5a5a5a" : Commons.Color.muted)
+  readonly property color bg: pick("dotmatrixBg", mono ? "#000000" : Commons.Color.background)
+  readonly property color fg: pick("dotmatrixFg", mono ? "#f2f2f2" : Commons.Color.foreground)
+  readonly property color dim: pick("dotmatrixDim", mono ? "#8e8e8e" : alpha(fg, 0.62))
+  readonly property color muted: pick("dotmatrixMuted", mono ? "#5a5a5a" : Commons.Color.muted)
   // Hairlines and unlit dots.
-  readonly property color line: pick("nihilLine", mono ? "#2a2a2a" : alpha(fg, 0.16))
-  readonly property color lineSoft: mono && !overrides.nihilLine ? "#1e1e1e" : alpha(line, line.a * 0.62)
+  readonly property color line: pick("dotmatrixLine", mono ? "#2a2a2a" : alpha(fg, 0.16))
+  readonly property color lineSoft: mono && !overrides.dotmatrixLine ? "#1e1e1e" : alpha(line, line.a * 0.62)
   readonly property color unlit: mono ? "#222222" : alpha(fg, 0.12)
   // Raised surfaces: inputs, hovered and selected rows.
-  readonly property color surface: pick("nihilSurface", mono ? "#0a0a0a" : over(bg, fg, 0.04))
-  readonly property color surfaceHi: mono && !overrides.nihilSurface ? "#141414" : over(surface, fg, 0.04)
+  readonly property color surface: pick("dotmatrixSurface", mono ? "#0a0a0a" : over(bg, fg, 0.04))
+  readonly property color surfaceHi: mono && !overrides.dotmatrixSurface ? "#141414" : over(surface, fg, 0.04)
   // Lit LEDs, slider segments, active toggles and filled buttons.
-  readonly property color lit: pick("nihilLit", fg)
+  readonly property color lit: pick("dotmatrixLit", fg)
   // The Nothing red: lit LEDs and the active workspace take the theme accent,
   // destructive confirmations and critical states take urgent.
-  readonly property color signal: pick("nihilSignal", mono ? "#d71921" : Commons.Color.accent)
-  readonly property color danger: pick("nihilDanger", mono ? "#d71921" : Commons.Color.urgent)
+  readonly property color signal: pick("dotmatrixSignal", mono ? "#d71921" : Commons.Color.accent)
+  readonly property color danger: pick("dotmatrixDanger", mono ? "#d71921" : Commons.Color.urgent)
   // Ink on a signal/danger fill.
   readonly property color onSignal: mono ? "#f2f2f2" : bg
 
   // Stock popups (qs.Ui PopupCard / KeyboardPanel) hard-code the card colour and radius
-  // on their inner BorderSurface; repaint it in the Nihil palette. Call from Component.onCompleted.
+  // on their inner BorderSurface; repaint it in the DOT-MATRIX palette. Call from Component.onCompleted.
   function restyleCard(win, radius) {
     var kids = []
     if (win && win.data) for (var d = 0; d < win.data.length; d++) kids.push(win.data[d])
@@ -79,8 +79,8 @@ QtObject {
   // Шрифты. ~/.config/omarchy/fonts.json — профиль шрифтов системы (omarchy-font-profile):
   //   stock — Space Grotesk / Space Mono как в Nihil-Shell; nothing / dot / pixel — sans и mono профиля
   //   (Geist, GeistMono / Terminess, с кириллицей). dot / pixel включают точечный слой (dotLayer):
-  //   Nihil Dot во всём крупном и коротком — заголовках, номерах, метках.
-  // Nihil Dot — Doto с кириллицей (kamradsmeshnyavy.customizer/fonts); без него — Doto, потом шрифт Omarchy.
+  //   DotMatrix Dot во всём крупном и коротком — заголовках, номерах, метках.
+  // DotMatrix Dot — Doto с кириллицей (kamradsmeshnyavy.customizer/fonts); без него — Doto, потом шрифт Omarchy.
   property var fontProfile: ({ profile: "stock" })
   readonly property bool dotLayer: fontProfile.profile === "dot" || fontProfile.profile === "pixel"
   readonly property var families: Qt.fontFamilies()
@@ -88,18 +88,18 @@ QtObject {
     if (families.indexOf(name) >= 0) return name
     return fallback !== undefined ? fallback : Commons.Style.font.family
   }
-  readonly property string fontDot: family("Nihil Dot", family("Doto"))
+  readonly property string fontDot: family("DotMatrix Dot", family("Doto"))
   readonly property string fontMono: fontProfile.profile !== "stock" && fontProfile.mono ? family(fontProfile.mono, family("Space Mono")) : family("Space Mono")
   readonly property string fontSans: fontProfile.profile !== "stock" && fontProfile.sans ? family(fontProfile.sans, family("Space Grotesk")) : family("Space Grotesk")
   readonly property string fontIcon: Commons.Style.font.family
-  // Метки и заголовки: точками при точечном слое, иначе — моно-голос Nihil.
+  // Метки и заголовки: точками при точечном слое, иначе — моно-голос DotMatrix.
   readonly property string fontLabel: dotLayer ? fontDot : fontMono
   readonly property string fontTitle: dotLayer ? fontDot : fontSans
   // Точки при обычной толщине бледные — заголовки точечного слоя набираются Black, как часы.
   function titleWeight(normal) { return dotLayer ? Font.Black : normal }
 
   property FileView file: FileView {
-    path: Quickshell.env("HOME") + "/.config/omarchy/nihil.json"
+    path: Quickshell.env("HOME") + "/.config/omarchy/dotmatrix.json"
     watchChanges: true
     printErrors: false
     onFileChanged: reload()

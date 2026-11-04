@@ -7,14 +7,14 @@ import qs.Commons
 import qs.Commons as Commons
 import qs.Ui
 import "TrayModel.js" as TrayModel
-// nihil: цвета, шрифты и карточки — палитра Nihil-бара (kamradsmeshnyavy.bar/nihil/Palette.qml).
-import "../kamradsmeshnyavy.bar/nihil" as Nihil
+// dotmatrix: цвета, шрифты и карточки — палитра DOT-MATRIX-бара (kamradsmeshnyavy.bar/dotmatrix/Palette.qml).
+import "../kamradsmeshnyavy.bar/dotmatrix" as DotMatrix
 
 BarWidget {
   id: root
   moduleName: "omarchy.tray"
 
-  // nihil: collapse=false (по умолчанию) — все значки видны всегда, без выдвижного ящика;
+  // dotmatrix: collapse=false (по умолчанию) — все значки видны всегда, без выдвижного ящика;
   // collapse=true — стоковое поведение (ящик раскрывается при наведении).
   // monochrome=true (по умолчанию) — значки серые, цвет возвращается при наведении.
   readonly property bool collapse: settings.collapse === true
@@ -25,15 +25,15 @@ BarWidget {
   property bool trayMenuOpen: false
   property var activeTrayItem: null
   property var activeTrayAnchor: null
-  readonly property color foreground: Nihil.Palette.fg
-  readonly property string fontFamily: Nihil.Palette.fontSans
+  readonly property color foreground: DotMatrix.Palette.fg
+  readonly property string fontFamily: DotMatrix.Palette.fontSans
   readonly property var pinnedIds: settings.pinned instanceof Array ? settings.pinned : []
   readonly property var hiddenIds: settings.hidden instanceof Array ? settings.hidden : []
   readonly property var pinnedItems: bucket("pinned")
   readonly property var drawerItems: bucket("drawer")
   readonly property var allItems: bucket("all")
   readonly property int drawerCount: drawerItems.length
-  readonly property int trayItemExtent: 22  // nihil: плотнее стоковой ячейки Style.bar.iconSlot
+  readonly property int trayItemExtent: 22  // dotmatrix: плотнее стоковой ячейки Style.bar.iconSlot
   readonly property int trayItemGap: 0
   readonly property int trayJoinGap: 0
   readonly property int drawerExtent: drawerCount > 0 ? drawerCount * trayItemExtent + (drawerCount - 1) * trayItemGap : 0
@@ -280,7 +280,7 @@ BarWidget {
           x: root.drawerExtent - root.revealExtent
           text: root.collapse ? "\uf053" : "\uf141"
           onPressed: function(button) {
-            // nihil: без сворачивания кнопка — только менеджер значков (любой кнопкой мыши).
+            // dotmatrix: без сворачивания кнопка — только менеджер значков (любой кнопкой мыши).
             if (button === Qt.RightButton || !root.collapse) root.managePopupOpen = !root.managePopupOpen
           }
         }
@@ -364,7 +364,7 @@ BarWidget {
           text: root.collapse ? "\uf053" : "\uf141"
           textRotation: 90
           onPressed: function(button) {
-            // nihil: без сворачивания кнопка — только менеджер значков (любой кнопкой мыши).
+            // dotmatrix: без сворачивания кнопка — только менеджер значков (любой кнопкой мыши).
             if (button === Qt.RightButton || !root.collapse) root.managePopupOpen = !root.managePopupOpen
           }
         }
@@ -412,8 +412,8 @@ BarWidget {
     owner: root
     bar: root.bar
     open: root.managePopupOpen
-    borderColor: Nihil.Palette.line
-    Component.onCompleted: Nihil.Palette.restyleCard(managePopup, 18)
+    borderColor: DotMatrix.Palette.line
+    Component.onCompleted: DotMatrix.Palette.restyleCard(managePopup, 18)
     contentWidth: managePopup.fittedContentWidth(Style.space(300))
     contentHeight: managePopup.fittedContentHeight(manageColumn.implicitHeight)
 
@@ -545,8 +545,8 @@ BarWidget {
     // still resets immediately, from openTrayMenu() itself.
     onVisibleChanged: if (!visible) root.resetTrayMenu()
     padding: Style.space(8)
-    borderColor: Nihil.Palette.line
-    Component.onCompleted: Nihil.Palette.restyleCard(trayMenuPopup, 18)
+    borderColor: DotMatrix.Palette.line
+    Component.onCompleted: DotMatrix.Palette.restyleCard(trayMenuPopup, 18)
     contentWidth: trayMenuPopup.fittedContentWidth(Style.space(232))
     contentHeight: trayMenuPopup.fittedContentHeight(menuHeaderHeight + trayMenuColumn.implicitHeight, Style.space(420))
 
@@ -631,7 +631,7 @@ BarWidget {
             anchors.rightMargin: Style.space(10)
             anchors.verticalCenter: parent.verticalCenter
             height: 1
-            color: Nihil.Palette.line
+            color: DotMatrix.Palette.line
             opacity: 0.45
           }
         }
@@ -685,7 +685,7 @@ BarWidget {
                 anchors.rightMargin: Style.space(10)
                 anchors.verticalCenter: parent.verticalCenter
                 height: 1
-                color: Nihil.Palette.line
+                color: DotMatrix.Palette.line
                 opacity: 0.45
               }
 
@@ -786,7 +786,7 @@ BarWidget {
     required property var icon
     property bool hovered: false
     readonly property bool symbolic: root.iconIsSymbolic(icon)
-    // nihil: цветной значок рисуется через MultiEffect без насыщенности, пока на него не наведут.
+    // dotmatrix: цветной значок рисуется через MultiEffect без насыщенности, пока на него не наведут.
     readonly property bool grey: root.monochrome && !symbolic
 
     Image {

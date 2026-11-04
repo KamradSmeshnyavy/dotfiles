@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "kamradsmeshnyavy.audio",
-  "name": "Nihil sound",
+  "name": "DOT-MATRIX sound",
   "version": "1.0.0",
   "author": "KamradSmeshnyavy (clone of Omarchy)",
-  "description": "Omarchy audio panel in the Nihil style",
+  "description": "Omarchy audio panel in the DOT-MATRIX style",
   "kinds": [
     "bar-widget"
   ],
@@ -12,8 +12,8 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "Nihil sound",
-    "description": "Omarchy audio panel in the Nihil style",
+    "displayName": "DOT-MATRIX sound",
+    "description": "Omarchy audio panel in the DOT-MATRIX style",
     "category": "Audio",
     "allowMultiple": false
   },

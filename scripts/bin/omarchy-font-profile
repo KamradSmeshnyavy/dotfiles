@@ -1,43 +1,43 @@
 #!/usr/bin/env bash
 # Профиль шрифтов всей системы — в духе Nothing OS. Один выбор меняет шрифт терминалов, fontconfig, GTK,
-# VS Code, браузера (Dark Reader, Stylus) и Nihil-оболочки.
+# VS Code, браузера (Dark Reader, Stylus) и DOT-MATRIX-оболочки.
 #
 #   omarchy-font-profile                 # текущий профиль
 #   omarchy-font-profile list            # профили с описанием (для Customizer)
 #   omarchy-font-profile <profile>       # применить (список — `list`)
 #   omarchy-font-profile apply           # применить сохранённый (после установки шрифтов)
-#   omarchy-font-profile build-fonts     # собрать Nihil Mono и Nihil Pixel (just nihil-fonts)
+#   omarchy-font-profile build-fonts     # собрать DotMatrix Mono и DotMatrix Pixel (just dotmatrix-fonts)
 #
 # Профили:
-#   stock   — как было: Maple Mono NF CN везде; точечный Nihil Dot только в Nihil-виджетах.
-#   nothing — как Nothing OS: точками только часы, цифры, крупные заголовки; текст Geist, код Nihil Mono.
-#   dot     — точечный слой: Nihil Dot во всём крупном и коротком (бар, заголовки, лаунчер, lock, OSD,
+#   stock   — как было: Maple Mono NF CN везде; точечный DotMatrix Dot только в DOT-MATRIX-виджетах.
+#   nothing — как Nothing OS: точками только часы, цифры, крупные заголовки; текст Geist, код DotMatrix Mono.
+#   dot     — точечный слой: DotMatrix Dot во всём крупном и коротком (бар, заголовки, лаунчер, lock, OSD,
 #             заголовки страниц); текст и код как в nothing.
-#   pixel   — как dot, а терминал и код пиксельные (Nihil Pixel).
+#   pixel   — как dot, а терминал и код пиксельные (DotMatrix Pixel).
 #   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
 #   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat, терминал и код —
 #                 рукописный моноширинный Monaspace Radon.
 #   paper-hand  — Caveat везде, терминал и код — Monaspace Radon.
 #   paper-all   — абсолютно всё в Caveat, включая терминал и код (шрифт не моноширинный).
-#   retro       — интерфейс Pixelify Sans, терминал и код Nihil Pixel — стиль Retro.
+#   retro       — интерфейс Pixelify Sans, терминал и код DotMatrix Pixel — стиль Retro.
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
-# Nihil Mono — Geist Mono с включёнными лигатурами; Nihil Pixel — Terminess (Terminus) с русскими «в д и й»,
+# DotMatrix Mono — Geist Mono с включёнными лигатурами; DotMatrix Pixel — Terminess (Terminus) с русскими «в д и й»,
 # курсивом в ячейке и пиксельными лигатурами. Собираются из официальных шрифтов скриптами
-# kamradsmeshnyavy.customizer/scripts/nihil-{mono,pixel}.py в ~/.local/share/fonts/nihil-build;
+# kamradsmeshnyavy.customizer/scripts/dotmatrix-{mono,pixel}.py в ~/.local/share/fonts/dotmatrix-build;
 # значки Nerd Font терминалы берут из Symbols Nerd Font.
 #
-# Состояние: ~/.config/omarchy/fonts.json {"profile", "sans", "mono", "title"}. Его же читают nihil/Palette.qml,
+# Состояние: ~/.config/omarchy/fonts.json {"profile", "sans", "mono", "title"}. Его же читают dotmatrix/Palette.qml,
 # BarStyle.qml (title — заголовки и рукописный шрифт панелей), omarchy-darkreader, omarchy-stylus, omarchy-firefox-chrome.
 set -euo pipefail
 
 CFG="$HOME/.config/omarchy/fonts.json"
 FC_DIR="$HOME/.config/fontconfig/conf.d"
-FC_FILE="$FC_DIR/60-nihil-fonts.conf"
+FC_FILE="$FC_DIR/60-dotmatrix-fonts.conf"
 GEIST_DIR="$HOME/.local/share/fonts/geist"
 GEIST_ZIP="https://github.com/vercel/geist-font/releases/download/v1.9.0/geist-font-v1.9.0.zip"
-CACHE="$HOME/.cache/nihil-fonts"
-BUILD_DIR="$HOME/.local/share/fonts/nihil-build"
+CACHE="$HOME/.cache/dotmatrix-fonts"
+BUILD_DIR="$HOME/.local/share/fonts/dotmatrix-build"
 FONT_SCRIPTS="$HOME/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/scripts"
 TERMINESS="/usr/share/fonts/TTF/TerminessNerdFont"
 VSCODE="$HOME/.config/Code/User/settings.json"
@@ -46,15 +46,15 @@ THEMES="$HOME/dotfiles/omarchy-themes/scripts"
 # profile|стиль|sans|mono|title (заголовки; пусто — как sans)|описание
 STOCK_FONT="Maple Mono NF CN"
 PROFILES=(
-  "stock|base|$STOCK_FONT|$STOCK_FONT||As before: Maple Mono NF CN everywhere, dot font only in Nihil widgets"
-  "nothing|nihil|Geist|Nihil Mono||Like Nothing OS: dots only for clocks, numbers and big titles; Geist text, Nihil Mono code with ligatures"
-  "dot|nihil|Geist|Nihil Mono||Dot layer: Nihil Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
-  "pixel|nihil|Geist|Nihil Pixel||Dot layer plus pixel terminal and code (Nihil Pixel, ligatures)"
+  "stock|base|$STOCK_FONT|$STOCK_FONT||As before: Maple Mono NF CN everywhere, dot font only in DOT-MATRIX widgets"
+  "nothing|dotmatrix|Geist|DotMatrix Mono||Like Nothing OS: dots only for clocks, numbers and big titles; Geist text, DotMatrix Mono code with ligatures"
+  "dot|dotmatrix|Geist|DotMatrix Mono||Dot layer: DotMatrix Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
+  "pixel|dotmatrix|Geist|DotMatrix Pixel||Dot layer plus pixel terminal and code (DotMatrix Pixel, ligatures)"
   "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
   "paper-ui|paper|Pangolin|Monaspace Radon Var|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles, handwritten monospaced Monaspace Radon for the terminal and code"
   "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
   "paper-all|paper|Caveat|Caveat|Caveat|Absolutely everything in Caveat, terminal and code included (not monospaced)"
-  "retro|retro|Pixelify Sans|Nihil Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (Nihil Pixel)"
+  "retro|retro|Pixelify Sans|DotMatrix Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (DotMatrix Pixel)"
 )
 
 notify() { notify-send -t 4000 "Fonts" "$1" 2>/dev/null || echo "$1" >&2; }
@@ -70,7 +70,7 @@ stock_like() { [[ $1 == "$STOCK_FONT" ]]; }
 # считает шрифт отсутствующим.
 has_font() { fc-list : family | tr ',' '\n' | grep -xF -- "$1" >/dev/null; }
 
-# Официальный релиз Geist распаковывается один раз в кэш: из него берутся Geist и исходник Nihil Mono.
+# Официальный релиз Geist распаковывается один раз в кэш: из него берутся Geist и исходник DotMatrix Mono.
 geist_release() {
   local dir="$CACHE/geist-v1.9.0"
   if [[ ! -d $dir/geist-font ]]; then
@@ -93,13 +93,13 @@ install_geist() {
   fc-cache -f "$GEIST_DIR" >/dev/null
 }
 
-# Nihil Mono и Nihil Pixel — из официальных шрифтов (fonttools через uv).
+# DotMatrix Mono и DotMatrix Pixel — из официальных шрифтов (fonttools через uv).
 build_fonts() {
-  command -v uv >/dev/null || { notify "uv is needed to build Nihil fonts"; return 1; }
+  command -v uv >/dev/null || { notify "uv is needed to build DOT-MATRIX fonts"; return 1; }
   mkdir -p "$BUILD_DIR"
-  uv run -q --with fonttools python3 -I "$FONT_SCRIPTS/nihil-mono.py" "$(geist_release)/GeistMono/ttf" "$BUILD_DIR" >/dev/null
+  uv run -q --with fonttools python3 -I "$FONT_SCRIPTS/dotmatrix-mono.py" "$(geist_release)/GeistMono/ttf" "$BUILD_DIR" >/dev/null
   if [[ -f $TERMINESS-Regular.ttf ]]; then
-    uv run -q --with fonttools python3 -I "$FONT_SCRIPTS/nihil-pixel.py" \
+    uv run -q --with fonttools python3 -I "$FONT_SCRIPTS/dotmatrix-pixel.py" \
       "$TERMINESS-Regular.ttf" "$TERMINESS-Bold.ttf" "$BUILD_DIR" >/dev/null
   fi
   cp "$FONT_SCRIPTS/../fonts/OFL.txt" "$BUILD_DIR/"
@@ -187,7 +187,7 @@ PY
 }
 
 # ghostty: строки font-feature заданы под Maple (ss01–ss04 — её лигатуры) и выключают calt. Своим шрифтам
-# нужен calt (лигатуры Nihil Mono / Nihil Pixel), а наборы Maple поменяли бы форму букв Geist. Строки
+# нужен calt (лигатуры DotMatrix Mono / DotMatrix Pixel), а наборы Maple поменяли бы форму букв Geist. Строки
 # сводятся в блок между метками; исходные запоминаются при первом уходе со stock и возвращаются при stock.
 GHOSTTY_FEATURES="$HOME/.local/state/omarchy/font-profile/ghostty-features.conf"
 ghostty_features() {
@@ -221,7 +221,7 @@ else:
     if not os.path.exists(backup) and "font-feature = calt" not in current:
         os.makedirs(os.path.dirname(backup), exist_ok=True)
         open(backup, "w").write("\n".join(current) + "\n")
-    block = ["# лигатуры шрифтов Nihil", "font-feature = calt"]
+    block = ["# лигатуры шрифтов DOT-MATRIX", "font-feature = calt"]
 lines[at:at] = [BEGIN] + block + [END]
 open(path, "w").write("\n".join(lines))
 PY
@@ -253,7 +253,7 @@ apply() {
   IFS='|' read -r _ _ sans mono title _ <<<"$line"
 
   [[ $sans == Geist ]] && { install_geist || { notify "Could not download Geist"; exit 1; }; }
-  if [[ $mono == Nihil* ]] && ! has_font "$mono"; then
+  if [[ $mono == DOT-MATRIX* ]] && ! has_font "$mono"; then
     notify "Building $mono…"
     build_fonts || { notify "Could not build $mono"; exit 1; }
   fi
@@ -305,7 +305,7 @@ list)
   done
   ;;
 apply) apply "$(current)" ;;
-build-fonts) build_fonts && notify "Nihil Mono / Nihil Pixel built" ;;
+build-fonts) build_fonts && notify "DotMatrix Mono / DotMatrix Pixel built" ;;
 -h | --help) sed -n '2,33p' "$0" ;;
 *) apply "$1" ;;
 esac

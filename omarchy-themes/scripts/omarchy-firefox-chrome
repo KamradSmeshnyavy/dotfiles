@@ -6,9 +6,9 @@
   userChrome.css, userContent.css, userColors.css → apps/browser/configs/firefox/chrome/ (симлинки);
   omarchy/colors.css  — переменные --om-* из colors.toml темы и шрифты профиля;
   omarchy/style.css   — @import вида: по стилю Customizer (~/.config/omarchy/style.json: id → <id>.css —
-                        flat, glass, fluent, paper, neumorph, brutal, retro, neon; nihil → nihil.css), без стиля —
-                        по профилю шрифтов: nihil.css у nothing / dot / pixel, иначе stock.css (прежний вид);
-  omarchy/content.css — страницы about: (при nihil заголовки набраны Nihil Dot);
+                        flat, glass, fluent, paper, neumorph, brutal, retro, neon; dotmatrix → dotmatrix.css), без стиля —
+                        по профилю шрифтов: dotmatrix.css у nothing / dot / pixel, иначе stock.css (прежний вид);
+  omarchy/content.css — страницы about: (при dotmatrix заголовки набраны DotMatrix Dot);
   omarchy/*.css → файлы видов в dotfiles (симлинки), omarchy/paper(-dark).png — текстура стиля Paper.
 
 Chrome-CSS Firefox читает только при запуске: новая тема видна после перезапуска
@@ -124,15 +124,15 @@ def colors_css():
     lines += [f'  --om-font-sans: "{sans}", sans-serif;',
               f'  --om-font-mono: "{mono}", monospace;',
               f'  --om-font-title: "{title}", "{sans}", sans-serif;',
-              '  --om-font-dot: "Nihil Dot", "Doto", monospace;',
+              '  --om-font-dot: "DotMatrix Dot", "Doto", monospace;',
               f'  --om-texture: url("{"paper.png" if c["light"] else "paper-dark.png"}");',
               f"  --om-scheme: {'light' if c['light'] else 'dark'};",
               "}"]
     return "\n".join(lines) + "\n", profile
 
 
-# Страницы about: в стиле Nihil: заголовки точками, поиск — моно-шрифтом, прямые углы.
-NIHIL_CONTENT = """/* omarchy-firefox-chrome: страницы about: в стиле Nihil. */
+# Страницы about: в стиле DOT-MATRIX: заголовки точками, поиск — моно-шрифтом, прямые углы.
+DOTMATRIX_CONTENT = """/* omarchy-firefox-chrome: страницы about: в стиле DotMatrix. */
 @-moz-document url("about:newtab"), url("about:home"), url-prefix("about:preferences"), url-prefix("about:addons") {
   h1, h2, .main-heading, .section-title, .wordmark-text {
     font-family: var(--om-font-dot) !important;
@@ -196,18 +196,18 @@ def sync():
             link(out / name, (TEXTURES / name).resolve())
     css, font_profile = colors_css()
     write(out / "colors.css", css)
-    # Вид — по стилю Customizer, если у него есть файл; иначе по профилю шрифтов (Nihil — только у профилей
-    # Nihil; остальные — прежний вид).
+    # Вид — по стилю Customizer, если у него есть файл; иначе по профилю шрифтов (DOT-MATRIX — только у профилей
+    # DOT-MATRIX; остальные — прежний вид).
     sid = style_id()
     if sid and (SRC / f"{sid}.css").exists():
         style, why = f"{sid}.css", f"стилю {sid}"
     else:
-        style = "nihil.css" if font_profile in ("nothing", "dot", "pixel") else "stock.css"
+        style = "dotmatrix.css" if font_profile in ("nothing", "dot", "pixel") else "stock.css"
         why = f"профилю шрифтов {font_profile}"
     write(out / "style.css", f'/* omarchy-firefox-chrome: вид по {why}. */\n@import "{style}";\n')
     content = "/* omarchy-firefox-chrome: профиль шрифтов stock — без своих правил. */\n"
-    if style == "nihil.css":
-        content = NIHIL_CONTENT
+    if style == "dotmatrix.css":
+        content = DOTMATRIX_CONTENT
     write(out / "content.css", content)
 
 

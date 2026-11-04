@@ -143,7 +143,7 @@ o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.
 o.bind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOverview")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
 o.bind("SUPER + ALT + D", "Dashboard", "omarchy-shell widgets toggleDashboard")
--- Панель настроек Nihil из правого края / рамки (kamradsmeshnyavy.widgets): Wi-Fi, BT, звук, яркость.
+-- Панель настроек DOT-MATRIX из правого края / рамки (kamradsmeshnyavy.widgets): Wi-Fi, BT, звук, яркость.
 o.bind("SUPER + M", "Settings", "omarchy-shell widgets toggleSettings")
 
 hl.unbind("SUPER + SHIFT + ALT + Z")

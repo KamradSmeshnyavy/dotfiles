@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Генератор загрузочной анимации Plymouth для темы NIHIL (Arch Linux LED-матрица).
+# Генератор загрузочной анимации Plymouth для темы DOT-MATRIX (Arch Linux LED-матрица).
 # Адаптировано из Nihil-Shell (theme/plymouth.py и tools/snowflake.py),
 # Copyright (c) 2026 Pol Iglesias, лицензия MIT.
 #
@@ -9,7 +9,7 @@
 #
 # Примеры:
 #   python3 generate.py .
-#   python3 generate.py /usr/share/plymouth/themes/nihil --pitch 9
+#   python3 generate.py /usr/share/plymouth/themes/dot-matrix --pitch 9
 #   python3 generate.py . --font /usr/share/fonts/TTF/JetBrainsMonoNerdFont-Regular.ttf --write-grid arch-29.txt
 
 import argparse
@@ -74,7 +74,7 @@ def render_frame(grid: list[list[float]], pitch: int, levels_fn, supersample: in
 
 def main() -> None:
     here = os.path.dirname(os.path.abspath(__file__))
-    ap = argparse.ArgumentParser(description="Генератор кадров Plymouth для темы NIHIL")
+    ap = argparse.ArgumentParser(description="Генератор кадров Plymouth для темы DOT-MATRIX")
     ap.add_argument("outdir", nargs="?", default=here, help="Каталог для сохранения logo.png и frame-*.png")
     ap.add_argument("--grid", default=os.path.join(here, "arch-29.txt"), help="Путь к текстовой сетке 0..9")
     ap.add_argument("--font", default="", help="Опционально: TTF Nerd Font для пересоздания сетки глифа")

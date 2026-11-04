@@ -11,7 +11,7 @@ Dark Reader, Stylus and Surfingkeys in Helium and Firefox follow the current Oma
 | `scripts/omarchy-darkreader` | picks the theme's `dark-reader.json` or generates one from `browser-templates/efterklang/Dark-Reader-Settings.json` (colors only), forces the page font from the font profile (`~/.config/omarchy/fonts.json`), writes it into Dark Reader's storage while the browser is closed; also sets the browsers' own page fonts and light/dark sites (see below) |
 | `scripts/omarchy-stylus` | recolors the official Catppuccin userstyles (`browser-templates/catppuccin/stylus-import.json`, lib inlined from `lib-std-v1.less`) to the theme palette and makes them active at the next browser start (Firefox: written into Stylus' database; Helium: `helium-launch`) |
 | `scripts/firefox_idb.py`, `scripts/stylus-compile.cjs` | read and write Firefox extension IndexedDB (structured clone + snappy); compile usercss with Stylus' own `worker.js` / `less.js` under node |
-| `scripts/omarchy-firefox-chrome` | Firefox interface (userChrome / userContent) in theme colors: `stock` view for the stock font profile, `nihil` view for the others |
+| `scripts/omarchy-firefox-chrome` | Firefox interface (userChrome / userContent) in theme colors: `stock` view for the stock font profile, `dotmatrix` view for the others |
 | `scripts/omarchy-surfingkeys` | swaps the theme block (`const hintsCss` … `settings.theme`, or appends it if missing) inside Surfingkeys' `snippets` in Helium and Firefox, keeping the rest of the config; uses the theme's `surfingkeys.js` (rose-pine-hacker*, kept as-is) or generates one from `browser-templates/surfingkeys/rose-pine.js` (colors only); font is the font profile's mono |
 | `scripts/omarchy-stylus-serve` + `systemd/omarchy-stylus-server.service` | serve the styles on `127.0.0.1:47860–47875` (Stylus throttles per host:port) |
 | `scripts/helium-browser` | `~/.local/bin` wrapper: runs `omarchy-darkreader apply` and `omarchy-surfingkeys apply`, then starts Helium through `omarchy-stylus helium-launch` |
@@ -47,7 +47,7 @@ The browsers themselves follow the theme too, so pages look the same in both:
 - **Page fonts.** These are the sans and mono of the font profile. Helium: `webkit.webprefs.fonts` in
   `Preferences` (standard, sans-serif and serif get sans; fixed gets mono). Firefox: `font.name.*` for
   `x-western` and `x-cyrillic`.
-- The **Nihil fonts** userstyle gets a new `@version` whenever its rules change; Stylus skips updates that
+- The **DOT-MATRIX fonts** userstyle gets a new `@version` whenever its rules change; Stylus skips updates that
   are not newer. In the `stock` profile it stays installed with no font rules instead of becoming a
   stub, because a stub's `0.0.0` version would never replace it.
 
@@ -78,7 +78,7 @@ it closes. No wrapper is needed (the desktop entry runs `/usr/lib/firefox/firefo
   - `userChrome.css`, `userContent.css`, `userColors.css` are links into
     `apps/browser/configs/firefox/chrome/`.
   - `omarchy/colors.css` holds `--om-*` colors from colors.toml and the profile fonts.
-  - `omarchy/style.css` imports `stock.css` or `nihil.css`; both build on `base.css`, which maps
+  - `omarchy/style.css` imports `stock.css` or `dotmatrix.css`; both build on `base.css`, which maps
     Firefox's variables to the theme, including Firefox 15x names such as `--toolbar-background-color`.
   - No `@namespace xul` in these files. With it, selectors without a type (`.urlbar-background`) only
     match XUL elements, and the urlbar is HTML now.
@@ -86,8 +86,8 @@ it closes. No wrapper is needed (the desktop entry runs `/usr/lib/firefox/firefo
 ### Firefox views by style
 
 `omarchy-firefox-chrome` picks the userChrome view from the Customizer style (`~/.config/omarchy/style.json` id):
-`chrome/<id>.css` — flat, glass, fluent, paper, neumorph, brutal, retro, neon (nihil → `nihil.css`). Without a style it
-falls back to the font profile (Nihil profiles → `nihil.css`, otherwise `stock.css`). All views sit on `base.css` and the
+`chrome/<id>.css` — flat, glass, fluent, paper, neumorph, brutal, retro, neon (dotmatrix → `dotmatrix.css`). Without a style it
+falls back to the font profile (DOT-MATRIX profiles → `dotmatrix.css`, otherwise `stock.css`). All views sit on `base.css` and the
 theme's `--om-*`; `--om-font-title` is the profile's title font, `--om-texture` the Paper grain (light / dark variant,
 linked into `chrome/omarchy/`). Visual check: a throwaway `--profile <scratch> --no-remote --new-instance` with only
 `chrome/` + `user.js`, then grim the window — it does not touch profiles.ini.
