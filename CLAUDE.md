@@ -78,7 +78,8 @@ omarchy-image-picker-styles, `.customizer` → omarchy-customizer (GPL-3.0: пр
 английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`), `.widgets` →
 omarchy-desktop-widgets (виджеты, дашборд, меню выключения, обзор столов), `.osd` → omarchy-edge-osd,
 `.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
-`BarStyle.qml` одинаковый в widgets/osd/notifications — правку переносить во все три. Так же `nihil/Palette.qml`
+`BarStyle.qml` и `PaperCard.qml` одинаковые в widgets/osd/notifications — правку переносить во все три (BarStyle читает
+токены стиля из `~/.config/omarchy/style.json`, их пишет Customizer → Пресеты → Стиль). Так же `nihil/Palette.qml`
 (палитра стиля Nihil, `docs/apps/omarchy-shell-nihil.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer:
 цвета Nihil — только через него, не hex.
 Клоны стоковых виджетов бара в стиле Nihil — `kamradsmeshnyavy.{tray,network,bluetooth,audio}` (в dotfiles,
