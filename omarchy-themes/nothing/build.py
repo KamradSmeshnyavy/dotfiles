@@ -19,7 +19,7 @@ from palettes import PALETTES, check
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EFTER = os.path.join(HERE, "..", "catppuccin-mocha-efter")
-DOT-MATRIX = os.path.join(HERE, "..", "dotmatrix")
+DOTMATRIX = os.path.join(HERE, "..", "dot-matrix")
 
 
 # ── Цветовые утилиты ──────────────────────────────────────────────────────
@@ -433,7 +433,7 @@ def env(p):
 
 
 def fastfetch(p):
-    text = open(os.path.join(DOT-MATRIX, "apps", "fastfetch.jsonc")).read()
+    text = open(os.path.join(DOTMATRIX, "apps", "fastfetch.jsonc")).read()
     # Точечный Arch-логотип dotmatrix; горящие точки — красным ANSI (у варианта он близок к сигналу), ключи — серые.
     text = text.replace('"1": "white"', '"1": "red"', 1)
     return re.sub(r"#d71921", p["accent"], text, flags=re.I)
@@ -870,7 +870,7 @@ def wallpapers(variant, p, out_dir):
         if os.path.exists(dst):
             continue
         # Светлая тема: фон светлый, точки тёмные — инверсия яркости исходника.
-        recolor_png(os.path.join(DOT-MATRIX, "backgrounds", src), dst, p["bg"], dot)
+        recolor_png(os.path.join(DOTMATRIX, "backgrounds", src), dst, p["bg"], dot)
 
 
 # ── Сборка ────────────────────────────────────────────────────────────────

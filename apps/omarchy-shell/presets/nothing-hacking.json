@@ -1,7 +1,7 @@
 {
   "name": "nothing-hacking",
   "theme": "nothing-steel",
-  "wallpaper": "~/.local/state/omarchy/current/theme/backgrounds/1-galaxy.png",
+  "wallpaper": "~/.config/omarchy/themes/nothing-steel/backgrounds/1-galaxy.png",
   "anims": "DOT-MATRIX",
   "opacity": "dotmatrix",
   "blur": "dotmatrix",

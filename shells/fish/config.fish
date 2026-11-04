@@ -18,4 +18,4 @@ alias cat="bat"
 
 
 # Added by Antigravity CLI installer
-set -gx PATH "/home/kamradsmeshnyavy/.local/bin" $PATH
+fish_add_path -g "$HOME/.local/bin"  # без дублей (fish_add_path не добавляет уже имеющийся путь)

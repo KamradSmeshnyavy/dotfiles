@@ -757,4 +757,5 @@ export _JAVA_OPTIONS="-Dsun.java2d.uiScale=2"
 
 
 # Added by Antigravity CLI installer
-export PATH="/home/kamradsmeshnyavy/.local/bin:$PATH"
+# Без дублей: каждый новый shell (и перезапуск оболочки Omarchy из него) иначе дописывал ещё одну копию.
+case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac

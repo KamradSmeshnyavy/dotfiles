@@ -353,27 +353,50 @@ def stub(name, url):
 
 
 FONTS_JSON = HOME / ".config/omarchy/fonts.json"
+LEGACY_FONT_STYLES = {"nihil-fonts": "NIHIL fonts"}
 DOT = '"DotMatrix Dot", "Doto", monospace'
-# Что набирать точками / пикселями по профилю шрифтов (omarchy-font-profile).
-FONT_RULES = {
-    "nothing": {"dot": "h1, h2"},
-    "dot": {"dot": "h1, h2, h3, th, [role=heading]"},
-    "pixel": {"dot": "h1, h2, h3, th, [role=heading]", "code": "code, pre, kbd, samp, tt"},
-}
+STOCK_FONT = "Maple Mono NF CN"   # шрифт stock-профиля (omarchy-font-profile): его на сайтах не навязываем
+# Заголовки точками у профилей DOT-MATRIX (как в оболочке: nothing — только крупные).
+DOT_HEADINGS = {"nothing": "h1, h2", "dot": "h1, h2, h3, th, [role=heading]", "pixel": "h1, h2, h3, th, [role=heading]"}
+# Текст страницы шрифтом интерфейса профиля. Иконочные шрифты (Font Awesome, Material, Nerd-иконки, svg-спрайты
+# в span/i) не трогаем — у них свои классы; код — отдельным правилом.
+NOT_ICON = (':not([class*="icon" i]):not([class*="fa-"]):not([class*="fa " i]):not([class*="material" i])'
+            ':not([class*="symbol" i]):not([class*="glyph" i]):not([class*="codicon" i]):not(i)'
+            ':not(code *):not(pre *):not(kbd *)')
+TEXT = ("body, p, li, dt, dd, td, th, a, span, div, label, input, textarea, button, select, option, "
+        "blockquote, figcaption, summary, caption, legend, small, strong, em, b, h4, h5, h6")
+CODE = "code, pre, kbd, samp, tt, code *, pre *, kbd *"
 
 
-def fonts_style():
+def font_rules(cfg):
+    """CSS шрифтов по ~/.config/omarchy/fonts.json: текст — sans профиля, заголовки — title (у DOT-MATRIX —
+    DotMatrix Dot), код — mono. Шрифты stock (Maple) не навязываются: paper-shell меняет только оболочку."""
+    profile = cfg.get("profile") or "stock"
+    sans, mono = cfg.get("sans") or STOCK_FONT, cfg.get("mono") or STOCK_FONT
+    title = cfg.get("title") or sans
+    css = []
+    text_on = sans != STOCK_FONT
+    if text_on:
+        sel = ", ".join(f"{t}{NOT_ICON}" for t in TEXT.split(", "))
+        css.append(f'{sel} {{ font-family: "{sans}", sans-serif !important; }}')
+    if profile in DOT_HEADINGS:
+        css.append(f"{DOT_HEADINGS[profile]} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
+        if text_on:  # остальные заголовки — текстом профиля
+            rest = [h for h in ("h1", "h2", "h3") if h not in DOT_HEADINGS[profile]]
+            if rest:
+                css.append(f'{", ".join(rest)} {{ font-family: "{sans}", sans-serif !important; }}')
+    elif text_on:
+        css.append(f'h1, h2, h3, [role=heading] {{ font-family: "{title}", "{sans}", sans-serif !important; }}')
+    if mono != STOCK_FONT:
+        css.append(f'{CODE} {{ font-family: "{mono}", monospace !important; }}')
+    return profile, css
+
+
+def fonts_style(name="dotmatrix-fonts", title="DOT-MATRIX fonts"):
     """Usercss «DOT-MATRIX fonts» на все сайты. У stock правил нет, но стиль остаётся (пустым), а не
     заглушкой: у заглушки версия 0.0.0, и Stylus отказался бы ставить её поверх 1.0.x."""
     cfg = load_json(FONTS_JSON, {})
-    profile = cfg.get("profile") or "stock"
-    rules = FONT_RULES.get(profile, {})
-    css = []
-    if "dot" in rules:
-        css.append(f"{rules['dot']} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
-    if "code" in rules:
-        css.append(f'{rules["code"]} {{ font-family: "{cfg.get("mono", "monospace")}", monospace !important; }}')
-    name = "dotmatrix-fonts"
+    profile, css = font_rules(cfg)
     url = style_url(name)
     # Комментарий без правил Stylus счёл бы пустым стилем — для stock одна безвредная переменная.
     body = "\n  ".join(css) or "html { --omarchy-font-profile: stock; }"
@@ -384,12 +407,12 @@ def fonts_style():
     m = re.search(r"^@version (\S+)$", old, re.M)
     same = old.endswith(f"{{\n  {body}\n}}\n") and f"({profile})" in old
     version = m.group(1) if m and same and m.group(1) != "1.0.0" else f"1.0.{int(time.time())}"
-    code = (f"/* ==UserStyle==\n@name DOT-MATRIX fonts\n@namespace omarchy\n@version {version}\n"
+    code = (f"/* ==UserStyle==\n@name {title}\n@namespace omarchy\n@version {version}\n"
             f"@description Шрифты по профилю omarchy-font-profile ({profile})\n@updateURL {url}\n"
             f"==/UserStyle== */\n@-moz-document regexp(\".*\") {{\n  {body}\n}}\n")
     style = {
-        "name": "DOT-MATRIX fonts", "enabled": True, "sourceCode": code, "updateUrl": url, "updatable": True,
-        "usercssData": {"name": "DOT-MATRIX fonts", "namespace": "omarchy", "version": version, "updateURL": url},
+        "name": title, "enabled": True, "sourceCode": code, "updateUrl": url, "updatable": True,
+        "usercssData": {"name": title, "namespace": "omarchy", "version": version, "updateURL": url},
         "sections": [{"code": body, "regexps": [".*"]}],
         "originalDigest": hashlib.sha1(code.encode()).hexdigest(),
     }
@@ -435,6 +458,13 @@ def build():
     write_atomic(WWW / f"{name}.user.css", code)
     used[name] = "DOT-MATRIX fonts"
     styles.append(style)
+    # До переименования стиль назывался «NIHIL fonts» (nihil-fonts.user.css) и уже стоит в браузерах.
+    # Stylus не обновляет usercss со сменой @name, поэтому старый адрес отдаёт тот же CSS под старым
+    # именем — иначе он стал бы заглушкой и шрифты по профилю пропали. В import.json не входит.
+    for old_name, old_title in LEGACY_FONT_STYLES.items():
+        _, old_code, _ = fonts_style(old_name, old_title)
+        write_atomic(WWW / f"{old_name}.user.css", old_code)
+        used[old_name] = old_title
 
     # Стили из прошлых наборов, которых сейчас нет: пустая заглушка вместо кода.
     served = load_json(SERVED, None)
@@ -462,8 +492,20 @@ FIREFOX_ROOT = HOME / ".config/mozilla/firefox"
 FIREFOX_STYLUS_ID = "{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}"
 
 
+def firefox_profile_locked():
+    """Ссылка lock в профиле → «ip:+pid»: Firefox (или его зависший процесс) держит профиль."""
+    profile = firefox_profile()
+    link = profile / "lock" if profile else None
+    if not link or not os.path.islink(link):
+        return False
+    m = re.search(r"\+(\d+)$", os.readlink(link))
+    return bool(m) and Path(f"/proc/{m.group(1)}").exists()
+
+
 def running(browser):
     import subprocess
+    if browser == "firefox" and firefox_profile_locked():
+        return True
     for proc in BROWSER_PROCS[browser]:
         r = subprocess.run(["pgrep", "-u", str(os.getuid()), "-x", proc],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -557,6 +599,42 @@ def stylus_js(xpi):
     return out
 
 
+def db_ok(path):
+    """PRAGMA quick_check базы sqlite (только чтение)."""
+    import sqlite3
+    try:
+        con = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=5)
+        try:
+            return con.execute("PRAGMA quick_check").fetchone()[0] == "ok"
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return False
+
+
+def restore_firefox_db(db_path, prefer=None):
+    """Повреждённую базу стилей заменить последней целой резервной копией (их делает install_firefox
+    перед каждой записью); повреждённая остаётся в backups/*-malformed. True — восстановлено."""
+    import shutil
+    name = db_path.name
+    candidates = ([prefer] if prefer else []) + sorted((STATE / "backups").glob("*-firefox-idb"), reverse=True)
+    for d in candidates:
+        if d and (d / name).is_file() and db_ok(d / name):
+            keep = STATE / "backups" / f"{time.strftime('%Y%m%d-%H%M%S')}-firefox-idb-malformed"
+            keep.mkdir(parents=True, exist_ok=True)
+            files = db_path.with_suffix(".files")
+            for f in (db_path, db_path.with_name(name + "-wal"), db_path.with_name(name + "-shm"), files):
+                if f.exists():
+                    shutil.move(str(f), keep / f.name)
+            shutil.copy2(d / name, db_path)
+            if (d / files.name).is_dir():
+                shutil.copytree(d / files.name, files)
+            log(f"install firefox: база стилей была повреждена — восстановлена из {d.name}")
+            return True
+    log("install firefox: база стилей повреждена, целой резервной копии нет")
+    return False
+
+
 def install_firefox():
     """Новые стили сразу в базу Stylus (IndexedDB «stylish»), пока Firefox закрыт: при запуске
     они уже действуют, без минутного ожидания проверки обновлений. Код собирается тем же
@@ -581,6 +659,12 @@ def install_firefox():
     if not con:
         log("install firefox: база стилей Stylus не найдена")
         return prime_firefox() and None
+    db_path = Path(con.execute("PRAGMA database_list").fetchone()[2])
+    if not db_ok(db_path):
+        con.close()
+        if not restore_firefox_db(db_path):
+            return prime_firefox() and None
+        con = fi.open_db(idb, "stylish")
     files_dir = fi.files_dir(con)
     try:
         rows = con.execute("SELECT key, data, file_ids FROM object_data WHERE object_store_id = 1").fetchall()
@@ -614,7 +698,7 @@ def install_firefox():
         log(f"install firefox: сборка не удалась ({e})")
         return prime_firefox() and None
 
-    backup = STATE / "backups" / f"{time.strftime('%Y%m%d-%H%M%S')}-firefox-idb"
+    backup = STATE / "backups" / f"{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}-firefox-idb"
     shutil.copytree(idb, backup)
     now = float(int(time.time() * 1000))
     done, failed = 0, []
@@ -637,6 +721,10 @@ def install_firefox():
             done += 1
         fi.flush_refcounts(con)
     con.close()
+    if not db_ok(db_path):  # запись испортила базу — вернуть копию, снятую прямо перед ней
+        restore_firefox_db(db_path, prefer=backup)
+        log("install firefox: после записи база не прошла проверку — откат к копии до записи")
+        return False
     log(f"install firefox: записано {done} стилей" + (f", не собраны: {failed}" if failed else ""))
     if failed:
         prime_firefox()  # остальные Stylus подтянет сам через минуту после запуска
@@ -794,9 +882,22 @@ def prime_one(browser):
     key = {"firefox": "firefox-db"}.get(browser, browser)
     if not build or primed.get(key) == build:
         return "done"
-    if running(browser):
-        return "running"
-    res = PRIMERS[browser]()
+    import fcntl
+    STATE.mkdir(parents=True, exist_ok=True)
+    with open(STATE / f"db-{browser}.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)  # второй процесс ждёт и видит отметку первого
+        primed = load_json(PRIMED, {})
+        if "digest" in primed:
+            primed = {"helium": primed["digest"]}
+        if primed.get(key) == build:
+            return "done"
+        if running(browser):
+            return "running"
+        res = PRIMERS[browser]()
+        return finish_prime(browser, key, build, primed, res)
+
+
+def finish_prime(browser, key, build, primed, res):
     if res is False:
         return "failed"
     if res is None:  # сработал только запасной prime — при следующем закрытии попробовать снова

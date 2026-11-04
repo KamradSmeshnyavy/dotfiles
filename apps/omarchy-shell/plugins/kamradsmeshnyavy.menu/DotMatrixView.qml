@@ -41,8 +41,20 @@ SkinBase {
     ? (barPos === "right" ? Math.max(24, Number(barSkin.height || 44)) : Math.max(1, Number(barSkin.frameWidth || 8)))
     : 0
 
-  readonly property int flare: 14
+  // Радиус стыков — как у углов рамки (radius скина), как у дашборда и Super+M.
+  readonly property int flare: framedBar ? Math.max(8, Math.round(Number(barSkin.radius || 0))) : 14
   readonly property int cornerRadius: 18
+  // Линия ящика — тем же цветом, что линия рамки (border + borderAlpha скина, как в BarSkin.qml),
+  // иначе стык с рамкой виден по смене цвета.
+  readonly property color lineColor: {
+    var s = String(barSkin.border || "")
+    var key = s.indexOf("dotmatrix.") === 0 ? s.slice("dotmatrix.".length) : ""
+    var c = key !== "" && DotMatrix.Palette[key] !== undefined ? DotMatrix.Palette[key]
+      : s.charAt(0) === "#" ? Qt.color(s) : DotMatrix.Palette.line
+    var a = Number(barSkin.borderAlpha)
+    return framedBar && Number(barSkin.borderWidth || 0) > 0 ? Qt.rgba(c.r, c.g, c.b, isFinite(a) ? Math.max(0, Math.min(1, a)) : 1)
+      : DotMatrix.Palette.line
+  }
   readonly property real innerWidth: Math.max(360, width - bezelLeft - bezelRight)
   readonly property real centerX: bezelLeft + innerWidth / 2
   readonly property real drawerWidth: Math.min(860, innerWidth - 96)
@@ -243,7 +255,7 @@ SkinBase {
   readonly property real leftX: Math.round(centerX - drawerWidth / 2)
   readonly property real rightX: leftX + drawerWidth
 
-  // Concave-fillet bottom hardware drawer.
+  // Выдвижной ящик из нижней рамки: стыки скругляют угол свободной области, как у рамки и дашборда.
   Shape {
     id: drawerShape
     anchors.fill: parent
@@ -264,6 +276,7 @@ SkinBase {
         y: root.baseY - drawerShape.fy
         radiusX: Math.max(0.01, root.flare)
         radiusY: Math.max(0.01, drawerShape.fy)
+        direction: PathArc.Counterclockwise
       }
       PathLine { x: root.leftX; y: root.topY + drawerShape.tr }
       PathArc {
@@ -285,13 +298,14 @@ SkinBase {
         y: root.baseY
         radiusX: Math.max(0.01, root.flare)
         radiusY: Math.max(0.01, drawerShape.fy)
+        direction: PathArc.Counterclockwise
       }
       PathLine { x: root.rightX + root.flare; y: root.height }
     }
 
     ShapePath {
       fillColor: "transparent"
-      strokeColor: DotMatrix.Palette.line
+      strokeColor: root.lineColor
       strokeWidth: root.curHeight > 1 ? 1 : -1
       startX: root.leftX - root.flare
       startY: root.baseY
@@ -301,6 +315,7 @@ SkinBase {
         y: root.baseY - drawerShape.fy
         radiusX: Math.max(0.01, root.flare)
         radiusY: Math.max(0.01, drawerShape.fy)
+        direction: PathArc.Counterclockwise
       }
       PathLine { x: root.leftX; y: root.topY + drawerShape.tr }
       PathArc {
@@ -322,6 +337,7 @@ SkinBase {
         y: root.baseY
         radiusX: Math.max(0.01, root.flare)
         radiusY: Math.max(0.01, drawerShape.fy)
+        direction: PathArc.Counterclockwise
       }
     }
   }
