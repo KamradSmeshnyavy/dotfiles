@@ -11,7 +11,8 @@
     "gapsOut": 8,
     "borderSize": 1,
     "rounding": 12,
-    "shadow": false
+    "shadow": false,
+    "noGaps": true
   },
   "barSkinData": {
     "note": "NIHIL bezel frame (44px bar, 8px frame, 20px inner corners, 1px hairline border, LED workspaces); colours from the Nihil palette — theme or mono",
