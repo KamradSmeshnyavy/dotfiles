@@ -366,6 +366,14 @@ NOT_ICON = (':not([class*="icon" i]):not([class*="fa-"]):not([class*="fa " i]):n
 TEXT = ("body, p, li, dt, dd, td, th, a, span, div, label, input, textarea, button, select, option, "
         "blockquote, figcaption, summary, caption, legend, small, strong, em, b, h4, h5, h6")
 CODE = "code, pre, kbd, samp, tt, code *, pre *, kbd *"
+# Dark Reader со «шрифтом» ставит свой font-family с !important селектором *:not(…, .far, …) — специфичность
+# (0,1,0) выше, чем у простого h1, и заголовки оставались текстом. :not(#_) поднимает её до (1,0,1), ничего не
+# меняя в выборке (элемента с id «_» нет).
+LIFT = ":not(#_)"
+
+
+def lifted(selectors):
+    return ", ".join(f"{x.strip()}{LIFT}" for x in selectors.split(","))
 
 
 def font_rules(cfg):
@@ -380,15 +388,15 @@ def font_rules(cfg):
         sel = ", ".join(f"{t}{NOT_ICON}" for t in TEXT.split(", "))
         css.append(f'{sel} {{ font-family: "{sans}", sans-serif !important; }}')
     if profile in DOT_HEADINGS:
-        css.append(f"{DOT_HEADINGS[profile]} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
+        css.append(f"{lifted(DOT_HEADINGS[profile])} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
         if text_on:  # остальные заголовки — текстом профиля
             rest = [h for h in ("h1", "h2", "h3") if h not in DOT_HEADINGS[profile]]
             if rest:
-                css.append(f'{", ".join(rest)} {{ font-family: "{sans}", sans-serif !important; }}')
+                css.append(f'{lifted(", ".join(rest))} {{ font-family: "{sans}", sans-serif !important; }}')
     elif text_on:
-        css.append(f'h1, h2, h3, [role=heading] {{ font-family: "{title}", "{sans}", sans-serif !important; }}')
+        css.append(f'{lifted("h1, h2, h3, [role=heading]")} {{ font-family: "{title}", "{sans}", sans-serif !important; }}')
     if mono != STOCK_FONT:
-        css.append(f'{CODE} {{ font-family: "{mono}", monospace !important; }}')
+        css.append(f'{lifted(CODE)} {{ font-family: "{mono}", monospace !important; }}')
     return profile, css
 
 
