@@ -384,6 +384,8 @@ def font_rules(cfg):
     """CSS шрифтов по ~/.config/omarchy/fonts.json: текст — sans профиля, заголовки — title (у DOT-MATRIX —
     DotMatrix Dot), код — mono. Шрифты stock (Maple) не навязываются: paper-shell меняет только оболочку."""
     profile = cfg.get("profile") or "stock"
+    if profile.startswith("dots"):  # dots, dots-halftone — одни правила, шрифт берётся из профиля
+        profile = "dots"
     sans, mono = cfg.get("sans") or STOCK_FONT, cfg.get("mono") or STOCK_FONT
     title = cfg.get("title") or sans
     css = []
