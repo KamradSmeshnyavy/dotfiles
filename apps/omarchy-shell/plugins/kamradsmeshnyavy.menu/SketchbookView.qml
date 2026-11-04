@@ -4,7 +4,7 @@ import QtQuick.Shapes
 import Quickshell
 import qs.Commons
 
-// Paper: the menu as a page of a sketchbook (the Customizer's Paper style). A ruled sheet with
+// Sketchbook: the menu as a page of a sketchbook (made for the Customizer's Paper style). A ruled sheet with
 // a red margin, a spiral binding and slightly torn edges lies on the desk; each row is a small
 // polaroid card pinned to the page at its own tilt. The selected card straightens up, gets a strip
 // of tape and a pencil circle drawn around it, and a sticky note beside the book tells what it

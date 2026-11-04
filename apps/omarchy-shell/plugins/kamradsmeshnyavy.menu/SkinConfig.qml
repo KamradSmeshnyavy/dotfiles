@@ -42,7 +42,16 @@ Item {
     "bookshelf": "BookshelfView.qml",
     "lanterns": "LanternsView.qml",
     "aquarium": "AquariumView.qml",
-    "paper": "PaperView.qml",
+    "sketchbook": "SketchbookView.qml",
+    // Шторка Nihil в отделке стилей Customizer: один файл, вариант — после «drawer-».
+    "drawer-flat": "DrawerView.qml",
+    "drawer-glass": "DrawerView.qml",
+    "drawer-fluent": "DrawerView.qml",
+    "drawer-paper": "DrawerView.qml",
+    "drawer-neumorph": "DrawerView.qml",
+    "drawer-brutal": "DrawerView.qml",
+    "drawer-retro": "DrawerView.qml",
+    "drawer-neon": "DrawerView.qml",
     // Minimal terminal-style twins: same file, drawn with variant "hack".
     "drum-hack": "DrumView.qml",
     "tarot-hack": "TarotView.qml",
@@ -60,6 +69,8 @@ Item {
     var n = String(name || "")
     if (/-hack$/.test(n)) return "hack"
     if (/-term$/.test(n)) return "term"
+    // drawer-<стиль>: шторка Nihil в отделке стиля Customizer (DrawerView.qml).
+    if (/^drawer-/.test(n)) return n.slice(7)
     return ""
   }
   readonly property var known: Object.keys(root.files).concat(["list"])
