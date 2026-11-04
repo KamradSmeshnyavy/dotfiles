@@ -198,7 +198,7 @@ SkinBase {
     return isFinite(a) && a >= 0 ? Qt.rgba(c.r, c.g, c.b, a) : c
   }
   readonly property bool barGlass: root.barFill.a < 0.15 || String(root.barSkin.shape || "") === "islands" || root.barSkin.transparent === true
-  // Непрозрачный фон шторки; у стекла и неона альфа — baseAlpha.
+  // Фон шторки (подложка бара без альфы).
   readonly property color base: {
     var c = root.barGlass ? Color.popups.background : root.barFill
     return Qt.rgba(c.r, c.g, c.b, 1)
