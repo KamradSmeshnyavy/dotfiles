@@ -18,6 +18,9 @@
 #             терминала (kitty / ghostty) и подписи оболочки (карточки, уведомления, меню, Customizer).
 #   dots-all — точки везде: абсолютно любой знак — DotMatrix LED (Terminus 8×16, пиксель → точка, недостающее —
 #             из DejaVu Sans Mono) в интерфейсе, на сайтах, в заголовках, терминале и коде.
+#   dots-all-test — как dots-all, но размеры по сетке шрифта (строка кратна 16 физ. пикселям при масштабе 2):
+#             терминалы 18 pt, VS Code 24 px — шаг точки 3 px, точки видны и горят в полную силу; интерфейс
+#             GTK 12 pt (шаг 2 px). Прежние размеры запоминаются и возвращаются при смене профиля.
 #   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
 #   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat, терминал и код —
 #                 рукописный моноширинный Monaspace Radon.
@@ -56,6 +59,7 @@ PROFILES=(
   "pixel|dotmatrix|Geist|DotMatrix Pixel||Dot layer plus pixel terminal and code (DotMatrix Pixel, ligatures)"
   "dot-accents|dotmatrix|Geist|DotMatrix Pixel||Dot accents: Pixel plus DotMatrix Dot in site headings and controls, bold terminal text and shell labels"
   "dots-all|dotmatrix|DotMatrix LED|DotMatrix LED|DotMatrix LED|Dots everywhere: every character in DotMatrix LED — interface, sites, titles, terminal and code"
+  "dots-all-test|dotmatrix|DotMatrix LED|DotMatrix LED|DotMatrix LED|Test: dots everywhere at grid sizes — terminals 18 pt, VS Code 24 px, interface 12 pt: crisp dots, full brightness"
   "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
   "paper-ui|paper|Pangolin|Monaspace Radon Var|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles, handwritten monospaced Monaspace Radon for the terminal and code"
   "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
@@ -121,6 +125,43 @@ build_fonts() {
   cp "$FONT_SCRIPTS/../fonts/OFL.txt" "$BUILD_DIR/"
   fc-cache -f "$BUILD_DIR" >/dev/null
   build_dots || true
+}
+
+# Размеры по сетке DotMatrix LED (dots-all-test): точка горит ярко, только когда её шаг — целое число пикселей
+# экрана. grid — запомнить текущие размеры (один раз) и поставить свои; restore — вернуть запомненные.
+SIZES="$HOME/.local/state/omarchy/font-profile/sizes.json"
+term_sizes() {
+  python3 -I - "$1" "$SIZES" "$HOME/.config/kitty/kitty.conf" "$HOME/.config/ghostty/config" "$VSCODE" <<'PY'
+import json, os, re, sys
+mode, state, kitty, ghostty, vscode = sys.argv[1:]
+GRID = {"kitty": "18.0", "ghostty": "18", "editor.fontSize": "24", "terminal.integrated.fontSize": "24"}
+# (файл, ключ, регулярка значения): kitty «font_size 14.0», ghostty «font-size = 12», VS Code «"editor.fontSize": 16»
+spots = [(kitty, "kitty", r"^(\s*font_size\s+)(\S+)"), (ghostty, "ghostty", r"^(font-size\s*=\s*)(\S+)"),
+         (vscode, "editor.fontSize", r'("editor\.fontSize":\s*)([0-9.]+)'),
+         (vscode, "terminal.integrated.fontSize", r'("terminal\.integrated\.fontSize":\s*)([0-9.]+)')]
+def current():
+    out = {}
+    for path, key, rx in spots:
+        if os.path.isfile(path):
+            m = re.search(rx, open(path).read(), re.M)
+            if m: out[key] = m.group(2)
+    return out
+def write(values):
+    for path, key, rx in spots:
+        if key in values and os.path.isfile(path):
+            real = os.path.realpath(path)
+            text = open(real).read()
+            new = re.sub(rx, lambda m: m.group(1) + values[key], text, count=1, flags=re.M)
+            if new != text: open(real, "w").write(new)
+if mode == "grid":
+    if not os.path.exists(state):
+        os.makedirs(os.path.dirname(state), exist_ok=True)
+        json.dump(current(), open(state, "w"))
+    write(GRID)
+elif os.path.exists(state):
+    write(json.load(open(state)))
+    os.remove(state)
+PY
 }
 
 # Первая гарнитура в списке VS Code; остальной запасной список не трогаем.
@@ -300,6 +341,7 @@ apply() {
   fontconfig_sans "$profile" "$sans"
   # Caveat мельче обычных гротесков при том же кегле — интерфейсу на 2 пункта больше.
   local size=11
+  [[ $profile == dots-all-test ]] && size=12  # 12 pt при масштабе 2 = 32 px: шаг точки ровно 2 px
   [[ $sans == Caveat ]] && size=13
   gsettings set org.gnome.desktop.interface font-name "$sans $size" 2>/dev/null || true
   gsettings set org.gnome.desktop.interface monospace-font-name "$mono 11" 2>/dev/null || true
@@ -316,6 +358,7 @@ apply() {
   [[ $profile == dot-accents ]] && term=accents
   kitty_variants "$term"
   ghostty_features "$term"
+  if [[ $profile == dots-all-test ]]; then term_sizes grid; else term_sizes restore; fi
   set_mono "$mono"
   # Qt (qt6ct), Ghidra, Vesktop берут шрифты из fontconfig — после set_mono
   "$THEMES/omarchy-app-themes" >/dev/null 2>&1 || true

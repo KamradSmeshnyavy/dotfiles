@@ -202,7 +202,7 @@ def sync():
     if sid and (SRC / f"{sid}.css").exists():
         style, why = f"{sid}.css", f"стилю {sid}"
     else:
-        style = "dotmatrix.css" if font_profile in ("nothing", "dot", "pixel", "dot-accents", "dots-all") else "stock.css"
+        style = "dotmatrix.css" if font_profile in ("nothing", "dot", "pixel", "dot-accents", "dots-all", "dots-all-test") else "stock.css"
         why = f"профилю шрифтов {font_profile}"
     write(out / "style.css", f'/* omarchy-firefox-chrome: вид по {why}. */\n@import "{style}";\n')
     content = "/* omarchy-firefox-chrome: профиль шрифтов stock — без своих правил. */\n"
