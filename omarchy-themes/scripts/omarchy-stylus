@@ -675,8 +675,25 @@ def install_firefox():
     if not m or not xpi.is_file():
         log("install firefox: Stylus не установлен, пропуск")
         return True
-    idb = profile / "storage/default" / f"moz-extension+++{m.group(1)}" / "idb"
-    con = fi.open_db(idb, "stylish") if idb.is_dir() else None
+    # Где Stylus держит стили: обычно IndexedDB «stylish», но если он однажды не смог её открыть (так было
+    # после порчи базы 2026-11-04), он ставит в storage.local флаг dbInChromeStorage и дальше читает стили
+    # оттуда (ключи style-<id>) — запись в «stylish» тогда молча ни на что не влияет.
+    base = profile / "storage/default"
+    local_idb = base / f"moz-extension+++{m.group(1)}^userContextId=4294967295" / "idb"
+    in_local = False
+    lcon = fi.open_db(local_idb, "webExtensions-storage-local") if local_idb.is_dir() else None
+    if lcon:
+        try:
+            row = lcon.execute("SELECT data, file_ids FROM object_data WHERE key = ?", (idb_key("dbInChromeStorage"),)).fetchone()
+            in_local = bool(row) and fi.read_value(row[0], row[1], fi.files_dir(lcon)) is True
+        except Exception:
+            in_local = False
+        lcon.close()
+    if in_local:
+        idb, dbname, prefix = local_idb, "webExtensions-storage-local", idb_key("style-")
+    else:
+        idb, dbname, prefix = base / f"moz-extension+++{m.group(1)}" / "idb", "stylish", b""
+    con = fi.open_db(idb, dbname) if idb.is_dir() else None
     if not con:
         log("install firefox: база стилей Stylus не найдена")
         return prime_firefox() and None
@@ -685,11 +702,13 @@ def install_firefox():
         con.close()
         if not restore_firefox_db(db_path):
             return prime_firefox() and None
-        con = fi.open_db(idb, "stylish")
+        con = fi.open_db(idb, dbname)
     files_dir = fi.files_dir(con)
     try:
         rows = con.execute("SELECT key, data, file_ids FROM object_data WHERE object_store_id = 1").fetchall()
-        styles = {key: fi.read_value(data, fids, files_dir) for key, data, fids in rows}
+        styles = {key: fi.read_value(data, fids, files_dir) for key, data, fids in rows
+                  if bytes(key).startswith(prefix)}
+        styles = {k: v for k, v in styles.items() if isinstance(v, dict) and "sourceCode" in v}
     except Exception as e:
         con.close()
         log(f"install firefox: база не прочитана ({e})")
@@ -746,7 +765,8 @@ def install_firefox():
         restore_firefox_db(db_path, prefer=backup)
         log("install firefox: после записи база не прошла проверку — откат к копии до записи")
         return False
-    log(f"install firefox: записано {done} стилей" + (f", не собраны: {failed}" if failed else ""))
+    log(f"install firefox: записано {done} стилей в {'storage.local' if in_local else 'stylish'}"
+        + (f", не собраны: {failed}" if failed else ""))
     if failed:
         prime_firefox()  # остальные Stylus подтянет сам через минуту после запуска
         return None
