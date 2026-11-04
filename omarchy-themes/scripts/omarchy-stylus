@@ -391,13 +391,15 @@ def font_rules(cfg):
     if text_on:
         sel = ", ".join(f"{t}{NOT_ICON}" for t in TEXT.split(", "))
         css.append(f'{sel} {{ font-family: "{sans}", sans-serif !important; }}')
+    # dots — точками абсолютно всё: и заголовки, и элементы тем же DotMatrix Dots, что и текст.
+    dot = f'"{sans}", {DOT}' if profile == "dots" else DOT
     if profile in DOT_HEADINGS:
-        css.append(f"{lifted(DOT_HEADINGS[profile])} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
+        css.append(f"{lifted(DOT_HEADINGS[profile])} {{ font-family: {dot} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
         if profile == "dots":
             ctl = [x.strip() for x in DOT_CONTROLS.split(",")]
             sel = ", ".join([f"{x}{LIFT}" for x in ctl] + [f"{x} *{NOT_ICON}{LIFT}" for x in ctl])
             # Мелкий текст точками бледный — Black (900), как подписи точечного слоя в оболочке.
-            css.append(f"{sel} {{ font-family: {DOT} !important; font-weight: 900 !important; letter-spacing: 0.03em; }}")
+            css.append(f"{sel} {{ font-family: {dot} !important; font-weight: 900 !important; letter-spacing: 0.03em; }}")
         if text_on:  # остальные заголовки — текстом профиля
             rest = [h for h in ("h1", "h2", "h3") if h not in DOT_HEADINGS[profile]]
             if rest:

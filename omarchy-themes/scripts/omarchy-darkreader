@@ -63,7 +63,10 @@ def page_font():
         return "Maple Mono NF CN"
 
 
-FONT = {"useFont": True, "fontFamily": page_font()}
+# Шрифт Dark Reader — только для stock-профилей (Maple): у остальных шрифты страниц ставит стиль Stylus
+# «DOT-MATRIX fonts» (текст, заголовки, элементы и код раздельно). Два расширения с font-family !important
+# на одном тексте спорили, и где-то побеждал Dark Reader — заголовки точками оставались текстом.
+FONT = {"useFont": page_font() == "Maple Mono NF CN", "fontFamily": page_font()}
 
 
 def browser_prefs():
