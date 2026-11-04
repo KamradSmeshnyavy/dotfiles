@@ -42,6 +42,7 @@ Item {
     "bookshelf": "BookshelfView.qml",
     "lanterns": "LanternsView.qml",
     "aquarium": "AquariumView.qml",
+    "paper": "PaperView.qml",
     // Minimal terminal-style twins: same file, drawn with variant "hack".
     "drum-hack": "DrumView.qml",
     "tarot-hack": "TarotView.qml",

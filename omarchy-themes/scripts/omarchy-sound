@@ -19,9 +19,11 @@ if [[ -f $conf ]]; then
 fi
 [[ $enabled == true ]] || exit 0
 
-# Пакеты звуков NIHIL / classic живут в плагине kamradsmeshnyavy.customizer.
-customizer_play="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/play-sound.sh"
-if [[ ($pack == nihil || $pack == classic) && -x $customizer_play ]]; then
+# Пакеты звуков стилей (nihil, classic, flat, glass, paper, …) живут в плагине kamradsmeshnyavy.customizer:
+# всё, у чего там есть каталог sounds/<пакет>, играет его play-sound.sh.
+customizer="$HOME/.config/omarchy/plugins/kamradsmeshnyavy.customizer"
+customizer_play="$customizer/scripts/play-sound.sh"
+if [[ $pack != theme && $pack =~ ^[a-z0-9-]+$ && -d $customizer/sounds/$pack && -x $customizer_play ]]; then
   exec "$customizer_play" "$event"
 fi
 
