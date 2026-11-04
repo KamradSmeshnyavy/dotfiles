@@ -177,7 +177,8 @@ def sync():
         link(out / name, SRC / name)
     css, font_profile = colors_css()
     write(out / "colors.css", css)
-    style = "stock.css" if font_profile == "stock" else "nihil.css"
+    # Вид Nihil — только у профилей шрифтов Nihil; остальные (stock, paper-*, retro) — прежний вид.
+    style = "nihil.css" if font_profile in ("nothing", "dot", "pixel") else "stock.css"
     write(out / "style.css", f'/* omarchy-firefox-chrome: вид по профилю шрифтов ({font_profile}). */\n'
                              f'@import "{style}";\n')
     content = "/* omarchy-firefox-chrome: профиль шрифтов stock — без своих правил. */\n"

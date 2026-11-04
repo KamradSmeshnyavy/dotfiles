@@ -4,7 +4,7 @@
 #
 #   omarchy-font-profile                 # текущий профиль
 #   omarchy-font-profile list            # профили с описанием (для Customizer)
-#   omarchy-font-profile <profile>       # применить: stock | nothing | dot | pixel
+#   omarchy-font-profile <profile>       # применить (список — `list`)
 #   omarchy-font-profile apply           # применить сохранённый (после установки шрифтов)
 #   omarchy-font-profile build-fonts     # собрать Nihil Mono и Nihil Pixel (just nihil-fonts)
 #
@@ -14,14 +14,20 @@
 #   dot     — точечный слой: Nihil Dot во всём крупном и коротком (бар, заголовки, лаунчер, lock, OSD,
 #             заголовки страниц); текст и код как в nothing.
 #   pixel   — как dot, а терминал и код пиксельные (Nihil Pixel).
+#   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
+#   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat; терминал и код — Maple.
+#   paper-hand  — Caveat везде, кроме терминала и кода.
+#   paper-all   — абсолютно всё в Caveat, включая терминал и код (шрифт не моноширинный).
+#   retro       — интерфейс Pixelify Sans, терминал и код Nihil Pixel — стиль Retro.
+# Caveat, Pangolin и Pixelify Sans (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
 # Nihil Mono — Geist Mono с включёнными лигатурами; Nihil Pixel — Terminess (Terminus) с русскими «в д и й»,
 # курсивом в ячейке и пиксельными лигатурами. Собираются из официальных шрифтов скриптами
 # kamradsmeshnyavy.customizer/scripts/nihil-{mono,pixel}.py в ~/.local/share/fonts/nihil-build;
 # значки Nerd Font терминалы берут из Symbols Nerd Font.
 #
-# Состояние: ~/.config/omarchy/fonts.json {"profile": …}. Его же читают nihil/Palette.qml,
-# omarchy-darkreader и omarchy-stylus.
+# Состояние: ~/.config/omarchy/fonts.json {"profile", "sans", "mono", "title"}. Его же читают nihil/Palette.qml,
+# BarStyle.qml (title — заголовки и рукописный шрифт панелей), omarchy-darkreader, omarchy-stylus, omarchy-firefox-chrome.
 set -euo pipefail
 
 CFG="$HOME/.config/omarchy/fonts.json"
@@ -36,12 +42,18 @@ TERMINESS="/usr/share/fonts/TTF/TerminessNerdFont"
 VSCODE="$HOME/.config/Code/User/settings.json"
 THEMES="$HOME/dotfiles/omarchy-themes/scripts"
 
-# profile|sans|mono|описание
+# profile|стиль|sans|mono|title (заголовки; пусто — как sans)|описание
+STOCK_FONT="Maple Mono NF CN"
 PROFILES=(
-  "stock|Maple Mono NF CN|Maple Mono NF CN|As before: Maple Mono NF CN everywhere, dot font only in Nihil widgets"
-  "nothing|Geist|Nihil Mono|Like Nothing OS: dots only for clocks, numbers and big titles; Geist text, Nihil Mono code with ligatures"
-  "dot|Geist|Nihil Mono|Dot layer: Nihil Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
-  "pixel|Geist|Nihil Pixel|Dot layer plus pixel terminal and code (Nihil Pixel, ligatures)"
+  "stock|base|$STOCK_FONT|$STOCK_FONT||As before: Maple Mono NF CN everywhere, dot font only in Nihil widgets"
+  "nothing|nihil|Geist|Nihil Mono||Like Nothing OS: dots only for clocks, numbers and big titles; Geist text, Nihil Mono code with ligatures"
+  "dot|nihil|Geist|Nihil Mono||Dot layer: Nihil Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
+  "pixel|nihil|Geist|Nihil Pixel||Dot layer plus pixel terminal and code (Nihil Pixel, ligatures)"
+  "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
+  "paper-ui|paper|Pangolin|$STOCK_FONT|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles; terminal and code stay Maple"
+  "paper-hand|paper|Caveat|$STOCK_FONT|Caveat|Handwritten Caveat everywhere except the terminal and code"
+  "paper-all|paper|Caveat|Caveat|Caveat|Absolutely everything in Caveat, terminal and code included (not monospaced)"
+  "retro|retro|Pixelify Sans|Nihil Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (Nihil Pixel)"
 )
 
 notify() { notify-send -t 4000 "Fonts" "$1" 2>/dev/null || echo "$1" >&2; }
@@ -51,6 +63,8 @@ spec() {
   return 1
 }
 current() { jq -r '.profile // "stock"' "$CFG" 2>/dev/null || echo stock; }
+# Терминалы и fontconfig «как stock», если профиль оставляет шрифт Maple (stock, paper-shell, …).
+stock_like() { [[ $1 == "$STOCK_FONT" ]]; }
 # Без `grep -q` в конвейере: он выходит на первом совпадении, fc-list ловит SIGPIPE, и pipefail
 # считает шрифт отсутствующим.
 has_font() { fc-list : family | tr ',' '\n' | grep -xF -- "$1" >/dev/null; }
@@ -213,7 +227,7 @@ PY
 }
 
 fontconfig_sans() {
-  if [[ $1 == stock ]]; then
+  if stock_like "$2"; then
     # Пустой файл fontconfig считает ошибкой XML — оставляем корректный пустой конфиг.
     [[ -f $FC_FILE ]] && printf '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig/>\n' >"$FC_FILE"
     return 0
@@ -233,9 +247,9 @@ XML
 }
 
 apply() {
-  local profile=$1 line sans mono
+  local profile=$1 line sans mono title
   line=$(spec "$profile") || { notify "Unknown font profile: $profile"; exit 2; }
-  IFS='|' read -r _ sans mono _ <<<"$line"
+  IFS='|' read -r _ _ sans mono title _ <<<"$line"
 
   [[ $sans == Geist ]] && { install_geist || { notify "Could not download Geist"; exit 1; }; }
   if [[ $mono == Nihil* ]] && ! has_font "$mono"; then
@@ -245,17 +259,22 @@ apply() {
   local missing=()
   has_font "$sans" || missing+=("$sans")
   has_font "$mono" || missing+=("$mono")
+  [[ -z $title ]] || has_font "$title" || missing+=("$title")
   if ((${#missing[@]})); then
     notify "Missing fonts: ${missing[*]}. Install: sudo pacman -S ttf-terminus-nerd ttf-nerd-fonts-symbols, then omarchy-font-profile build-fonts"
     exit 1
   fi
 
   mkdir -p "$(dirname "$CFG")"
-  jq -n --arg p "$profile" --arg s "$sans" --arg m "$mono" '{profile: $p, sans: $s, mono: $m}' >"$CFG.tmp"
+  jq -n --arg p "$profile" --arg s "$sans" --arg m "$mono" --arg t "$title" \
+    '{profile: $p, sans: $s, mono: $m} + (if $t != "" then {title: $t} else {} end)' >"$CFG.tmp"
   mv "$CFG.tmp" "$CFG"
 
   fontconfig_sans "$profile" "$sans"
-  gsettings set org.gnome.desktop.interface font-name "$sans 11" 2>/dev/null || true
+  # Caveat мельче обычных гротесков при том же кегле — интерфейсу на 2 пункта больше.
+  local size=11
+  [[ $sans == Caveat ]] && size=13
+  gsettings set org.gnome.desktop.interface font-name "$sans $size" 2>/dev/null || true
   gsettings set org.gnome.desktop.interface monospace-font-name "$mono 11" 2>/dev/null || true
   vscode_font "$mono"
   # Dark Reader, Stylus и шрифты страниц Helium и Firefox читают fonts.json; пишутся, когда браузер закрыт
@@ -264,8 +283,11 @@ apply() {
   "$THEMES/omarchy-stylus" sync >/dev/null 2>&1 || true
   "$THEMES/omarchy-surfingkeys" sync >/dev/null 2>&1 || true
   "$THEMES/omarchy-firefox-chrome" >/dev/null 2>&1 || true
-  kitty_variants "$profile"
-  ghostty_features "$profile"
+  # Варианты kitty и лигатуры ghostty заданы под Maple: у профилей с моно Maple — как в stock.
+  local term=custom
+  stock_like "$mono" && term=stock
+  kitty_variants "$term"
+  ghostty_features "$term"
   set_mono "$mono"
   # Qt (qt6ct), Ghidra, Vesktop берут шрифты из fontconfig — после set_mono
   "$THEMES/omarchy-app-themes" >/dev/null 2>&1 || true
@@ -275,10 +297,14 @@ apply() {
 case "${1:-}" in
 "") current ;;
 list)
-  for p in "${PROFILES[@]}"; do IFS='|' read -r n _ _ d <<<"$p"; printf '%s\t%s\n' "$n" "$d"; done
+  # name, описание, стиль, sans, mono, title — первые два столбца как раньше (Customizer).
+  for p in "${PROFILES[@]}"; do
+    IFS='|' read -r n g sa mo ti d <<<"$p"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$n" "$d" "$g" "$sa" "$mo" "${ti:-$sa}"
+  done
   ;;
 apply) apply "$(current)" ;;
 build-fonts) build_fonts && notify "Nihil Mono / Nihil Pixel built" ;;
--h | --help) sed -n '2,28p' "$0" ;;
+-h | --help) sed -n '2,33p' "$0" ;;
 *) apply "$1" ;;
 esac
