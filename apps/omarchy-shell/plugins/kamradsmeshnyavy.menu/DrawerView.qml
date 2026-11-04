@@ -169,29 +169,45 @@ SkinBase {
   readonly property var families: Qt.fontFamilies()
   function face(name, fallback) { return families.indexOf(name) >= 0 ? name : fallback }
   function mix(a, b, t) { return root.theme ? root.theme.mix(a, b, t) : a }
-  readonly property bool dark: root.theme ? root.theme.luma(root.background) < 0.45 : true
+  readonly property bool dark: 0.299 * root.base.r + 0.587 * root.base.g + 0.114 * root.base.b < 0.45
   readonly property color fg: root.foreground
   readonly property color acc: root.accent
   readonly property color onAcc: root.theme ? root.theme.ink(root.acc) : "#ffffff"
   readonly property color danger: root.theme ? root.theme.red : "#e05050"
   readonly property color dim: Util.alpha(root.fg, 0.78)
-  readonly property color muted: root.theme ? root.theme.muted : Util.alpha(root.fg, 0.55)
+  readonly property color muted: Color.muted
 
-  // Фон шторки (непрозрачный — для отделки; у стекла и неона поверх — альфа).
-  readonly property color base: root.pick({
-    flat: root.background,
-    glass: root.background,
-    fluent: root.mix(root.background, root.fg, 0.03),
-    paper: root.dark ? root.mix(root.mix(root.background, root.theme ? root.theme.brown : root.background, 0.3), root.fg, 0.04)
-                     : root.mix(root.background, root.theme ? root.theme.yellow : root.background, 0.05),
-    neumorph: root.background,
-    brutal: root.background,
-    retro: root.mix(root.background, root.fg, root.dark ? 0.16 : 0.06),
-    neon: root.mix(root.background, "#000000", 0.4)
-  })
-  readonly property real baseAlpha: root.pick({ glass: 0.92, neon: 0.94, flat: 1 })
-  readonly property color surface: root.mix(root.base, root.fg, 0.06)
-  readonly property color surfaceHi: root.mix(root.base, root.fg, 0.12)
+  // Цвета — как у дашборда, меню выключения, OSD и уведомлений (BarStyle.qml в kamradsmeshnyavy.widgets):
+  // фон панели — подложка бара из ~/.config/omarchy/bar-skin.json (почти прозрачный бар → фон всплывающих
+  // окон), текст — foreground / muted темы, выделения и скотч — акцент. Своих оттенков у отделок нет.
+  function resolve(spec, fallback) {
+    var s = String(spec === undefined || spec === null ? "" : spec).trim()
+    if (s === "" || s === "bar") return fallback
+    if (s.charAt(0) === "#") return Qt.color(s)
+    if (s === "background") return Color.background
+    if (s === "foreground") return Color.foreground
+    if (s === "accent") return Color.accent
+    if (s === "muted") return Color.muted
+    if (s === "urgent") return Color.urgent
+    if (root.theme && root.theme.values && root.theme.values[s]) return Qt.color(root.theme.values[s])
+    return fallback
+  }
+  readonly property color barFill: {
+    var c = root.resolve(root.barSkin.background, Color.bar.background)
+    var a = Number(root.barSkin.backgroundAlpha)
+    return isFinite(a) && a >= 0 ? Qt.rgba(c.r, c.g, c.b, a) : c
+  }
+  readonly property bool barGlass: root.barFill.a < 0.15 || String(root.barSkin.shape || "") === "islands" || root.barSkin.transparent === true
+  // Непрозрачный фон шторки; у стекла и неона альфа — baseAlpha.
+  readonly property color base: {
+    var c = root.barGlass ? Color.popups.background : root.barFill
+    return Qt.rgba(c.r, c.g, c.b, 1)
+  }
+  // Альфа шторки — 1 у всех отделок: слой меню с альфой < 1 композитор показывает почти насквозь
+  // (0.92 читается как ~0.5), и сквозь стекло читался текст окон. Стекло держится на рамке и тени.
+  readonly property real baseAlpha: 1
+  readonly property color surface: Util.alpha(root.fg, 0.05)
+  readonly property color surfaceHi: Util.alpha(root.fg, 0.1)
   readonly property color line: root.pick({
     brutal: root.fg, neon: Util.alpha(root.acc, 0.7), paper: Util.alpha(root.fg, 0.35),
     glass: Util.alpha(root.fg, 0.18), neumorph: "transparent", flat: Util.alpha(root.fg, 0.16)
@@ -216,8 +232,9 @@ SkinBase {
   function cap(s) { return root.upper ? String(s).toUpperCase() : String(s) }
   readonly property string grain: Quickshell.env("HOME") + "/.config/omarchy/plugins/kamradsmeshnyavy.customizer/textures/"
     + (root.dark ? "paper-dark.png" : "paper.png")
-  readonly property color tape: root.theme ? Util.alpha(root.mix(root.theme.yellow, "#ffffff", 0.45), 0.62) : Qt.rgba(1, 0.95, 0.8, 0.6)
-  readonly property color marker: root.theme ? Util.alpha(root.theme.yellow, root.dark ? 0.32 : 0.45) : Qt.rgba(1, 0.9, 0.2, 0.4)
+  // Как у дашборда: скотч — акцент 0.55 (BarStyle.tapeColor), выделение бумаги — акцент 0.2.
+  readonly property color tape: Util.alpha(root.acc, 0.55)
+  readonly property color marker: Util.alpha(root.acc, 0.2)
   function lift(c, k) { return Qt.rgba(c.r + (1 - c.r) * k, c.g + (1 - c.g) * k, c.b + (1 - c.b) * k, 1) }
   function shade(c, k) { return Qt.rgba(c.r * k, c.g * k, c.b * k, 1) }
 
@@ -369,8 +386,8 @@ SkinBase {
           radius: root.pillRadius
           visible: root.look !== "paper"
           color: root.pick({
-            glass: Util.alpha(root.fg, 0.08), neon: Util.alpha(root.acc, 0.08),
-            neumorph: root.shade(root.base, root.dark ? 0.82 : 0.94), retro: root.lift(root.base, root.dark ? 0.08 : 0.6),
+            glass: root.surface, neon: Util.alpha(root.acc, 0.08),
+            neumorph: root.shade(root.base, root.dark ? 0.82 : 0.94), retro: root.shade(root.base, root.dark ? 0.85 : 0.96),
             brutal: root.base, flat: root.surface
           })
           border.width: root.pick({ brutal: 2, neumorph: 0, retro: 0, flat: 1 })
