@@ -78,11 +78,13 @@ QtObject {
 
   // Шрифты. ~/.config/omarchy/fonts.json — профиль шрифтов системы (omarchy-font-profile):
   //   stock — Space Grotesk / Space Mono как в Nihil-Shell; nothing / dot / pixel — sans и mono профиля
-  //   (Geist, GeistMono / Terminess, с кириллицей). dot / pixel включают точечный слой (dotLayer):
+  //   (Geist, GeistMono / Terminess, с кириллицей). dot / pixel / dots включают точечный слой (dotLayer):
   //   DotMatrix Dot во всём крупном и коротком — заголовках, номерах, метках.
   // DotMatrix Dot — Doto с кириллицей (kamradsmeshnyavy.customizer/fonts); без него — Doto, потом шрифт Omarchy.
   property var fontProfile: ({ profile: "stock" })
-  readonly property bool dotLayer: fontProfile.profile === "dot" || fontProfile.profile === "pixel"
+  readonly property bool dotLayer: fontProfile.profile === "dot" || fontProfile.profile === "pixel" || fontProfile.profile === "dots"
+  // dots — «точки везде»: ещё и заголовки карточек, уведомлений, пункты меню (fontHeading), не только крупное.
+  readonly property bool dotEverywhere: fontProfile.profile === "dots"
   readonly property var families: Qt.fontFamilies()
   function family(name, fallback) {
     if (families.indexOf(name) >= 0) return name
@@ -95,6 +97,9 @@ QtObject {
   // Метки и заголовки: точками при точечном слое, иначе — моно-голос DotMatrix.
   readonly property string fontLabel: dotLayer ? fontDot : fontMono
   readonly property string fontTitle: dotLayer ? fontDot : fontSans
+  // Заголовки второго уровня (карточки, уведомления, пункты меню): точками только у профиля dots.
+  readonly property string fontHeading: dotEverywhere ? fontDot : fontSans
+  function headingWeight(normal) { return dotEverywhere ? Font.Black : normal }
   // Точки при обычной толщине бледные — заголовки точечного слоя набираются Black, как часы.
   function titleWeight(normal) { return dotLayer ? Font.Black : normal }
 

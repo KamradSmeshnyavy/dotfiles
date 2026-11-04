@@ -507,8 +507,10 @@ SkinBase {
             elide: Text.ElideRight
             textFormat: Text.PlainText
             text: cell.label.toUpperCase()
-            font.family: DotMatrix.Palette.fontMono
-            font.pixelSize: 10
+            // Профиль dots — подписи приложений точками (крупнее: точки мельче штриха).
+            font.family: DotMatrix.Palette.dotEverywhere ? DotMatrix.Palette.fontDot : DotMatrix.Palette.fontMono
+            font.pixelSize: DotMatrix.Palette.dotEverywhere ? 12 : 10
+            font.weight: DotMatrix.Palette.headingWeight(Font.Normal)
             font.letterSpacing: 0.8
             color: cell.selected ? DotMatrix.Palette.fg : DotMatrix.Palette.muted
           }
@@ -595,9 +597,9 @@ SkinBase {
             elide: Text.ElideRight
             textFormat: Text.PlainText
             text: actRow.label
-            font.family: DotMatrix.Palette.fontSans
-            font.pixelSize: 14
-            font.weight: actRow.selected ? Font.Medium : Font.Normal
+            font.family: DotMatrix.Palette.fontHeading
+            font.pixelSize: DotMatrix.Palette.dotEverywhere ? 16 : 14
+            font.weight: DotMatrix.Palette.dotEverywhere ? Font.Black : (actRow.selected ? Font.Medium : Font.Normal)
             color: actRow.isArmed ? DotMatrix.Palette.onSignal : (actRow.selected ? DotMatrix.Palette.fg : DotMatrix.Palette.dim)
           }
 

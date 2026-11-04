@@ -14,6 +14,8 @@
 #   dot     — точечный слой: DotMatrix Dot во всём крупном и коротком (бар, заголовки, лаунчер, lock, OSD,
 #             заголовки страниц); текст и код как в nothing.
 #   pixel   — как dot, а терминал и код пиксельные (DotMatrix Pixel).
+#   dots    — «точки везде»: как pixel, плюс DotMatrix Dot в заголовках и элементах сайтов, жирный текст
+#             терминала (kitty / ghostty) и подписи оболочки (карточки, уведомления, меню, Customizer).
 #   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
 #   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat, терминал и код —
 #                 рукописный моноширинный Monaspace Radon.
@@ -50,6 +52,7 @@ PROFILES=(
   "nothing|dotmatrix|Geist|DotMatrix Mono||Like Nothing OS: dots only for clocks, numbers and big titles; Geist text, DotMatrix Mono code with ligatures"
   "dot|dotmatrix|Geist|DotMatrix Mono||Dot layer: DotMatrix Dot in every big short text (bar, titles, launcher, lock, OSD, page headings)"
   "pixel|dotmatrix|Geist|DotMatrix Pixel||Dot layer plus pixel terminal and code (DotMatrix Pixel, ligatures)"
+  "dots|dotmatrix|Geist|DotMatrix Pixel||Dots everywhere: Pixel plus DotMatrix Dot in site headings and controls, bold terminal text and shell labels"
   "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
   "paper-ui|paper|Pangolin|Monaspace Radon Var|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles, handwritten monospaced Monaspace Radon for the terminal and code"
   "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
@@ -181,7 +184,9 @@ else:
     if not os.path.exists(backup):
         os.makedirs(os.path.dirname(backup), exist_ok=True)
         open(backup, "w").write("\n".join(l for l in lines if rx.match(l)) + "\n")
-    lines = [f"{l.split()[0]:<20} auto" if rx.match(l) else l for l in lines]
+    # dots — жирное точками (DotMatrix Dot Black: обычной толщины точки бледные), курсив — как у шрифта.
+    dot = {"bold_font": "DotMatrix Dot Black", "bold_italic_font": "DotMatrix Dot Black"} if profile == "dots" else {}
+    lines = [f"{l.split()[0]:<20} {dot.get(l.split()[0], 'auto')}" if rx.match(l) else l for l in lines]
 open(path, "w").write("\n".join(lines))
 PY
 }
@@ -222,6 +227,9 @@ else:
         os.makedirs(os.path.dirname(backup), exist_ok=True)
         open(backup, "w").write("\n".join(current) + "\n")
     block = ["# лигатуры шрифтов DOT-MATRIX", "font-feature = calt"]
+    if profile == "dots":  # жирное точками, как в kitty
+        block += ["font-family-bold = DotMatrix Dot", "font-style-bold = Black",
+                  "font-family-bold-italic = DotMatrix Dot", "font-style-bold-italic = Black"]
 lines[at:at] = [BEGIN] + block + [END]
 open(path, "w").write("\n".join(lines))
 PY
@@ -287,6 +295,7 @@ apply() {
   # Варианты kitty и лигатуры ghostty заданы под Maple: у профилей с моно Maple — как в stock.
   local term=custom
   stock_like "$mono" && term=stock
+  [[ $profile == dots ]] && term=dots
   kitty_variants "$term"
   ghostty_features "$term"
   set_mono "$mono"

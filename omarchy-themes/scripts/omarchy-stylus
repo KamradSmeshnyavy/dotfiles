@@ -357,7 +357,11 @@ LEGACY_FONT_STYLES = {"nihil-fonts": "NIHIL fonts"}
 DOT = '"DotMatrix Dot", "Doto", monospace'
 STOCK_FONT = "Maple Mono NF CN"   # шрифт stock-профиля (omarchy-font-profile): его на сайтах не навязываем
 # Заголовки точками у профилей DOT-MATRIX (как в оболочке: nothing — только крупные).
-DOT_HEADINGS = {"nothing": "h1, h2", "dot": "h1, h2, h3, th, [role=heading]", "pixel": "h1, h2, h3, th, [role=heading]"}
+DOT_HEADINGS = {"nothing": "h1, h2", "dot": "h1, h2, h3, th, [role=heading]", "pixel": "h1, h2, h3, th, [role=heading]",
+                "dots": "h1, h2, h3, h4, h5, h6, th, [role=heading]"}
+# dots — «точки везде»: ещё и элементы интерфейса сайтов (с текстом внутри них, кроме иконочных шрифтов).
+DOT_CONTROLS = ("button, [role=button], [role=tab], [role=menuitem], [role=option], nav a, label, legend, summary, "
+                "caption, input[type=submit], input[type=button], input[type=reset], select")
 # Текст страницы шрифтом интерфейса профиля. Иконочные шрифты (Font Awesome, Material, Nerd-иконки, svg-спрайты
 # в span/i) не трогаем — у них свои классы; код — отдельным правилом.
 NOT_ICON = (':not([class*="icon" i]):not([class*="fa-"]):not([class*="fa " i]):not([class*="material" i])'
@@ -389,6 +393,11 @@ def font_rules(cfg):
         css.append(f'{sel} {{ font-family: "{sans}", sans-serif !important; }}')
     if profile in DOT_HEADINGS:
         css.append(f"{lifted(DOT_HEADINGS[profile])} {{ font-family: {DOT} !important; font-weight: 700 !important; letter-spacing: 0.03em; }}")
+        if profile == "dots":
+            ctl = [x.strip() for x in DOT_CONTROLS.split(",")]
+            sel = ", ".join([f"{x}{LIFT}" for x in ctl] + [f"{x} *{NOT_ICON}{LIFT}" for x in ctl])
+            # Мелкий текст точками бледный — Black (900), как подписи точечного слоя в оболочке.
+            css.append(f"{sel} {{ font-family: {DOT} !important; font-weight: 900 !important; letter-spacing: 0.03em; }}")
         if text_on:  # остальные заголовки — текстом профиля
             rest = [h for h in ("h1", "h2", "h3") if h not in DOT_HEADINGS[profile]]
             if rest:
