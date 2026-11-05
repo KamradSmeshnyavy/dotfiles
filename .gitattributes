@@ -1,0 +1,2 @@
+# Локальные значения (шрифт, размер, тема Omarchy) не попадают в git — scripts/git-filters/vscode-local, подключает `just link`.
+apps/vscode/settings.json filter=vscode-local

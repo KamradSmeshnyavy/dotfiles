@@ -121,12 +121,20 @@ moveBarWidget`), ⏎ или x — убрать с бара / вернуть. У�
   | `pixel` | Geist | DotMatrix Pixel | как `dot`; в браузере `code`/`pre` — DotMatrix Pixel |
 
   Что применяет профиль:
-  - терминалы (kitty, ghostty, alacritty, foot) и fontconfig `monospace` — как `omarchy font set`, но без
-    перезапуска оболочки;
-  - лигатуры в ghostty: блок `font-feature` между метками `omarchy-font-profile` — для своих шрифтов `calt`,
-    для stock исходные строки Maple;
+  - kitty и ghostty — **не** в `kitty.conf` / `config` из репозитория: они держат шрифт stock (Maple, её ss01–ss04)
+    и последним подключают сгенерированный `fonts.conf` (`globinclude fonts.conf` / `config-file = ?fonts.conf`,
+    в `.gitignore`). Скрипт пишет его целиком: семейство, варианты (`auto`, у `dot-accents` жирное DotMatrix Dot
+    Black), в ghostty сброс `font-family = ""` / `font-feature = ""` и `calt`, размеры по сетке. Смена профиля
+    не оставляет диффов в git;
+  - alacritty, foot и fontconfig `monospace` — как `omarchy font set`, но без перезапуска оболочки;
+  - `omarchy font set` (меню Omarchy) правит `font_family` прямо в `kitty.conf` — хук `hooks/font-set` вызывает
+    `omarchy-font-profile mono <шрифт>`: строка возвращается к stock, шрифт уходит в `fonts.conf`;
   - fontconfig `sans-serif` (`conf.d/60-dotmatrix-fonts.conf`), GTK (`gsettings`);
-  - VS Code — первая гарнитура в `editor`/`terminal`/`debug`/`markdown` fontFamily;
+  - VS Code — первая гарнитура в `editor`/`terminal`/`debug`/`markdown` fontFamily и размеры. `settings.json`
+    отслеживается git, поэтому эти ключи и `workbench.colorTheme` (его пишет Omarchy при смене темы) прячет
+    clean-фильтр `scripts/git-filters/vscode-local` (`.gitattributes`, настраивает `just link`): в индекс идут
+    канонические значения из `CANON` в фильтре. `vscode-local-refresh` (после профиля и в хуке `theme-set`)
+    обновляет stat-кэш индекса, иначе `git status` показывал бы файл из-за другого размера;
   - браузеры: шрифты страниц Helium и Firefox, Dark Reader, Stylus (usercss «DOT-MATRIX fonts»), Surfingkeys, вид
     интерфейса Firefox (`omarchy-firefox-chrome`: stock — прежний, остальные — DOT-MATRIX);
   - DOT-MATRIX-палитру (`dotLayer`, `fontSans`, `fontMono`).

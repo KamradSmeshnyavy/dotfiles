@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# После записи шрифта / темы в apps/vscode/settings.json git status всё равно показывает файл изменённым: у файла
+# другой размер, и git не прогоняет clean-фильтр. Если после фильтра содержимое совпадает с индексом, `git add`
+# только обновляет stat-кэш (тот же blob) — статус снова чистый. Настоящие правки файла не трогаются.
+# Вызывают omarchy-font-profile и хук theme-set.
+set -euo pipefail
+repo="$HOME/dotfiles"
+file=apps/vscode/settings.json
+[[ $(git -C "$repo" config filter.vscode-local.clean || true) ]] || exit 0
+staged=$(git -C "$repo" rev-parse -q --verify ":$file") || exit 0
+cleaned=$(git -C "$repo" hash-object --path "$file" "$repo/$file")
+[[ $staged == "$cleaned" ]] && git -C "$repo" add -- "$file"
+exit 0

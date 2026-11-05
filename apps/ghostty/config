@@ -39,11 +39,10 @@ theme = theme.conf
 confirm-close-surface=false
 # font-family
 # font-family = RecMonoCasual Nerd Font
+# Шрифт stock. Профиль шрифтов (omarchy-font-profile) переопределяет его в неотслеживаемом fonts.conf (в конце файла).
 font-family = Maple Mono NF CN
-# font-family = "Maple Mono NF CN"
 font-size = 12
 window-title-font-family = Maple Mono NF CN
-# >>> omarchy-font-profile: font-feature
 # ss01: != and ===
 font-feature = "ss01"
 # ss02: <= and >=
@@ -55,7 +54,6 @@ font-feature = "ss04"
 # liga: //, ..., ||
 font-feature = "liga"
 font-feature = -calt, -liga, -dlig
-# <<< omarchy-font-profile
 # font-thicken = true
 font-thicken-strength = 255
 
@@ -107,3 +105,5 @@ keybind = alt+shift+enter=csi:13;4u
 
 # Стиль Customizer (Пресеты → Стиль): отступы окна и форма курсора; файл пишет omarchy-app-themes.
 config-file = ?style.conf
+# Профиль шрифтов (omarchy-font-profile): шрифт, лигатуры и размер; файл генерируется и не отслеживается git.
+config-file = ?fonts.conf

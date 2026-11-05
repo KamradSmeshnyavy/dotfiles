@@ -6,6 +6,7 @@
 #   omarchy-font-profile list            # профили с описанием (для Customizer)
 #   omarchy-font-profile <profile>       # применить (список — `list`)
 #   omarchy-font-profile apply           # применить сохранённый (после установки шрифтов)
+#   omarchy-font-profile mono <font>     # только шрифт терминалов (хук font-set после `omarchy font set`)
 #   omarchy-font-profile build-fonts     # собрать DotMatrix Mono, Pixel, LED и Board (just dotmatrix-fonts)
 #
 # Профили:
@@ -49,6 +50,9 @@
 # DotMatrix Board (Mono / Sans) — Matrix Sans / Matrix Mono (FriedOrange, OFL, 5×7, с кириллицей) круглыми точками:
 # scripts/dotmatrix-board.py, релиз Matrix Sans скачивается в кэш. DotMatrix LED (сетка 8×16) точек на обычном
 # кегле не показывает — шаг точки 2–3 px, зазоров нет.
+#
+# kitty / ghostty — в неотслеживаемом ~/.config/{kitty,ghostty}/fonts.conf (term_fonts), основной конфиг из репозитория
+# держит stock. VS Code — в settings.json, ключи прячет git-фильтр scripts/git-filters/vscode-local.
 #
 # Состояние: ~/.config/omarchy/fonts.json {"profile", "sans", "mono", "title"}. Его же читают dotmatrix/Palette.qml,
 # BarStyle.qml (title — заголовки и рукописный шрифт панелей), omarchy-darkreader, omarchy-stylus, omarchy-firefox-chrome.
@@ -200,16 +204,17 @@ build_fonts() {
 # Профили, которым нужны размеры по сетке 5×7.
 grid_profile() { [[ $1 == dots-all-test* || $1 == dots-all-lumen || $1 == lumen ]]; }
 # Размеры по сетке DotMatrix Board (dots-all-test-*, Lumen): точки ровные, только когда их шаг (10 % кегля) — целое число
-# пикселей экрана; 15 pt при масштабе 2 = 40 px, шаг 4 px. grid — запомнить текущие размеры (один раз) и поставить свои; restore — вернуть запомненные.
+# пикселей экрана; 15 pt при масштабе 2 = 40 px, шаг 4 px. Терминалы получают размер в fonts.conf (term_fonts), здесь —
+# VS Code: grid — запомнить текущие размеры (один раз) и поставить свои; restore — вернуть запомненные.
+# settings.json отслеживается git, но эти ключи прячет clean-фильтр scripts/git-filters/vscode-local.
 SIZES="$HOME/.local/state/omarchy/font-profile/sizes.json"
 term_sizes() {
-  python3 -I - "$1" "$SIZES" "$HOME/.config/kitty/kitty.conf" "$HOME/.config/ghostty/config" "$VSCODE" <<'PY'
+  python3 -I - "$1" "$SIZES" "$VSCODE" <<'PY'
 import json, os, re, sys
-mode, state, kitty, ghostty, vscode = sys.argv[1:]
-GRID = {"kitty": "15.0", "ghostty": "15", "editor.fontSize": "20", "terminal.integrated.fontSize": "20"}
-# (файл, ключ, регулярка значения): kitty «font_size 14.0», ghostty «font-size = 12», VS Code «"editor.fontSize": 16»
-spots = [(kitty, "kitty", r"^(\s*font_size\s+)(\S+)"), (ghostty, "ghostty", r"^(font-size\s*=\s*)(\S+)"),
-         (vscode, "editor.fontSize", r'("editor\.fontSize":\s*)([0-9.]+)'),
+mode, state, vscode = sys.argv[1:]
+GRID = {"editor.fontSize": "20", "terminal.integrated.fontSize": "20"}
+# (файл, ключ, регулярка значения): VS Code «"editor.fontSize": 16»; старые ключи kitty / ghostty в state пропускаются
+spots = [(vscode, "editor.fontSize", r'("editor\.fontSize":\s*)([0-9.]+)'),
          (vscode, "terminal.integrated.fontSize", r'("terminal\.integrated\.fontSize":\s*)([0-9.]+)')]
 def current():
     out = {}
@@ -252,25 +257,12 @@ PY
 
 # То же, что omarchy-font-set (терминалы + fontconfig monospace), но без перезапуска оболочки:
 # Commons/Style.qml сам перечитывает fonts.conf, а перезапуск закрыл бы открытый Customizer.
+# kitty и ghostty — в term_fonts: отдельный неотслеживаемый fonts.conf, а не kitty.conf / config из репозитория.
 set_mono() {
   local font=$1 esc
   esc=$(printf '%s' "$font" | sed 's/[\\&/]/\\&/g')
   [[ -f ~/.config/alacritty/alacritty.toml ]] &&
     sed --follow-symlinks -i "s/family = \".*\"/family = \"$esc\"/g" ~/.config/alacritty/alacritty.toml
-  if [[ -f ~/.config/kitty/kitty.conf ]]; then
-    if grep -qE '^[[:space:]]*font_family[[:space:]]+' ~/.config/kitty/kitty.conf; then
-      # Заменяется только значение — отступ и выравнивание строки остаются.
-      sed --follow-symlinks -i -E "s/^([[:space:]]*font_family[[:space:]]+).*/\\1$esc/" ~/.config/kitty/kitty.conf
-    else
-      printf '\nfont_family %s\n' "$font" >>~/.config/kitty/kitty.conf
-    fi
-    pkill -USR1 kitty || true
-  fi
-  if [[ -f ~/.config/ghostty/config ]]; then
-    # Только незакомментированная строка, с кавычками или без.
-    sed --follow-symlinks -i -E "s/^font-family[[:space:]]*=.*/font-family = $esc/" ~/.config/ghostty/config
-    pkill -SIGUSR2 ghostty || true
-  fi
   [[ -f ~/.config/foot/foot.ini ]] && sed --follow-symlinks -i "s/^font=[^:]*/font=$esc/" ~/.config/foot/foot.ini
   mkdir -p ~/.config/fontconfig
   cat >~/.config/fontconfig/fonts.conf <<XML
@@ -289,77 +281,71 @@ set_mono() {
 XML
 }
 
-# kitty: bold/italic/bold_italic_font привязаны к Maple. Для профиля — auto (варианты берутся из font_family);
-# исходные строки запоминаются при первом уходе со stock и возвращаются при stock.
-KITTY_VARIANTS="$HOME/.local/state/omarchy/font-profile/kitty-variants.conf"
-kitty_variants() {
+# Шрифты терминалов — в ~/.config/{kitty,ghostty}/fonts.conf. Оба каталога — симлинки в репозиторий, но fonts.conf
+# в .gitignore, а kitty.conf / ghostty config подключают его последним (globinclude / config-file = ?) и сами держат
+# шрифт stock (Maple Mono NF CN). Файл пишется целиком, поэтому смена профиля не оставляет диффов в git.
+#   term_fonts <stock|custom|accents> <mono> [grid]
+# stock — Maple-настройки основного конфига (варианты Maple, её ss01–ss04, без calt); custom — свои шрифты: варианты
+# auto и calt (лигатуры DotMatrix Mono / Pixel); accents (dot-accents) — ещё и жирное DotMatrix Dot Black.
+# grid — размеры по сетке 5×7: kitty 15.0, ghostty 15.
+KITTY_FONTS="$HOME/.config/kitty/fonts.conf"
+GHOSTTY_FONTS="$HOME/.config/ghostty/fonts.conf"
+term_fonts() {
+  local term=$1 font=$2 grid=${3:-} head="# Generated by omarchy-font-profile — not tracked by git, do not edit"
+  if [[ -d ~/.config/kitty ]]; then
+    {
+      echo "$head"
+      [[ $font == "$STOCK_FONT" ]] || printf 'font_family          %s\n' "$font"
+      if [[ $term != stock ]]; then
+        printf 'italic_font          auto\n'
+        if [[ $term == accents ]]; then
+          # обычной толщины точки бледные — жирное точками Black
+          printf 'bold_font            DotMatrix Dot Black\nbold_italic_font     DotMatrix Dot Black\n'
+        else
+          printf 'bold_font            auto\nbold_italic_font     auto\n'
+        fi
+      fi
+      [[ -z $grid ]] || echo "font_size 15.0"
+    } >"$KITTY_FONTS"
+    pkill -USR1 kitty || true
+  fi
+  if [[ -d ~/.config/ghostty ]]; then
+    {
+      echo "$head"
+      # Пустое значение сбрасывает повторяемые ключи основного конфига (font-family — список запасных).
+      [[ $font == "$STOCK_FONT" ]] || printf 'font-family = ""\nfont-family = %s\n' "$font"
+      if [[ $term != stock ]]; then
+        # Наборы Maple (ss01–ss04) поменяли бы форму букв других шрифтов, а -calt выключил бы их лигатуры.
+        printf 'font-feature = ""\nfont-feature = calt\n'
+        [[ $term != accents ]] || printf '%s\n' "font-family-bold = DotMatrix Dot" "font-style-bold = Black" \
+          "font-family-bold-italic = DotMatrix Dot" "font-style-bold-italic = Black"
+      fi
+      [[ -z $grid ]] || echo "font-size = 15"
+    } >"$GHOSTTY_FONTS"
+    pkill -SIGUSR2 ghostty || true
+  fi
+  return 0
+}
+
+# omarchy-font-set (меню Omarchy → Font) sed'ит font_family прямо в kitty.conf из репозитория. Хук font-set вызывает
+# `omarchy-font-profile mono <шрифт>`: строка возвращается к stock, а шрифт уходит в fonts.conf.
+kitty_stock_line() {
   local kitty="$HOME/.config/kitty/kitty.conf"
   [[ -f $kitty ]] || return 0
-  python3 -I - "$kitty" "$KITTY_VARIANTS" "$1" <<'PY'
+  python3 -I - "$kitty" "font_family          $STOCK_FONT" <<'PY'
 import os, re, sys
-kitty, backup, profile = sys.argv[1:]
-keys = ("bold_font", "italic_font", "bold_italic_font")
-path = os.path.realpath(kitty)
-lines = open(path).read().split("\n")
-rx = re.compile(r"^(%s)\s" % "|".join(keys))
-if profile == "stock":
-    if not os.path.exists(backup):
-        sys.exit(0)
-    saved = {l.split()[0]: l for l in open(backup).read().splitlines() if l.strip()}
-    lines = [saved.get(l.split()[0], l) if rx.match(l) else l for l in lines]
-else:
-    if not os.path.exists(backup):
-        os.makedirs(os.path.dirname(backup), exist_ok=True)
-        open(backup, "w").write("\n".join(l for l in lines if rx.match(l)) + "\n")
-    # dot-accents — жирное точками (DotMatrix Dot Black: обычной толщины точки бледные), курсив — как у шрифта.
-    dot = {"bold_font": "DotMatrix Dot Black", "bold_italic_font": "DotMatrix Dot Black"} if profile == "accents" else {}
-    lines = [f"{l.split()[0]:<20} {dot.get(l.split()[0], 'auto')}" if rx.match(l) else l for l in lines]
-open(path, "w").write("\n".join(lines))
+path, line = os.path.realpath(sys.argv[1]), sys.argv[2]
+text = open(path).read()
+new = re.sub(r"^[ \t]*font_family[ \t]+.*$", lambda m: line, text, count=1, flags=re.M)
+if new != text: open(path, "w").write(new)
 PY
 }
 
-# ghostty: строки font-feature заданы под Maple (ss01–ss04 — её лигатуры) и выключают calt. Своим шрифтам
-# нужен calt (лигатуры DotMatrix Mono / DotMatrix Pixel), а наборы Maple поменяли бы форму букв Geist. Строки
-# сводятся в блок между метками; исходные запоминаются при первом уходе со stock и возвращаются при stock.
-GHOSTTY_FEATURES="$HOME/.local/state/omarchy/font-profile/ghostty-features.conf"
-ghostty_features() {
-  local conf="$HOME/.config/ghostty/config"
-  [[ -f $conf ]] || return 0
-  python3 -I - "$conf" "$GHOSTTY_FEATURES" "$1" <<'PY'
-import os, sys
-conf, backup, profile = sys.argv[1:]
-path = os.path.realpath(conf)
-lines = open(path).read().split("\n")
-BEGIN, END = "# >>> omarchy-font-profile: font-feature", "# <<< omarchy-font-profile"
-if BEGIN in lines:
-    at, end = lines.index(BEGIN), lines.index(END)
-    current = lines[at + 1:end]
-    del lines[at:end + 1]
-else:
-    keep, current, at = [], [], None
-    for i, line in enumerate(lines):
-        nxt = lines[i + 1] if i + 1 < len(lines) else ""
-        # font-feature и комментарий прямо над ней (кроме закомментированных настроек «# font-…»)
-        if line.startswith("font-feature") or (line.startswith("#") and nxt.startswith("font-feature")
-                                               and not line.startswith("# font-")):
-            at = len(keep) if at is None else at
-            current.append(line)
-        else:
-            keep.append(line)
-    lines, at = keep, len(keep) if at is None else at
-if profile == "stock":
-    block = open(backup).read().splitlines() if os.path.exists(backup) else current
-else:
-    if not os.path.exists(backup) and "font-feature = calt" not in current:
-        os.makedirs(os.path.dirname(backup), exist_ok=True)
-        open(backup, "w").write("\n".join(current) + "\n")
-    block = ["# лигатуры шрифтов DOT-MATRIX", "font-feature = calt"]
-    if profile == "accents":  # dot-accents: жирное точками, как в kitty
-        block += ["font-family-bold = DotMatrix Dot", "font-style-bold = Black",
-                  "font-family-bold-italic = DotMatrix Dot", "font-style-bold-italic = Black"]
-lines[at:at] = [BEGIN] + block + [END]
-open(path, "w").write("\n".join(lines))
-PY
+# Режим терминалов: stock — моно Maple; accents — dot-accents; остальное — custom.
+term_mode() {
+  if [[ $1 == dot-accents ]]; then echo accents
+  elif stock_like "$2"; then echo stock
+  else echo custom; fi
 }
 
 fontconfig_sans() {
@@ -428,13 +414,12 @@ apply() {
   "$THEMES/omarchy-stylus" sync >/dev/null 2>&1 || true
   "$THEMES/omarchy-surfingkeys" sync >/dev/null 2>&1 || true
   "$THEMES/omarchy-firefox-chrome" >/dev/null 2>&1 || true
-  # Варианты kitty и лигатуры ghostty заданы под Maple: у профилей с моно Maple — как в stock.
-  local term=custom
-  stock_like "$mono" && term=stock
-  [[ $profile == dot-accents ]] && term=accents
-  kitty_variants "$term"
-  ghostty_features "$term"
-  if grid_profile "$profile"; then term_sizes grid; else term_sizes restore; fi
+  local grid=
+  grid_profile "$profile" && grid=grid
+  if [[ -n $grid ]]; then term_sizes grid; else term_sizes restore; fi
+  term_fonts "$(term_mode "$profile" "$mono")" "$mono" "$grid"
+  # VS Code: ключи шрифта прячет git-фильтр; обновить stat-кэш, чтобы git status не показывал файл
+  "$(dirname "$(realpath "$0")")/../git-filters/vscode-local-refresh" || true
   set_mono "$mono"
   # Qt (qt6ct), Ghidra, Vesktop берут шрифты из fontconfig — после set_mono
   "$THEMES/omarchy-app-themes" >/dev/null 2>&1 || true
@@ -451,7 +436,15 @@ list)
   done
   ;;
 apply) apply "$(current)" ;;
+mono)
+  # Хук font-set: шрифт из меню Omarchy — в fonts.conf терминалов, kitty.conf из репозитория — обратно к stock.
+  [[ -n ${2:-} ]] || { echo "usage: omarchy-font-profile mono <font>" >&2; exit 2; }
+  kitty_stock_line
+  prof=$(current) grid=
+  grid_profile "$prof" && grid=grid
+  term_fonts "$(term_mode "$prof" "$2")" "$2" "$grid"
+  ;;
 build-fonts) build_fonts && notify "DotMatrix Mono / DotMatrix Pixel built" ;;
--h | --help) sed -n '2,51p' "$0" ;;
+-h | --help) sed -n '2,58p' "$0" ;;
 *) apply "$1" ;;
 esac

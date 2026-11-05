@@ -43,5 +43,8 @@ tui/yazi/flavors/omarchy.yazi
 # omarchy-app-themes: форма стиля Customizer для терминалов (omarchy-style-form)
 apps/kitty/style.conf
 apps/ghostty/style.conf
+# omarchy-font-profile: шрифты терминалов по профилю (основной конфиг держит stock)
+apps/kitty/fonts.conf
+apps/ghostty/fonts.conf
 # генерируется omarchy-tmux-theme при каждой смене темы
 tui/tmux/om-theme.conf

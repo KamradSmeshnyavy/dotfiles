@@ -7,6 +7,8 @@
 ~/dotfiles/omarchy-themes/scripts/omarchy-stylus sync 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-surfingkeys sync 2>/dev/null || true
 ~/dotfiles/omarchy-themes/scripts/omarchy-firefox-chrome 2>/dev/null || true
+# workbench.colorTheme из omarchy-theme-set-vscode: git-фильтр прячет, здесь — обновить stat-кэш индекса
+~/dotfiles/scripts/git-filters/vscode-local-refresh 2>/dev/null || true
 # Customizer → Theme Switcher → «Кэшировать обои при смене темы» (autoCache в image-picker.json).
 if jq -e '.autoCache == true' ~/.config/omarchy/image-picker.json >/dev/null 2>&1; then
   (~/dotfiles/apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/customizer.sh picker-cache >/dev/null 2>&1 &)

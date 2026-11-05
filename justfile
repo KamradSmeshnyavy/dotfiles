@@ -40,6 +40,12 @@ gc:
 link:
     python3 {{justfile_directory()}}/install/install.py
     git -C {{justfile_directory()}} config core.hooksPath .githooks
+    # settings.json VS Code: шрифт/тема с этой машины не попадают в git (см. .gitattributes)
+    git -C {{justfile_directory()}} config filter.vscode-local.clean scripts/git-filters/vscode-local
+    git -C {{justfile_directory()}} config filter.vscode-local.smudge cat
+    git -C {{justfile_directory()}} config filter.vscode-local.required false
+    # шрифты терминалов по сохранённому профилю — генерирует неотслеживаемые kitty/ghostty fonts.conf
+    -{{justfile_directory()}}/scripts/bin/omarchy-font-profile apply
     @just install-skill
 
 # Применить тему Omarchy (без имени — показать список)

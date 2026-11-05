@@ -138,6 +138,10 @@ television, gitui, rmpc, nushell, tmux, fzf читают тему из файл�
   и `command curl`.
 - Не делать `rm` по путям, собранным из переменных; для временных файлов — свежий `mktemp -d`.
 - Многие конфиги — симлинки в `~/.config`: правьте файл в репо, а не копию.
+- Шрифты терминалов не править в `apps/kitty/kitty.conf` / `apps/ghostty/config` — там stock; профиль шрифтов
+  пишет неотслеживаемый `fonts.conf` (`omarchy-font-profile`). В `apps/vscode/settings.json` шрифты, размеры и
+  `workbench.colorTheme` прячет git-фильтр `scripts/git-filters/vscode-local` (настраивает `just link`): чтобы
+  поменять их в репо, правьте `CANON` в фильтре.
 - Не трогать `archive/` и `*.bak`; `history.txt`, `lazy-lock.json`, `state.*` — в `.gitignore`.
 - Не линковать `~/.config/chromium` целиком: на Linux это профиль браузера. Конфиги браузеров — в
   `apps/browser/`, линкуются отдельными файлами (`chromium-flags.conf`, `helium-flags.conf`, tridactyl).

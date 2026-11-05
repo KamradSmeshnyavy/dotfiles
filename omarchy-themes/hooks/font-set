@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 # omarchy font set → шрифты GUI-приложений (Qt, Ghidra, Vesktop) из fontconfig
 ~/dotfiles/omarchy-themes/scripts/omarchy-app-themes >/dev/null 2>&1 || true
+# Шрифт из меню Omarchy → fonts.conf kitty/ghostty (omarchy-font-set правит kitty.conf из репозитория — возвращаем к stock)
+~/dotfiles/scripts/bin/omarchy-font-profile mono "$1" >/dev/null 2>&1 || true
