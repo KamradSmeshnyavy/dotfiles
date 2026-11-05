@@ -111,7 +111,8 @@ o.bind("SUPER + ALT + W", "Toggle Shell Layout", "~/.config/omarchy/hooks/shell-
 
 -- Customizer on SHIFT T: Quickshell overlay (plugin kamradsmeshnyavy.customizer).
 -- The old fzf version is still at ~/.local/bin/omarchy-customizer.
-o.bind("SUPER + SHIFT + T", "Omarchy Customizer", "omarchy-shell shell toggle kamradsmeshnyavy.customizer")
+-- rebind: с обновления Omarchy на SUPER + SHIFT + T по умолчанию «Activity» (btop) — без снятия запускались оба.
+o.rebind("SUPER + SHIFT + T", "Omarchy Customizer", "omarchy-shell shell toggle kamradsmeshnyavy.customizer")
 
 -- Screen shaders (CRT etc.): toggle / next, damage_tracking switches with them
 o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/crt-toggle.sh")
