@@ -1,5 +1,7 @@
 # Carapace
 
+[🇬🇧 English](carapace.md)
+
 Краткое описание: Мульти-шелловый парсер автодополнений для терминала (bridge completions).
 
 ## Пути

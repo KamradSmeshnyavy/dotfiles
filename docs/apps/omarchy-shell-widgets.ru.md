@@ -1,5 +1,7 @@
 # Виджеты рабочего стола omarchy-shell
 
+[🇬🇧 English](omarchy-shell-widgets.md)
+
 > Плагин — отдельный репо и сабмодуль: [omarchy-desktop-widgets](https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets).
 
 Свой плагин `kamradsmeshnyavy.widgets` (`kind: service`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets/` →

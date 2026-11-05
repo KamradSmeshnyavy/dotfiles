@@ -1,5 +1,7 @@
 # Karabiner
 
+[🇬🇧 English](karabiner.md)
+
 Краткое описание: Инструмент для глубокой кастомизации клавиатуры на macOS (Karabiner-Elements).
 
 ## Пути

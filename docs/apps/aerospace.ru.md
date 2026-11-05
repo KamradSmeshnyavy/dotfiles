@@ -1,5 +1,7 @@
 # Aerospace
 
+[🇬🇧 English](aerospace.md)
+
 Краткое описание: Оконный менеджер (tiling window manager) для macOS, используемый как замена yabai.
 
 ## Пути

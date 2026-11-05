@@ -1,59 +1,89 @@
-# Installation Guide
+# Установка
 
-## Clone the repository
+[🇬🇧 English](INSTALL.md)
 
-Run the following command to clone the repository and enter the directory:
+Два пути: взять только **плагины Omarchy** (без dotfiles) или поставить **всю систему**.
+
+## Только плагины
+
+Каждый плагин — отдельный репозиторий и ставится на чистый Omarchy 4:
 
 ```bash
-git clone git@github.com:KamradSmeshnyavy/dotfiles.git
-cd dotfiles
+omarchy plugin add https://github.com/KamradSmeshnyavy/omarchy-customizer --enable
+omarchy restart shell
 ```
 
-## Setup Options
+Список — в [README](../README.ru.md#-плагины-omarchy); в README каждого плагина — настройки и как его удалить. Всё
+сразу — `install.sh --all` из Customizer.
 
-The repository includes an interactive installation script that can handle package installation and dotfile linking. 
+## Вся система
 
-Run the bootstrap script:
+### Клонировать репозиторий
+
+```bash
+git clone --recursive git@github.com:KamradSmeshnyavy/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+```
+
+Забыли `--recursive` — `git submodule update --init --recursive` (Dotbot, шейдеры и курсоры Ghostty и плагины —
+сабмодули).
+
+### Bootstrap
 
 ```bash
 ./install/bootstrap.sh
 ```
 
-You will be prompted with three options:
+Предлагает три варианта:
 
-1. **Install packages**: Installs required packages based on your OS.
-   - On **macOS**, it installs packages via Homebrew (from `install/packages/brew.txt` and `brew-cask.txt`).
-   - On **Arch-based Linux (Omarchy)**, it uses `pacman` and `yay` (from `install/packages/pacman.txt` and `yay.txt`).
-2. **Apply dotfiles**: Uses Dotbot (`install.py` / `install.conf.yaml`) to symlink configuration files into your system (usually `~/.config/`).
-3. **Install packages then apply dotfiles**: Performs both steps sequentially.
+1. **Поставить пакеты** для своей ОС:
+   - **macOS** — Homebrew (`install/packages/brew.txt`, `brew-cask.txt`);
+   - **Arch / Omarchy** — `pacman` и `yay` (`install/packages/pacman.txt`, `yay.txt`).
+2. **Применить dotfiles** — Dotbot (`install/install.py` / `install.conf.yaml`) раскладывает симлинки конфигов
+   (в основном в `~/.config/`).
+3. **Оба шага** подряд.
 
 > [!WARNING]
-> Before applying dotfiles, ensure you don't have conflicting configurations, or let Dotbot overwrite them if you are sure. 
+> Перед применением dotfiles убедитесь, что нет конфликтующих конфигов, или разрешите Dotbot их перезаписать.
 
-## Alternative Installation Methods
+### Только ссылки, хуки и фильтры
 
-### macOS (Nix-Darwin)
-For macOS users who prefer Nix, the repository includes a `justfile` and a Nix-Darwin configuration:
+Если пакеты уже стоят:
 
 ```bash
-just switch   # Switch to the new configuration
-just build    # Build configuration without applying
-just update   # Update flake.lock and apply
+just link            # Dotbot + git hooks (gitleaks) + git-фильтры + AI-скиллы + шрифты терминалов по профилю
+just check-links     # ручные симлинки, которых нет в install/install.conf.yaml
+just app-themes      # направить слоты тем приложений на текущую тему
+```
+
+Предпросмотр: `python3 install/install.py --dry-run`; флаги идут в Dotbot как есть (`--only link`, …). `just` без
+аргументов — список всех рецептов.
+
+### После установки
+
+- `bat cache --build` выполняется сам.
+- Шрифты: `omarchy-font-profile list` / `omarchy-font-profile <профиль>`; шрифты DotMatrix — `just dotmatrix-fonts`.
+- Тема: `just theme <имя>` (без имени — список).
+
+## Другие способы
+
+### macOS (nix-darwin)
+
+```bash
+just switch   # применить новую конфигурацию
+just build    # собрать без применения
+just update   # обновить flake.lock и применить
 ```
 
 ### GNU Stow
-If you prefer managing symlinks with `stow` instead of Dotbot, you can use the provided setup script:
 
 ```bash
 ./install/setup.sh
 ```
-This relies on `.stowrc` to link the base directories appropriately.
 
-## Configurations Overview
+Опирается на `.stowrc` для ссылок на базовые каталоги.
 
-Detailed documentation on each tool's configuration, including custom features and paths, can be found in the following directories:
+## Конфиги
 
-- [Apps](./apps/)
-- [CLI Tools](./cli/)
-- [Shells](./shells/)
-- [TUI Tools](./tui/)
+У каждого конфига своя страница: [apps](./apps/), [cli](./cli/), [shells](./shells/), [tui](./tui/) — индекс в
+[docs/README.ru.md](README.ru.md). Гайды — в [wiki](https://github.com/KamradSmeshnyavy/dotfiles/wiki).

@@ -1,5 +1,7 @@
 # Chromium / браузеры
 
+[🇬🇧 English](chromium.md)
+
 Краткое описание: конфиги браузеров (раньше лежали в `apps/chromium`, теперь в `apps/browser`).
 
 ## Пути

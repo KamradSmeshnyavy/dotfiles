@@ -1,5 +1,7 @@
 # Qutebrowser
 
+[🇬🇧 English](qutebrowser.md)
+
 Краткое описание: Конфигурация для qutebrowser.
 
 ## Пути

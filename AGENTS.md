@@ -7,7 +7,8 @@
 Личные dotfiles для **Arch Linux + [Omarchy](https://omarchy.org)** (Hyprland). Основная платформа — Linux;
 macOS-конфиги (nix-darwin, yabai, skhd, aerospace, sketchybar, karabiner) сохранены и подключаются только на Darwin.
 Симлинки раскладывает [Dotbot](https://github.com/anishathalye/dotbot), команды собраны в `justfile`.
-Комментарии, документация и рецепты — на русском.
+Документация (README, docs/, wiki/) — на английском (`name.md`) с русским переводом рядом (`name.ru.md`);
+правка — в обоих языках. Комментарии в коде и рецепты — на русском.
 
 Репозиторий **публичный**: секреты не коммитить (стоит pre-commit хук с gitleaks).
 
@@ -33,7 +34,7 @@ dotfiles/
 ├── skills/             # AI-скиллы + linux_install_map.json (какой скилл в какой агент)
 ├── install/            # install.py, install.conf.yaml (Dotbot), bootstrap/setup-скрипты, packages/
 ├── macos/              # nix, nix-darwin (flake)
-├── docs/               # Описание каждого конфига: docs/{apps,tui,shells,cli}/<имя>.md, INSTALL.md
+├── docs/               # Описание каждого конфига: docs/{apps,tui,shells,cli}/<имя>.md (+ .ru.md), INSTALL.md, legacy/
 ├── archive/            # Старые конфиги — не трогать и не подключать
 ├── mics/               # Разное (tlp.conf, шаблоны)
 ├── .dotbot/            # Dotbot (сабмодуль)
@@ -77,7 +78,7 @@ python3 install/install.py --dry-run   # предпросмотр Dotbot; фла
 1. Положить файлы в нужную категорию (`apps/`, `tui/`, `shells/`, `cli/`).
 2. Добавить запись в `install/install.conf.yaml` (с `if:` для Linux/Darwin-only).
 3. Если появляются генерируемые или содержащие состояние файлы — в `.gitignore`.
-4. По желанию: `docs/<категория>/<имя>.md`.
+4. По желанию: `docs/<категория>/<имя>.md` (английский) и `<имя>.ru.md` (русский).
 5. `just link`, затем `just check-links`.
 
 ## Система тем

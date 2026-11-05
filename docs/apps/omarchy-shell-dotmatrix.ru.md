@@ -1,5 +1,7 @@
 # Стиль DOT-MATRIX (dot-matrix)
 
+[🇬🇧 English](omarchy-shell-dotmatrix.md)
+
 Вид Nothing OS, портированный из [poligle/Nihil-Shell](https://github.com/poligle/Nihil-Shell) (MIT) в свои плагины
 omarchy-shell. Это стиль, а не тема: он работает на любой omarchy-теме.
 

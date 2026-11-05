@@ -1,5 +1,7 @@
 # sketchybar
 
+[🇬🇧 English](sketchybar.md)
+
 Краткое описание: Гибко настраиваемый статус-бар для macOS, написанный на Lua (через sketchybar-package).
 
 ## Пути

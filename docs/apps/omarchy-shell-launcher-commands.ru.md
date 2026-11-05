@@ -1,5 +1,7 @@
 # Команды лаунчера omarchy-shell (`>…`)
 
+[🇬🇧 English](omarchy-shell-launcher-commands.md)
+
 Лаунчер — плагин `kamradsmeshnyavy.menu` (`apps/omarchy-shell/plugins/kamradsmeshnyavy.menu/`). Поиск, начинающийся
 с `>`, переключает его в режим команд (идея caelestia, написано с нуля, `Commands.js`). Строки команд идут
 в тот же список, что и обычные пункты, поэтому выглядят по-своему в каждом скине лаунчера.

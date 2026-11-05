@@ -7,7 +7,8 @@
 
 Личные dotfiles для Arch Linux + Omarchy (Hyprland), macOS — вторичная платформа. Симлинки раскладывает
 [Dotbot](https://github.com/anishathalye/dotbot) по `install/install.conf.yaml`, команды — в `justfile`.
-Репозиторий публичный; комментарии и документация на русском.
+Репозиторий публичный. Документация — на английском (`name.md`) с русским переводом рядом (`name.ru.md`, переключатель
+языка вверху); правка доки — в обоих файлах. Комментарии в коде и сообщения коммитов — на русском.
 
 ## Установка
 
@@ -35,7 +36,7 @@ dotfiles/
 ├── scripts/             # bin/ → ~/.local/bin, check-links, install-skill.nu
 ├── skills/              # AI-скиллы + linux_install_map.json
 ├── macos/               # nix-darwin flake
-├── docs/                # описание каждого конфига
+├── docs/                # описание каждого конфига (EN + .ru.md)
 └── archive/             # старое, не трогать
 ```
 

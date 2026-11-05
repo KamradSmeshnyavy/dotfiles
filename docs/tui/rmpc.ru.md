@@ -1,5 +1,7 @@
 # Rmpc
 
+[🇬🇧 English](rmpc.md)
+
 Краткое описание: Красивый и современный консольный клиент для Music Player Daemon (MPD), написанный на Rust.
 
 ## Пути
@@ -23,3 +25,5 @@
 - **Управление:**
   - Шаг изменения громкости: 5%.
   - Включена горячая перезагрузка конфигурации (`enable_config_hot_reload: true`).
+- **Цвета следуют теме Omarchy:** `themes/omarchy.ron` — слот темы, игнорируемый git симлинк, который `omarchy-app-themes` направляет на
+  текущую тему (см. `omarchy-themes/APP-THEMING.md`).

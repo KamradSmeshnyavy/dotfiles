@@ -1,5 +1,7 @@
 # Television
 
+[🇬🇧 English](television.md)
+
 Краткое описание: Терминальный нечеткий искатель (fuzzy finder), оптимизированный для работы с текстом и файлами.
 
 ## Пути
@@ -24,3 +26,5 @@
     - Git команды перенаправляются в `git-diff`, `git-branch`, `git-log`, `git-repos`.
     - Управление процессами (`kill`, `procs`) направляется в канал `procs`.
     - `docker run` триггерит канал `docker-images`.
+- **Цвета следуют теме Omarchy:** `themes/omarchy.toml` — слот темы, игнорируемый git симлинк, который `omarchy-app-themes` направляет на
+  текущую тему (см. `omarchy-themes/APP-THEMING.md`).

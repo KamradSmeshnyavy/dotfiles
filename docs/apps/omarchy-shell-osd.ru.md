@@ -1,5 +1,7 @@
 # OSD и уведомления omarchy-shell: у края экрана
 
+[🇬🇧 English](omarchy-shell-osd.md)
+
 > Плагины — отдельные репо и сабмодули: [omarchy-edge-osd](https://github.com/KamradSmeshnyavy/omarchy-edge-osd), [omarchy-drawer-notifications](https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications).
 
 Клон стокового `omarchy.osd` (`omarchy plugin clone omarchy.osd`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/` →

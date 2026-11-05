@@ -1,5 +1,7 @@
 # Бар omarchy-shell: скины и раскладки
 
+[🇬🇧 English](omarchy-shell-bar.md)
+
 > Плагин — отдельный репо и сабмодуль: [omarchy-bar-skins](https://github.com/KamradSmeshnyavy/omarchy-bar-skins) (там README на английском).
 
 Верхний бар — клон стокового `omarchy.bar` (`omarchy plugin clone omarchy.bar`) с прослойкой скинов:

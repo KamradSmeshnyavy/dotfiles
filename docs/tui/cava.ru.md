@@ -1,5 +1,7 @@
 # Cava
 
+[🇬🇧 English](cava.md)
+
 Краткое описание: Консольный аудио-визуализатор спектра (Console-based Audio Visualizer for ALSA/PulseAudio/MPD).
 
 ## Пути
