@@ -15,7 +15,7 @@ o.bind(
 
 hl.unbind("SUPER + SHIFT + F")
 o.bind("SUPER + SHIFT + F", "File manager", "uwsm-app -- nautilus --new-window")
-o.bind(
+o.rebind(
 	"SUPER + ALT + SHIFT + F",
 	"File manager (cwd)",
 	'uwsm-app -- nautilus --new-window "$(omarchy-cmd-terminal-cwd)"'
@@ -23,10 +23,13 @@ o.bind(
 
 hl.unbind("SUPER + SHIFT + B")
 o.bind("SUPER + SHIFT + B", "Browser", "omarchy-launch-browser")
-o.bind("SUPER + SHIFT + ALT + B", "Browser (private)", "omarchy-launch-browser --private")
+o.rebind("SUPER + SHIFT + ALT + B", "Browser (private)", "omarchy-launch-browser --private")
 
-o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
-o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
+o.rebind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
+o.rebind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
+
+-- rebind, а не bind (здесь и у SUPER + I/Q/M/grave ниже): с Omarchy 4.5 эти клавиши заняты стоковыми
+-- биндами — без снятия срабатывали оба действия (или одно и то же дважды).
 
 -- Media Controls
 o.bind("Pause", "Play/Pause", "playerctl play-pause", { locked = true })
@@ -141,11 +144,11 @@ o.bind("SUPER + ESCAPE", "Power menu", "omarchy-shell widgets togglePower")
 
 o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.audio")
 -- Обзор рабочих столов с живыми превью окон (kamradsmeshnyavy.widgets).
-o.bind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOverview")
+o.rebind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOverview")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
 o.bind("SUPER + ALT + D", "Dashboard", "omarchy-shell widgets toggleDashboard")
 -- Панель настроек DOT-MATRIX из правого края / рамки (kamradsmeshnyavy.widgets): Wi-Fi, BT, звук, яркость.
-o.bind("SUPER + M", "Settings", "omarchy-shell widgets toggleSettings")
+o.rebind("SUPER + M", "Settings", "omarchy-shell widgets toggleSettings")
 
 hl.unbind("SUPER + SHIFT + ALT + Z")
 o.bind("SUPER + SHIFT + CTRL + Z", "Reset zoom", "hyprctl keyword cursor:zoom_factor 1")
@@ -153,9 +156,9 @@ o.bind("SUPER + SHIFT + CTRL + Z", "Reset zoom", "hyprctl keyword cursor:zoom_fa
 -- wl-kbptr через обёртку: она гасит mouseless на время выбора метки
 -- и возвращает его после выхода (в т.ч. по Esc).
 -- Из mouse-mode эти бинды доступны через правый Super (altgr в слое mouse).
-o.bind(
+o.rebind(
 	"SUPER + I",
 	"Mouse hints (wl-kbptr detect)",
 	"~/.config/hypr/scripts/kbptr-wrapper.sh -o modes=floating,click -o mode_floating.source=detect"
 )
-o.bind("SUPER + Q", "Mouse grid (wl-kbptr tile)", "~/.config/hypr/scripts/kbptr-wrapper.sh -o modes=tile,click")
+o.rebind("SUPER + Q", "Mouse grid (wl-kbptr tile)", "~/.config/hypr/scripts/kbptr-wrapper.sh -o modes=tile,click")
