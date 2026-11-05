@@ -359,7 +359,11 @@ STOCK_FONT = "Maple Mono NF CN"   # шрифт stock-профиля (omarchy-fon
 # Заголовки точками у профилей DOT-MATRIX (как в оболочке: nothing — только крупные).
 DOT_HEADINGS = {"nothing": "h1, h2", "dot": "h1, h2, h3, th, [role=heading]", "pixel": "h1, h2, h3, th, [role=heading]",
                 "dot-accents": "h1, h2, h3, h4, h5, h6, th, [role=heading]",
-                "dots-all": "h1, h2, h3, h4, h5, h6, th, [role=heading]"}
+                "dots-all": "h1, h2, h3, h4, h5, h6, th, [role=heading]",
+                # Lumen: крупные заголовки — DotMatrix Dot (title профиля), мелкое — Lumen Sans (5×7 читается мелко).
+                "dots-all-lumen": "h1, h2, h3",
+                # Семейство Lumen: Doto только в самом крупном, h3 (~19 px) уже мелок для его сетки.
+                "lumen": "h1, h2"}
 # dot-accents / dots-all: ещё и элементы интерфейса сайтов (с текстом внутри них, кроме иконочных шрифтов).
 DOT_CONTROLS = ("button, [role=button], [role=tab], [role=menuitem], [role=option], nav a, label, legend, summary, "
                 "caption, input[type=submit], input[type=button], input[type=reset], select")
@@ -385,7 +389,7 @@ def font_rules(cfg):
     """CSS шрифтов по ~/.config/omarchy/fonts.json: текст — sans профиля, заголовки — title (у DOT-MATRIX —
     DotMatrix Dot), код — mono. Шрифты stock (Maple) не навязываются: paper-shell меняет только оболочку."""
     profile = cfg.get("profile") or "stock"
-    if profile == "dots-all-test":  # те же правила, что у dots-all (отличаются только размеры в терминалах)
+    if profile.startswith("dots-all-test"):  # те же правила, что у dots-all (отличаются только размеры в терминалах)
         profile = "dots-all"
     sans, mono = cfg.get("sans") or STOCK_FONT, cfg.get("mono") or STOCK_FONT
     title = cfg.get("title") or sans

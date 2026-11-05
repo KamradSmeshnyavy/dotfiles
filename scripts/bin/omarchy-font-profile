@@ -6,7 +6,7 @@
 #   omarchy-font-profile list            # профили с описанием (для Customizer)
 #   omarchy-font-profile <profile>       # применить (список — `list`)
 #   omarchy-font-profile apply           # применить сохранённый (после установки шрифтов)
-#   omarchy-font-profile build-fonts     # собрать DotMatrix Mono и DotMatrix Pixel (just dotmatrix-fonts)
+#   omarchy-font-profile build-fonts     # собрать DotMatrix Mono, Pixel, LED и Board (just dotmatrix-fonts)
 #
 # Профили:
 #   stock   — как было: Maple Mono NF CN везде; точечный DotMatrix Dot только в DOT-MATRIX-виджетах.
@@ -18,9 +18,22 @@
 #             терминала (kitty / ghostty) и подписи оболочки (карточки, уведомления, меню, Customizer).
 #   dots-all — точки везде: абсолютно любой знак — DotMatrix LED (Terminus 8×16, пиксель → точка, недостающее —
 #             из DejaVu Sans Mono) в интерфейсе, на сайтах, в заголовках, терминале и коде.
-#   dots-all-test — как dots-all, но размеры по сетке шрифта (строка кратна 16 физ. пикселям при масштабе 2):
-#             терминалы 18 pt, VS Code 24 px — шаг точки 3 px, точки видны и горят в полную силу; интерфейс
-#             GTK 12 pt (шаг 2 px). Прежние размеры запоминаются и возвращаются при смене профиля.
+#   dots-all-test-{a…f} — проба нового «точки везде»: DotMatrix Board (сетка 5×7, как у табло) вместо DotMatrix LED,
+#             шесть вариантов точки (BOARD_VARIANTS): a/b/c — круглая 65/72/80 % шага, d/e/f — квадратная (LCD).
+#             Board Sans — интерфейс и сайты, Board Mono — терминал и код. Размеры по сетке (шаг точки — 10 % кегля):
+#             терминалы 15 pt, VS Code 20 px — шаг 4 физ. px при масштабе 2; интерфейс GTK 11.25 pt — шаг 3 px.
+#             Прежние размеры запоминаются и возвращаются при смене профиля.
+#   dots-all-lumen — «идеальный» вариант точек везде: DotMatrix Lumen. Lumen Sans (5×7, круглая точка 74 %, разрядка
+#             в полточки) — интерфейс и сайты; Lumen Mono (то же, с лигатурами -> <- => == != точками) — терминал и код;
+#             заголовки — DotMatrix Dot (мелкая сетка Doto хороша только крупно). Размеры по сетке, как у dots-all-test-*.
+#   lumen   — семейство Lumen, как задумано: размер сетки по размеру текста. Всё мелкое — 5×7: интерфейс и заголовки
+#             панелей Lumen Sans, терминал, код и метки оболочки Lumen Mono. DotMatrix Dot (мелкая сетка Doto) — только
+#             в крупном: часы, OSD, lock, крупные цифры, на сайтах h1–h2. В отличие от dots-all-lumen, оболочка не
+#             включает точечный слой (dotLayer): заголовки панелей 14 px Doto на них сливаются.
+#   nothing-os-test — проба шрифтов Nothing OS: интерфейс NType 82, терминал и код Lettera Mono LL, заголовки Ndot 57.
+#   ndot-test   — проба Ndot: интерфейс Ndot 57, заголовки Ndot 57 Caps, терминал и код DotMatrix Board B Mono.
+#             Ndot / NType / Lettera — проприетарные (Nothing, Lineto): ставятся вручную в ~/.local/share/fonts/nothing-test,
+#             в репозиторий не кладутся. Кириллицы в них нет (кроме Ndot Caps) — она из FALLBACK_SANS через fontconfig.
 #   paper-shell — система как stock; рукописный Caveat только в оболочке (бар, панели) — стиль Paper.
 #   paper-ui    — интерфейс Pangolin (рукописный печатный, читаемый), заголовки Caveat, терминал и код —
 #                 рукописный моноширинный Monaspace Radon.
@@ -33,6 +46,9 @@
 # курсивом в ячейке и пиксельными лигатурами. Собираются из официальных шрифтов скриптами
 # kamradsmeshnyavy.customizer/scripts/dotmatrix-{mono,pixel}.py в ~/.local/share/fonts/dotmatrix-build;
 # значки Nerd Font терминалы берут из Symbols Nerd Font.
+# DotMatrix Board (Mono / Sans) — Matrix Sans / Matrix Mono (FriedOrange, OFL, 5×7, с кириллицей) круглыми точками:
+# scripts/dotmatrix-board.py, релиз Matrix Sans скачивается в кэш. DotMatrix LED (сетка 8×16) точек на обычном
+# кегле не показывает — шаг точки 2–3 px, зазоров нет.
 #
 # Состояние: ~/.config/omarchy/fonts.json {"profile", "sans", "mono", "title"}. Его же читают dotmatrix/Palette.qml,
 # BarStyle.qml (title — заголовки и рукописный шрифт панелей), omarchy-darkreader, omarchy-stylus, omarchy-firefox-chrome.
@@ -59,13 +75,25 @@ PROFILES=(
   "pixel|dotmatrix|Geist|DotMatrix Pixel||Dot layer plus pixel terminal and code (DotMatrix Pixel, ligatures)"
   "dot-accents|dotmatrix|Geist|DotMatrix Pixel||Dot accents: Pixel plus DotMatrix Dot in site headings and controls, bold terminal text and shell labels"
   "dots-all|dotmatrix|DotMatrix LED|DotMatrix LED|DotMatrix LED|Dots everywhere: every character in DotMatrix LED — interface, sites, titles, terminal and code"
-  "dots-all-test|dotmatrix|DotMatrix LED|DotMatrix LED|DotMatrix LED|Test: dots everywhere at grid sizes — terminals 18 pt, VS Code 24 px, interface 12 pt: crisp dots, full brightness"
+  "dots-all-test-a|dotmatrix|DotMatrix Board A Sans|DotMatrix Board A Mono|DotMatrix Board A Sans|Test A: dots everywhere in DotMatrix Board (5×7 LED grid), round dots 65% — most separate, dimmer; terminals 15 pt, VS Code 20 px"
+  "dots-all-test-b|dotmatrix|DotMatrix Board B Sans|DotMatrix Board B Mono|DotMatrix Board B Sans|Test B: dots everywhere in DotMatrix Board (5×7 LED grid), round dots 72% — balanced; terminals 15 pt, VS Code 20 px"
+  "dots-all-test-c|dotmatrix|DotMatrix Board C Sans|DotMatrix Board C Mono|DotMatrix Board C Sans|Test C: dots everywhere in DotMatrix Board (5×7 LED grid), round dots 80% — brighter; terminals 15 pt, VS Code 20 px"
+  "dots-all-test-d|dotmatrix|DotMatrix Board D Sans|DotMatrix Board D Mono|DotMatrix Board D Sans|Test D: dots everywhere in DotMatrix Board (5×7 LED grid), square LCD dots 65%; terminals 15 pt, VS Code 20 px"
+  "dots-all-test-e|dotmatrix|DotMatrix Board E Sans|DotMatrix Board E Mono|DotMatrix Board E Sans|Test E: dots everywhere in DotMatrix Board (5×7 LED grid), square LCD dots 72%; terminals 15 pt, VS Code 20 px"
+  "dots-all-test-f|dotmatrix|DotMatrix Board F Sans|DotMatrix Board F Mono|DotMatrix Board F Sans|Test F: dots everywhere in DotMatrix Board (5×7 LED grid), square LCD dots 80% — brightest; terminals 15 pt, VS Code 20 px"
+  "dots-all-lumen|dotmatrix|DotMatrix Lumen Sans|DotMatrix Lumen Mono|DotMatrix Dot|Lumen: the tuned dots everywhere — 5×7 round dots with airy interface spacing, dotted code ligatures, DotMatrix Dot titles; grid sizes"
+  "lumen|dotmatrix|DotMatrix Lumen Sans|DotMatrix Lumen Mono|DotMatrix Dot|Lumen family: 5×7 dots for all small text (Lumen Sans interface, Lumen Mono code and labels), DotMatrix Dot only in big text — clocks, OSD, page h1–h2"
+  "nothing-os-test|dotmatrix|NType 82|Lettera Mono LL|Ndot 57|Test: Nothing OS fonts — NType 82 interface, Lettera Mono LL code, Ndot 57 titles (local fonts, no Cyrillic: falls back to Geist)"
+  "ndot-test|dotmatrix|Ndot 57|DotMatrix Board B Mono|Ndot57Caps|Test: Ndot 57 interface, Ndot 57 Caps titles, DotMatrix Board B Mono terminal (local fonts, Cyrillic from DotMatrix Board B Sans)"
   "paper-shell|paper|$STOCK_FONT|$STOCK_FONT|Caveat|System as stock; handwritten Caveat only in the shell (bar, panels)"
   "paper-ui|paper|Pangolin|Monaspace Radon Var|Caveat|Readable handwritten Pangolin for the interface, Caveat for titles, handwritten monospaced Monaspace Radon for the terminal and code"
   "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
   "paper-all|paper|Caveat|Caveat|Caveat|Absolutely everything in Caveat, terminal and code included (not monospaced)"
   "retro|retro|Pixelify Sans|DotMatrix Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (DotMatrix Pixel)"
 )
+
+# Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).
+declare -A FALLBACK_SANS=(["nothing-os-test"]="Geist" ["ndot-test"]="DotMatrix Board B Sans")
 
 notify() { notify-send -t 4000 "Fonts" "$1" 2>/dev/null || echo "$1" >&2; }
 spec() {
@@ -113,7 +141,48 @@ build_dots() {
     fc-cache -f "$BUILD_DIR" >/dev/null
 }
 
-# DotMatrix Mono, DotMatrix Pixel и DotMatrix LED — из официальных шрифтов (fonttools через uv).
+# DotMatrix Board — из релиза Matrix Sans (вариант Screen: каждая точка — отдельный контур на сетке 5×7).
+MATRIX_ZIP="https://github.com/FriedOrange/MatrixSans/releases/download/v1.800/MatrixSans-v1.800.zip"
+matrix_release() {
+  local dir="$CACHE/matrixsans-v1.800"
+  if [[ ! -d $dir/MatrixSans-v1.800 ]]; then
+    local tmp
+    mkdir -p "$CACHE"
+    tmp=$(mktemp -d -p "$CACHE")
+    python3 -I -c 'import sys, urllib.request; urllib.request.urlretrieve(sys.argv[1], sys.argv[2])' "$MATRIX_ZIP" "$tmp/m.zip"
+    python3 -I -m zipfile -e "$tmp/m.zip" "$tmp/x" >/dev/null
+    mv "$tmp/x" "$dir"
+  fi
+  echo "$dir/MatrixSans-v1.800"
+}
+# Варианты точки для проб dots-all-test-{a…f}: буква|форма|диаметр в долях шага → семейство «DotMatrix Board <БУКВА>».
+BOARD_VARIANTS=("a|round|0.65" "b|round|0.72" "c|round|0.80" "d|square|0.65" "e|square|0.72" "f|square|0.80")
+build_board() {
+  command -v uv >/dev/null || return 1
+  local src v key shape dot fail=0
+  src=$(matrix_release) || return 1
+  mkdir -p "$BUILD_DIR"
+  local pids=()
+  for v in "${BOARD_VARIANTS[@]}"; do
+    IFS='|' read -r key shape dot <<<"$v"
+    uv run -q --with fonttools --with freetype-py python3 -I "$FONT_SCRIPTS/dotmatrix-board.py" \
+      "$src/fonts/ttf" "$BUILD_DIR" "$DEJAVU.ttf" "$DEJAVU-Bold.ttf" \
+      --family "DotMatrix Board ${key^^}" --shape "$shape" --dot "$dot" >/dev/null &
+    pids+=($!)
+  done
+  # DotMatrix Lumen (dots-all-lumen): точка 74 %, разрядка Sans в полточки, лигатуры Mono.
+  uv run -q --with fonttools --with freetype-py python3 -I "$FONT_SCRIPTS/dotmatrix-board.py" \
+    "$src/fonts/ttf" "$BUILD_DIR" "$DEJAVU.ttf" "$DEJAVU-Bold.ttf" \
+    --family "DotMatrix Lumen" --shape round --dot 0.74 --track 50 --ligatures >/dev/null &
+  pids+=($!)
+  for v in "${pids[@]}"; do wait "$v" || fail=1; done
+  ((fail == 0)) &&
+    cp "$src/OFL.txt" "$BUILD_DIR/OFL-MatrixSans.txt" &&
+    cp "$src/FONTLOG.txt" "$BUILD_DIR/FONTLOG-MatrixSans.txt" &&
+    fc-cache -f "$BUILD_DIR" >/dev/null
+}
+
+# DotMatrix Mono, DotMatrix Pixel, DotMatrix LED и DotMatrix Board — из официальных шрифтов (fonttools через uv).
 build_fonts() {
   command -v uv >/dev/null || { notify "uv is needed to build DOT-MATRIX fonts"; return 1; }
   mkdir -p "$BUILD_DIR"
@@ -125,16 +194,19 @@ build_fonts() {
   cp "$FONT_SCRIPTS/../fonts/OFL.txt" "$BUILD_DIR/"
   fc-cache -f "$BUILD_DIR" >/dev/null
   build_dots || true
+  build_board || true
 }
 
-# Размеры по сетке DotMatrix LED (dots-all-test): точка горит ярко, только когда её шаг — целое число пикселей
-# экрана. grid — запомнить текущие размеры (один раз) и поставить свои; restore — вернуть запомненные.
+# Профили, которым нужны размеры по сетке 5×7.
+grid_profile() { [[ $1 == dots-all-test* || $1 == dots-all-lumen || $1 == lumen ]]; }
+# Размеры по сетке DotMatrix Board (dots-all-test-*, Lumen): точки ровные, только когда их шаг (10 % кегля) — целое число
+# пикселей экрана; 15 pt при масштабе 2 = 40 px, шаг 4 px. grid — запомнить текущие размеры (один раз) и поставить свои; restore — вернуть запомненные.
 SIZES="$HOME/.local/state/omarchy/font-profile/sizes.json"
 term_sizes() {
   python3 -I - "$1" "$SIZES" "$HOME/.config/kitty/kitty.conf" "$HOME/.config/ghostty/config" "$VSCODE" <<'PY'
 import json, os, re, sys
 mode, state, kitty, ghostty, vscode = sys.argv[1:]
-GRID = {"kitty": "18.0", "ghostty": "18", "editor.fontSize": "24", "terminal.integrated.fontSize": "24"}
+GRID = {"kitty": "15.0", "ghostty": "15", "editor.fontSize": "20", "terminal.integrated.fontSize": "20"}
 # (файл, ключ, регулярка значения): kitty «font_size 14.0», ghostty «font-size = 12», VS Code «"editor.fontSize": 16»
 spots = [(kitty, "kitty", r"^(\s*font_size\s+)(\S+)"), (ghostty, "ghostty", r"^(font-size\s*=\s*)(\S+)"),
          (vscode, "editor.fontSize", r'("editor\.fontSize":\s*)([0-9.]+)'),
@@ -304,7 +376,7 @@ fontconfig_sans() {
 <fontconfig>
   <match target="pattern">
     <test name="family" qual="any"><string>sans-serif</string></test>
-    <edit name="family" mode="prepend_first" binding="strong"><string>$2</string></edit>
+    <edit name="family" mode="prepend_first" binding="strong"><string>$2</string>${FALLBACK_SANS[$1]:+<string>${FALLBACK_SANS[$1]}</string>}</edit>
   </match>
 </fontconfig>
 XML
@@ -315,7 +387,11 @@ apply() {
   line=$(spec "$profile") || { notify "Unknown font profile: $profile"; exit 2; }
   IFS='|' read -r _ _ sans mono title _ <<<"$line"
 
-  [[ $sans == Geist ]] && { install_geist || { notify "Could not download Geist"; exit 1; }; }
+  [[ $sans == Geist || ${FALLBACK_SANS[$profile]:-} == Geist ]] && { install_geist || { notify "Could not download Geist"; exit 1; }; }
+  if [[ $mono == "DotMatrix Board "* || $mono == "DotMatrix Lumen "* ]] && ! { has_font "$mono" && has_font "$sans"; }; then
+    notify "Building DotMatrix Board…"
+    build_board || { notify "Could not build DotMatrix Board"; exit 1; }
+  fi
   if [[ $mono == "DotMatrix LED" ]] && ! has_font "$mono"; then
     notify "Building $mono…"
     { has_font "DotMatrix Pixel" || build_fonts; } && build_dots || { notify "Could not build $mono"; exit 1; }
@@ -341,7 +417,7 @@ apply() {
   fontconfig_sans "$profile" "$sans"
   # Caveat мельче обычных гротесков при том же кегле — интерфейсу на 2 пункта больше.
   local size=11
-  [[ $profile == dots-all-test ]] && size=12  # 12 pt при масштабе 2 = 32 px: шаг точки ровно 2 px
+  grid_profile "$profile" && size=11.25  # 11.25 pt при масштабе 2 = 30 px: шаг точки Board ровно 3 px
   [[ $sans == Caveat ]] && size=13
   gsettings set org.gnome.desktop.interface font-name "$sans $size" 2>/dev/null || true
   gsettings set org.gnome.desktop.interface monospace-font-name "$mono 11" 2>/dev/null || true
@@ -358,7 +434,7 @@ apply() {
   [[ $profile == dot-accents ]] && term=accents
   kitty_variants "$term"
   ghostty_features "$term"
-  if [[ $profile == dots-all-test ]]; then term_sizes grid; else term_sizes restore; fi
+  if grid_profile "$profile"; then term_sizes grid; else term_sizes restore; fi
   set_mono "$mono"
   # Qt (qt6ct), Ghidra, Vesktop берут шрифты из fontconfig — после set_mono
   "$THEMES/omarchy-app-themes" >/dev/null 2>&1 || true
@@ -376,6 +452,6 @@ list)
   ;;
 apply) apply "$(current)" ;;
 build-fonts) build_fonts && notify "DotMatrix Mono / DotMatrix Pixel built" ;;
--h | --help) sed -n '2,33p' "$0" ;;
+-h | --help) sed -n '2,51p' "$0" ;;
 *) apply "$1" ;;
 esac
