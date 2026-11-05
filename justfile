@@ -90,6 +90,11 @@ dotmatrix-fonts:
 check-links:
     {{justfile_directory()}}/scripts/check-links
 
+# Статус заявок плагинов в plugins.omarchy.org (проверка, одобрение, публикация)
+[linux]
+marketplace:
+    {{justfile_directory()}}/scripts/marketplace-status
+
 # Опубликовать wiki/ в GitHub Wiki (-n — только показать изменения)
 [linux]
 wiki-sync *args:

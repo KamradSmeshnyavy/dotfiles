@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+# Статус заявок плагинов в plugins.omarchy.org (репо omacom/omarchy-plugin-marketplace).
+#   scripts/marketplace-status        # таблица: заявка, итог проверки, одобрена, опубликована
+# «Опубликован» — репозиторий есть в sources registry.json каталога. Нужен авторизованный gh.
+import json
+import re
+import subprocess
+import urllib.request
+
+REPO = "omacom/omarchy-plugin-marketplace"
+ISSUES = range(13987, 14002)  # 15 заявок от 2026-11-05
+
+
+def gh(*args):
+    return json.loads(subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout)
+
+
+meta = gh("api", f"repos/{REPO}/contents/registry.json")
+with urllib.request.urlopen(meta["download_url"]) as r:
+    registry = json.load(r)
+listed = {s["repo"].rstrip("/").lower() for s in registry.get("sources", [])}
+
+rows, done = [], 0
+for n in ISSUES:
+    i = gh("issue", "view", str(n), "--repo", REPO, "--json", "title,state,labels,comments,body")
+    labels = {l["name"] for l in i["labels"]}
+    body = "\n".join(c["body"] for c in i["comments"])
+    if "security baseline passed" in body:
+        sec = "passed"
+    elif "Findings requiring review" in body:
+        sec = "FIX NEEDED"
+    elif "Manual review required" in body:
+        sec = "review"
+    else:
+        sec = "pending"
+    m = re.search(r"https://github\.com/\S+", i["body"])
+    pub = bool(m) and m.group(0).rstrip("/").lower() in listed
+    done += pub
+    approved = "approved-and-verified" in labels
+    rows.append((f"#{n}", i["title"].replace("[Plugin]: ", ""), sec,
+                 "yes" if approved else "-", "LISTED" if pub else "-", i["state"].lower()))
+
+w = [max(len(r[k]) for r in rows) for k in range(6)]
+head = ("issue", "plugin", "security", "approved", "published", "state")
+w = [max(a, len(b)) for a, b in zip(w, head)]
+for r in [head, *rows]:
+    print("  ".join(c.ljust(x) for c, x in zip(r, w)))
+print(f"\n{done}/{len(rows)} published · https://plugins.omarchy.org")

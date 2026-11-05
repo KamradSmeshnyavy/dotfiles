@@ -32,12 +32,11 @@ omarchy plugin add https://github.com/KamradSmeshnyavy/omarchy-drawer-notificati
 omarchy restart shell
 ```
 
-Или всё сразу установщиком Customizer (сначала прочитайте его):
+Или всё сразу: у Customizer есть установщик — после установки Customizer прочитайте его и запустите:
 
 ```sh
-curl -fsSLo /tmp/customizer-install.sh https://raw.githubusercontent.com/KamradSmeshnyavy/omarchy-customizer/main/install.sh
-less /tmp/customizer-install.sh
-bash /tmp/customizer-install.sh --all
+less ~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/install.sh
+bash ~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/install.sh --all
 ```
 
 **Попробовать вид DOT-MATRIX:** Super+Shift+T → Пресеты → DOT-MATRIX → ⏎. Передумали — Пресеты → «Восстановить
