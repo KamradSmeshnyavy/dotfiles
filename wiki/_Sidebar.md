@@ -1,0 +1,33 @@
+**[🏠 Home](Home)** · **[Главная](Home-ru)**
+
+**English**
+- [Quick start](Quick-Start)
+- [Customizer](Customizer)
+- [Styles](Styles)
+- [Font profiles](Font-Profiles)
+- [Themes and app theming](Themes-and-App-Theming)
+- [Bar skins](Bar-Skins)
+- [Lock screen](Lock-Screen)
+- [Launcher](Launcher)
+- [Wallpapers and pickers](Wallpapers-and-Pickers)
+- [Widgets, OSD, notifications](Widgets-OSD-Notifications)
+- [Browsers](Browsers)
+- [Hyprland and terminals](Hyprland-and-Terminals)
+- [Make your own](Make-Your-Own)
+- [FAQ](FAQ)
+
+**Русский**
+- [Быстрый старт](Quick-Start-ru)
+- [Customizer](Customizer-ru)
+- [Стили](Styles-ru)
+- [Профили шрифтов](Font-Profiles-ru)
+- [Темы и приложения](Themes-and-App-Theming-ru)
+- [Скины бара](Bar-Skins-ru)
+- [Экран блокировки](Lock-Screen-ru)
+- [Лаунчер](Launcher-ru)
+- [Обои и пикеры](Wallpapers-and-Pickers-ru)
+- [Виджеты, OSD, уведомления](Widgets-OSD-Notifications-ru)
+- [Браузеры](Browsers-ru)
+- [Hyprland и терминалы](Hyprland-and-Terminals-ru)
+- [Своё](Make-Your-Own-ru)
+- [FAQ](FAQ-ru)

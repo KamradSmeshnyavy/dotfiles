@@ -37,6 +37,7 @@ dotfiles/
 ├── skills/              # AI-скиллы + linux_install_map.json
 ├── macos/               # nix-darwin flake
 ├── docs/                # описание каждого конфига (EN + .ru.md)
+├── wiki/                # исходники GitHub Wiki (EN + -ru), публикация — just wiki-sync
 └── archive/             # старое, не трогать
 ```
 

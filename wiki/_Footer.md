@@ -1,0 +1,1 @@
+[dotfiles](https://github.com/KamradSmeshnyavy/dotfiles) · [plugins.omarchy.org](https://plugins.omarchy.org) · Source of this wiki: [`wiki/`](https://github.com/KamradSmeshnyavy/dotfiles/tree/main/wiki) — edit there, then `just wiki-sync`.

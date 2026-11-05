@@ -157,6 +157,7 @@ dotfiles/
 ├── skills/            # AI skills for coding agents
 ├── macos/             # nix-darwin flake
 ├── docs/              # one page per config: docs/{apps,tui,shells,cli}/<name>.md (English, + .ru.md)
+├── wiki/              # source of the GitHub wiki (EN + -ru pages), published with `just wiki-sync`
 └── assets/            # screenshots and the demo
 ```
 

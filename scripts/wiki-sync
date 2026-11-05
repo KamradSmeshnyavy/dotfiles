@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Опубликовать wiki/ в GitHub Wiki репозитория (dotfiles.wiki.git).
+#   scripts/wiki-sync        # клонировать wiki во временный каталог, заменить страницы, закоммитить и запушить
+#   scripts/wiki-sync -n     # только показать, что изменится
+# Источник правды — wiki/ в репозитории: правки делать там, на GitHub не редактировать.
+# Git-репозиторий wiki появляется только после первой страницы, созданной в веб-интерфейсе GitHub.
+set -euo pipefail
+
+repo=$(cd "$(dirname "$0")/.." && pwd)
+remote="git@github.com:KamradSmeshnyavy/dotfiles.wiki.git"
+dry=false
+[[ ${1:-} == -n ]] && dry=true
+
+tmp=$(mktemp -d -t wiki-sync.XXXXXX)
+if ! GIT_TERMINAL_PROMPT=0 git clone -q "$remote" "$tmp/wiki" 2>/dev/null; then
+  echo "Wiki ещё не создана: откройте https://github.com/KamradSmeshnyavy/dotfiles/wiki, сохраните любую первую страницу" >&2
+  echo "и запустите снова." >&2
+  exit 1
+fi
+
+# Страницы, которых больше нет в wiki/, удаляются через git rm (в клоне), остальные перезаписываются.
+cd "$tmp/wiki"
+git ls-files '*.md' | while read -r page; do
+  [[ -f $repo/wiki/$page ]] || git rm -q -- "$page"
+done
+cp "$repo"/wiki/*.md .
+git add -A
+
+if git diff --cached --quiet; then
+  echo "Wiki уже совпадает с wiki/."
+  exit 0
+fi
+git diff --cached --stat
+$dry && { echo "(-n: не публикую)"; exit 0; }
+git commit -q -m "Sync from dotfiles $(git -C "$repo" rev-parse --short HEAD)"
+git push -q origin HEAD
+echo "Wiki обновлена: https://github.com/KamradSmeshnyavy/dotfiles/wiki"

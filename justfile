@@ -90,6 +90,11 @@ dotmatrix-fonts:
 check-links:
     {{justfile_directory()}}/scripts/check-links
 
+# Опубликовать wiki/ в GitHub Wiki (-n — только показать изменения)
+[linux]
+wiki-sync *args:
+    {{justfile_directory()}}/scripts/wiki-sync {{args}}
+
 # Обновить публичный omarchy-launcher-skins из лаунчера в dotfiles (без портированных скинов)
 [linux]
 publish-launcher path="~/src/omarchy-launcher-skins":
