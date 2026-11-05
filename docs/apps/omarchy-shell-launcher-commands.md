@@ -1,30 +1,33 @@
-# Команды лаунчера omarchy-shell (`>…`)
+# omarchy-shell launcher commands (`>…`)
 
-Лаунчер — плагин `kamradsmeshnyavy.menu` (`apps/omarchy-shell/plugins/kamradsmeshnyavy.menu/`). Поиск, начинающийся
-с `>`, переключает его в режим команд (идея caelestia, написано с нуля, `Commands.js`). Строки команд идут
-в тот же список, что и обычные пункты, поэтому выглядят по-своему в каждом скине лаунчера.
+[🇷🇺 Русский](omarchy-shell-launcher-commands.ru.md)
 
-| Ввод | Что показывает |
+The launcher is the `kamradsmeshnyavy.menu` plugin (`apps/omarchy-shell/plugins/kamradsmeshnyavy.menu/`). A search
+starting with `>` switches it into command mode (idea from caelestia, written from scratch, `Commands.js`). Command rows
+go into the same list as ordinary items, so they look native in every launcher skin.
+
+| Input | What it shows |
 |---|---|
-| `>` | все команды с описанием |
-| `>th` | команды, чьё имя начинается с `th` |
-| `>theme` + Enter | дописывает `>theme ` и показывает аргументы |
-| `>theme rose` | аргументы, в которых есть `rose` |
+| `>` | every command with a description |
+| `>th` | commands whose name starts with `th` |
+| `>theme` + Enter | completes to `>theme ` and shows the arguments |
+| `>theme rose` | arguments containing `rose` |
 
-| Команда | Аргументы | Делает |
+| Command | Arguments | Does |
 |---|---|---|
-| `>theme` | темы Omarchy (свои и стоковые) | `omarchy-theme-set` |
-| `>dynamic` | `tonal-spot` `vibrant` `expressive` `fruit-salad` `monochrome` `light` | тема из обоев (`omarchy-wallpaper-theme`; только если он в `PATH`) |
-| `>wall` | следующие / выбрать… | `omarchy-theme-bg-next` / `omarchy-theme-bg-switcher` |
-| `>skin` | скины бара: ★ свои и пресеты | `customizer.sh apply bar-skins` |
-| `>dash` | — | дашборд виджетов |
-| `>dnd` | — | «Не беспокоить» |
-| `>shader` | — | шейдер экрана (crt-toggle) |
-| `>custom` | — | Customizer |
+| `>theme` | Omarchy themes (own and stock) | `omarchy-theme-set` |
+| `>dynamic` | `tonal-spot` `vibrant` `expressive` `fruit-salad` `monochrome` `light` | a theme from the wallpaper (`omarchy-wallpaper-theme`; only if it is in `PATH`) |
+| `>wall` | next / choose… | `omarchy-theme-bg-next` / `omarchy-theme-bg-switcher` |
+| `>skin` | bar skins: ★ own ones and presets | `customizer.sh apply bar-skins` |
+| `>dash` | — | the widgets dashboard |
+| `>dnd` | — | "Do not disturb" |
+| `>shader` | — | screen shader (crt-toggle) |
+| `>custom` | — | the Customizer |
 | `>lock` | — | `omarchy-system-lock` |
-| `>power` | — | меню выключения (виджеты) |
+| `>power` | — | the power menu (widgets) |
 
-`>skin`, `>shader`, `>custom` нужны плагин `kamradsmeshnyavy.customizer`, `>dash` и `>power` — `kamradsmeshnyavy.widgets`;
-без них эти команды не показываются (так `Commands.js` можно публиковать через `just publish-launcher`).
-Списки тем и скинов читаются один раз за открытие меню при первом `>`. Подписи — на языке Customizer.
-Новая команда — запись в `catalog()` в `Commands.js`: `name`, `icon`, `desc`, и `action` либо `args()`.
+`>skin`, `>shader`, `>custom` need the `kamradsmeshnyavy.customizer` plugin, `>dash` and `>power` —
+`kamradsmeshnyavy.widgets`; without them these commands are hidden (so `Commands.js` can be published with
+`just publish-launcher`). Theme and skin lists are read once per menu opening, at the first `>`. Captions follow the
+Customizer language. A new command is an entry in `catalog()` in `Commands.js`: `name`, `icon`, `desc`, and either
+`action` or `args()`.

@@ -1,60 +1,59 @@
-# Обои и theme switcher: переходы, стили пикера, кэш миниатюр
+# Wallpapers and the theme switcher: transitions, picker styles, thumbnail cache
 
-> Плагины — отдельные репо и сабмодули: [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) и [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles).
+[🇷🇺 Русский](omarchy-shell-wallpaper.ru.md)
 
-Два клона первой стороны, оба настраиваются в Customizer (Super+Shift+T):
+> The plugins are separate repos and submodules: [omarchy-wallpaper-fx](https://github.com/KamradSmeshnyavy/omarchy-wallpaper-fx) and [omarchy-image-picker-styles](https://github.com/KamradSmeshnyavy/omarchy-image-picker-styles).
 
-| Плагин | Клон | Настройки | Категория |
+Two clones of first-party plugins, both set up in the Customizer (Super+Shift+T):
+
+| Plugin | Clone of | Settings | Category |
 |---|---|---|---|
 | `kamradsmeshnyavy.background` | `omarchy.background` | `~/.config/omarchy/wallpaper-transition.json` | Wallpaper FX |
 | `kamradsmeshnyavy.image-picker` | `omarchy.image-picker` | `~/.config/omarchy/image-picker.json` | Theme Switcher |
 
-Оба файла читаются на лету. Правки клонов помечены `// fx:` и `// picker:`.
+Both files are read live. Clone changes are marked `// fx:` and `// picker:`.
 
-## Переходы обоев
+## Wallpaper transitions
 
-Переход рисует свой шейдер `shaders/transition.frag` (один на все эффекты, номер — `mode`) через
-`TransitionEffect.qml`. После правки шейдера: `just shaders-wallpaper` (qsb → `transition.frag.qsb`,
-оба файла в репо).
+The transition is drawn by a custom shader `shaders/transition.frag` (one for all effects, the number is `mode`) via
+`TransitionEffect.qml`. After editing the shader: `just shaders-wallpaper` (qsb → `transition.frag.qsb`, both files are
+in the repo).
 
-Эффекты (свои реализации по идеям swww и gl-transitions): `slant` (как в стоке), `fade`, `wipe`,
-`wave`, `grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`,
-`ripple`, `swirl`, `crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `random`,
-`none`.
+Effects (my own implementations of ideas from swww and gl-transitions): `slant` (as in stock), `fade`, `wipe`, `wave`,
+`grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`, `ripple`, `swirl`,
+`crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `random`, `none`.
 
-| Ключ | Умолч. | |
+| Key | Default | |
 |---|---|---|
-| `type` | `slant` | эффект |
-| `duration` | `420` | мс |
-| `easing` | `InOutCubic` | кривая Qt: InOutQuad, OutExpo, OutBack, OutBounce, Linear, … |
-| `angle` | `0` | градусы для wipe / wave / slide |
-| `origin` | `center` | откуда круг и капля: center / cursor / random |
-| `softness` | `0.02` | ширина мягкого края |
+| `type` | `slant` | effect |
+| `duration` | `420` | ms |
+| `easing` | `InOutCubic` | a Qt curve: InOutQuad, OutExpo, OutBack, OutBounce, Linear, … |
+| `angle` | `0` | degrees for wipe / wave / slide |
+| `origin` | `center` | where the circle and the drop start: center / cursor / random |
+| `softness` | `0.02` | width of the soft edge |
 
-`omarchy-shell background replay` — проиграть текущий эффект (соседние обои темы → текущие). В
-Customizer это `p`.
+`omarchy-shell background replay` replays the current effect (the theme's neighbouring wallpaper → the current one).
+In the Customizer it is `p`.
 
 ## Theme switcher
 
-Один overlay для выбора темы и обоев. Стили: `slices` (сток), `cards`, `coverflow`, `strip`, `wide`,
-`polaroid`. Поверх стиля — `expandedWidth/Height`, `sliceWidth/Height`, `spacing`, `skew`,
-`cardRadius`, `dim`, `selectedBorder`, `animMs`, `scrimAlpha`, `labels`; 0 / -1 — значение стиля
-или темы (ключ не хранится). `autoCache` — кэшировать миниатюры после смены темы
-(`omarchy-themes/hooks/theme-set`).
+One overlay for picking themes and wallpapers. Styles: `slices` (stock), `cards`, `coverflow`, `strip`, `wide`,
+`polaroid`. On top of a style — `expandedWidth/Height`, `sliceWidth/Height`, `spacing`, `skew`, `cardRadius`, `dim`,
+`selectedBorder`, `animMs`, `scrimAlpha`, `labels`; 0 / -1 means the style's or theme's value (the key is not stored).
+`autoCache` — cache thumbnails after a theme change (`omarchy-themes/hooks/theme-set`).
 
-## Кэш миниатюр — почему пикеры тормозили
+## Thumbnail cache — why the pickers were slow
 
-`omarchy-menu-images` хранит миниатюры в `~/.cache/omarchy/image-selector/` и индекс
-`index.tsv` (путь, размер:mtime, хэш). Обои текущей темы лежат по одному и тому же пути
-`~/.local/state/omarchy/current/theme/backgrounds`, но при каждой смене темы копируются заново с новым
-mtime — индекс растёт без конца (было 56 тыс. строк, 9 ГБ миниатюр). После смены темы кэш строк
-промахивается, и для каждой картинки индекс прогоняется `awk`'ом: ~55 мс × 439 обоев ≈ 24 с.
+`omarchy-menu-images` keeps thumbnails in `~/.cache/omarchy/image-selector/` and an index `index.tsv` (path,
+size:mtime, hash). The current theme's wallpapers live at the same path
+`~/.local/state/omarchy/current/theme/backgrounds`, but are copied again with a new mtime on every theme change — the
+index grows forever (it reached 56k lines and 9 GB of thumbnails). After a theme change the row cache misses, and for
+every picture the index goes through `awk`: ~55 ms × 439 wallpapers ≈ 24 s.
 
-В Customizer → Theme Switcher:
-- **⚡ Закэшировать миниатюры** — `omarchy-theme-switcher --print-rows` и
-  `omarchy-menu-images --cache-only` для превью тем и для обоев текущей темы (те же каталоги, что у
-  `omarchy-theme-bg-switcher`: ключ кэша строк — md5 списка каталогов);
-- **🧹 Очистить неиспользуемые** — оставляет миниатюры картинок, которые существуют с той же
-  подписью, и всё, на что ссылаются `*.rows`; остальное удаляет и переписывает индекс без дублей.
-  Перед удалением — подтверждение с размером;
-- **autoCache** — то же кэширование в фоне после каждой смены темы.
+In Customizer → Theme Switcher:
+- **⚡ Cache thumbnails** — `omarchy-theme-switcher --print-rows` and `omarchy-menu-images --cache-only` for theme
+  previews and the current theme's wallpapers (the same directories as `omarchy-theme-bg-switcher`: the row cache key
+  is the md5 of the directory list);
+- **🧹 Clean up unused** — keeps thumbnails of pictures that exist with the same signature and everything referenced by
+  `*.rows`; deletes the rest and rewrites the index without duplicates. Asks for confirmation with the size first;
+- **autoCache** — the same caching in the background after every theme change.

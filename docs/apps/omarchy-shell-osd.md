@@ -1,63 +1,68 @@
-# OSD и уведомления omarchy-shell: у края экрана
+# omarchy-shell OSD and notifications: at the screen edge
 
-> Плагины — отдельные репо и сабмодули: [omarchy-edge-osd](https://github.com/KamradSmeshnyavy/omarchy-edge-osd), [omarchy-drawer-notifications](https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications).
+[🇷🇺 Русский](omarchy-shell-osd.ru.md)
 
-Клон стокового `omarchy.osd` (`omarchy plugin clone omarchy.osd`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/` →
-`~/.config/omarchy/plugins/kamradsmeshnyavy.osd`. Правки в `Osd.qml` помечены `// edge:`; сравнить со стоком —
+> The plugins are separate repos and submodules: [omarchy-edge-osd](https://github.com/KamradSmeshnyavy/omarchy-edge-osd), [omarchy-drawer-notifications](https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications).
+
+A clone of the stock `omarchy.osd` (`omarchy plugin clone omarchy.osd`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/` →
+`~/.config/omarchy/plugins/kamradsmeshnyavy.osd`. Changes in `Osd.qml` are marked `// edge:`; compare with stock —
 `diff -u $OMARCHY_PATH/shell/plugins/osd/Osd.qml apps/omarchy-shell/plugins/kamradsmeshnyavy.osd/Osd.qml`.
 
-OSD со шкалой (громкость, яркость, микрофон — всё, что вызывает `omarchy osd -p …`) в стиле `edge` —
-вертикальный слайдер, выезжающий из края экрана (`EdgeOsd.qml`, идея caelestia, написано с нуля). Окно
-встаёт внутри зарезервированных зон, поэтому со скином бара `frame` растёт прямо из рамки, а вогнутые углы
-сверху и снизу переходят в неё. Цвет — как у бара и рамки; у прозрачного бара — цвет попапов темы.
-Сообщения без шкалы и медиа-OSD остаются стоковой карточкой. Клики OSD не перехватывает.
+An OSD with a scale (volume, brightness, microphone — whatever calls `omarchy osd -p …`) in the `edge` style is a
+vertical slider sliding out of the screen edge (`EdgeOsd.qml`, idea from caelestia, written from scratch). The window
+sits inside the reserved zones, so with the `frame` bar skin it grows right out of the frame, and the concave corners at
+the top and bottom flow into it. The colour is the bar's and the frame's; with a transparent bar — the theme's popup
+colour. Messages without a scale and the media OSD keep the stock card. The OSD never takes clicks. The `dotmatrix`
+style is a 16-LED hardware meter at the edge.
 
-Настройки: Customizer → Окна → **OSD и уведомления** или `~/.config/omarchy/osd.json`:
+Settings: Customizer → Windows → **OSD and notifications** or `~/.config/omarchy/osd.json`:
 
-| Ключ | По умолчанию | |
+| Key | Default | |
 |---|---|---|
-| `osdStyle` | `edge` | `edge` или `stock` (стоковая карточка снизу) |
-| `osdSide` | `right` | `right` или `left` |
+| `osdStyle` | `edge` | `edge`, `dotmatrix` or `stock` (the stock card at the bottom) |
+| `osdSide` | `right` | `right` or `left` |
 
-Вид — `BarStyle.qml`, как у дашборда: `osdFollowBar` (`true`), `osdAttach` (`auto` / `attached` /
-`floating`), свои `osdBackground` / `osdAlpha` / `osdRadius`. Ещё: `osdAlign` (`center` / `top` / `bottom`
-вдоль края), `osdSize` (`compact` / `normal` / `large`), `osdShowValue`, `osdTimeout` (мс, `-1` — как в стоке).
+The look comes from `BarStyle.qml`, as for the dashboard: `osdFollowBar` (`true`), `osdAttach` (`auto` / `attached` /
+`floating`), your own `osdBackground` / `osdAlpha` / `osdRadius`. Also: `osdAlign` (`center` / `top` / `bottom` along the
+edge), `osdSize` (`compact` / `normal` / `large`), `osdShowValue`, `osdTimeout` (ms, `-1` — as in stock).
 
-Вернуть стоковый OSD целиком: `omarchy plugin enable omarchy.osd`.
+Back to the stock OSD entirely: `omarchy plugin enable omarchy.osd`.
 
-## Уведомления
+## Notifications
 
-Клон `omarchy.notifications` (`apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications/`, правки помечены
-`// drawer:` в `Service.qml` и `components/NotificationCard.qml`). В стиле `drawer` тосты лежат в одной
-подложке цвета бара в правом верхнем углу: окно встаёт внутри бара и рамки (`ExclusionMode.Normal`),
-вогнутый угол слева сверху уходит в бар, справа снизу — в правый край / рамку, высота плавно следует за
-числом карточек, карточки внутри без рамки. Демон, DND, история и IPC — стоковые.
+A clone of `omarchy.notifications` (`apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications/`, changes marked
+`// drawer:` in `Service.qml` and `components/NotificationCard.qml`). In the `drawer` style the toasts sit in one
+backdrop of the bar colour in the top right corner: the window sits inside the bar and the frame
+(`ExclusionMode.Normal`), the concave top-left corner flows into the bar, the bottom-right one into the right edge /
+frame, the height follows the number of cards smoothly, the cards inside have no border. The daemon, DND, history and
+IPC are stock.
 
-| Ключ (`~/.config/omarchy/notify-style.json`) | По умолчанию | |
+| Key (`~/.config/omarchy/notify-style.json`) | Default | |
 |---|---|---|
-| `notifyStyle` | `drawer` | `drawer` или `stock` |
-| `notifyFollowBar`, `notifyAttach` | `true`, `auto` | как у дашборда: прилипать к сплошному бару, иначе плавающая карточка |
-| `notifyCorner` | `top-right` | `top-right` / `top-left` / `top-center` (по центру — затёки с обеих сторон) |
-| `notifyWidth`, `notifyMax` | `380`, `0` | ширина тоста; сколько видно сразу (`0` — все, новые сверху) |
-| `notifyCards` | `flat` | `flat` — без рамки внутри подложки, `bordered` — стоковые |
-| `notifyBackground`, `notifyAlpha`, `notifyRadius` | | свой вид, когда не следуем бару |
+| `notifyStyle` | `drawer` | `drawer` or `stock` |
+| `notifyFollowBar`, `notifyAttach` | `true`, `auto` | as for the dashboard: stick to a solid bar, otherwise a floating card |
+| `notifyCorner` | `top-right` | `top-right` / `top-left` / `top-center` (centred — flows on both sides) |
+| `notifyWidth`, `notifyMax` | `380`, `0` | toast width; how many are visible at once (`0` — all, newest on top) |
+| `notifyCards` | `flat` | `flat` — no border inside the backdrop, `bordered` — stock, `dotmatrix` — DOT-MATRIX hardware cards with a Glyph sweep |
+| `notifyBackground`, `notifyAlpha`, `notifyRadius` | | your own look when not following the bar |
 
-## Звуки
+## Sounds
 
-`omarchy-sound <событие>` (`omarchy-themes/scripts/omarchy-sound` → `~/.local/bin`) играет звук через
-`pw-play`. Имена событий — из freedesktop sound theme spec; файл ищется в `apps/sounds/` текущей темы,
-потом в `omarchy-themes/app-defaults/sounds/`, потом в `/usr/share/sounds/freedesktop/stereo`.
-Тема со своими звуками кладёт, например, `apps/sounds/message-new-instant.oga`.
+`omarchy-sound <event>` (`omarchy-themes/scripts/omarchy-sound` → `~/.local/bin`) plays a sound via `pw-play`. Event
+names follow the freedesktop sound theme spec; the file is looked up in the current theme's `apps/sounds/`, then in
+`omarchy-themes/app-defaults/sounds/`, then in `/usr/share/sounds/freedesktop/stereo`. A theme with its own sounds
+ships, for example, `apps/sounds/message-new-instant.oga`.
 
-| Событие | Откуда |
+| Event | Where from |
 |---|---|
-| `message-new-instant` / `dialog-warning` | показ тоста / критического тоста (клон уведомлений; при DND молчит) |
-| `audio-volume-change` | OSD громкости (не чаще раза в 80 мс) |
-| `service-login` | хук `post-boot.d/sound-login` |
-| `battery-low` (→ `dialog-warning`) | хук `battery-low.d/sound-battery-low` |
+| `message-new-instant` / `dialog-warning` | a toast / a critical toast (the notifications clone; silent under DND) |
+| `audio-volume-change` | the volume OSD (no more than once per 80 ms) |
+| `service-login` | hook `post-boot.d/sound-login` |
+| `battery-low` (→ `dialog-warning`) | hook `battery-low.d/sound-battery-low` |
 
-Customizer → Окна → **OSD и уведомления**: «Звуки: включены» и «Звуки: громкость»
-(`~/.config/omarchy/sounds.json`: `sounds`, `soundVolume`).
+Customizer → Windows → **OSD and notifications**: "Sounds: on" and "Sounds: volume"
+(`~/.config/omarchy/sounds.json`: `sounds`, `soundVolume`). The Customizer also has tactile sound packs and Hyprland
+window/workspace sounds.
 
-Вернуть стоковые уведомления целиком: `omarchy plugin enable omarchy.notifications`.
-При включённом «Не беспокоить» на экран проходят только критические `notify-send` без `-a` и `omarchy-action`.
+Back to the stock notifications entirely: `omarchy plugin enable omarchy.notifications`. With "Do not disturb" on, only
+critical `notify-send` without `-a` and `omarchy-action` reach the screen.

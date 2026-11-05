@@ -1,56 +1,59 @@
-# Экран блокировки omarchy-shell: дизайны
+# omarchy-shell lock screen: designs
 
-> Плагин — отдельный репо и сабмодуль: [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs) (там README на английском).
+[🇷🇺 Русский](omarchy-shell-lock.ru.md)
 
-Свой аналог [omarchy-lock-explorer](https://github.com/SirJul1337/omarchy-lock-explorer), написанный
-заново: чужой код не используется. Клон стокового `omarchy.lock` (`omarchy plugin clone omarchy.lock`):
+> The plugin is a separate repo and a submodule: [omarchy-lock-designs](https://github.com/KamradSmeshnyavy/omarchy-lock-designs).
+
+My own take on [omarchy-lock-explorer](https://github.com/SirJul1337/omarchy-lock-explorer), written from scratch: no
+foreign code is used. A clone of the stock `omarchy.lock` (`omarchy plugin clone omarchy.lock`):
 `apps/omarchy-shell/plugins/kamradsmeshnyavy.lock/` → `~/.config/omarchy/plugins/kamradsmeshnyavy.lock`.
 
-Выбор — в Customizer (Super+Shift+T): категории **Lock** и **Lock Tweaks**.
+Choose in the Customizer (Super+Shift+T): groups **Lock** and **Lock Tweaks**.
 
-## Безопасность
+## Safety
 
-- Пароль, PAM и отпечаток — стоковый `Service.qml` без изменений логики. Правки помечены `// design:`:
-  `LockView` заменён на `LockHost` в двух местах, добавлены IPC `previewDesign` и закрытие превью по Esc.
-- Дизайн видит только то же, что стоковый `LockView`: состояние и введённый текст, который он отдаёт
-  сигналом `submitPassword`.
-- `LockHost` показывает стоковый `LockView`, если дизайн не загрузился, не найден или за 0,5 с не
-  назначил поле пароля (`field`). Экран без ввода пароля не остаётся.
-- Клон наследует капабилити `authentication` от `omarchy.lock`: шелл держит его так же изолированно.
-- Аварийный выход, если экран заблокирован и что-то сломалось: TTY (Ctrl+Alt+F3) →
-  `omarchy plugin enable omarchy.lock` или `loginctl unlock-session`.
+- Password, PAM and fingerprint are the stock `Service.qml` with unchanged logic. Changes are marked `// design:`:
+  `LockView` is replaced by `LockHost` in two places, plus the `previewDesign` IPC and closing the preview with Esc.
+- A design sees only what the stock `LockView` sees: the state and the typed text, which it hands over with the
+  `submitPassword` signal.
+- `LockHost` shows the stock `LockView` if a design fails to load, is not found or does not assign the password
+  field (`field`) within 0.5 s. The screen is never left without a password input.
+- The clone inherits the `authentication` capability from `omarchy.lock`: the shell isolates it the same way.
+- Emergency exit if the screen is locked and something broke: a TTY (Ctrl+Alt+F3) →
+  `omarchy plugin enable omarchy.lock` or `loginctl unlock-session`.
 
-## Файлы
+## Files
 
-| Файл | Что это |
+| File | What it is |
 |---|---|
-| `~/.config/omarchy/lock-design.json` | выбранный дизайн и настройки (следит `LockHost`, применяется сразу) |
-| `kamradsmeshnyavy.lock/LockHost.qml` | загрузчик дизайна с фолбэком |
-| `kamradsmeshnyavy.lock/designs/designs.json` | реестр: `id`, `file`, `name`, `description`, `tags` |
-| `kamradsmeshnyavy.lock/designs/*.qml` | дизайны и общие части: `DesignBase`, `PasswordField`, `Wallpaper`, `Avatar` |
-| `~/.config/omarchy/lock-designs/*.qml` | свои дизайны (id `my:<Файл>.qml`) |
-| `~/.cache/omarchy-customizer/lock/*.jpg` | превью для Customizer (`T` — переснять в цветах текущей темы) |
+| `~/.config/omarchy/lock-design.json` | the chosen design and settings (`LockHost` watches it, applied at once) |
+| `kamradsmeshnyavy.lock/LockHost.qml` | the design loader with a fallback |
+| `kamradsmeshnyavy.lock/designs/designs.json` | the registry: `id`, `file`, `name`, `description`, `tags` |
+| `kamradsmeshnyavy.lock/designs/*.qml` | designs and shared parts: `DesignBase`, `PasswordField`, `Wallpaper`, `Avatar` |
+| `~/.config/omarchy/lock-designs/*.qml` | your own designs (id `my:<File>.qml`) |
+| `~/.cache/omarchy-customizer/lock/*.jpg` | previews for the Customizer (`T` — re-shoot in the current theme's colours) |
 
-## Дизайны
+## Designs
 
-classic (сток), zen, dock, island, split, sheet, card, cinema, poster, editorial, analog, flip, ring,
-calendar, terminal, neon, system, music, aurora, rain, constellation.
+classic (stock), zen, dock, island, split, sheet, card, cinema, poster, editorial, analog, flip, ring, calendar,
+terminal, neon, system, music, aurora, rain, constellation, dotmatrix — plus one per Customizer style (flat, glass,
+fluent, paper, neon, neumorph, brutal, retro), picked when a style is applied.
 
-## Настройки (`lock-design.json`, Lock Tweaks)
+## Settings (`lock-design.json`, Lock Tweaks)
 
-| Ключ | Умолч. | |
+| Key | Default | |
 |---|---|---|
-| `design` | `classic` | id дизайна |
-| `clock24` | `true` | 24-часовой формат |
-| `showSeconds` | `false` | секунды |
-| `showDate` | `true` | дата |
-| `wallpaperBlur` | `1` | размытие обоев 0–1 |
-| `wallpaperDim` | `0` | затемнение обоев 0–0.9 |
-| `reduceMotion` | `false` | без анимаций (aurora, rain, секундная стрелка) |
-| `ownerMessage` | `Привет, $USER` | приветствие |
-| `avatar` | `~/.face` | картинка аватара; нет — первая буква имени |
+| `design` | `classic` | design id |
+| `clock24` | `true` | 24-hour format |
+| `showSeconds` | `false` | seconds |
+| `showDate` | `true` | date |
+| `wallpaperBlur` | `1` | wallpaper blur 0–1 |
+| `wallpaperDim` | `0` | wallpaper dimming 0–0.9 |
+| `reduceMotion` | `false` | no animations (aurora, rain, the second hand) |
+| `ownerMessage` | `Hi, $USER` | greeting |
+| `avatar` | `~/.face` | avatar picture; none — the first letter of the name |
 
-## Свой дизайн
+## Your own design
 
 `~/.config/omarchy/lock-designs/Mine.qml`:
 
@@ -60,18 +63,18 @@ import "../plugins/kamradsmeshnyavy.lock/designs"
 
 DesignBase {
   id: root
-  field: pw                       // обязательно: иначе покажется стоковый экран
+  field: pw                       // required: otherwise the stock screen is shown
   Wallpaper { anchors.fill: parent; host: root }
   Text { text: root.time; color: root.fg; font.family: root.font; font.pixelSize: 80 }
   PasswordField { id: pw; host: root; anchors.centerIn: parent }
 }
 ```
 
-В `DesignBase` есть `time`, `hours`, `minutes`, `dateText`, `now`, `greeting`, `userName`, цвета
-`bg fg accent muted`, `font`, `withAlpha()`, `opt(key, def)` и флаг `preview`. Проверка без блокировки:
-`omarchy-shell lock previewDesign my:Mine.qml` (Esc или клик — закрыть).
+`DesignBase` provides `time`, `hours`, `minutes`, `dateText`, `now`, `greeting`, `userName`, colours
+`bg fg accent muted`, `font`, `withAlpha()`, `opt(key, def)` and the `preview` flag. Test without locking:
+`omarchy-shell lock previewDesign my:Mine.qml` (Esc or a click closes it).
 
-## Обновление апстрима
+## Updating from upstream
 
 `diff -u $OMARCHY_PATH/shell/plugins/lock/Service.qml apps/omarchy-shell/plugins/kamradsmeshnyavy.lock/Service.qml` —
-перенести блоки `// design:` на новую версию. После правок QML — `omarchy restart shell`.
+carry the `// design:` blocks over to the new version. After QML edits — `omarchy restart shell`.

@@ -1,88 +1,113 @@
-# Виджеты рабочего стола omarchy-shell
+# omarchy-shell desktop widgets
 
-> Плагин — отдельный репо и сабмодуль: [omarchy-desktop-widgets](https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets).
+[🇷🇺 Русский](omarchy-shell-widgets.ru.md)
 
-Свой плагин `kamradsmeshnyavy.widgets` (`kind: service`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets/` →
-`~/.config/omarchy/plugins/kamradsmeshnyavy.widgets`. Включение: `omarchy plugin enable kamradsmeshnyavy.widgets`
-(после `omarchy-shell shell rescanPlugins`), правки QML — только после `omarchy restart shell`.
+> The plugin is a separate repo and a submodule: [omarchy-desktop-widgets](https://github.com/KamradSmeshnyavy/omarchy-desktop-widgets).
 
-Окна на слое Bottom: над обоями и под окнами, видны на пустом рабочем столе. Клики проходят насквозь,
-кроме кнопок плеера.
+My own plugin `kamradsmeshnyavy.widgets` (`kind: service`): `apps/omarchy-shell/plugins/kamradsmeshnyavy.widgets/` →
+`~/.config/omarchy/plugins/kamradsmeshnyavy.widgets`. Enable: `omarchy plugin enable kamradsmeshnyavy.widgets`
+(after `omarchy-shell shell rescanPlugins`); QML changes need `omarchy restart shell`.
 
-| Виджет | Что показывает | Откуда данные |
+Windows sit on the Bottom layer: above the wallpaper and below windows, visible on an empty desktop. Clicks pass
+through, except for the player buttons and the interactive cards (todo, quote, photo).
+
+| Widget | What it shows | Data source |
 |---|---|---|
-| Часы | стили `big`, `stacked`, `terminal`, `minimal`; дата на языке Customizer | `Timer` раз в секунду |
-| Сейчас играет | обложка, название, исполнитель, прогресс, ⏮ ⏯ ⏭ | MPRIS (`Quickshell.Services.Mpris`), играющий плеер или первый |
-| Визуализатор | `bars`, `mirror`, `wave` во всю ширину у нижнего края | cava в raw-режиме (pipewire), запускается только пока играет музыка |
-| Кольца системы | CPU, RAM, температура, батарея; красные при перегреве и ≤15 % | `/proc/stat`, `/proc/meminfo`, `/sys/class/thermal`, `/sys/class/power_supply` раз в 2 с |
+| Clock | styles `big`, `stacked`, `terminal`, `minimal`, `dotmatrix`; date in the Customizer language | a `Timer` once a second |
+| Now playing | cover, title, artist, progress, ⏮ ⏯ ⏭ (dot-matrix cover in the `dotmatrix` style) | MPRIS (`Quickshell.Services.Mpris`), the playing player or the first one |
+| Visualizer | `bars`, `mirror`, `wave` (or LED dots) full width at the bottom edge | cava in raw mode (pipewire), runs only while music plays |
+| System rings | CPU, RAM, temperature, battery (or 28-LED dials); red on overheat and ≤15 % | `/proc/stat`, `/proc/meminfo`, `/sys/class/thermal`, `/sys/class/power_supply` every 2 s |
+| Network | default interface, ↓ / ↑ speed and a dotted oscilloscope | polled every 2 s |
+| Todo | a list from `~/.config/omarchy/widgets-todo.json`; click the box — done, right click — delete, "+" — add (a zenity prompt: the desktop layer takes no keyboard) | the file |
+| Quote | a quote of the day: built-in proverbs and sayings plus your lines from `~/.config/omarchy/widgets-quotes.txt` ("text — Author", one per line); click — next | changes once a day |
+| Photo frame | a picture from `photoDir` changing every `photoInterval` minutes and on click; no folder — the current wallpaper. The frame follows the style (Paper — a polaroid with tape, Retro — a rim, Neon — a glow) | the folder |
 
-cava и опрос `/proc` запускаются один раз на все мониторы; выключенный виджет не тратит ничего.
+cava and the `/proc` poll start once for all monitors; a disabled widget costs nothing. `desktopWidgets: false` turns
+off every desktop widget (the layer is not even created).
 
-## Дашборд
+## Dashboard
 
-`Super+Alt+D` (`omarchy-shell widgets toggleDashboard`, есть `openDashboard` / `closeDashboard`) —
-панель «вырастает» из-под бара у верхнего края экрана с фокусом (идея caelestia, написано с нуля):
-вогнутые углы сверху переходят в полосу бара, высота растёт от нуля. С формой бара `frame` или `hug`
-и непрозрачным фоном — цвет и радиус углов бара; у прозрачных скинов — цвет попапов темы.
-Закрывается Esc или кликом мимо (`HyprlandFocusGrab`).
+`Super+Alt+D` (`omarchy-shell widgets toggleDashboard`, also `openDashboard` / `closeDashboard`) — the panel "grows"
+out from under the bar at the top edge of the focused screen (the idea is from caelestia, written from scratch):
+concave corners at the top flow into the bar strip, the height grows from zero. With the `frame` or `hug` bar shape
+and an opaque background it takes the bar's colour and corner radius; with transparent skins — the theme's popup colour.
+Closes with Esc or a click outside (`HyprlandFocusGrab`).
 
-Внутри: плеер (обложка, время, кнопки, визуализатор cava), календарь месяца (‹ › листают), погода
-(open-meteo без ключа: город — `weatherCity`, обновление раз в 20 минут и только при открытии), графики
-CPU/RAM за 2 минуты, температура и батарея. Пока дашборд открыт, данные собираются, даже если
-виджеты на рабочем столе выключены.
+Inside (`dashStyle: default`): the player (cover, time, buttons, cava visualizer), a month calendar (‹ › to page),
+weather (open-meteo, no key: city — `weatherCity`, refreshed every 20 minutes and only while open), 2-minute CPU/RAM
+graphs, temperature and battery. `dashStyle: dotmatrix` — a Doto clock, dot-matrix MPRIS cover, a 24×6 LED spectrum,
+28-LED CPU/RAM/°C dials and an rx/tx LED oscilloscope. While the dashboard is open data is collected even if the
+desktop widgets are off.
 
-### Вид дашборда и меню выключения
+### Dashboard and power menu look
 
-Customizer → Рабочий стол → **Дашборд** (ключи в `widgets.json`). Стиль считает `BarStyle.qml`:
+Customizer → Desktop → **Dashboard** (keys in `widgets.json`). The style is computed by `BarStyle.qml`:
 
-| Ключ | По умолчанию | |
+| Key | Default | |
 |---|---|---|
-| `dashFollowBar` | `true` | цвет, прозрачность, рамка и скругление как у бара; у прозрачного бара — стекло (0.72 под размытием Hyprland, 0.92 без него) |
-| `dashAttach` | `auto` | `auto` — прилипать вогнутыми углами только к сплошному бару у края (`frame`, `hug`, `full`), иначе плавающая карточка с отступом и тенью; `attached` / `floating` — принудительно |
-| `dashBackground`, `dashAlpha`, `dashRadius`, `dashBorder` | `background`, `0.94`, `22`, `false` | свой вид, когда `dashFollowBar: false` |
-| `dashMedia`, `dashCalendar`, `dashWeather`, `dashStats` | `true` | блоки; ширина подстраивается |
-| `dashAnimation`, `dashDuration` | `grow`, `340` | `grow` / `slide` / `fade`, мс |
+| `dashStyle` | `default` | `default` or `dotmatrix` |
+| `dashFollowBar` | `true` | colour, transparency, border and radius as the bar; with a transparent bar — glass (0.72 under Hyprland blur, 0.92 without) |
+| `dashAttach` | `auto` | `auto` — stick with concave corners only to a solid bar at the edge (`frame`, `hug`, `full`), otherwise a floating card with a gap and a shadow; `attached` / `floating` — forced |
+| `dashBackground`, `dashAlpha`, `dashRadius`, `dashBorder` | `background`, `0.94`, `22`, `false` | your own look when `dashFollowBar: false` |
+| `dashMedia`, `dashCalendar`, `dashWeather`, `dashStats` | `true` | blocks; the width adapts |
+| `dashAnimation`, `dashDuration` | `grow`, `340` | `grow` / `slide` / `fade`, ms |
 
-## Меню выключения
+## Settings panel
 
-`Super+Esc` (`omarchy-shell widgets togglePower`; было стоковое System-меню — оно осталось в лаунчере) —
-столбец кнопок, выезжающий из правого края / рамки, того же цвета, что дашборд. Пункты и команды — как в
-стоковом System-меню: блокировка, сон (если не отключён `suspend-off`), гибернация (если
-`omarchy-hibernation-available`), выход, перезагрузка, выключение. Последние три срабатывают со второго
-нажатия в течение 3 секунд (первое красит кнопку: «ещё раз»). Клавиши: `j`/`k` или ↑↓, Enter, `1`–`6`, Esc;
-клик мимо закрывает. Открытие меню закрывает дашборд и наоборот.
+`Super+M` (`omarchy-shell widgets toggleSettings`, `widgets openSettingsSection wifi|bt|audio`) — the DOT-MATRIX
+hardware drawer at the right edge, growing out of the frame corner: 3×2 round tiles (Wi-Fi, Bluetooth, Audio, Mic, DND,
+Night light), 24-segment LED sliders, expandable Wi-Fi/Bluetooth/Audio lists (details in
+[omarchy-shell-dotmatrix.md](omarchy-shell-dotmatrix.md)), notification history, session actions with a two-click red
+confirmation.
 
-## Обзор рабочих столов и жесты
+`edgeHover: true` adds screen-edge dwell hot zones that open the dashboard, the settings panel and the launcher.
 
-`Super+`` ` (`omarchy-shell widgets toggleOverview`) — сетка рабочих столов (1…5, больше — если заняты)
-с обоями и живыми превью окон (`ScreencopyView`). Клик по столу — перейти, по окну — фокус на нём;
-перетащить окно на другой стол — перенести его туда, не уходя с текущего. Клавиши: ←→↑↓ / `hjkl`,
-Enter, `1`–`9`, Esc; клик по пустому месту закрывает. Диспетчеры идут через `hyprctl eval`
-(`hl.dsp.window.move({ workspace, follow = false, window = "address:0x…" })`) — под Lua-конфигом
-обычный `hyprctl dispatch` ничего не делает.
+## Power menu
 
-Жесты тачпада (`apps/hyprland/input.lua`) — на четыре пальца, потому что три заняты `drag_3fg`:
-в стороны — рабочие столы, вверх — обзор, вниз — дашборд.
+`Super+Esc` (`omarchy-shell widgets togglePower`; it used to be the stock System menu — that one is still in the
+launcher) — a column of buttons sliding out of the right edge / frame, the same colour as the dashboard. Items and
+commands are as in the stock System menu: lock, suspend (unless `suspend-off` is set), hibernate (if
+`omarchy-hibernation-available`), log out, reboot, shut down. The last three need a second press within 3 seconds (the
+first one colours the button: "again"). Keys: `j`/`k` or ↑↓, Enter, `1`–`6`, Esc; a click outside closes it. Opening the
+menu closes the dashboard and vice versa.
 
-## Настройки
+## Workspace overview and gestures
 
-Customizer (Super+Shift+T) → Рабочий стол → **Виджеты**: `h`/`l` меняют значение, `x` сбрасывает.
-Пишется в `~/.config/omarchy/widgets.json` (нет файла — значения по умолчанию), плагин подхватывает сразу.
+`` Super+` `` (`omarchy-shell widgets toggleOverview`) — a grid of workspaces (1…5, more if occupied) with wallpapers
+and live window previews (`ScreencopyView`). Click a workspace — go there, a window — focus it; drag a window to another
+workspace — move it there without leaving the current one. Keys: ←→↑↓ / `hjkl`, Enter, `1`–`9`, Esc; a click on empty
+space closes it. Dispatchers go through `hyprctl eval`
+(`hl.dsp.window.move({ workspace, follow = false, window = "address:0x…" })`) — with the Lua config a plain
+`hyprctl dispatch` does nothing.
 
-| Ключ | По умолчанию | |
+Touchpad gestures (`apps/hyprland/input.lua`) use four fingers, because three are taken by `drag_3fg`: sideways —
+workspaces, up — overview, down — dashboard.
+
+## Settings
+
+Customizer (Super+Shift+T) → Desktop → **Widgets**: `h`/`l` change a value, `x` resets it. Written to
+`~/.config/omarchy/widgets.json` (no file — defaults), the plugin picks it up at once.
+
+| Key | Default | |
 |---|---|---|
-| `clock`, `media`, `visualizer`, `sysinfo` | `true` | включить виджет |
+| `desktopWidgets` | `true` | `false` — no desktop widgets at all |
+| `clock`, `media`, `visualizer`, `sysinfo`, `network`, `todo`, `quote`, `photo` | per widget | enable a widget |
+| `widgetStyle` | `default` | `default` or `dotmatrix` |
 | `clockStyle` | `big` | `big` `stacked` `terminal` `minimal` |
-| `clockAnchor`, `mediaAnchor`, `sysinfoAnchor` | `top-left`, `bottom-left`, `top-right` | `top-left` … `bottom-right`, `center` |
+| `clockAnchor`, `mediaAnchor`, `sysinfoAnchor`, `networkAnchor`, `todoAnchor`, `quoteAnchor`, `photoAnchor` | per widget | `top-left` `top` `top-right` `left` `center` `right` `bottom-left` `bottom` `bottom-right` |
 | `clock24`, `clockSeconds` | `true`, `false` | |
 | `visualizerStyle` | `bars` | `bars` `mirror` `wave` |
 | `visualizerBars`, `visualizerHeight`, `visualizerAlpha` | `48`, `140`, `0.45` | |
-| `visualizerIdle` | `false` | рисовать и без музыки (cava тогда работает всегда) |
-| `edgeMargin` | `56` | отступ от краёв экрана |
-| `tint` | `accent` | роль (`accent` `foreground` `muted`), ключ `colors.toml` или `#hex` |
-| `locale` | `""` | язык даты; пусто — `lang` из `customizer.json`, иначе системный |
-| `screens` | `all` | `all` или `primary` |
-| `weatherCity` | `""` | город для погоды в дашборде |
-| `weatherUnits` | `celsius` | `celsius` или `fahrenheit` |
+| `visualizerIdle` | `false` | draw without music too (cava then always runs) |
+| `todoMax` | | how many todo lines to show |
+| `photoDir`, `photoInterval` | `""`, minutes | photo folder (`~` expands) and change interval |
+| `edgeMargin` | `56` | distance from the screen edges |
+| `edgeHover` | `false` | screen-edge hot zones |
+| `tint` | `accent` | a role (`accent` `foreground` `muted`), a `colors.toml` key or `#hex` |
+| `locale` | `""` | date language; empty — `lang` from `customizer.json`, else the system one |
+| `screens` | `all` | `all` or `primary` |
+| `weatherCity` | `""` | city for the dashboard weather |
+| `weatherUnits` | `celsius` | `celsius` or `fahrenheit` |
 
-Цвета берутся из темы (`Commons.Color` и `colors.toml`) и меняются вместе с ней.
+Colours come from the theme (`Commons.Color` and `colors.toml`) and change with it. The card look (frame, corners,
+font) follows the current Customizer style through `BarStyle.qml` / `StyleCard.qml`.
