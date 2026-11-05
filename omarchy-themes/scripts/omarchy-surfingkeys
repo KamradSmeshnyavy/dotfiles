@@ -336,8 +336,20 @@ def apply(browsers=None):
             log(f"{browser}: применено")
 
 
+def exclusive():
+    """Один запуск за раз. sync зовут одновременно хук theme-set, omarchy-font-profile и стили Customizer:
+    два процесса в одной LevelDB Helium (plyvel читает файлы через mmap) — один переписывает таблицу, у другого
+    SIGBUS и уведомление «Process crashed». Блокировка ставит такие вызовы в очередь."""
+    import fcntl
+    STATE.mkdir(parents=True, exist_ok=True)
+    lock = open(STATE / "lock", "w")
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    return lock  # держать открытым до выхода
+
+
 def main(argv):
     cmd = argv[1] if len(argv) > 1 else "sync"
+    _lock = exclusive() if cmd in ("sync", "apply") else None
     if cmd == "sync":
         resolve()
         apply()
