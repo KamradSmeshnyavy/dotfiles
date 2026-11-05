@@ -80,8 +80,9 @@ omarchy-desktop-widgets (виджеты, дашборд, меню выключе
 `.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
 `BarStyle.qml` и `StyleCard.qml` одинаковые в widgets/osd/notifications — правку переносить во все три (BarStyle читает
 токены стиля из `~/.config/omarchy/style.json`, их пишет Customizer → Пресеты → Стиль). Так же `dotmatrix/Palette.qml`
-(палитра стиля DOT-MATRIX, `docs/apps/omarchy-shell-dotmatrix.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer:
+(палитра стиля DOT-MATRIX, `docs/apps/omarchy-shell-dotmatrix.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer
+и шести DOT-MATRIX-панелях:
 цвета DOT-MATRIX — только через него, не hex.
-Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio,monitor,agents}` (в dotfiles,
-правки помечены `// dotmatrix:`, палитру импортируют из `kamradsmeshnyavy.bar/dotmatrix`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
+Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio,monitor,agents}` —
+тоже сабмодули, репо `omarchy-dotmatrix-<имя>` (правки помечены `// dotmatrix:`, у каждого своя копия `dotmatrix/Palette.qml`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.

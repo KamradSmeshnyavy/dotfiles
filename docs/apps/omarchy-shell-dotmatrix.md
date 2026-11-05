@@ -42,7 +42,7 @@ notifications, bar, menu, lock и customizer. Правка — во все ко�
 
 Функции берутся у Omarchy, а не пишутся заново. Стоковые виджеты бара клонированы (`omarchy plugin clone`) в
 `apps/omarchy-shell/plugins/kamradsmeshnyavy.{tray,network,bluetooth,audio}`. Правки помечены `// dotmatrix:`:
-цвета и шрифты из палитры DOT-MATRIX-бара (`import "../kamradsmeshnyavy.bar/dotmatrix"`), карточка — `Palette.restyleCard`.
+цвета и шрифты из своей копии палитры (`import "dotmatrix"`), карточка — `Palette.restyleCard`. Каждая панель — отдельное репо `omarchy-dotmatrix-<имя>` (сабмодуль).
 Логика (`Model.js`, скрипты `omarchy-*`) стоковая: при обновлении Omarchy новые версии переносятся diff'ом
 против `/usr/share/omarchy/shell/plugins/{bar/widgets,panels/*}`. IPC-цели остались стоковыми
 (`omarchy.network`, `omarchy.audio`…), поэтому бинды Omarchy (Super+Alt+A и т.п.) открывают DOT-MATRIX-панели.

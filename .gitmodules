@@ -38,3 +38,21 @@
 [submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications"]
 	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.notifications
 	url = https://github.com/KamradSmeshnyavy/omarchy-drawer-notifications
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.tray"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.tray
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-tray
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.network"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.network
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-network
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.bluetooth"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.bluetooth
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-bluetooth
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.audio"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.audio
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-audio
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.monitor"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.monitor
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-monitor
+[submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.agents"]
+	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.agents
+	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-agents
