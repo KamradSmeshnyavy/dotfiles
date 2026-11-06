@@ -25,6 +25,10 @@ Item {
     try { payload = JSON.parse(payloadJson || "{}") } catch (e) { payload = ({}) }
 
     if (payload.fontFamily) root.fontFamily = payload.fontFamily
+    // Customizer (p): skin — показать этим скином только сейчас, без записи в menu-skin.json;
+    // returnTo — payload, с которым Customizer откроется снова, когда меню закроется.
+    root.skinOverride = typeof payload.skin === "string" && skinConfig.known.indexOf(payload.skin) !== -1 ? payload.skin : ""
+    root.returnTo = typeof payload.returnTo === "string" ? payload.returnTo : ""
 
     if (payload.mode === "select" || payload.mode === "input") {
       root.openDmenu(payload)
@@ -121,7 +125,17 @@ Item {
   readonly property var appLibrary: root.shell ? root.shell.appLibrary : null
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
-  onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
+  onOpenedChanged: {
+    if (opened) return
+    deleteConfirmOpen = false
+    deleteTarget = null
+    // Открыто из Customizer (p): вернуть его на ту же строку.
+    if (!root.returnTo) return
+    var back = root.returnTo
+    root.returnTo = ""
+    // skinOverride не сбрасываем здесь — иначе скин сменится посреди анимации закрытия; его сбросит open().
+    Quickshell.execDetached(["omarchy-shell", "shell", "summon", "kamradsmeshnyavy.customizer", back])
+  }
   // Bound to the central [menu] section in shell.toml via Color.qml.
   // Each color already includes its alpha companion (composed in the
   // singleton), so consumers can drop them straight into a Rectangle.
@@ -154,7 +168,9 @@ Item {
   // `omarchy plugin enable omarchy.menu` away if none of them stick.
   // dmenu prompts (theme pickers, text input) keep the card: a select list is
   // the right shape for them.
-  property string skin: skinConfig.skin
+  property string skinOverride: ""
+  property string returnTo: ""
+  property string skin: root.skinOverride || skinConfig.skin
   readonly property bool skinActive: !root.dmenuActive && root.rowsLoaded && root.skin !== "list"
   readonly property bool constellationActive: root.skinActive && root.skin === "constellation"
   readonly property bool terminalActive: root.skinActive && root.skin === "terminal"

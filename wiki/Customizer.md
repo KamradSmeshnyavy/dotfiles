@@ -38,7 +38,8 @@ Repo: [omarchy-customizer](https://github.com/KamradSmeshnyavy/omarchy-customize
 | / | search all settings (↑↓ pick a result in another section, ⏎ go there) |
 | v · z · n · J K | hide the preview · preview at full size · description over it · scroll the description |
 | f | favourite theme / wallpaper (Themes, Wallpaper) |
-| p | play / show live (transitions, lock designs, picker) |
+| D | delete your own preset / style / bar skin / layout; in Wallpaper — your own wallpaper to the trash (asks in the window) |
+| p | play / show live (transitions, lock designs, picker); in Launcher — open it with the skin under the cursor, back to Customizer on close |
 | r | surprise me |
 | ? · q / Esc | all keys · close |
 
