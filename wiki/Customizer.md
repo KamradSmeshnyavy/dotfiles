@@ -12,7 +12,7 @@ use right now and quick actions. It follows the theme, the glass / solid materia
 
 Repo: [omarchy-customizer](https://github.com/KamradSmeshnyavy/omarchy-customizer) (GPL-3.0).
 
-![Customizer](https://raw.githubusercontent.com/KamradSmeshnyavy/omarchy-customizer/main/screenshots/desktop.webp)
+![Customizer](https://raw.githubusercontent.com/KamradSmeshnyavy/omarchy-customizer/main/screenshots/home.webp)
 
 ## Groups
 
