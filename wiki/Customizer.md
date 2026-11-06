@@ -36,12 +36,13 @@ Repo: [omarchy-customizer](https://github.com/KamradSmeshnyavy/omarchy-customize
 | ⏎ | apply · toggle · open |
 | h l, − + | change a setting · x — reset it · i — type a value |
 | / | search all settings (↑↓ pick a result in another section, ⏎ go there) |
-| v · J K | show / hide the preview card · scroll its text |
+| v · z · n · J K | hide the preview · preview at full size · description over it · scroll the description |
+| f | favourite theme / wallpaper (Themes, Wallpaper) |
 | p | play / show live (transitions, lock designs, picker) |
 | r | surprise me |
 | ? · q / Esc | all keys · close |
 
-Everything also works with the mouse: drag sliders, click switches, segments and tiles.
+Everything also works with the mouse: drag sliders, click switches, segments and tiles. Keys work in any keyboard layout (they follow the physical key, like in the US layout); typing in search stays as typed.
 
 Open it on a given group: `omarchy-shell shell toggle kamradsmeshnyavy.customizer '{"category":"windows"}'`.
 

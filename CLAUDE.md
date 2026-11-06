@@ -77,7 +77,9 @@ dotfiles/
 `.lock` → omarchy-lock-designs, `.background` → omarchy-wallpaper-fx, `.image-picker` →
 omarchy-image-picker-styles, `.customizer` → omarchy-customizer (GPL-3.0: пресеты анимаций из HyDE/ML4W/end-4;
 в нём же шейдеры экрана, opacity/blur, перекраска обоев, хук `hypr/customizer.lua` и i18n — строки на
-английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`), `.widgets` →
+английском, перевод в `i18n/ru.json`, язык из `~/.config/omarchy/customizer.json`; бэкенд — Python в `backend/`
+(один процесс `serve`, пока открыт overlay), описания настроек — `settings.json`; правку бэкенда сверять
+`tests/compare_*.py` с эталоном `tests/legacy/customizer.sh`), `.widgets` →
 omarchy-desktop-widgets (виджеты, дашборд, меню выключения, обзор столов), `.osd` → omarchy-edge-osd,
 `.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
 `BarStyle.qml` и `StyleCard.qml` одинаковые в widgets/osd/notifications — правку переносить во все три (BarStyle читает
