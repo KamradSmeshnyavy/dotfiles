@@ -58,6 +58,8 @@ against `/usr/share/omarchy/shell/plugins/{bar/widgets,panels/*}`. IPC targets s
   mirror the Omarchy panels: connection details, speed (LED oscilloscope), ping, band, DNS, networks with password /
   802.1X / "forget", QR and speed test; pairing, connecting, "forget" and sending audio to a BT device; outputs and
   inputs, per-app volume. Sections use the clones' `Model.js`; the ⚙ button opens the panel at the bar icon.
+  A new 802.1X network (here and in the Wi-Fi panel) also asks for the RADIUS server domain: the profile trusts only
+  a system-CA-signed server matching it (`802-1x.system-ca-certs` + `domain-suffix-match`).
 
 ## Bar widgets in the Customizer
 
