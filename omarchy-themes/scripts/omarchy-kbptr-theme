@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""
+Цвета и шрифт меток wl-kbptr из colors.toml темы Omarchy + форма стиля Customizer.
+
+Использование: omarchy-kbptr-theme <каталог темы> <выходной файл>
+
+Выход — по одной опции wl-kbptr на строку (`mode_tile.label_color=#rrggbbaa`). Его читает
+apps/hyprland/scripts/kbptr-wrapper.sh и передаёт как `-o …` поверх apps/wl-kbptr/config, поэтому
+символы меток, режимы и кегли остаются в конфиге, а здесь — только цвета и шрифт.
+
+У wl-kbptr нет радиусов и толщины рамок, поэтому стиль (style.json) задаёт прозрачность подложки,
+цвет рамки ячеек, цвет меток и шрифт: dotmatrix — DotMatrix Dot, иначе токен typeface (как BarStyle.qml).
+"""
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_tokens import font_profile, tokens  # noqa: E402
+from theme_palette import Palette  # noqa: E402
+
+
+def a(c, alpha):
+    """#rrggbb + альфа 0..1 → #rrggbbaa."""
+    return f"{c[:7]}{round(max(0, min(1, alpha)) * 255):02x}"
+
+
+def has_family(name):
+    """Семейство установлено (fontconfig знает его под этим именем)."""
+    if not name:
+        return False
+    try:
+        out = subprocess.run(["fc-list", f":family={name}", "family"],
+                             capture_output=True, text=True, timeout=5).stdout
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return bool(out.strip())
+
+
+def omarchy_font():
+    """Шрифт Omarchy (omarchy font set) — тот, что у бара и панелей при typeface = shell."""
+    try:
+        name = subprocess.run(["omarchy-font-current"], capture_output=True, text=True, timeout=5).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        name = ""
+    if has_family(name):
+        return name
+    try:
+        return subprocess.run(["fc-match", "monospace", "-f", "%{family}"], capture_output=True,
+                              text=True, timeout=5).stdout.split(",")[0].strip() or "monospace"
+    except (OSError, subprocess.SubprocessError):
+        return "monospace"
+
+
+def font(sid, look):
+    if sid == "dotmatrix":
+        for name in ("DotMatrix Dot", "Doto"):
+            if has_family(name):
+                return name
+        return "monospace"
+    typeface = look.get("typeface")
+    prof = font_profile()
+    if typeface == "hand":
+        for name in (prof.get("title"), "Caveat"):
+            if has_family(name):
+                return name
+    if typeface == "profile" and prof.get("profile") not in (None, "", "stock") and has_family(prof.get("sans")):
+        return prof["sans"]
+    return omarchy_font()
+
+
+def look_of(p, sid):
+    """Роли меток и подложки под стиль: прозрачность (bg_a/cell_a), рамка, метка, выбранная метка."""
+    v = {
+        "bg_a": 0.8, "cell": p.surface, "cell_a": 0.93, "border": p.accent, "border_a": 0.85,
+        "label": p.fg_bright, "select": p.accent, "area_a": 0.27,
+    }
+    if sid == "glass":
+        v.update(bg_a=0.4, cell_a=0.6, border_a=0.9, area_a=0.2)
+    elif sid in ("flat", "dotmatrix"):
+        v.update(bg_a=0.85, cell_a=1, border=p.overlay, border_a=1)
+    elif sid == "retro":
+        v.update(bg_a=0.85, cell_a=1, border=p.fg, border_a=1)
+    elif sid == "brutal":
+        v.update(bg_a=0.85, cell_a=1, border=p.fg, border_a=1, area_a=0.4)
+    elif sid == "neon":
+        v.update(bg_a=0.87, cell=p.bg_darker, cell_a=0.95, border_a=1, label=p.accent, select=p.magenta)
+    elif sid == "paper":
+        v.update(bg_a=0.75, cell_a=1, border=p.fg_muted, border_a=1, label=p.fg)
+    elif sid == "neumorph":
+        v.update(bg_a=0.93, cell=p.bg, cell_a=1, border=p.overlay, border_a=1, label=p.fg)
+    return v
+
+
+def options(p, sid, look):
+    v = look_of(p, sid)
+    family = font(sid, look)
+    bg = a(p.bg, v["bg_a"])
+    cell = a(v["cell"], v["cell_a"])
+    border = a(v["border"], v["border_a"])
+    pointer = a(p.red, 0.87)
+    history = a(p.overlay, 0.6)
+    opts = {
+        "mode_tile": {
+            "label_color": a(v["label"], 1),
+            "label_select_color": a(v["select"], 1),
+            "unselectable_bg_color": bg,
+            "selectable_bg_color": cell,
+            "selectable_border_color": border,
+            "label_font_family": family,
+        },
+        "mode_floating": {
+            "label_color": a(v["label"], 1),
+            "label_select_color": a(v["select"], 1),
+            "unselectable_bg_color": a(p.bg, v["bg_a"] * 0.9),
+            "selectable_bg_color": cell,
+            "selectable_border_color": border,
+            "label_font_family": family,
+        },
+        "mode_bisect": {
+            "label_color": a(v["label"], 0.87),
+            "label_font_family": family,
+            "pointer_color": pointer,
+            "unselectable_bg_color": a(p.bg, 0.4),
+            "even_area_bg_color": a(p.accent, v["area_a"]),
+            "even_area_border_color": a(v["border"] if sid in ("brutal", "retro") else p.accent, 0.55),
+            "odd_area_bg_color": a(p.magenta, v["area_a"]),
+            "odd_area_border_color": a(v["border"] if sid in ("brutal", "retro") else p.magenta, 0.55),
+            "history_border_color": history,
+        },
+        "mode_split": {
+            "pointer_color": pointer,
+            "bg_color": a(p.bg, 0.4),
+            "area_bg_color": a(v["cell"], 0.55),
+            "vertical_color": a(p.accent, 0.8),
+            "horizontal_color": a(p.cyan, 0.8),
+            "history_border_color": history,
+        },
+    }
+    lines = [f"# Сгенерировано omarchy-kbptr-theme (стиль «{sid or '—'}»), передаётся в wl-kbptr как -o"]
+    for section, kv in opts.items():
+        lines += [f"{section}.{k}={val}" for k, val in kv.items()]
+    return "\n".join(lines) + "\n"
+
+
+def main(argv):
+    if len(argv) != 3:
+        sys.exit(__doc__)
+    look = tokens()
+    sid = str(look.get("id") or "")
+    Path(argv[2]).write_text(options(Palette(Path(argv[1])), sid, look), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main(sys.argv)

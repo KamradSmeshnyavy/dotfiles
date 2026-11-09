@@ -41,4 +41,16 @@ restore_mouseless() {
 }
 trap restore_mouseless EXIT
 
-wl-kbptr "$@"
+# Цвета и шрифт меток — от темы Omarchy и стиля Customizer: omarchy-app-themes пишет опции
+# (по одной на строку) в слот ниже, здесь они идут как -o поверх ~/.config/wl-kbptr/config.
+# Аргументы бинда — последними, поэтому при совпадении ключа побеждают они.
+THEME_OPTS=()
+THEME_FILE=$HOME/.local/state/omarchy/app-themes/wl-kbptr.opts
+if [ -r "$THEME_FILE" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        case $line in '' | '#'*) continue ;; esac
+        THEME_OPTS+=(-o "$line")
+    done <"$THEME_FILE"
+fi
+
+wl-kbptr "${THEME_OPTS[@]}" "$@"

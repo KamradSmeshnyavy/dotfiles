@@ -26,6 +26,8 @@ declare -A SLOTS=(
   [fastfetch.jsonc]=$HOME/.config/fastfetch/config.jsonc
   # не в ~/.config: путь задан в FZF_DEFAULT_OPTS_FILE (env.nu, .zshrc)
   [fzf.opts]=$STATE/app-themes/fzf.opts
+  # опции -o для wl-kbptr: читает apps/hyprland/scripts/kbptr-wrapper.sh
+  [wl-kbptr.opts]=$STATE/app-themes/wl-kbptr.opts
 )
 
 # Файлы, которые omarchy-theme-set сам рендерит в корень темы из omarchy-themes/themed/*.tpl
@@ -58,6 +60,8 @@ generate_one() {
 generate() {
   generate_one yatline.lua omarchy-yatline-theme
   generate_one fzf.opts omarchy-fzf-theme
+  # цвета + форма стиля Customizer (style.json): Customizer после смены стиля сам перезапускает скрипт
+  generate_one wl-kbptr.opts omarchy-kbptr-theme
   # GUI-приложения (применяются в apply_gui ниже)
   generate_one gtk4.css omarchy-gtk-theme
   generate_one gtk3.css omarchy-gtk-theme --gtk3

@@ -63,6 +63,7 @@ delta не задаёт `syntax-theme`, поэтому берёт `BAT_THEME` и
 | `gtk3.css` | `omarchy-gtk-theme --gtk3` | `~/.config/gtk-3.0/gtk.css` (`@define-color`) | новые окна; нужна тема `adw-gtk3` (пакет `adw-gtk-theme`) — скрипт ставит её вместо Adwaita |
 | `ghidra.theme` | `omarchy-ghidra-theme` | `~/.config/ghidra/ghidra_*/themes/omarchy.theme` + `Theme=` в `preferences` | при следующем запуске Ghidra; пока она запущена, `preferences` не трогается |
 | `telegram.tdesktop-theme` | `omarchy-telegram-theme` | `~/.local/state/omarchy/app-themes/omarchy.tdesktop-theme` | сразу, после одного ручного применения (ниже) |
+| `wl-kbptr.opts` | `omarchy-kbptr-theme` | `~/.local/state/omarchy/app-themes/wl-kbptr.opts` (слот) | при следующем вызове меток |
 
 Ghidra: цвета FlatLaf (`[laf.color]Panel.background` и др. — `system.color.bg.control` панели не красит),
 листинг, декомпилятор, закладки; `font.standard` / `font.monospaced` — шрифты системы, кегль 13.
@@ -81,6 +82,11 @@ Telegram 7 не открывает `.tdesktop-theme` из командной с�
 
 **Qt**: `qt6ct.conf` получает и шрифты (`[Fonts]`). Нужен пакет `qt6ct` и перелогин. Telegram — Qt, но рисует себя сам.
 
+**wl-kbptr** читает один конфиг, поэтому `wl-kbptr.opts` — не конфиг, а опции по одной на строку
+(`mode_tile.label_color=#rrggbbaa`): `apps/hyprland/scripts/kbptr-wrapper.sh` передаёт их как `-o` поверх
+`apps/wl-kbptr/config` (там остаются символы меток, режимы и кегли; его цвета — запасной вид). Генератор учитывает
+стиль Customizer (см. ниже), поэтому свой `apps/wl-kbptr.opts` темы отключает и стиль.
+
 Не перекрашиваются: Signal и Bitwarden (только светлая/тёмная — следуют `color-scheme`), Spotify (только через
 spicetify), LibreOffice/OnlyOffice (частично — GTK3).
 
@@ -93,6 +99,10 @@ spicetify), LibreOffice/OnlyOffice (частично — GTK3).
   без стиля слот, как раньше, указывает на файл темы.
 - kitty / ghostty: `style.conf` (отступы окна, форма курсора), подключён в конфигах (`globinclude style.conf`,
   `config-file = ?style.conf`), в `.gitignore`; перечитываются сигналом.
+- wl-kbptr: у меток нет радиусов и толщины рамок, поэтому стиль задаёт прозрачность подложки (glass —
+  прозрачнее, flat/brutal/retro/paper — сплошные ячейки), цвет рамки ячеек (brutal/retro — цвет текста,
+  neon — акцент) и шрифт: DOT-MATRIX — `DotMatrix Dot`, иначе токен `typeface` (`shell` — шрифт Omarchy,
+  `profile` — sans из `fonts.json`, `hand` — рукописный).
 - Customizer после смены стиля сам вызывает `omarchy-app-themes` и `omarchy-firefox-chrome`.
 
 ## Курсор

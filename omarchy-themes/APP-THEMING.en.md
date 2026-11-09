@@ -65,6 +65,7 @@ script also runs after `omarchy font set` (hook `hooks/font-set`) and `omarchy-f
 | `gtk3.css` | `omarchy-gtk-theme --gtk3` | `~/.config/gtk-3.0/gtk.css` (`@define-color`) | new windows; needs the `adw-gtk3` theme (package `adw-gtk-theme`), which the script selects instead of Adwaita |
 | `ghidra.theme` | `omarchy-ghidra-theme` | `~/.config/ghidra/ghidra_*/themes/omarchy.theme` + `Theme=` in `preferences` | next Ghidra start; `preferences` is left alone while Ghidra runs |
 | `telegram.tdesktop-theme` | `omarchy-telegram-theme` | `~/.local/state/omarchy/app-themes/omarchy.tdesktop-theme` | immediately, after one manual apply (below) |
+| `wl-kbptr.opts` | `omarchy-kbptr-theme` | `~/.local/state/omarchy/app-themes/wl-kbptr.opts` (slot) | next time hints open |
 
 Ghidra: FlatLaf colours (`[laf.color]Panel.background` etc. — `system.color.bg.control` does not paint panels),
 listing, decompiler, bookmarks; `font.standard` / `font.monospaced` use the system fonts at size 13.
@@ -84,6 +85,15 @@ script runs `touch -h` on the link and the theme changes without a restart. Stoc
 
 **Qt**: `qt6ct.conf` gets fonts too (`[Fonts]`). Needs the `qt6ct` package and a re-login. Telegram is Qt but draws
 itself.
+
+**wl-kbptr** reads a single config, so `wl-kbptr.opts` is not a config but one option per line
+(`mode_tile.label_color=#rrggbbaa`): `apps/hyprland/scripts/kbptr-wrapper.sh` passes them as `-o` on top of
+`apps/wl-kbptr/config` (which keeps label symbols, modes and sizes; its colours are only a fallback). The generator
+also follows the Customizer style (`~/.config/omarchy/style.json`): wl-kbptr has no corner radius or border width,
+so the style sets backdrop opacity (glass — more transparent, flat/brutal/retro/paper — solid cells), cell border
+colour (brutal/retro — text colour, neon — accent) and the font: DOT-MATRIX — `DotMatrix Dot`, otherwise the
+`typeface` token (`shell` — Omarchy font, `profile` — sans from `fonts.json`, `hand` — handwritten). A theme's own
+`apps/wl-kbptr.opts` replaces both colours and style.
 
 Not recoloured: Signal and Bitwarden (light/dark only — they follow `color-scheme`), Spotify (spicetify only),
 LibreOffice/OnlyOffice (partly, via GTK3).

@@ -2,6 +2,10 @@
 # The file location can be passed with the -c parameter.
 # Othewise the `$XDG_CONFIG_HOME/wl-kbptr/config` file will
 # be loaded if it exits. Below is the default configuration.
+#
+# Цвета и label_font_family ниже — запасной вид (Rose Pine). Через бинды (kbptr-wrapper.sh) их перекрывают
+# опции темы Omarchy и стиля Customizer: omarchy-themes/scripts/omarchy-kbptr-theme →
+# ~/.local/state/omarchy/app-themes/wl-kbptr.opts. Здесь — только символы меток, режимы и кегли.
 
 [general]
 home_row_keys=

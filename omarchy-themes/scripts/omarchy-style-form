@@ -11,44 +11,19 @@
   kitty       — style.conf (globinclude в kitty.conf): отступы окна и форма курсора;
   ghostty     — style.conf (config-file = ?style.conf): то же.
 """
-import json
-import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_tokens import HOME, style  # noqa: E402
 from theme_palette import Palette, hex_to_rgb, mix  # noqa: E402
 
-HOME = Path.home()
-STYLE_JSON = HOME / ".config/omarchy/style.json"
 TEXTURES = HOME / ".config/omarchy/plugins/kamradsmeshnyavy.customizer/textures"
 
 
 def rgba(c, a):
     r, g, b = (round(v * 255) for v in hex_to_rgb(c))
     return f"rgba({r}, {g}, {b}, {a})"
-
-
-# Форма стилей: радиус, рамка, тени. bevel — 3D-кант (светлый сверху-слева, тёмный снизу-справа).
-FORMS = {
-    "dotmatrix":    {"r": 0,  "border": 1, "shadow": "none",  "pad": 10, "cursor": "block"},
-    "flat":     {"r": 0,  "border": 1, "shadow": "none",  "pad": 8,  "cursor": "block"},
-    "glass":    {"r": 12, "border": 1, "shadow": "soft",  "pad": 14, "cursor": "beam", "glass": True},
-    "fluent":   {"r": 8,  "border": 1, "shadow": "soft",  "pad": 12, "cursor": "beam"},
-    "paper":    {"r": 4,  "border": 1, "shadow": "paper", "pad": 16, "cursor": "underline", "texture": True},
-    "neumorph": {"r": 14, "border": 0, "shadow": "neu",   "pad": 16, "cursor": "beam"},
-    "brutal":   {"r": 0,  "border": 2, "shadow": "hard",  "pad": 10, "cursor": "block"},
-    "retro":    {"r": 0,  "border": 2, "shadow": "bevel", "pad": 6,  "cursor": "block"},
-    "neon":     {"r": 6,  "border": 1, "shadow": "glow",  "pad": 12, "cursor": "beam"},
-}
-
-
-def style():
-    try:
-        sid = str(json.loads(STYLE_JSON.read_text()).get("id") or "")
-    except (OSError, ValueError):
-        sid = ""
-    return sid, FORMS.get(sid)
 
 
 def shadows(p, f, pressed=False):
