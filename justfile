@@ -53,10 +53,11 @@ link:
 theme name="":
     @if [ -z "{{name}}" ]; then omarchy theme list; else omarchy theme set "{{name}}"; fi
 
-# Перенаправить слоты тем приложений на текущую тему (без смены темы)
+# Перенаправить слоты тем приложений на текущую тему (без смены темы);
+# `just app-themes telegram` / `telegram-android` — переслать тему Telegram (desktop / телефон)
 [linux]
-app-themes:
-    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes
+app-themes *args:
+    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes {{args}}
 
 # Тема «dynamic» из обоев через matugen (без пути — текущие; --scheme vibrant, --mode light, --no-apply)
 [linux]

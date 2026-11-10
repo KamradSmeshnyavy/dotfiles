@@ -72,7 +72,7 @@ Ghidra: FlatLaf colours (`[laf.color]Panel.background` etc. — `system.color.bg
 listing, decompiler, bookmarks; `font.standard` / `font.monospaced` use the system fonts at size 13.
 
 **Telegram** keeps the theme internally but watches the applied theme file (`QFileSystemWatcher`) and reloads it.
-So apply it once: `omarchy-app-themes telegram` opens Telegram's "Forward to…" with the file → send it to Saved
+So apply it once: `just app-themes telegram` opens Telegram's "Forward to…" with the file → send it to Saved
 Messages → click the file → Apply. After that the file is updated in place on every theme change.
 Telegram 7 opens a `.tdesktop-theme` passed on the command line as "Forward to…", not as a preview.
 Palette keys live in `scripts/data/telegram-palette.tsv` (from lib_ui; refresh with
@@ -83,7 +83,7 @@ colours onto the nearest theme colour by hue, outgoing messages onto the accent.
 **Telegram for Android** reads an `.attheme` file (`key=#AARRGGBB` lines; the theme's name in Telegram is the file
 name, and Telegram decides dark or light from `windowBackgroundWhite`). The file is always `Omarchy.attheme`, so
 applying it again replaces the same theme. The phone doesn't watch the file, so after an Omarchy theme change:
-`omarchy-app-themes telegram-android` opens Telegram Desktop's "Forward to…" with the file → send it to Saved
+`just app-themes telegram-android` opens Telegram Desktop's "Forward to…" with the file → send it to Saved
 Messages → on the phone tap the file → Apply. Keys live in `scripts/data/telegram-android-palette.tsv` (from
 DrKLO/Telegram `ThemeColors.java`; refresh with `omarchy-telegram-android-theme --update-palette`). Recolouring is
 shared with desktop (`scripts/telegram_common.py`); on top of that the dark hover haze turns light, white text on

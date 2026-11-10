@@ -70,7 +70,7 @@ Ghidra: цвета FlatLaf (`[laf.color]Panel.background` и др. — `system.c
 листинг, декомпилятор, закладки; `font.standard` / `font.monospaced` — шрифты системы, кегль 13.
 
 **Telegram** хранит тему у себя, но за файлом применённой темы следит (`QFileSystemWatcher`) и перечитывает его.
-Поэтому применить нужно один раз: `omarchy-app-themes telegram` открывает в Telegram «Переслать…» с этим файлом →
+Поэтому применить нужно один раз: `just app-themes telegram` открывает в Telegram «Переслать…» с этим файлом →
 отправить в «Избранное» → нажать на файл → «Применить». Дальше файл обновляется на месте при каждой смене темы.
 Telegram 7 не открывает `.tdesktop-theme` из командной строки как предпросмотр — только как «Переслать».
 Ключи палитры — `scripts/data/telegram-palette.tsv` (из lib_ui; обновить: `omarchy-telegram-theme --update-palette`):
@@ -80,7 +80,7 @@ Telegram 7 не открывает `.tdesktop-theme` из командной с�
 **Telegram на Android** берёт тему из файла `.attheme` (строки `ключ=#AARRGGBB`; имя темы в Telegram — имя файла,
 тёмная она или светлая, Telegram решает сам по `windowBackgroundWhite`). Файл всегда называется `Omarchy.attheme`,
 поэтому повторное применение заменяет ту же тему. За файлом телефон не следит — после смены темы Omarchy:
-`omarchy-app-themes telegram-android` открывает в Telegram Desktop «Переслать…» с файлом → отправить в «Избранное» →
+`just app-themes telegram-android` открывает в Telegram Desktop «Переслать…» с файлом → отправить в «Избранное» →
 на телефоне нажать на файл → «Применить». Ключи — `scripts/data/telegram-android-palette.tsv` (из `ThemeColors.java`
 DrKLO/Telegram; обновить: `omarchy-telegram-android-theme --update-palette`). Перекраска общая с desktop
 (`scripts/telegram_common.py`); вдобавок тёмная дымка наведения становится светлой, белый текст на цветных плашках —
