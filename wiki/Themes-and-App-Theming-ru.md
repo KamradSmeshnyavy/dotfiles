@@ -27,7 +27,7 @@ DOT-MATRIX, Rose Pine Hacker / Hacker24, Pastel Hacker, Catppuccin Mocha (Efter,
 | Neovim | собственная схема темы из `~/.local/state/omarchy/current/theme/nvim` |
 | Zsh | `omarchy-zsh-colors` |
 | VS Code | стоковый `omarchy-theme-set-vscode` |
-| GTK, Qt (qt6ct), Ghidra, Vesktop, Telegram | генерирует `omarchy-app-themes` |
+| GTK, Qt (qt6ct), Ghidra, Vesktop, Telegram (desktop и Android) | генерирует `omarchy-app-themes` |
 | Firefox, Helium | Dark Reader, Stylus, Surfingkeys, `userChrome.css` Firefox — см. [Браузеры](Browsers-ru) |
 | Плагины оболочки | цвета Quickshell из темы; палитра DOT-MATRIX тоже следует ей |
 | Загрузка | `just boot-theme` — Limine и Plymouth в цветах темы (нужен sudo) |

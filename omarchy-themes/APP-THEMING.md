@@ -63,6 +63,7 @@ delta не задаёт `syntax-theme`, поэтому берёт `BAT_THEME` и
 | `gtk3.css` | `omarchy-gtk-theme --gtk3` | `~/.config/gtk-3.0/gtk.css` (`@define-color`) | новые окна; нужна тема `adw-gtk3` (пакет `adw-gtk-theme`) — скрипт ставит её вместо Adwaita |
 | `ghidra.theme` | `omarchy-ghidra-theme` | `~/.config/ghidra/ghidra_*/themes/omarchy.theme` + `Theme=` в `preferences` | при следующем запуске Ghidra; пока она запущена, `preferences` не трогается |
 | `telegram.tdesktop-theme` | `omarchy-telegram-theme` | `~/.local/state/omarchy/app-themes/omarchy.tdesktop-theme` | сразу, после одного ручного применения (ниже) |
+| `telegram.attheme` | `omarchy-telegram-android-theme` | `~/.local/state/omarchy/app-themes/Omarchy.attheme` | на телефоне, после пересылки и применения (ниже) |
 | `wl-kbptr.opts` | `omarchy-kbptr-theme` | `~/.local/state/omarchy/app-themes/wl-kbptr.opts` (слот) | при следующем вызове меток |
 
 Ghidra: цвета FlatLaf (`[laf.color]Panel.background` и др. — `system.color.bg.control` панели не красит),
@@ -75,6 +76,16 @@ Telegram 7 не открывает `.tdesktop-theme` из командной с�
 Ключи палитры — `scripts/data/telegram-palette.tsv` (из lib_ui; обновить: `omarchy-telegram-theme --update-palette`):
 серые светлой темы по умолчанию идут на шкалу фон…текст, цветные — на ближайший по оттенку цвет темы, исходящие
 сообщения — на акцент. Просмотр медиа и звонки (тёмные по замыслу) не трогаются.
+
+**Telegram на Android** берёт тему из файла `.attheme` (строки `ключ=#AARRGGBB`; имя темы в Telegram — имя файла,
+тёмная она или светлая, Telegram решает сам по `windowBackgroundWhite`). Файл всегда называется `Omarchy.attheme`,
+поэтому повторное применение заменяет ту же тему. За файлом телефон не следит — после смены темы Omarchy:
+`omarchy-app-themes telegram-android` открывает в Telegram Desktop «Переслать…» с файлом → отправить в «Избранное» →
+на телефоне нажать на файл → «Применить». Ключи — `scripts/data/telegram-android-palette.tsv` (из `ThemeColors.java`
+DrKLO/Telegram; обновить: `omarchy-telegram-android-theme --update-palette`). Перекраска общая с desktop
+(`scripts/telegram_common.py`); вдобавок тёмная дымка наведения становится светлой, белый текст на цветных плашках —
+текстом поверх акцента, а вторичный текст подтягивается до контраста 4.5. Звонки (`voipgroup_`, `calls_`) и
+всплывашки (`undo_`) не трогаются.
 
 **Vesktop**: `omarchy-fonts.css` (шрифты системы) пишет скрипт; `enabledThemes` = `omarchy.css` + `omarchy-fonts.css`
 выставляется, только когда Vesktop закрыт. Vencord не замечает смену файла за симлинком, поэтому скрипт делает

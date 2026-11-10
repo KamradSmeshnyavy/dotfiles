@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Темы CLI/TUI- и GUI-приложений, которые Omarchy сам не перекрашивает.
 # `omarchy-app-themes telegram` — один раз отправить тему Omarchy в Telegram (см. apply_telegram).
+# `omarchy-app-themes telegram-android` — отправить тему для Telegram на телефоне (см. apply_telegram_android).
 # Каждый слот — симлинк на apps/<файл> текущей темы, а если его нет — на сгенерированный файл
 # (yatline.lua из colors.toml) или на app-defaults/<файл>.
 # apps/env (KEY=VALUE, {theme} → путь к текущей теме) превращается в app-theme.zsh и app-theme.json (nushell).
@@ -67,6 +68,7 @@ generate() {
   generate_one gtk3.css omarchy-gtk-theme --gtk3
   generate_one ghidra.theme omarchy-ghidra-theme
   generate_one telegram.tdesktop-theme omarchy-telegram-theme
+  generate_one telegram.attheme omarchy-telegram-android-theme
 }
 
 # source_of <файл в apps/>: свой файл темы или сгенерированный (пусто, если нет ни того, ни другого)
@@ -227,6 +229,21 @@ apply_telegram() {
   fi
 }
 
+# Telegram Android: Omarchy.attheme (имя файла = имя темы в Telegram, поэтому одно и то же — повторное
+# применение заменяет тему, а не добавляет новую). За файлом телефон не следит: после смены темы Omarchy
+# `omarchy-app-themes telegram-android` открывает в Telegram Desktop «Переслать…» с этим файлом —
+# отправить в «Избранное», на телефоне нажать на файл → «Применить».
+apply_telegram_android() {
+  local src dest=$STATE/app-themes/Omarchy.attheme
+  src=$(source_of telegram.attheme)
+  [[ -n $src ]] || return 0
+  cmp -s "$src" "$dest" || cp -f "$src" "$dest"
+  if [[ ${1:-} == open ]]; then
+    command -v Telegram >/dev/null || { echo "omarchy-app-themes: Telegram не установлен" >&2; return 1; }
+    setsid -f Telegram -- "$dest" >/dev/null 2>&1 </dev/null
+  fi
+}
+
 # Vesktop (Vencord): omarchy.css (цвета, шаблон themed/vesktop.css.tpl) + omarchy-fonts.css (шрифты).
 # Список включённых тем пишется, только когда Vesktop закрыт (иначе он перезапишет его при выходе).
 apply_vesktop() {
@@ -325,12 +342,17 @@ if [[ ${1:-} == telegram ]]; then
   apply_telegram open
   exit
 fi
+if [[ ${1:-} == telegram-android ]]; then
+  apply_telegram_android open
+  exit
+fi
 link_slots
 apply_cursor
 write_qt6ct
 apply_gtk
 apply_ghidra
 apply_telegram
+apply_telegram_android
 apply_vesktop
 apply_terminals
 write_env

@@ -65,6 +65,7 @@ script also runs after `omarchy font set` (hook `hooks/font-set`) and `omarchy-f
 | `gtk3.css` | `omarchy-gtk-theme --gtk3` | `~/.config/gtk-3.0/gtk.css` (`@define-color`) | new windows; needs the `adw-gtk3` theme (package `adw-gtk-theme`), which the script selects instead of Adwaita |
 | `ghidra.theme` | `omarchy-ghidra-theme` | `~/.config/ghidra/ghidra_*/themes/omarchy.theme` + `Theme=` in `preferences` | next Ghidra start; `preferences` is left alone while Ghidra runs |
 | `telegram.tdesktop-theme` | `omarchy-telegram-theme` | `~/.local/state/omarchy/app-themes/omarchy.tdesktop-theme` | immediately, after one manual apply (below) |
+| `telegram.attheme` | `omarchy-telegram-android-theme` | `~/.local/state/omarchy/app-themes/Omarchy.attheme` | on the phone, after forwarding and applying (below) |
 | `wl-kbptr.opts` | `omarchy-kbptr-theme` | `~/.local/state/omarchy/app-themes/wl-kbptr.opts` (slot) | next time hints open |
 
 Ghidra: FlatLaf colours (`[laf.color]Panel.background` etc. — `system.color.bg.control` does not paint panels),
@@ -78,6 +79,16 @@ Palette keys live in `scripts/data/telegram-palette.tsv` (from lib_ui; refresh w
 `omarchy-telegram-theme --update-palette`): greys of the default light theme map onto the background…text ramp,
 colours onto the nearest theme colour by hue, outgoing messages onto the accent. Media viewer and calls
 (dark by design) are left alone.
+
+**Telegram for Android** reads an `.attheme` file (`key=#AARRGGBB` lines; the theme's name in Telegram is the file
+name, and Telegram decides dark or light from `windowBackgroundWhite`). The file is always `Omarchy.attheme`, so
+applying it again replaces the same theme. The phone doesn't watch the file, so after an Omarchy theme change:
+`omarchy-app-themes telegram-android` opens Telegram Desktop's "Forward to…" with the file → send it to Saved
+Messages → on the phone tap the file → Apply. Keys live in `scripts/data/telegram-android-palette.tsv` (from
+DrKLO/Telegram `ThemeColors.java`; refresh with `omarchy-telegram-android-theme --update-palette`). Recolouring is
+shared with desktop (`scripts/telegram_common.py`); on top of that the dark hover haze turns light, white text on
+coloured chips becomes on-accent text, and secondary text is lifted to 4.5 contrast. Calls (`voipgroup_`, `calls_`)
+and toasts (`undo_`) are left alone.
 
 **Vesktop**: the script writes `omarchy-fonts.css` (system fonts); `enabledThemes` = `omarchy.css` +
 `omarchy-fonts.css` is set only while Vesktop is closed. Vencord misses content changes behind a symlink, so the

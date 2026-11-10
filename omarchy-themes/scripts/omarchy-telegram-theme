@@ -20,7 +20,8 @@ import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from theme_palette import Palette, hls, mix  # noqa: E402
+from telegram_common import remap  # noqa: E402
+from theme_palette import Palette, mix  # noqa: E402
 
 DATA = Path(__file__).resolve().parent / "data" / "telegram-palette.tsv"
 SOURCE = "https://raw.githubusercontent.com/desktop-app/lib_ui/master/ui/colors.palette"
@@ -48,31 +49,6 @@ def defaults():
         if line and not line.startswith("#"):
             key, value = line.split("\t")
             yield key, value
-
-
-def split_alpha(v):
-    v = v.lstrip("#")
-    return "#" + v[:6], (v[6:8] if len(v) == 8 else "")
-
-
-def remap(p, key, value):
-    base, alpha = split_alpha(value)
-    if alpha:
-        # полупрозрачные: тени и затемнения (чёрный/белый) оставить, цветные — перекрасить
-        h, l, s = hls(base)
-        if s < 0.15:
-            return value
-        return p.by_hue(base) + alpha
-    h, l, s = hls(base)
-    out_family = key.startswith(("msgOut", "historyOut", "historySendingOut"))
-    if s < 0.15 or (l > 0.95 and s < 0.5):
-        return p.gray(l)
-    target = p.accent if out_family else p.by_hue(base)
-    if l > 0.88:  # бледная подложка (наведение, выделение)
-        return p.tint(target, 0.14)
-    if l > 0.75:
-        return p.tint(target, 0.32)
-    return target
 
 
 def palette(p):
@@ -162,7 +138,8 @@ def build(theme_dir, out):
         if key in explicit:
             lines.append(f"{key}: {explicit.pop(key)};")
         elif value.startswith("#") and not key.startswith(KEEP):
-            lines.append(f"{key}: {remap(p, key, value)};")
+            outgoing = key.startswith(("msgOut", "historyOut", "historySendingOut"))
+            lines.append(f"{key}: {remap(p, value, outgoing)};")
     # явные ключи, которых нет в списке по умолчанию (переименованы в новых версиях) — не пишем
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:

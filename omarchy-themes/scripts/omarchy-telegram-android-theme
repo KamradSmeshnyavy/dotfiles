@@ -1,0 +1,315 @@
+#!/usr/bin/env python3
+"""
+Тема Telegram для Android (.attheme) из colors.toml темы Omarchy.
+
+Использование:
+  omarchy-telegram-android-theme <каталог темы> <выходной .attheme>
+  omarchy-telegram-android-theme --update-palette   # перекачать список ключей из DrKLO/Telegram
+
+.attheme — строки «ключ=#AARRGGBB»; имя темы в Telegram — имя файла. Тёмная тема или светлая, Telegram
+решает сам по яркости windowBackgroundWhite. Ключи с цветом по умолчанию (data/telegram-android-palette.tsv)
+пересчитываются как на desktop (telegram_common.remap), основные заданы явно. Звонки и всплывашки
+(тёмные по замыслу) не трогаются.
+"""
+import re
+import sys
+import urllib.request
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from telegram_common import remap, split_alpha  # noqa: E402
+from theme_palette import Palette, contrast, hls, mix  # noqa: E402
+
+DATA = Path(__file__).resolve().parent / "data" / "telegram-android-palette.tsv"
+SOURCE = (
+    "https://raw.githubusercontent.com/DrKLO/Telegram/master/"
+    "TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java"
+)
+KEEP = ("voipgroup_", "calls_", "returnToCall", "undo_", "key_")
+
+
+def java_color(expr, consts):
+    """Значение из defaultColors[…] = expr → '#rrggbb' или '#rrggbbaa' (None — не цвет)."""
+    expr = expr.strip()
+    if expr in consts:
+        return consts[expr]
+    m = re.fullmatch(r"ColorUtils\.setAlphaComponent\((.+),\s*(\d+)\)", expr)
+    if m:
+        base = java_color(m.group(1), consts)
+        return base and split_alpha(base)[0] + f"{int(m.group(2)):02x}"
+    if expr == "Color.WHITE":
+        v = 0xFFFFFFFF
+    elif expr == "Color.BLACK":
+        v = 0xFF000000
+    elif re.fullmatch(r"0[xX][0-9a-fA-F]{8}", expr):
+        v = int(expr, 16)
+    elif re.fullmatch(r"-?\d+", expr) and expr != "0":
+        v = int(expr) & 0xFFFFFFFF
+    else:
+        return None
+    a, rgb = v >> 24, v & 0xFFFFFF
+    return f"#{rgb:06x}" + ("" if a == 0xFF else f"{a:02x}")
+
+
+def update_palette():
+    with urllib.request.urlopen(SOURCE, timeout=60) as r:
+        text = r.read().decode()
+    consts = {}
+    for name, value in re.findall(r"static final int (\w+) = (0[xX][0-9a-fA-F]{8});", text):
+        consts[name] = java_color(value, {})
+    defaults = dict(re.findall(r"defaultColors\[key_(\w+)\] = ([^;]+);", text))
+    names = re.findall(r'colorKeysMap\.put\(key_(\w+), "([^"]+)"\)', text)
+    if len(names) < 500:
+        sys.exit(f"omarchy-telegram-android-theme: в {SOURCE} нашлось только {len(names)} ключей")
+    rows = []
+    for ident, name in names:
+        value = java_color(defaults[ident], consts) if ident in defaults else None
+        rows.append(f"{name}\t{value or ''}\n")
+    header = (
+        "# Ключи палитры Telegram Android (имя в .attheme) и значения светлой темы по умолчанию;\n"
+        "# пусто — у ключа нет своего значения (Telegram выводит его из другого).\n"
+        f"# Источник: {SOURCE}\n# Обновить: omarchy-telegram-android-theme --update-palette\n"
+    )
+    DATA.write_text(header + "".join(rows), encoding="utf-8")
+    print(f"{DATA}: {len(rows)} ключей")
+
+
+def keys():
+    for line in DATA.read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith("#"):
+            key, value = line.split("\t")
+            yield key, value
+
+
+def palette(p):
+    out_bg = p.tint(p.accent, 0.22 if p.dark else 0.12)
+    on = p.on_accent
+    hover = (p.fg_bright if p.dark else "#000000") + "14"
+    bar = {
+        "": p.bg_dark,
+        "Icon": p.fg,
+        "Title": p.fg_bright,
+        "Subtitle": p.fg_muted,
+        "Selector": hover,
+        "Search": p.fg,
+        "SearchPlaceholder": p.fg_muted,
+    }
+    c = {
+        # окна, списки, настройки
+        "windowBackgroundWhite": p.bg,
+        "windowBackgroundGray": p.bg_dark,
+        "windowBackgroundWhiteBlackText": p.fg,
+        "windowBackgroundWhiteGrayIcon": p.fg_muted,
+        "windowBackgroundWhiteHintText": p.fg_muted,
+        "windowBackgroundWhiteInputField": p.overlay,
+        "windowBackgroundWhiteInputFieldActivated": p.accent,
+        "windowBackgroundChecked": p.accent,
+        "windowBackgroundUnchecked": p.muted,
+        "windowBackgroundCheckText": on,
+        "listSelectorSDK21": hover,
+        "divider": p.overlay,
+        "graySection": p.bg_dark,
+        "dialogBackground": p.surface,
+        "dialogBackgroundGray": p.bg_dark,
+        "dialogTextBlack": p.fg,
+        "dialogButton": p.accent,
+        "switchTrack": p.muted,
+        "switchTrackChecked": p.accent,
+        "switchTrackBlue": p.muted,
+        "switchTrackBlueChecked": p.accent,
+        "switchTrackBlueThumb": p.bg,
+        "switchTrackBlueThumbChecked": p.bg,
+        "checkboxSquareBackground": p.accent,
+        "checkboxSquareCheck": on,
+        "checkboxSquareUnchecked": p.fg_muted,
+        "featuredStickers_addButton": p.accent,
+        "featuredStickers_addButtonPressed": mix(p.accent, p.bg, 0.2),
+        "featuredStickers_buttonText": on,
+        "featuredStickers_buttonProgress": on,
+        # шапка
+        "actionBarDefaultSubmenuBackground": p.surface,
+        "actionBarDefaultSubmenuItem": p.fg,
+        "actionBarDefaultSubmenuItemIcon": p.fg_dim,
+        "actionBarDefaultSubmenuSeparator": p.overlay,
+        "avatar_backgroundActionBarBlue": p.bg_dark,
+        "avatar_backgroundInProfileBlue": p.bg_dark,
+        "avatar_actionBarIconBlue": p.fg,
+        "avatar_actionBarSelectorBlue": hover,
+        "avatar_subtitleInProfileBlue": p.fg_muted,
+        "avatar_text": on,
+        "profile_title": p.fg_bright,
+        "profile_status": p.fg_muted,
+        "profile_actionBackground": p.surface,
+        "profile_actionIcon": p.fg_dim,
+        # нижние вкладки («стекло»)
+        "glass_defaultIcon": p.fg_muted,
+        "glass_defaultText": p.fg_muted,
+        "glass_targetMainTabs": p.bg_dark,
+        "glass_targetMainTopPanel": p.bg,
+        "glass_tabSelected": p.accent,
+        "glass_tabSelectedText": p.accent,
+        "glass_tabUnselected": p.fg,
+        # список чатов и боковое меню
+        "chats_name": p.fg_bright,
+        "chats_nameArchived": p.fg_dim,
+        "chats_message": p.fg_muted,
+        "chats_message_threeLines": p.fg_muted,
+        "chats_messageArchived": p.fg_muted,
+        "chats_nameMessage": p.accent,
+        "chats_nameMessage_threeLines": p.fg_dim,
+        "chats_date": p.fg_muted,
+        "chats_pinnedIcon": p.fg_muted,
+        "chats_muteIcon": p.muted,
+        "chats_unreadCounter": p.accent,
+        "chats_unreadCounterMuted": p.muted,
+        "chats_unreadCounterText": on,
+        "chats_mentionIcon": on,
+        "chats_actionBackground": p.accent,
+        "chats_actionPressedBackground": mix(p.accent, p.fg_bright, 0.15),
+        "chats_actionIcon": on,
+        "chats_archiveBackground": p.accent,
+        "chats_archivePinBackground": p.muted,
+        "chats_archiveIcon": on,
+        "chats_archiveText": on,
+        "chats_archivePullDownBackground": p.surface,
+        "chats_archivePullDownBackgroundActive": p.accent,
+        "chats_tabUnreadActiveBackground": p.accent,
+        "chats_tabUnreadUnactiveBackground": p.muted,
+        "chats_menuBackground": p.bg,
+        "chats_menuTopBackground": p.bg_dark,
+        "chats_menuTopBackgroundCats": p.bg_dark,
+        "chats_menuName": p.fg_bright,
+        "chats_menuPhone": p.fg_muted,
+        "chats_menuPhoneCats": p.fg_muted,
+        "chats_menuItemText": p.fg,
+        "chats_menuItemIcon": p.fg_muted,
+        "chats_menuItemCheck": p.accent,
+        # чат
+        "chat_wallpaper": p.bg,
+        "chat_inBubble": p.surface,
+        "chat_inBubbleSelected": p.selection,
+        "chat_inBubbleShadow": p.bg_darker,
+        "chat_outBubble": out_bg,
+        "chat_outBubbleSelected": mix(out_bg, p.selection, 0.5),
+        "chat_outBubbleShadow": p.bg_darker,
+        "chat_messageTextIn": p.fg,
+        "chat_messageTextOut": p.fg,
+        "chat_messageLinkIn": p.accent,
+        "chat_messageLinkOut": mix(p.accent, p.fg_bright, 0.35),
+        "chat_inTimeText": p.fg_muted,
+        "chat_outTimeText": mix(p.fg_muted, p.accent, 0.4),
+        "chat_inReplyMessageText": p.fg,
+        "chat_outReplyMessageText": p.fg,
+        "chat_serviceBackground": p.bg_darker + "b3",
+        "chat_serviceBackgroundSelected": p.bg_darker + "e0",
+        "chat_serviceText": p.fg,
+        "chat_serviceLink": p.accent,
+        "chat_serviceIcon": p.fg,
+        "chat_stickerNameText": p.fg,
+        "chat_messagePanelBackground": p.bg_dark,
+        "chat_messagePanelText": p.fg,
+        "chat_messagePanelHint": p.fg_muted,
+        "chat_messagePanelCursor": p.accent,
+        "chat_messagePanelIcons": p.fg_muted,
+        "chat_messagePanelSend": p.accent,
+        "chat_emojiPanelBackground": p.bg_dark,
+        "chat_topPanelBackground": p.bg_dark,
+        "chat_topPanelTitle": p.accent,
+        "chat_topPanelMessage": p.fg_muted,
+        "chat_unreadMessagesStartBackground": p.surface,
+        "chat_unreadMessagesStartText": p.accent,
+        "chat_goDownButton": p.surface,
+        "chat_goDownButtonCounter": on,
+        "chat_goDownButtonCounterBackground": p.accent,
+        "chat_attachCheckBoxBackground": p.accent,
+        "chat_attachCheckBoxCheck": on,
+        "chat_inContactBackground": p.accent,
+        "chat_inContactIcon": on,
+        "chat_outContactBackground": p.accent,
+        "chat_outContactIcon": out_bg,
+        "chat_inLoader": p.accent,
+        "chat_inLoaderSelected": p.accent,
+        "chat_inMediaIcon": on,
+        "chat_outLoader": p.accent,
+        "chat_outLoaderSelected": p.accent,
+        "chat_outMediaIcon": out_bg,
+        "chat_inAudioProgress": p.surface,
+        "chat_outAudioProgress": out_bg,
+        "chat_inAudioSeekbar": p.overlay,
+        "chat_outAudioSeekbar": mix(out_bg, p.accent, 0.35),
+        "chat_inAudioCacheSeekbar": p.overlay + "3f",
+        "chat_outAudioCacheSeekbar": mix(out_bg, p.accent, 0.35) + "3f",
+    }
+    for suffix, value in bar.items():
+        c["actionBarDefault" + suffix] = value
+        c["actionBarDefaultArchived" + suffix] = value
+    return c
+
+
+# вторичный текст: у некоторых тем (nord) dark_foreground почти сливается с фоном — подтянуть к тексту
+READABLE = {
+    "chats_message": "windowBackgroundWhite",
+    "chats_message_threeLines": "windowBackgroundWhite",
+    "chats_date": "windowBackgroundWhite",
+    "windowBackgroundWhiteGrayText": "windowBackgroundWhite",
+    "windowBackgroundWhiteGrayText2": "windowBackgroundWhite",
+    "windowBackgroundWhiteHintText": "windowBackgroundWhite",
+    "actionBarDefaultSubtitle": "actionBarDefault",
+    "chat_inTimeText": "chat_inBubble",
+    "chat_outTimeText": "chat_outBubble",
+    "chat_messagePanelHint": "chat_messagePanelBackground",
+}
+
+
+def readable(p, color, bg, target=4.5):
+    """color, сдвинутый к яркому тексту, пока контраст с bg не станет ≥ target."""
+    for i in range(11):
+        c = mix(color, p.fg_bright, i / 10)
+        if contrast(c, bg) >= target:
+            return c
+    return p.fg_bright
+
+
+def recolor(p, key, value):
+    """Ключ без явного значения: перекраска как на desktop + поправки под Android."""
+    base, alpha = split_alpha(value)
+    _, l, s = hls(base)
+    if "Shadow" in key:  # тени остаются тенями
+        return value
+    if alpha and s < 0.15 and l < 0.5 and p.dark and int(alpha, 16) < 0x60:
+        # тёмная дымка поверх светлого (наведение, нажатие) → светлая дымка поверх тёмного
+        return p.fg_bright + alpha
+    if not alpha and base == "#ffffff" and re.search(r"(Text|Icon|Check|Counter|Name|Phone)$", key, re.I):
+        # белое поверх цветной плашки
+        return p.on_accent
+    return remap(p, value, outgoing=key.startswith("chat_out"))
+
+
+def argb(value):
+    """'#rrggbb[aa]' → '#AARRGGBB' (формат Android)."""
+    base, alpha = split_alpha(value)
+    return f"#{(alpha or 'ff')}{base[1:]}".upper()
+
+
+def build(theme_dir, out):
+    p = Palette(theme_dir)
+    explicit = palette(p)
+    colors = {}
+    for key, value in keys():
+        if key in explicit:
+            colors[key] = explicit[key]
+        elif value and not key.startswith(KEEP):
+            colors[key] = recolor(p, key, value)
+    for key, bg in READABLE.items():
+        colors[key] = readable(p, colors[key], colors[bg])
+    lines = [f"{key}={argb(value)}" for key, value in colors.items()]
+    Path(out).write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] == ["--update-palette"]:
+        update_palette()
+    elif len(sys.argv) == 3:
+        build(Path(sys.argv[1]), sys.argv[2])
+    else:
+        sys.exit(__doc__)
