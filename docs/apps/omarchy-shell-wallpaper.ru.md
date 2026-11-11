@@ -21,8 +21,16 @@
 
 Эффекты (свои реализации по идеям swww и gl-transitions): `slant` (как в стоке), `fade`, `wipe`,
 `wave`, `grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`,
-`ripple`, `swirl`, `crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `random`,
-`none`.
+`ripple`, `swirl`, `crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `contagion`,
+`outline`, `random`, `none`.
+
+`contagion` и `outline` — неторопливые эффекты-«сцены» по мотивам
+[pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (код свой). contagion: колонии пикселей прогрызают старые
+обои, фронт вспыхивает самым ярким цветом темы. Процедурный, всё в шейдере. outline: рисуется контур персонажа,
+персонаж заливается, потом из него вырастает мир. Персонажа вырезает BiRefNet (`scripts/wallpaper-fx-outline` в плагине,
+отдельный venv ~1 ГБ по желанию: `just wallpaper-fx-outline-install`, затем `just wallpaper-fx-outline-warm`). Карты
+кэшируются по содержимому файла в `~/.cache/wallpaper-fx/outline/`. Без модели или без явного персонажа outline играет
+как contagion. В Customizer в списке Wallpaper FX есть строка установки / вырезки.
 
 | Ключ | Умолч. | |
 |---|---|---|
@@ -32,6 +40,11 @@
 | `angle` | `0` | градусы для wipe / wave / slide |
 | `origin` | `center` | откуда круг и капля: center / cursor / random |
 | `softness` | `0.02` | ширина мягкого края |
+| `durationScene` | `1900` | мс, contagion / outline (линейно) |
+| `cell` | `6` | px, клетки contagion / outline |
+| `frontGlow` | `0.9` | сила вспышек contagion |
+| `lineWidth` | `1.5` | px, линия outline |
+| `outlineWait` | `8000` | мс ожидания свежей вырезки, потом contagion |
 
 `omarchy-shell background replay` — проиграть текущий эффект (соседние обои темы → текущие). В
 Customizer это `p`.

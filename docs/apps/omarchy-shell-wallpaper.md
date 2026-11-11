@@ -21,7 +21,16 @@ in the repo).
 
 Effects (my own implementations of ideas from swww and gl-transitions): `slant` (as in stock), `fade`, `wipe`, `wave`,
 `grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`, `ripple`, `swirl`,
-`crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `random`, `none`.
+`crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `contagion`, `outline`, `random`, `none`.
+
+`contagion` and `outline` are slower "scene" effects inspired by
+[pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (the code is my own). contagion: pixel colonies eat through the
+old wallpaper, and the front flashes in the theme's brightest colour. It is procedural, in the shader. outline:
+the character's outline is drawn, the character fills in, then the world grows out of it. The character is cut out by
+BiRefNet (`scripts/wallpaper-fx-outline` in the plugin, an optional venv of ~1 GB: `just wallpaper-fx-outline-install`,
+then `just wallpaper-fx-outline-warm`). Maps are cached by file content in `~/.cache/wallpaper-fx/outline/`. Without the
+model, or with no clear character, outline plays as contagion. In the Customizer, the Wallpaper FX list has an
+install/cut-out row.
 
 | Key | Default | |
 |---|---|---|
@@ -31,6 +40,11 @@ Effects (my own implementations of ideas from swww and gl-transitions): `slant` 
 | `angle` | `0` | degrees for wipe / wave / slide |
 | `origin` | `center` | where the circle and the drop start: center / cursor / random |
 | `softness` | `0.02` | width of the soft edge |
+| `durationScene` | `1900` | ms, contagion / outline (linear) |
+| `cell` | `6` | px, contagion / outline cells |
+| `frontGlow` | `0.9` | contagion flash strength |
+| `lineWidth` | `1.5` | px, outline line |
+| `outlineWait` | `8000` | ms to wait for a fresh cut-out, then contagion |
 
 `omarchy-shell background replay` replays the current effect (the theme's neighbouring wallpaper → the current one).
 In the Customizer it is `p`.

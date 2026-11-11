@@ -81,6 +81,16 @@ shaders-wallpaper:
       -o {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag.qsb \
       {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag
 
+# Переход outline: venv с BiRefNet для вырезки персонажей (~1 ГБ вместе с моделью)
+[linux]
+wallpaper-fx-outline-install:
+    {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/scripts/wallpaper-fx-outline install
+
+# Переход outline: заранее вырезать персонажей (без аргументов — обои текущей темы)
+[linux]
+wallpaper-fx-outline-warm *dirs:
+    {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/scripts/wallpaper-fx-outline warm {{dirs}}
+
 # Собрать DotMatrix Mono (Geist Mono + лигатуры) и DotMatrix Pixel (Terminus: русские «в д и й», курсив, лигатуры)
 [linux]
 dotmatrix-fonts:
