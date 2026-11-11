@@ -243,6 +243,9 @@
     ~/.local/bin/omarchy-font-profile:
       path: scripts/bin/omarchy-font-profile
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omasnap:
+      path: scripts/bin/omasnap
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/bookmarks-sync:
       path: scripts/bin/bookmarks-sync
       if: "[ `uname` = Linux ]"

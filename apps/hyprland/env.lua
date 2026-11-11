@@ -28,3 +28,13 @@ do
 		hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 	end
 end
+
+-- OCR (Super+Ctrl+PrtSc, omarchy-capture-text): русский + английский, но только если стоят данные
+-- (tesseract-data-rus) — с несуществующим языком tesseract падает, и OCR не работает совсем
+do
+	local f = io.open("/usr/share/tessdata/rus.traineddata", "r")
+	if f then
+		f:close()
+		hl.env("OMARCHY_OCR_LANGS", "rus+eng")
+	end
+end

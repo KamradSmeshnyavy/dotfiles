@@ -1,0 +1,8 @@
+#!/bin/sh
+# Обёртка над /usr/bin/omasnap (скриншоты Omarchy: PrtSc, Super+Ctrl+Alt+C, меню, `omarchy screenshot`).
+#
+# В ~/.config/uwsm/env стоит глобальный QT_SCALE_FACTOR=2.0. На Wayland Qt и так берёт масштаб 2 у Hyprland,
+# множитель удваивает его, и omasnap видит экран 720×450 вместо 1440×900: «весь экран» давал левую верхнюю
+# четверть, выделенная область съезжала к углу. Оболочка Omarchy тоже работает с QT_SCALE_FACTOR=1.
+# Глобально переменную не трогаем — чиним только скриншоты. ~/.local/bin стоит первым в PATH (monitors.lua).
+QT_SCALE_FACTOR=1 exec /usr/bin/omasnap "$@"

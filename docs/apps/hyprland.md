@@ -59,6 +59,12 @@ toggles. Package updates improve the defaults without rewriting these files.
 
 Everything else is Omarchy's stock bindings (`Super + Ctrl + ;` lists all of them).
 
+**Screenshots (`PrtSc`, omasnap).** `~/.config/uwsm/env` sets a global `QT_SCALE_FACTOR=2.0`. On Wayland, Qt already
+gets scale 2 from Hyprland, so the factor doubles it: omasnap saw a 720×450 screen and cropped the wrong area. The
+wrapper `scripts/bin/omasnap` (→ `~/.local/bin`, first in `PATH`) starts it with `QT_SCALE_FACTOR=1`, so every way of
+taking a screenshot is covered and nothing else changes. OCR (`Super + Ctrl + PrtSc`) reads Russian and English
+(`OMARCHY_OCR_LANGS` in `env.lua`) once `tesseract-data-rus` is installed.
+
 ## Look
 
 Animations, transparency, blur and the window-corner rule are set from the Customizer and survive a reload: it writes
