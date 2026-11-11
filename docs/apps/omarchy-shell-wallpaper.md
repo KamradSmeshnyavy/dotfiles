@@ -21,7 +21,12 @@ in the repo).
 
 Effects (my own implementations of ideas from swww and gl-transitions): `slant` (as in stock), `fade`, `wipe`, `wave`,
 `grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`, `ripple`, `swirl`,
-`crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `contagion`, `outline`, `random`, `none`.
+`crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `contagion`, `outline`, `outline-cut`, `random`, `none`.
+
+`outline` draws only the picture's own lines. `outline-cut` cuts out the character in the background.
+Live wallpapers (owe, video and GIF) skip the transition: owe hides the shell through `setSuspended`. The
+`wallpaper-fx-keep` unit (linked by Dotbot) re-enables the clone if owe ever pushes it out. Enable it by hand:
+`systemctl --user enable --now wallpaper-fx-keep.path`.
 
 `contagion` and `outline` are slower "scene" effects inspired by
 [pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (the code is my own). contagion: pixel colonies eat through the

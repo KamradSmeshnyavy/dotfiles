@@ -22,7 +22,12 @@
 Эффекты (свои реализации по идеям swww и gl-transitions): `slant` (как в стоке), `fade`, `wipe`,
 `wave`, `grow`, `outer`, `diamond`, `clock`, `blinds`, `doors`, `mosaic`, `dissolve`, `pixelize`,
 `ripple`, `swirl`, `crosszoom`, `slide`, `zoom`, `glitch`, `burn`, `waterdrop`, `hexagon`, `contagion`,
-`outline`, `random`, `none`.
+`outline`, `outline-cut`, `random`, `none`.
+
+`outline` рисует только линии самой картинки, `outline-cut` в фоне вырезает персонажа. Живые обои (owe,
+видео и GIF) идут без перехода: owe прячет оболочку через `setSuspended`. Юнит `wallpaper-fx-keep` (ссылку делает
+Dotbot) возвращает клон, если owe его когда-нибудь вытеснит. Включить вручную:
+`systemctl --user enable --now wallpaper-fx-keep.path`.
 
 `contagion` и `outline` — неторопливые эффекты-«сцены» по мотивам
 [pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (код свой). contagion: колонии пикселей прогрызают старые

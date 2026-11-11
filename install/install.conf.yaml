@@ -184,6 +184,12 @@
     ~/.config/systemd/user/omarchy-stylus-server.service:
       path: omarchy-themes/systemd/omarchy-stylus-server.service
       if: "[ `uname` = Linux ]"
+    ~/.config/systemd/user/wallpaper-fx-keep.path:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.background/systemd/wallpaper-fx-keep.path
+      if: "[ `uname` = Linux ]"
+    ~/.config/systemd/user/wallpaper-fx-keep.service:
+      path: apps/omarchy-shell/plugins/kamradsmeshnyavy.background/systemd/wallpaper-fx-keep.service
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/catppuccin-mocha-lavender:
       path: omarchy-themes/catppuccin-mocha-lavender
       if: "[ `uname` = Linux ]"
