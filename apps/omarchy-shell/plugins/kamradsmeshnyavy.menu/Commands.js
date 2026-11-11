@@ -50,9 +50,9 @@ function catalog(data, ru) {
     { name: "custom", icon: "󰸌", desc: t("Open the Customizer", "Открыть Customizer"), action: "omarchy-shell shell toggle kamradsmeshnyavy.customizer" },
     { name: "lock", icon: "󰌾", desc: t("Lock the screen", "Заблокировать экран"), action: "omarchy-system-lock" },
     { name: "suspend", icon: "󰒲", desc: t("Suspend the system", "Усыпить систему"), action: "systemctl suspend" },
-    { name: "logout", icon: "󰍃", desc: t("End Hyprland session", "Завершить сессию"), action: "omarchy-system-logout" },
-    { name: "reboot", icon: "󰜉", desc: t("Reboot the machine", "Перезагрузить компьютер"), action: "omarchy-system-reboot" },
-    { name: "poweroff", icon: "󰐥", desc: t("Power off the machine", "Выключить компьютер"), action: "omarchy-system-shutdown" },
+    { name: "logout", icon: "󰍃", desc: t("End Hyprland session", "Завершить сессию"), action: "omarchy-system logout" },
+    { name: "reboot", icon: "󰜉", desc: t("Reboot the machine", "Перезагрузить компьютер"), action: "omarchy-system reboot" },
+    { name: "poweroff", icon: "󰐥", desc: t("Power off the machine", "Выключить компьютер"), action: "omarchy-system shutdown" },
     { name: "power", icon: "󰐥", desc: t("Power menu", "Меню выключения"), action: "omarchy-shell widgets togglePower" }
   ]
   var needs = { skin: "customizer", shader: "customizer", custom: "customizer", dash: "widgets", settings: "widgets", power: "widgets" }
