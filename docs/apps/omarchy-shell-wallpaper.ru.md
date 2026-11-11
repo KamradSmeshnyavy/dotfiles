@@ -28,9 +28,12 @@
 [pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (код свой). contagion: колонии пикселей прогрызают старые
 обои, фронт вспыхивает самым ярким цветом темы. Процедурный, всё в шейдере. outline: рисуется контур персонажа,
 персонаж заливается, потом из него вырастает мир. Персонажа вырезает BiRefNet (`scripts/wallpaper-fx-outline` в плагине,
-отдельный venv ~1 ГБ по желанию: `just wallpaper-fx-outline-install`, затем `just wallpaper-fx-outline-warm`). Карты
-кэшируются по содержимому файла в `~/.cache/wallpaper-fx/outline/`. Без модели или без явного персонажа outline играет
-как contagion. В Customizer в списке Wallpaper FX есть строка установки / вырезки.
+отдельный venv по желанию: `just wallpaper-fx-outline-install`, затем `just wallpaper-fx-outline-warm`). Пока обои не
+вырезаны или на них нет явного персонажа, линия идёт по краям самой картинки, поэтому линия есть всегда. Цвет линии
+зависит от яркости под ней. Карты кэшируются по содержимому файла в `~/.cache/wallpaper-fx/outline/`. Вырезка идёт
+через очередь с одним фоновым воркером (NPU → GPU → CPU, `nice 19`). Для NPU и GPU нужны `intel-npu-driver
+intel-compute-runtime level-zero-loader`. В Customizer в списке Wallpaper FX есть строка установки / очереди с
+устройством и длиной очереди.
 
 | Ключ | Умолч. | |
 |---|---|---|
@@ -44,7 +47,7 @@
 | `cell` | `6` | px, клетки contagion / outline |
 | `frontGlow` | `0.9` | сила вспышек contagion |
 | `lineWidth` | `1.5` | px, линия outline |
-| `outlineWait` | `8000` | мс ожидания свежей вырезки, потом contagion |
+| `outlineWait` | `3000` | мс ожидания карты, потом contagion |
 
 `omarchy-shell background replay` — проиграть текущий эффект (соседние обои темы → текущие). В
 Customizer это `p`.

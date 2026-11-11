@@ -81,12 +81,12 @@ shaders-wallpaper:
       -o {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag.qsb \
       {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/shaders/transition.frag
 
-# Переход outline: venv с BiRefNet для вырезки персонажей (~1 ГБ вместе с моделью)
+# Переход outline: venv с BiRefNet для вырезки персонажей (NPU/GPU Intel — intel-npu-driver, intel-compute-runtime)
 [linux]
 wallpaper-fx-outline-install:
     {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/scripts/wallpaper-fx-outline install
 
-# Переход outline: заранее вырезать персонажей (без аргументов — обои текущей темы)
+# Переход outline: поставить обои в очередь на вырезку — один фоновый воркер (без аргументов — текущей темы)
 [linux]
 wallpaper-fx-outline-warm *dirs:
     {{justfile_directory()}}/apps/omarchy-shell/plugins/kamradsmeshnyavy.background/scripts/wallpaper-fx-outline warm {{dirs}}

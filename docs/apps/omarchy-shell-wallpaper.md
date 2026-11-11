@@ -27,10 +27,12 @@ Effects (my own implementations of ideas from swww and gl-transitions): `slant` 
 [pocket-dots](https://github.com/diegoMalagrida/pocket-dots) (the code is my own). contagion: pixel colonies eat through the
 old wallpaper, and the front flashes in the theme's brightest colour. It is procedural, in the shader. outline:
 the character's outline is drawn, the character fills in, then the world grows out of it. The character is cut out by
-BiRefNet (`scripts/wallpaper-fx-outline` in the plugin, an optional venv of ~1 GB: `just wallpaper-fx-outline-install`,
-then `just wallpaper-fx-outline-warm`). Maps are cached by file content in `~/.cache/wallpaper-fx/outline/`. Without the
-model, or with no clear character, outline plays as contagion. In the Customizer, the Wallpaper FX list has an
-install/cut-out row.
+BiRefNet (`scripts/wallpaper-fx-outline` in the plugin, an optional venv: `just wallpaper-fx-outline-install`, then
+`just wallpaper-fx-outline-warm`). Until a wallpaper is cut out, or with no clear character, the line follows the
+picture's own edges, so a line is always drawn. Its colour follows the brightness underneath. Maps are cached by file
+content in `~/.cache/wallpaper-fx/outline/`. Cut-outs go through a queue with one background worker (NPU → GPU → CPU,
+`nice 19`). NPU and GPU need `intel-npu-driver intel-compute-runtime level-zero-loader`. In the Customizer, the
+Wallpaper FX list has an install/queue row with the device and queue length.
 
 | Key | Default | |
 |---|---|---|
@@ -44,7 +46,7 @@ install/cut-out row.
 | `cell` | `6` | px, contagion / outline cells |
 | `frontGlow` | `0.9` | contagion flash strength |
 | `lineWidth` | `1.5` | px, outline line |
-| `outlineWait` | `8000` | ms to wait for a fresh cut-out, then contagion |
+| `outlineWait` | `3000` | ms to wait for the map, then contagion |
 
 `omarchy-shell background replay` replays the current effect (the theme's neighbouring wallpaper → the current one).
 In the Customizer it is `p`.
