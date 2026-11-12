@@ -20,4 +20,11 @@ end
 -- Быстрый браузер-панель (WaveTerm style)
 o.window("^chrome-google.com__-Default$", { float = true })
 
-
+-- Шторка для стрима (scripts/bin/omarchy-curtain): пока есть файл состояния, окна не попадают в запись экрана.
+do
+	local f = io.open((os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")) .. "/omarchy/curtain", "r")
+	if f then
+		f:close()
+		hl.window_rule({ match = { class = ".*" }, no_screen_share = true })
+	end
+end

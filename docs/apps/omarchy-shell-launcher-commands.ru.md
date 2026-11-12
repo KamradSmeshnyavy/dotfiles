@@ -23,6 +23,10 @@
 | `>dnd` | — | «Не беспокоить» |
 | `>shader` | — | шейдер экрана (crt-toggle) |
 | `>custom` | — | Customizer |
+| `>ocr` | — | текст из области экрана (`omarchy-capture-text`) |
+| `>qr` | — | распознать QR-код в области экрана (`omarchy-capture-qr`, ещё Super+Alt+Print) |
+| `>curtain` | — | шторка для стрима: окна скрыты из трансляции (`omarchy-curtain`, Super+Ctrl+Alt+S) |
+| `>reading` | — | режим чтения |
 | `>lock` | — | `omarchy-system-lock` |
 | `>power` | — | меню выключения (виджеты) |
 

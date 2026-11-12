@@ -23,6 +23,10 @@ go into the same list as ordinary items, so they look native in every launcher s
 | `>dnd` | — | "Do not disturb" |
 | `>shader` | — | screen shader (crt-toggle) |
 | `>custom` | — | the Customizer |
+| `>ocr` | — | text from a screen region (`omarchy-capture-text`) |
+| `>qr` | — | decode a QR code from a screen region (`omarchy-capture-qr`, also Super+Alt+Print) |
+| `>curtain` | — | stream curtain: windows hidden from screen sharing (`omarchy-curtain`, Super+Ctrl+Alt+S) |
+| `>reading` | — | reading mode |
 | `>lock` | — | `omarchy-system-lock` |
 | `>power` | — | the power menu (widgets) |
 

@@ -122,6 +122,9 @@ o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/omarchy/plugins/kam
 o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/crt-toggle.sh next")
 
 -- Режим чтения: экран как печатная страница (шейдер reading, плоские окна без анимаций)
+-- QR из области экрана (omarchy-capture-qr; OCR — стоковый SUPER+CTRL+PRINT) и шторка для стрима
+o.bind("SUPER + ALT + PRINT", "Decode QR from screenshot", "omarchy-capture-qr")
+o.bind("SUPER + CTRL + ALT + S", "Stream curtain: hide windows from screen sharing", "omarchy-curtain")
 o.bind("SUPER + ALT + R", "Toggle reading mode", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/reading-mode.sh")
 
 -- System transparency presets: cycle forward / back (also in the customizer)

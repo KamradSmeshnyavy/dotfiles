@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Шторка для стрима (идея yami, своя реализация): содержимое всех окон не попадает в запись и трансляцию
+# экрана — правило Hyprland no_screen_share. Сам экран у тебя не меняется, зрители видят окна чёрными.
+#   omarchy-curtain [toggle|on|off|status]
+# Пока включена — файл ~/.local/state/omarchy/curtain; apps/hyprland/windows.lua по нему ставит правило и после
+# перезагрузки конфига. Выключение — hyprctl reload (правило уходит вместе с файлом состояния).
+set -euo pipefail
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/curtain"
+mkdir -p "$(dirname "$STATE")"
+
+notify() { omarchy notification send -t 2500 -g "$1" --app-name "Curtain" "$2" "${3:-}" >/dev/null 2>&1 || true; }
+
+on() {
+  : >"$STATE"
+  hyprctl eval 'hl.window_rule({ match = { class = ".*" }, no_screen_share = true })' >/dev/null
+  notify 󰈈 "Curtain on — windows are hidden from screen sharing" "omarchy-curtain off — show them again"
+}
+
+off() {
+  [[ -f $STATE ]] || return 0
+  mv -f "$STATE" "$STATE.off"
+  hyprctl reload >/dev/null
+  notify 󰈉 "Curtain off — windows are shared again"
+}
+
+case "${1:-toggle}" in
+toggle) if [[ -f $STATE ]]; then off; else on; fi ;;
+on) on ;;
+off) off ;;
+status) [[ -f $STATE ]] && echo on || echo off ;;
+*) echo "usage: ${0##*/} [toggle|on|off|status]" >&2; exit 2 ;;
+esac

@@ -246,6 +246,9 @@
     ~/.local/bin/omasnap:
       path: scripts/bin/omasnap
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-curtain:
+      path: scripts/bin/omarchy-curtain
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/bookmarks-sync:
       path: scripts/bin/bookmarks-sync
       if: "[ `uname` = Linux ]"
