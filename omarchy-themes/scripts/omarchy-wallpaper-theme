@@ -17,6 +17,7 @@ THEMES = HOME / ".config/omarchy/themes"
 TARGET = THEMES / "dynamic"
 MARKER = ".omarchy-wallpaper-theme"
 CURRENT_BG = HOME / ".local/state/omarchy/current/background"
+VIDEO = {".mp4", ".webm", ".mkv", ".mov", ".m4v", ".gif"}
 
 SCHEMES = ["tonal-spot", "content", "expressive", "fidelity", "fruit-salad", "monochrome",
            "neutral", "rainbow", "vibrant", "smart"]
@@ -141,7 +142,22 @@ def main():
     if not image.is_file():
         sys.exit(f"omarchy-wallpaper-theme: нет файла {image}")
 
-    p = palette(matugen(image, args.scheme, args.mode, args.prefer, args.contrast), args.mode)
+    # Живые обои (видео / GIF, их играет owe): цвета — из представительного кадра (ffmpeg thumbnail),
+    # а в тему копируется сам файл, так что фон темы остаётся живым.
+    source = image
+    with tempfile.TemporaryDirectory() as tmp:
+        if image.suffix.lower() in VIDEO:
+            frame = Path(tmp) / "frame.png"
+            for seek in (["-ss", "2"], []):
+                r = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", *seek, "-i", str(image),
+                                    "-vf", "thumbnail=60,scale=1280:-2", "-frames:v", "1", str(frame)],
+                                   capture_output=True, text=True)
+                if r.returncode == 0 and frame.is_file():
+                    break
+            if not frame.is_file():
+                sys.exit(f"omarchy-wallpaper-theme: не удалось взять кадр из {image.name} (нужен ffmpeg)")
+            source = frame
+        p = palette(matugen(source, args.scheme, args.mode, args.prefer, args.contrast), args.mode)
     write_theme(image, p, args.mode, args.scheme)
     print(f"dynamic: {image.name}, scheme-{args.scheme}, {args.mode}, accent {p['accent']}")
     if not args.no_apply:
