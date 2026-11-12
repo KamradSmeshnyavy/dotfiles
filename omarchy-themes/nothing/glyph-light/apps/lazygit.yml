@@ -1,0 +1,17 @@
+# Glyph Light (glyph-rice) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#d9d9d9"]
+    searchingActiveBorderColor: ["#5a6a12", bold]
+    optionsTextColor: ["#2f4f7a"]
+    selectedLineBgColor: ["#ffffff"]
+    inactiveViewSelectedLineBgColor: ["#f1f1f1"]
+    cherryPickedCommitFgColor: ["#6a4a7a"]
+    cherryPickedCommitBgColor: ["#ffffff"]
+    markedBaseCommitFgColor: ["#2f4f7a"]
+    markedBaseCommitBgColor: ["#ffffff"]
+    unstagedChangesColor: ["#b3121a"]
+    defaultFgColor: ["#0b0b0b"]
+  authorColors:
+    "*": "#2a6262"

@@ -1,0 +1,12 @@
+# Glyph Light (glyph-rice) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d71921"
+magenta = "#6a4a7a"
+red = "#b3121a"
+yellow = "#5a6a12"
+green = "#3f6b3e"
+cyan = "#2a6262"
+blue = "#2f4f7a"
+foreground = "#0b0b0b"
+background = "#e9e9e9"
+dark_background = "#f1f1f1"
+lighter_background = "#ffffff"

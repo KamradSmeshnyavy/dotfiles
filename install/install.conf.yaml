@@ -289,6 +289,12 @@
     ~/.config/omarchy/themes/nothing-ashlight:
       path: omarchy-themes/nothing/ashlight
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-glyph-dark:
+      path: omarchy-themes/nothing/glyph-dark
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-glyph-light:
+      path: omarchy-themes/nothing/glyph-light
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

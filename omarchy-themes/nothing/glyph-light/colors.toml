@@ -1,0 +1,39 @@
+# Glyph Light (glyph-rice) — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#f3cfd1"
+selection_foreground = "#0b0b0b"
+selection_background = "#f3cfd1"
+muted = "#6e6e6e"
+
+background = "#e9e9e9"
+dark_background = "#f1f1f1"
+darker_background = "#f1f1f1"
+lighter_background = "#ffffff"
+
+foreground = "#0b0b0b"
+dark_foreground = "#6e6e6e"
+light_foreground = "#4a4a4a"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#d9d9d9"
+
+red = "#b3121a"
+yellow = "#5a6a12"
+orange = "#7a5a12"
+green = "#3f6b3e"
+cyan = "#2a6262"
+blue = "#2f4f7a"
+magenta = "#6a4a7a"
+brown = "#ac9a73"
+
+bright_red = "#930f15"
+bright_yellow = "#4a570f"
+bright_green = "#345833"
+bright_cyan = "#225050"
+bright_blue = "#274164"
+bright_magenta = "#573d64"

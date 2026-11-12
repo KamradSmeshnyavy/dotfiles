@@ -858,6 +858,9 @@ WALLPAPERS = {
     "ember": [("01-night.png", "accent"), ("tokyo.png", "number"), ("blackhole.png", "keyword"), ("02-arch.png", "accent")],
     "steel": [("galaxy.png", "string"), ("blackhole.png", "accent"), ("antenna.png", "function"), ("02-arch.png", "accent")],
     "ashlight": [("01-night.png", "fg"), ("blackhole.png", "accent"), ("space.png", "dim"), ("02-arch.png", "accent")],
+    "glyph-dark": [("01-night.png", "fg"), ("02-arch.png", "accent"), ("galaxy.png", "fg"), ("antenna.png", "dim"),
+                   ("blackhole.png", "accent")],
+    "glyph-light": [("01-night.png", "fg"), ("02-arch.png", "accent"), ("galaxy.png", "dim"), ("antenna.png", "fg")],
 }
 
 
@@ -924,6 +927,11 @@ def build(variant):
         write(os.path.join(out, rel), text)
     unlock_png(os.path.join(out, "unlock.png"), p["fg"])
     wallpapers(variant, p, out)
+    # light.mode — метка светлой темы для Omarchy (GTK, браузеры и т. п. переходят на светлое). Только по флагу,
+    # чтобы не менять поведение уже настроенных вариантов.
+    if p.get("light_mode_file"):
+        with open(os.path.join(out, "light.mode"), "w") as f:
+            f.write("")
     print(f"{name}: {len(files)} files")
 
 

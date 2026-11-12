@@ -1,0 +1,17 @@
+# Glyph Dark (glyph-rice) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#2a2a2a"]
+    searchingActiveBorderColor: ["#d9c38a", bold]
+    optionsTextColor: ["#8ea3c2"]
+    selectedLineBgColor: ["#1a1a1a"]
+    inactiveViewSelectedLineBgColor: ["#0e0e0e"]
+    cherryPickedCommitFgColor: ["#b79bc2"]
+    cherryPickedCommitBgColor: ["#1a1a1a"]
+    markedBaseCommitFgColor: ["#8ea3c2"]
+    markedBaseCommitBgColor: ["#1a1a1a"]
+    unstagedChangesColor: ["#f0434b"]
+    defaultFgColor: ["#f2f2f2"]
+  authorColors:
+    "*": "#8fb8b8"

@@ -1,0 +1,5 @@
+# Glyph Dark (glyph-rice) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#000000,bg+:#1a1a1a,fg:#8c8c8c,fg+:#f2f2f2
+--color=hl:#d71921,hl+:#d71921,info:#6e6e6e,prompt:#d71921
+--color=pointer:#d71921,marker:#9bb59a,spinner:#8ea3c2,header:#d9c38a
+--color=border:#2a2a2a,label:#f2f2f2,query:#f2f2f2,selected-bg:#2e0c0e

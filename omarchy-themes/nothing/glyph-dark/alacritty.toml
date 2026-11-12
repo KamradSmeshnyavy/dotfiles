@@ -1,0 +1,44 @@
+# Glyph Dark (glyph-rice) — alacritty
+[colors.primary]
+background = "#000000"
+foreground = "#f2f2f2"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#000000"
+cursor = "#8ea3c2"
+
+[colors.search.matches]
+foreground = "#000000"
+background = "#d9c38a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#f2f2f2"
+background = "#2e0c0e"
+
+[colors.normal]
+black = "#2a2a2a"
+red = "#f0434b"
+green = "#9bb59a"
+yellow = "#d9c38a"
+blue = "#8ea3c2"
+magenta = "#b79bc2"
+cyan = "#8fb8b8"
+white = "#8c8c8c"
+
+[colors.bright]
+black = "#6e6e6e"
+red = "#f36c73"
+green = "#b1c5b0"
+yellow = "#e1d0a4"
+blue = "#a7b7cf"
+magenta = "#c7b1cf"
+cyan = "#a8c8c8"
+white = "#ffffff"
