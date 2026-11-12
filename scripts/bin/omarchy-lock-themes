@@ -140,7 +140,9 @@ sddm)
 sddm-test)
   [[ -n ${2:-} ]] || die "какую тему?"
   IFS=$'\t' read -r src _ < <(sddm_source "$2")
-  exec sddm-greeter-qt6 --test-mode --theme "$src" ;;
+  echo "Тестовый режим: только посмотреть. Вход здесь не работает (нет демона SDDM — «QLocalSocket: device not open»"
+  echo "после Enter — это он). Закрыть — Escape или закрыть окно; проверить вход — поставить тему и выйти из сеанса."
+  exec sddm-greeter-qt6 --test-mode --theme "$src" 2> >(grep -v -e QLocalSocket -e "event dispatcher" -e "^Reading from" >&2) ;;
 list)
   if [[ ${2:-} == --remote ]]; then remote_themes; else installed; fi ;;
 fetch) shift; fetch "$@" ;;
