@@ -121,6 +121,9 @@ o.rebind("SUPER + SHIFT + T", "Omarchy Customizer", "omarchy-shell shell toggle 
 o.bind("SUPER + ALT + C", "Toggle screen shader", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/crt-toggle.sh")
 o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/crt-toggle.sh next")
 
+-- Режим чтения: экран как печатная страница (шейдер reading, плоские окна без анимаций)
+o.bind("SUPER + ALT + R", "Toggle reading mode", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/reading-mode.sh")
+
 -- System transparency presets: cycle forward / back (also in the customizer)
 o.bind("SUPER + ALT + O", "Next transparency preset", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/opacity.sh next")
 o.bind("SUPER + ALT + SHIFT + O", "Previous transparency preset", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/opacity.sh prev")
