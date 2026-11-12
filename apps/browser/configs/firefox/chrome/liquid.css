@@ -1,0 +1,30 @@
+/* Вид «Жидкое стекло» — Firefox в стиле Customizer «Жидкое стекло» (Пресеты → Стиль, по мотивам Vitreus).
+   Прозрачнее «Стекла», крупные скругления, вкладки-капли со светлым ободком и бликом сверху.
+   Цвета — только --om-* темы (colors.css), выбор вида — omarchy-firefox-chrome по ~/.config/omarchy/style.json. */
+@import "base.css";
+
+*|*:root {
+  --tab-border-radius: 16px !important;
+  --toolbarbutton-border-radius: 14px !important;
+  --toolbar-field-border-radius: 18px !important;
+  --arrowpanel-border-radius: 18px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --panel-border-radius: 18px !important;
+  --tab-min-height: 34px !important;
+  --urlbar-container-height: 40px !important;
+}
+
+#navigator-toolbox { background: color-mix(in srgb, var(--om-bg) 58%, transparent) !important; }
+.tabbrowser-tab .tab-background { margin-block: 4px !important; }
+.tabbrowser-tab[selected] .tab-background, .tabbrowser-tab[visuallyselected] .tab-background {
+  background: linear-gradient(to bottom, rgba(255,255,255,.12), transparent 55%),
+              color-mix(in srgb, var(--om-surface-hi) 55%, transparent) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 6px 18px rgba(0,0,0,.28) !important; }
+#urlbar-background, #urlbar .urlbar-background {
+  background: linear-gradient(to bottom, rgba(255,255,255,.08), transparent 60%),
+              color-mix(in srgb, var(--om-surface) 52%, transparent) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28) !important; }
+panel, menupopup { --panel-background: color-mix(in srgb, var(--om-bg) 70%, transparent) !important;
+  --panel-border-color: rgba(255,255,255,.16) !important; }

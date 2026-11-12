@@ -16,6 +16,7 @@ parts a style applies (`~/.config/omarchy/customizer/style-apply.json`); "Restor
 |---|---|
 | **Flat** | clean, solid panels, no effects |
 | **Glass** | translucent panels with blur |
+| **Liquid Glass** | after [Vitreus](https://github.com/natepayn3/Vitreus): very clear panels under strong vivid blur, a light rim and a soft top highlight, the `liquid` bar skin, the dashboard flows out of the bar like a drop and springs into place |
 | **Fluent** | Windows-11-like acrylic, soft corners |
 | **Paper** | sheets of paper: torn edge, grain, a strip of tape in the accent colour, handwritten Caveat, a static paper-grain screen shader; light themes give white paper, dark ones kraft / slate |
 | **Neon** | accent glow, the `neon` bar skin, a scanline shader |

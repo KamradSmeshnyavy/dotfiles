@@ -6,7 +6,7 @@
   userChrome.css, userContent.css, userColors.css → apps/browser/configs/firefox/chrome/ (симлинки);
   omarchy/colors.css  — переменные --om-* из colors.toml темы и шрифты профиля;
   omarchy/style.css   — @import вида: по стилю Customizer (~/.config/omarchy/style.json: id → <id>.css —
-                        flat, glass, fluent, paper, neumorph, brutal, retro, neon; dotmatrix → dotmatrix.css), без стиля —
+                        flat, glass, liquid, fluent, paper, neumorph, brutal, retro, neon; dotmatrix → dotmatrix.css), без стиля —
                         по профилю шрифтов: dotmatrix.css у nothing / dot / pixel, иначе stock.css (прежний вид);
   omarchy/content.css — страницы about: (при dotmatrix заголовки набраны DotMatrix Dot);
   omarchy/*.css → файлы видов в dotfiles (симлинки), omarchy/paper(-dark).png — текстура стиля Paper.
