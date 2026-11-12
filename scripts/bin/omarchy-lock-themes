@@ -9,6 +9,10 @@
 #   omarchy-lock-themes set <тема>        поставить тему на экран блокировки (lock-design.json)
 #   omarchy-lock-themes preview <тема>    показать тему на экране без блокировки (Esc — закрыть)
 #   omarchy-lock-themes update            обновить скачанное
+#   omarchy-lock-themes sddm <тема>       та же тема на экране входа SDDM (sudo; файлы — оригинал из git, без
+#                                         правки импортов: у SDDM свои SddmComponents, а домашний каталог ему не виден)
+#   omarchy-lock-themes sddm-test <тема>  показать её в настоящем greeter'е SDDM в окне, без sudo и выхода
+#   omarchy-lock-themes sddm reset        вернуть тему входа Omarchy
 #
 # После скачивания импорты Qt5 в темах (QtGraphicalEffects, SddmComponents, QtMultimedia 5) переписываются на
 # шимы qylock из quickshell-lockscreen/imports: внутри omarchy-shell путь импорта не задать (у qylock это
@@ -85,7 +89,44 @@ set_theme() {
   echo "Экран блокировки: $t"
 }
 
+SDDM_DIR=/usr/share/sddm/themes
+SDDM_CONF=/etc/sddm.conf.d/20-omarchy-lock-theme.conf
+
+# Оригинальные файлы темы (без переписанных импортов) — из git во временный каталог; печатает его путь.
+export_original() {
+  local t=$1 tmp
+  [[ -d $DIR/themes/$t ]] || die "тема $t не скачана: omarchy-lock-themes fetch $t"
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/omarchy-sddm-theme.XXXXXX")
+  git -C "$DIR" archive HEAD "themes/$t" | tar -x -C "$tmp"
+  printf '%s\n' "$tmp/themes/$t"
+}
+
+sddm_install() {
+  local t=${1:-}
+  [[ -n $t ]] || die "какую тему? omarchy-lock-themes list"
+  [[ $t =~ ^[A-Za-z0-9_.-]+$ ]] || die "странное имя темы: $t"
+  local src; src=$(export_original "$t")
+  echo "Ставлю тему входа qylock-$t (нужен sudo)…"
+  sudo install -d -m 755 "$SDDM_DIR/qylock-$t"
+  sudo cp -r --no-preserve=ownership "$src/." "$SDDM_DIR/qylock-$t/"
+  sudo chmod -R a+rX "$SDDM_DIR/qylock-$t"
+  printf '[Theme]\nCurrent=qylock-%s\n' "$t" | sudo tee "$SDDM_CONF" >/dev/null
+  echo "Экран входа: qylock-$t (вернуть: omarchy-lock-themes sddm reset)."
+  echo "Проверить без выхода: omarchy-lock-themes sddm-test $t"
+}
+
 case "${1:-list}" in
+sddm)
+  if [[ ${2:-} == reset ]]; then
+    sudo rm -f /etc/sddm.conf.d/20-omarchy-lock-theme.conf
+    echo "Экран входа снова omarchy (скопированные темы остались в $SDDM_DIR/qylock-*)."
+  else
+    sddm_install "${2:-}"
+  fi ;;
+sddm-test)
+  [[ -n ${2:-} ]] || die "какую тему?"
+  src=$(export_original "$2")
+  exec sddm-greeter-qt6 --test-mode --theme "$src" ;;
 list)
   if [[ ${2:-} == --remote ]]; then remote_themes; else installed; fi ;;
 fetch) shift; fetch "$@" ;;
