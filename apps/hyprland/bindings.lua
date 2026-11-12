@@ -148,6 +148,8 @@ o.bind("SUPER + ESCAPE", "Power menu", "omarchy-shell widgets togglePower")
 o.bind("SUPER + ALT + A", "Audio controls", "omarchy-shell shell toggle omarchy.audio")
 -- Обзор рабочих столов с живыми превью окон (kamradsmeshnyavy.widgets).
 o.rebind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOverview")
+-- Режим правки виджетов: перетаскивание, «поверх окон», вернуть на место (kamradsmeshnyavy.widgets)
+o.bind("SUPER + CTRL + W", "Edit desktop widgets", "omarchy-shell widgets toggleEdit")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
 o.bind("SUPER + ALT + D", "Dashboard", "omarchy-shell widgets toggleDashboard")
 -- Панель настроек DOT-MATRIX из правого края / рамки (kamradsmeshnyavy.widgets): Wi-Fi, BT, звук, яркость.
