@@ -33,6 +33,7 @@ Super+Space (меню), Super+Alt+Space (приложения).
 Esc.
 
 **Команды:** `>` включает режим команд — `>theme`, `>wall`, `>skin`, `>dash`, `>dnd`, `>shader`, `>custom`, `>lock`,
-`>power` ([справочник](https://github.com/KamradSmeshnyavy/dotfiles/blob/main/docs/apps/omarchy-shell-launcher-commands.ru.md)).
+`>power`; быстрые режимы: `=` калькулятор и единицы, `:` эмодзи / каомодзи / символы, `@` окна, `!` веб-поиск с
+bang, `;` история буфера обмена ([справочник](https://github.com/KamradSmeshnyavy/dotfiles/blob/main/docs/apps/omarchy-shell-launcher-commands.ru.md)).
 
 Вернуть стоковое меню: `omarchy plugin enable omarchy.menu`.

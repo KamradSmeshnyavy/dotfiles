@@ -32,6 +32,7 @@ usual: Super+Space (menu), Super+Alt+Space (apps).
 Keys: ↑↓ / Ctrl+J/K along the list or the ring, ←→ / PgUp/PgDn pages, Alt+1…9 quick-launch, Enter / Backspace / Esc.
 
 **Commands:** type `>` for command mode — `>theme`, `>wall`, `>skin`, `>dash`, `>dnd`, `>shader`, `>custom`, `>lock`,
-`>power` ([reference](https://github.com/KamradSmeshnyavy/dotfiles/blob/main/docs/apps/omarchy-shell-launcher-commands.md)).
+`>power`; quick modes: `=` calculator and units, `:` emoji / kaomoji / symbols, `@` windows, `!` web search with
+bangs, `;` clipboard history ([reference](https://github.com/KamradSmeshnyavy/dotfiles/blob/main/docs/apps/omarchy-shell-launcher-commands.md)).
 
 Back to the stock menu: `omarchy plugin enable omarchy.menu`.

@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
@@ -7,6 +8,7 @@ import qs.Commons as Commons
 import qs.Ui
 import "MenuModel.js" as MenuModel
 import "Commands.js" as Commands
+import "Modes.js" as Modes
 
 Item {
   id: root
@@ -73,6 +75,79 @@ Item {
   // Команды лаунчера (">" в поиске, Commands.js): темы и скины бара читаются один раз за открытие.
   readonly property bool commandMode: !root.dmenuActive && root.filterText.trim().charAt(0) === ">"
   property var commandData: ({ themes: [], skins: [], wallpaperTheme: false, plugins: {}, home: Quickshell.env("HOME") })
+
+  // Быстрые режимы (Modes.js): = калькулятор, : эмодзи/символы, @ окна, ! веб-поиск, ; буфер обмена.
+  readonly property string quickMode: !root.dmenuActive && !root.commandMode ? Modes.modeOf(root.filterText.trim()) : ""
+  property var charms: null
+  property var calcState: ({ expr: "", result: "", busy: false })
+  property var clips: []
+  property bool clipsLoaded: false
+  onQuickModeChanged: {
+    if (quickMode === ":" && charms === null) charmsFile.path = Qt.resolvedUrl("charms.json")
+    if (quickMode === ";" && !clipsLoaded && !clipProc.running) clipProc.running = true
+    if (quickMode === "@") Hyprland.refreshToplevels()
+  }
+  FileView {
+    id: charmsFile
+    printErrors: false
+    onLoaded: {
+      try { root.charms = JSON.parse(text()) } catch (e) { root.charms = { emoji: [], kaomoji: [], symbols: [] } }
+      if (root.quickMode === ":") root.rebuildDisplay()
+    }
+  }
+  Process {
+    id: clipProc
+    command: ["bash", "-c", "cliphist list 2>/dev/null | head -300"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var out = []
+        var lines = text.split("\n")
+        for (var i = 0; i < lines.length; i++) {
+          var tab = lines[i].indexOf("\t")
+          if (tab < 0) continue
+          out.push({ line: lines[i], text: lines[i].slice(tab + 1) })
+        }
+        root.clips = out
+        root.clipsLoaded = true
+        if (root.quickMode === ";") root.rebuildDisplay()
+      }
+    }
+  }
+  // Калькулятор: qalc с задержкой 150 мс после ввода; ответ, пришедший к старому выражению, отбрасывается.
+  Timer {
+    id: calcDebounce
+    interval: 150
+    onTriggered: {
+      var expr = root.filterText.trim().slice(1).trim()
+      if (expr === "") return
+      calcProc.expr = expr
+      calcProc.running = false
+      calcProc.command = ["qalc", "-t", "--", expr]
+      calcProc.running = true
+    }
+  }
+  Process {
+    id: calcProc
+    property string expr: ""
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (calcProc.expr !== root.filterText.trim().slice(1).trim()) return
+        var res = text.trim().split("\n").pop() || ""
+        root.calcState = { expr: calcProc.expr, result: /error|warning/i.test(res) ? "" : res, busy: false }
+        root.rebuildDisplay()
+      }
+    }
+  }
+  function quickWindows() {
+    var list = Hyprland.toplevels.values, out = []
+    for (var i = 0; i < list.length; i++) {
+      var ipc = list[i].lastIpcObject || {}
+      if (!ipc.address) continue
+      out.push({ address: String(ipc.address), cls: String(ipc["class"] || ""), title: String(ipc.title || ""),
+                 ws: ipc.workspace ? String(ipc.workspace.name || ipc.workspace.id) : "" })
+    }
+    return out
+  }
   property bool commandDataLoaded: false
   property string uiLang: ""
   FileView {
@@ -685,7 +760,12 @@ Item {
     var query = root.filterText.trim()
     root.searchDivider = false
 
-    if (root.commandMode) {
+    if (root.quickMode) {
+      rows = Modes.rows(root.quickMode, root.filterText.trim(), {
+        charms: root.charms, windows: root.quickMode === "@" ? root.quickWindows() : [],
+        calc: root.calcState, clips: root.clips, clipsLoaded: root.clipsLoaded
+      }, root.uiLang === "ru")
+    } else if (root.commandMode) {
       if (!root.commandDataLoaded && !commandProbe.running) commandProbe.running = true
       // filterText без trim: пробел после имени команды переключает на её аргументы.
       rows = Commands.rows(root.filterText.replace(/^\s+/, ""), root.commandData, root.uiLang === "ru")
@@ -797,7 +877,12 @@ Item {
     root.selectedIndex = 0
     root.cursorActive = root.mode !== "input"
     root.disarmPointer()
-    if (!root.dmenuActive && root.filterText.trim() && !root.commandMode) root.loadProvidersForSearch()
+    if (!root.dmenuActive && root.filterText.trim() && !root.commandMode && !root.quickMode) root.loadProvidersForSearch()
+    if (root.quickMode === "=") {
+      var expr = root.filterText.trim().slice(1).trim()
+      if (expr !== root.calcState.expr) root.calcState = { expr: expr, result: "", busy: expr !== "" }
+      calcDebounce.restart()
+    }
     root.rebuildDisplay()
   }
 
@@ -979,6 +1064,7 @@ Item {
     navStack = []
     filterText = ""
     commandDataLoaded = false
+    clipsLoaded = false
     selectedIndex = 0
     cursorActive = true
     root.disarmPointer()

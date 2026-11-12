@@ -31,3 +31,20 @@ go into the same list as ordinary items, so they look native in every launcher s
 `just publish-launcher`). Theme and skin lists are read once per menu opening, at the first `>`. Captions follow the
 Customizer language. A new command is an entry in `catalog()` in `Commands.js`: `name`, `icon`, `desc`, and either
 `action` or `args()`.
+
+## Quick modes (`= : @ ! ;`)
+
+The first character of the search switches the launcher into a quick mode (`Modes.js`; ideas from Vitreus and
+glyph-rice, written from scratch). Rows are ordinary launcher rows, so they work in every skin.
+
+| Input | Mode | Enter |
+|---|---|---|
+| `=2^10`, `=5 km to mi`, `=100 usd to eur` | calculator, units and currencies (`qalc`) | copy the result |
+| `:fire`, `:k cat`, `:s arrow` | emoji, kaomoji (`:k`), symbols (`:s` — arrows, math, currency, box drawing, Greek…) | copy |
+| `@`, `@fire` | open windows (title / class) | focus the window |
+| `!g …`, `!yt …`, `!gh …`, `!aw …` | web search; bangs: `g` `d` `yt` `gh` `w` `aw` `aur` `pkg` `r` `so` `mdn` `tr` `m` `ya`; anything else — DuckDuckGo | open in the browser |
+| `;`, `;http` | clipboard history (`cliphist`) | put it back into the clipboard |
+
+Emoji and symbols come from the Unicode database bundled with Python (`scripts/gen-charms.py` → `charms.json`): single
+code points with English names, no ZWJ sequences, flags or skin tones. Kaomoji are our own list with English and
+Russian tags. Needs `qalc`, `cliphist`, `wl-copy`.
