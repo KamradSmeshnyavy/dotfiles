@@ -1,5 +1,5 @@
 # Glyph Light (glyph-rice) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
 --color=bg:#e9e9e9,bg+:#ffffff,fg:#4a4a4a,fg+:#0b0b0b
 --color=hl:#d71921,hl+:#d71921,info:#6e6e6e,prompt:#d71921
---color=pointer:#d71921,marker:#3f6b3e,spinner:#2f4f7a,header:#5a6a12
+--color=pointer:#d71921,marker:#4a4a4a,spinner:#0b0b0b,header:#1c1c1c
 --color=border:#d9d9d9,label:#0b0b0b,query:#0b0b0b,selected-bg:#f3cfd1

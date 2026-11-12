@@ -45,6 +45,9 @@ def bare(h):
 
 def ansi(p):
     """16 цветов терминала. Тёмные: color0 чуть светлее фона, 7/15 — светлые; светлая — наоборот."""
+    if p.get("ansi16"):
+        # Свои 16 цветов терминала как есть (glyph-rice: пастель только терминалу, интерфейс — серый и красный).
+        return list(p["ansi16"])
     dark = p["mode"] == "dark"
     yellow = p.get("ansi_yellow", p["type"])
     base = {
