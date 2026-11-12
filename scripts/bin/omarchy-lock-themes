@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# SDDM-темы qylock (github.com/Darkkal44/qylock, GPL-3.0) как экраны блокировки Omarchy (kamradsmeshnyavy.lock,
+# дизайн "sddm:<тема>" → designs/SddmHost.qml). Темы и их ассеты (арт и видео из игр) в dotfiles не лежат:
+# скрипт качает их к тебе в ~/.local/share/omarchy-lock-themes/qylock (sparse-клон — только нужные темы).
+#
+#   omarchy-lock-themes list [--remote]   скачанные темы (или все, что есть в qylock)
+#   omarchy-lock-themes fetch <тема>…     скачать темы (шимы qylock качаются вместе с ними)
+#   omarchy-lock-themes fetch --all       все темы (~520 МБ, в основном видеофоны)
+#   omarchy-lock-themes set <тема>        поставить тему на экран блокировки (lock-design.json)
+#   omarchy-lock-themes preview <тема>    показать тему на экране без блокировки (Esc — закрыть)
+#   omarchy-lock-themes update            обновить скачанное
+#
+# После скачивания импорты Qt5 в темах (QtGraphicalEffects, SddmComponents, QtMultimedia 5) переписываются на
+# шимы qylock из quickshell-lockscreen/imports: внутри omarchy-shell путь импорта не задать (у qylock это
+# QML2_IMPORT_PATH в lock.sh). Пароль проверяет стоковый PAM экрана блокировки, тема его не видит.
+set -euo pipefail
+
+REPO=https://github.com/Darkkal44/qylock
+ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-lock-themes"
+DIR="$ROOT/qylock"
+CFG="$HOME/.config/omarchy/lock-design.json"
+
+die() { echo "omarchy-lock-themes: $*" >&2; exit 1; }
+
+ensure_repo() {
+  command -v git >/dev/null || die "нужен git"
+  if [[ ! -d $DIR/.git ]]; then
+    mkdir -p "$ROOT"
+    git clone --quiet --depth 1 --filter=blob:none --sparse "$REPO" "$DIR"
+    git -C "$DIR" sparse-checkout set --no-cone /quickshell-lockscreen/imports/ /LICENSE /README.md
+  fi
+}
+
+remote_themes() {
+  ensure_repo
+  git -C "$DIR" ls-tree --name-only HEAD themes/ | sed 's|^themes/||'
+}
+
+installed() {
+  [[ -d $DIR/themes ]] || return 0
+  find "$DIR/themes" -mindepth 2 -maxdepth 2 -name Main.qml -printf '%h\n' | xargs -rn1 basename | sort
+}
+
+# Импорты Qt5 → каталоги шимов qylock (абсолютные пути: тема грузится Loader'ом из оболочки).
+patch_imports() {
+  local imports="$DIR/quickshell-lockscreen/imports" f
+  [[ -d $imports ]] || return 0
+  while IFS= read -r -d '' f; do
+    sed -i -E \
+      -e "s#^([[:space:]]*)import[[:space:]]+QtGraphicalEffects([[:space:]]+[0-9.]+)?[[:space:]]*;?[[:space:]]*\$#\\1import \"file://$imports/QtGraphicalEffects\"#" \
+      -e "s#^([[:space:]]*)import[[:space:]]+SddmComponents([[:space:]]+[0-9.]+)?[[:space:]]*;?[[:space:]]*\$#\\1import \"file://$imports/SddmComponents\"#" \
+      -e "s#^([[:space:]]*)import[[:space:]]+QtMultimedia[[:space:]]+5[0-9.]*[[:space:]]*;?[[:space:]]*\$#\\1import \"file://$imports/QtMultimedia\"#" \
+      "$f"
+  done < <(find "$DIR/themes" -name '*.qml' -print0)
+}
+
+fetch() {
+  ensure_repo
+  local want=() t
+  if [[ ${1:-} == --all ]]; then
+    mapfile -t want < <(remote_themes)
+  else
+    want=("$@")
+  fi
+  ((${#want[@]})) || die "какие темы? omarchy-lock-themes list --remote"
+  local avail; avail=$(remote_themes)
+  for t in "${want[@]}"; do grep -qx -- "$t" <<<"$avail" || die "нет такой темы: $t"; done
+  local paths=(/quickshell-lockscreen/imports/ /LICENSE /README.md) cur
+  while IFS= read -r cur; do paths+=("/themes/$cur/"); done < <(installed)
+  for t in "${want[@]}"; do paths+=("/themes/$t/"); done
+  echo "Скачиваю: ${want[*]}"
+  git -C "$DIR" sparse-checkout set --no-cone "${paths[@]}"
+  patch_imports
+  echo "Готово. Поставить: omarchy-lock-themes set ${want[0]}"
+}
+
+set_theme() {
+  local t=${1:-}
+  [[ -n $t ]] || die "какую тему? omarchy-lock-themes list"
+  [[ -f $DIR/themes/$t/Main.qml ]] || die "тема $t не скачана: omarchy-lock-themes fetch $t"
+  mkdir -p "$(dirname "$CFG")"
+  if [[ -s $CFG ]]; then jq --arg d "sddm:$t" '.design = $d' "$CFG" >"$CFG.tmp"
+  else jq -n --arg d "sddm:$t" '{design: $d}' >"$CFG.tmp"; fi
+  mv -f "$CFG.tmp" "$CFG"
+  echo "Экран блокировки: $t"
+}
+
+case "${1:-list}" in
+list)
+  if [[ ${2:-} == --remote ]]; then remote_themes; else installed; fi ;;
+fetch) shift; fetch "$@" ;;
+set) set_theme "${2:-}" ;;
+preview)
+  [[ -n ${2:-} ]] || die "какую тему?"
+  omarchy-shell lock previewDesign "sddm:$2" ;;
+update)
+  ensure_repo
+  git -C "$DIR" fetch --quiet --depth 1 origin
+  git -C "$DIR" reset --quiet --hard FETCH_HEAD
+  patch_imports
+  echo "Обновлено" ;;
+*) sed -n '2,16p' "$0"; exit 2 ;;
+esac

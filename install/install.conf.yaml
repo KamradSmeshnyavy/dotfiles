@@ -249,6 +249,9 @@
     ~/.local/bin/omarchy-curtain:
       path: scripts/bin/omarchy-curtain
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-lock-themes:
+      path: scripts/bin/omarchy-lock-themes
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/bookmarks-sync:
       path: scripts/bin/bookmarks-sync
       if: "[ `uname` = Linux ]"
