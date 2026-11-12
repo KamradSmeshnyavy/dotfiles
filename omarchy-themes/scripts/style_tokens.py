@@ -15,6 +15,7 @@ FONTS_JSON = HOME / ".config/omarchy/fonts.json"
 # Форма стилей: радиус, рамка, тени. bevel — 3D-кант (светлый сверху-слева, тёмный снизу-справа).
 FORMS = {
     "dotmatrix":    {"r": 0,  "border": 1, "shadow": "none",  "pad": 10, "cursor": "block"},
+    "glyph":    {"r": 18, "border": 1, "shadow": "none",  "pad": 12, "cursor": "block"},
     "flat":     {"r": 0,  "border": 1, "shadow": "none",  "pad": 8,  "cursor": "block"},
     "glass":    {"r": 12, "border": 1, "shadow": "soft",  "pad": 14, "cursor": "beam", "glass": True},
     "liquid":   {"r": 18, "border": 1, "shadow": "soft",  "pad": 14, "cursor": "beam", "glass": True},
