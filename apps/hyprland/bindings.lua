@@ -126,6 +126,8 @@ o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/omarchy/plugi
 -- Скриншот — Shot из glyph-rice (kamradsmeshnyavy.widgets, glyph/Shot.qml): прицел над замёрзшим кадром, лупа,
 -- окно / экран / запись, карточка и редактор. Нет плагина — стоковый omarchy-capture-screenshot (он же на SUPER+CTRL+ALT+C).
 o.rebind("PRINT", "Screenshot (Shot)", "omarchy-shell widgets shot || omarchy-capture-screenshot")
+-- Менеджер буфера: стоковый или Clip из glyph-rice — решает clipboardPanel в widgets.json (Customizer → Виджеты)
+o.rebind("SUPER + CTRL + V", "Clipboard manager", "omarchy-shell widgets clip || omarchy-shell shell toggle omarchy.clipboard")
 o.bind("SUPER + ALT + PRINT", "Decode QR from screenshot", "omarchy-capture-qr")
 o.bind("SUPER + CTRL + ALT + S", "Stream curtain: hide windows from screen sharing", "omarchy-curtain")
 o.bind("SUPER + ALT + R", "Toggle reading mode", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/reading-mode.sh")
