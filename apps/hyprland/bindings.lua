@@ -123,6 +123,9 @@ o.bind("SUPER + ALT + SHIFT + C", "Next screen shader", "~/.config/omarchy/plugi
 
 -- Режим чтения: экран как печатная страница (шейдер reading, плоские окна без анимаций)
 -- QR из области экрана (omarchy-capture-qr; OCR — стоковый SUPER+CTRL+PRINT) и шторка для стрима
+-- Скриншот — Shot из glyph-rice (kamradsmeshnyavy.widgets, glyph/Shot.qml): прицел над замёрзшим кадром, лупа,
+-- окно / экран / запись, карточка и редактор. Нет плагина — стоковый omarchy-capture-screenshot (он же на SUPER+CTRL+ALT+C).
+o.rebind("PRINT", "Screenshot (Shot)", "omarchy-shell widgets shot || omarchy-capture-screenshot")
 o.bind("SUPER + ALT + PRINT", "Decode QR from screenshot", "omarchy-capture-qr")
 o.bind("SUPER + CTRL + ALT + S", "Stream curtain: hide windows from screen sharing", "omarchy-curtain")
 o.bind("SUPER + ALT + R", "Toggle reading mode", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/reading-mode.sh")
