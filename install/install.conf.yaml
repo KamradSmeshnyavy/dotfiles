@@ -295,6 +295,27 @@
     ~/.config/omarchy/themes/nothing-glyph-light:
       path: omarchy-themes/nothing/glyph-light
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-retro:
+      path: omarchy-themes/vitreus/retro
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-uwu:
+      path: omarchy-themes/vitreus/uwu
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-cyber:
+      path: omarchy-themes/vitreus/cyber
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-milk:
+      path: omarchy-themes/vitreus/milk
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-doodle:
+      path: omarchy-themes/vitreus/doodle
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-paper:
+      path: omarchy-themes/vitreus/paper
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/vitreus-proxy:
+      path: omarchy-themes/vitreus/proxy
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

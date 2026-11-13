@@ -1,0 +1,12 @@
+# UwU (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#ff3d9a"
+magenta = "#c2185b"
+red = "#cc0033"
+yellow = "#806200"
+green = "#1d7256"
+cyan = "#8a2fb8"
+blue = "#2a56c6"
+foreground = "#3a2a8c"
+background = "#e9e2ff"
+dark_background = "#d4c8ff"
+lighter_background = "#c8bbf6"

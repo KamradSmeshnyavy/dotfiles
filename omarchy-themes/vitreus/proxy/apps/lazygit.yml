@@ -1,0 +1,17 @@
+# Proxy (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#ffd21f", bold]
+    inactiveBorderColor: ["#2a323b"]
+    searchingActiveBorderColor: ["#e8b04a", bold]
+    optionsTextColor: ["#5aa9ff"]
+    selectedLineBgColor: ["#242b31"]
+    inactiveViewSelectedLineBgColor: ["#121920"]
+    cherryPickedCommitFgColor: ["#ff4d6d"]
+    cherryPickedCommitBgColor: ["#242b31"]
+    markedBaseCommitFgColor: ["#5aa9ff"]
+    markedBaseCommitBgColor: ["#242b31"]
+    unstagedChangesColor: ["#ff4d6d"]
+    defaultFgColor: ["#f2f6f8"]
+  authorColors:
+    "*": "#c3a6ff"

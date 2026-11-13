@@ -1,0 +1,44 @@
+# Paper (Vitreus) — alacritty
+[colors.primary]
+background = "#efe4cd"
+foreground = "#3b3631"
+
+[colors.cursor]
+text = "#fffaf0"
+cursor = "#6a90c9"
+
+[colors.vi_mode_cursor]
+text = "#efe4cd"
+cursor = "#1f6a70"
+
+[colors.search.matches]
+foreground = "#efe4cd"
+background = "#7a6420"
+
+[colors.search.focused_match]
+foreground = "#fffaf0"
+background = "#6a90c9"
+
+[colors.selection]
+text = "#3b3631"
+background = "#cacccc"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#bd3429"
+green = "#526f2e"
+yellow = "#9c501d"
+blue = "#1f6a70"
+magenta = "#b04038"
+cyan = "#7a4f8a"
+white = "#d9cbae"
+
+[colors.bright]
+black = "#857b6c"
+red = "#9b2b22"
+green = "#435b26"
+yellow = "#804218"
+blue = "#19575c"
+magenta = "#90342e"
+cyan = "#644171"
+white = "#bdbdb8"

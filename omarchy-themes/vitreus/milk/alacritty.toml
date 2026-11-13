@@ -1,0 +1,44 @@
+# Milkbox (Vitreus) — alacritty
+[colors.primary]
+background = "#e0e5ee"
+foreground = "#45495c"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#7f8cff"
+
+[colors.vi_mode_cursor]
+text = "#e0e5ee"
+cursor = "#2c67a2"
+
+[colors.search.matches]
+foreground = "#e0e5ee"
+background = "#7c5f0e"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#7f8cff"
+
+[colors.selection]
+text = "#45495c"
+background = "#c5ccf3"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#c7173c"
+green = "#386f54"
+yellow = "#905626"
+blue = "#2c67a2"
+magenta = "#b43a56"
+cyan = "#874dac"
+white = "#d3d9e5"
+
+[colors.bright]
+black = "#7982a1"
+red = "#a31331"
+green = "#2e5b45"
+yellow = "#76471f"
+blue = "#245485"
+magenta = "#943047"
+cyan = "#6f3f8d"
+white = "#bdbdb8"

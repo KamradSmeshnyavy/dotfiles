@@ -1,0 +1,12 @@
+# Cyber (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#00e5ff"
+magenta = "#c3ff5c"
+red = "#ff3b5c"
+yellow = "#ffd166"
+green = "#7dffb0"
+cyan = "#b9a3ff"
+blue = "#5ab0ff"
+foreground = "#d6f7ff"
+background = "#04070d"
+dark_background = "#0a1220"
+lighter_background = "#1a2432"

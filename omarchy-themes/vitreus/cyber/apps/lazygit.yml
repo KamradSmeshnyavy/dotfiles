@@ -1,0 +1,17 @@
+# Cyber (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#00e5ff", bold]
+    inactiveBorderColor: ["#26384a"]
+    searchingActiveBorderColor: ["#ffd166", bold]
+    optionsTextColor: ["#5ab0ff"]
+    selectedLineBgColor: ["#1a2432"]
+    inactiveViewSelectedLineBgColor: ["#0a1220"]
+    cherryPickedCommitFgColor: ["#c3ff5c"]
+    cherryPickedCommitBgColor: ["#1a2432"]
+    markedBaseCommitFgColor: ["#5ab0ff"]
+    markedBaseCommitBgColor: ["#1a2432"]
+    unstagedChangesColor: ["#ff3b5c"]
+    defaultFgColor: ["#d6f7ff"]
+  authorColors:
+    "*": "#b9a3ff"

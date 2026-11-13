@@ -1,0 +1,5 @@
+# UwU (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#e9e2ff,bg+:#c8bbf6,fg:#6553c9,fg+:#3a2a8c
+--color=hl:#ff3d9a,hl+:#ff3d9a,info:#7a6ad0,prompt:#ff3d9a
+--color=pointer:#ff3d9a,marker:#1d7256,spinner:#2a56c6,header:#806200
+--color=border:#cfc6f2,label:#3a2a8c,query:#3a2a8c,selected-bg:#efb4e3

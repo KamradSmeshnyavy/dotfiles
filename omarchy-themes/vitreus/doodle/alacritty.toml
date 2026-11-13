@@ -1,0 +1,44 @@
+# Doodle (Vitreus) — alacritty
+[colors.primary]
+background = "#fbf5e8"
+foreground = "#22202e"
+
+[colors.cursor]
+text = "#fffdf6"
+cursor = "#e0457b"
+
+[colors.vi_mode_cursor]
+text = "#fbf5e8"
+cursor = "#2a5bb0"
+
+[colors.search.matches]
+foreground = "#fbf5e8"
+background = "#8a6a00"
+
+[colors.search.focused_match]
+foreground = "#fffdf6"
+background = "#e0457b"
+
+[colors.selection]
+text = "#22202e"
+background = "#f3c4c9"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#db1f25"
+green = "#2f7a3a"
+yellow = "#b0540a"
+blue = "#2a5bb0"
+magenta = "#d0342c"
+cyan = "#6a3fa0"
+white = "#ebe3d2"
+
+[colors.bright]
+black = "#6b6577"
+red = "#b4191e"
+green = "#276430"
+yellow = "#904508"
+blue = "#224b90"
+magenta = "#ab2b24"
+cyan = "#573483"
+white = "#bdbdb8"

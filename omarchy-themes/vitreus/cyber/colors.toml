@@ -1,0 +1,39 @@
+# Cyber (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#00e5ff"
+cursor = "#00e5ff"
+selection = "#034551"
+selection_foreground = "#d6f7ff"
+selection_background = "#034551"
+muted = "#6f93a8"
+
+background = "#04070d"
+dark_background = "#0a1220"
+darker_background = "#04070d"
+lighter_background = "#1a2432"
+
+foreground = "#d6f7ff"
+dark_foreground = "#6f93a8"
+light_foreground = "#6f93a8"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#00e5ff"
+hyprland_inactive_border = "#26384a"
+
+red = "#ff3b5c"
+yellow = "#ff9f43"
+orange = "#ff9f43"
+green = "#7dffb0"
+cyan = "#b9a3ff"
+blue = "#5ab0ff"
+magenta = "#c3ff5c"
+brown = "#8e5b2b"
+
+bright_red = "#ff6680"
+bright_yellow = "#ffb46c"
+bright_green = "#9affc1"
+bright_cyan = "#c8b7ff"
+bright_blue = "#7ec1ff"
+bright_magenta = "#d0ff80"

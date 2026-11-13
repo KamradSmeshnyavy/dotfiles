@@ -1,0 +1,39 @@
+# Retro (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#e63a3a"
+cursor = "#e63a3a"
+selection = "#daa698"
+selection_foreground = "#2b2833"
+selection_background = "#daa698"
+muted = "#6a665a"
+
+background = "#d6d0bd"
+dark_background = "#bfb9a5"
+darker_background = "#bfb9a5"
+lighter_background = "#b3ad9c"
+
+foreground = "#2b2833"
+dark_foreground = "#6a665a"
+light_foreground = "#5c594e"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#e63a3a"
+hyprland_inactive_border = "#a39e8e"
+
+red = "#ab154c"
+yellow = "#8a4516"
+orange = "#8a4516"
+green = "#396329"
+cyan = "#5b3f8c"
+blue = "#2c5a8c"
+magenta = "#ab154c"
+brown = "#ac8461"
+
+bright_red = "#8c113e"
+bright_yellow = "#713912"
+bright_green = "#2f5122"
+bright_cyan = "#4b3473"
+bright_blue = "#244a73"
+bright_magenta = "#8c113e"

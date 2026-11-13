@@ -1,0 +1,17 @@
+# Milkbox (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#7f8cff", bold]
+    inactiveBorderColor: ["#d3d9e5"]
+    searchingActiveBorderColor: ["#7c5f0e", bold]
+    optionsTextColor: ["#2c67a2"]
+    selectedLineBgColor: ["#dce0ea"]
+    inactiveViewSelectedLineBgColor: ["#e6eaf2"]
+    cherryPickedCommitFgColor: ["#b43a56"]
+    cherryPickedCommitBgColor: ["#dce0ea"]
+    markedBaseCommitFgColor: ["#2c67a2"]
+    markedBaseCommitBgColor: ["#dce0ea"]
+    unstagedChangesColor: ["#c7173c"]
+    defaultFgColor: ["#45495c"]
+  authorColors:
+    "*": "#874dac"

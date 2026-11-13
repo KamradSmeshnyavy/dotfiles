@@ -41,6 +41,10 @@
 #   paper-hand  — Caveat везде, терминал и код — Monaspace Radon.
 #   paper-all   — абсолютно всё в Caveat, включая терминал и код (шрифт не моноширинный).
 #   retro       — интерфейс Pixelify Sans, терминал и код DotMatrix Pixel — стиль Retro.
+#   vitreus-<тема> — система как stock; шрифт темы Vitreus только в заголовках оболочки: glass Space Grotesk, retro
+#                 Audiowide, uwu Mochiy Pop One, cyber Orbitron, milk Zen Kurenaido, doodle Kalam, paper Fuzzy Bubbles,
+#                 proxy Titan One (OFL, kamradsmeshnyavy.customizer/fonts/vitreus; японские урезаны до латиницы и кириллицы,
+#                 у Audiowide, Orbitron, Kalam, Fuzzy Bubbles и Titan One кириллицы нет — она из запасного шрифта).
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
 # DotMatrix Mono — Geist Mono с включёнными лигатурами; DotMatrix Pixel — Terminess (Terminus) с русскими «в д и й»,
@@ -94,6 +98,14 @@ PROFILES=(
   "paper-hand|paper|Caveat|Monaspace Radon Var|Caveat|Handwritten Caveat everywhere; the terminal and code in handwritten monospaced Monaspace Radon"
   "paper-all|paper|Caveat|Caveat|Caveat|Absolutely everything in Caveat, terminal and code included (not monospaced)"
   "retro|retro|Pixelify Sans|DotMatrix Pixel|Pixelify Sans|Pixel interface (Pixelify Sans), pixel terminal and code (DotMatrix Pixel)"
+  "vitreus-glass|liquid|$STOCK_FONT|$STOCK_FONT|Space Grotesk|System as stock; Space Grotesk only in the shell titles — the Vitreus Glass theme"
+  "vitreus-retro|liquid|$STOCK_FONT|$STOCK_FONT|Audiowide|System as stock; Audiowide only in the shell titles — the Vitreus Retro theme"
+  "vitreus-uwu|liquid|$STOCK_FONT|$STOCK_FONT|Mochiy Pop One|System as stock; Mochiy Pop One only in the shell titles — the Vitreus UwU theme"
+  "vitreus-cyber|liquid|$STOCK_FONT|$STOCK_FONT|Orbitron|System as stock; Orbitron only in the shell titles — the Vitreus Cyber theme"
+  "vitreus-milk|liquid|$STOCK_FONT|$STOCK_FONT|Zen Kurenaido|System as stock; Zen Kurenaido only in the shell titles — the Vitreus Milkbox theme"
+  "vitreus-doodle|liquid|$STOCK_FONT|$STOCK_FONT|Kalam|System as stock; Kalam only in the shell titles — the Vitreus Doodle theme"
+  "vitreus-paper|liquid|$STOCK_FONT|$STOCK_FONT|Fuzzy Bubbles|System as stock; Fuzzy Bubbles only in the shell titles — the Vitreus Paper theme"
+  "vitreus-proxy|liquid|$STOCK_FONT|$STOCK_FONT|Titan One|System as stock; Titan One only in the shell titles — the Vitreus Proxy theme"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

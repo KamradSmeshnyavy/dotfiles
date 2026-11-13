@@ -1,0 +1,17 @@
+# Retro (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#e63a3a", bold]
+    inactiveBorderColor: ["#a39e8e"]
+    searchingActiveBorderColor: ["#705200", bold]
+    optionsTextColor: ["#2c5a8c"]
+    selectedLineBgColor: ["#b3ad9c"]
+    inactiveViewSelectedLineBgColor: ["#bfb9a5"]
+    cherryPickedCommitFgColor: ["#ab154c"]
+    cherryPickedCommitBgColor: ["#b3ad9c"]
+    markedBaseCommitFgColor: ["#2c5a8c"]
+    markedBaseCommitBgColor: ["#b3ad9c"]
+    unstagedChangesColor: ["#ab154c"]
+    defaultFgColor: ["#2b2833"]
+  authorColors:
+    "*": "#5b3f8c"

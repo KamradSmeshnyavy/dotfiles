@@ -1,0 +1,23 @@
+(
+    selected_tab: Some("#00e5ff"),
+    command_fg: Some("#d6f7ff"),
+    selection_bg: Some("#1a2432"),
+    selection_fg: Some("#d6f7ff"),
+    cmdbar_bg: Some("#0a1220"),
+    cmdbar_extra_lines_bg: Some("#0a1220"),
+    disabled_fg: Some("#6f93a8"),
+    diff_line_add: Some("#7dffb0"),
+    diff_line_delete: Some("#ff3b5c"),
+    diff_file_added: Some("#7dffb0"),
+    diff_file_removed: Some("#ff3b5c"),
+    diff_file_moved: Some("#c3ff5c"),
+    diff_file_modified: Some("#ff9f43"),
+    commit_hash: Some("#c3ff5c"),
+    commit_time: Some("#5ab0ff"),
+    commit_author: Some("#b9a3ff"),
+    danger_fg: Some("#ff3b5c"),
+    push_gauge_bg: Some("#00e5ff"),
+    push_gauge_fg: Some("#001018"),
+    tag_fg: Some("#ffd166"),
+    branch_fg: Some("#7dffb0")
+)

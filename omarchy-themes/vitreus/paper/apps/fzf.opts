@@ -1,0 +1,5 @@
+# Paper (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#efe4cd,bg+:#e7dfcf,fg:#6c6457,fg+:#3b3631
+--color=hl:#6a90c9,hl+:#6a90c9,info:#857b6c,prompt:#6a90c9
+--color=pointer:#6a90c9,marker:#526f2e,spinner:#1f6a70,header:#7a6420
+--color=border:#d9cbae,label:#3b3631,query:#3b3631,selected-bg:#cacccc

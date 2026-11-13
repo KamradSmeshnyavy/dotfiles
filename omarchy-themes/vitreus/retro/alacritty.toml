@@ -1,0 +1,44 @@
+# Retro (Vitreus) — alacritty
+[colors.primary]
+background = "#d6d0bd"
+foreground = "#2b2833"
+
+[colors.cursor]
+text = "#fff3dc"
+cursor = "#e63a3a"
+
+[colors.vi_mode_cursor]
+text = "#d6d0bd"
+cursor = "#2c5a8c"
+
+[colors.search.matches]
+foreground = "#d6d0bd"
+background = "#705200"
+
+[colors.search.focused_match]
+foreground = "#fff3dc"
+background = "#e63a3a"
+
+[colors.selection]
+text = "#2b2833"
+background = "#daa698"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#ab154c"
+green = "#396329"
+yellow = "#8a4516"
+blue = "#2c5a8c"
+magenta = "#ab154c"
+cyan = "#5b3f8c"
+white = "#a39e8e"
+
+[colors.bright]
+black = "#6a665a"
+red = "#8c113e"
+green = "#2f5122"
+yellow = "#713912"
+blue = "#244a73"
+magenta = "#8c113e"
+cyan = "#4b3473"
+white = "#bdbdb8"

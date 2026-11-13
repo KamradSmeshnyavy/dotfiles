@@ -1,0 +1,39 @@
+# Paper (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#6a90c9"
+cursor = "#6a90c9"
+selection = "#cacccc"
+selection_foreground = "#3b3631"
+selection_background = "#cacccc"
+muted = "#857b6c"
+
+background = "#efe4cd"
+dark_background = "#f6eedd"
+darker_background = "#f6eedd"
+lighter_background = "#e7dfcf"
+
+foreground = "#3b3631"
+dark_foreground = "#857b6c"
+light_foreground = "#6c6457"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#6a90c9"
+hyprland_inactive_border = "#d9cbae"
+
+red = "#bd3429"
+yellow = "#9c501d"
+orange = "#9c501d"
+green = "#526f2e"
+cyan = "#7a4f8a"
+blue = "#1f6a70"
+magenta = "#b04038"
+brown = "#c1936c"
+
+bright_red = "#9b2b22"
+bright_yellow = "#804218"
+bright_green = "#435b26"
+bright_cyan = "#644171"
+bright_blue = "#19575c"
+bright_magenta = "#90342e"

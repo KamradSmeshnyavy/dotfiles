@@ -892,8 +892,9 @@ def build(variant):
     problems = check(variant, p)
     if problems:
         sys.exit(f"{variant}: {'; '.join(problems)}")
-    out = os.path.join(HERE, variant)
-    name = f"nothing-{variant}"
+    # name / out — для чужих палитр (omarchy-themes/vitreus/build.py): имя темы и каталог; по умолчанию nothing-<вариант>
+    out = p.get("out", os.path.join(HERE, variant))
+    name = p.get("name", f"nothing-{variant}")
     files = {
         "colors.toml": colors_toml(p),
         "kitty.conf": kitty(p),
@@ -929,7 +930,10 @@ def build(variant):
     for rel, text in files.items():
         write(os.path.join(out, rel), text)
     unlock_png(os.path.join(out, "unlock.png"), p["fg"])
-    wallpapers(variant, p, out)
+    if variant in WALLPAPERS:
+        wallpapers(variant, p, out)
+    elif p.get("wallpapers"):
+        p["wallpapers"](p, os.path.join(out, "backgrounds"))
     # light.mode — метка светлой темы для Omarchy (GTK, браузеры и т. п. переходят на светлое). Только по флагу,
     # чтобы не менять поведение уже настроенных вариантов.
     if p.get("light_mode_file"):

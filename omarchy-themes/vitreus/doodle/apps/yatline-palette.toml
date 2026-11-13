@@ -1,0 +1,12 @@
+# Doodle (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#e0457b"
+magenta = "#d0342c"
+red = "#db1f25"
+yellow = "#8a6a00"
+green = "#2f7a3a"
+cyan = "#6a3fa0"
+blue = "#2a5bb0"
+foreground = "#22202e"
+background = "#fbf5e8"
+dark_background = "#fffdf6"
+lighter_background = "#edebe6"

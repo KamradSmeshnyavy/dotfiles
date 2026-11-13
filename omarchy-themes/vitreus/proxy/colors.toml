@@ -1,0 +1,39 @@
+# Proxy (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#ffd21f"
+cursor = "#ffd21f"
+selection = "#534b1e"
+selection_foreground = "#f2f6f8"
+selection_background = "#534b1e"
+muted = "#93a1ac"
+
+background = "#10161d"
+dark_background = "#121920"
+darker_background = "#10161d"
+lighter_background = "#242b31"
+
+foreground = "#f2f6f8"
+dark_foreground = "#93a1ac"
+light_foreground = "#93a1ac"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#ffd21f"
+hyprland_inactive_border = "#2a323b"
+
+red = "#ff4d6d"
+yellow = "#ff7a3d"
+orange = "#ff7a3d"
+green = "#8ee07a"
+cyan = "#c3a6ff"
+blue = "#5aa9ff"
+magenta = "#ff4d6d"
+brown = "#934d2f"
+
+bright_red = "#ff748d"
+bright_yellow = "#ff9768"
+bright_green = "#a7e797"
+bright_cyan = "#d0baff"
+bright_blue = "#7ebcff"
+bright_magenta = "#ff748d"

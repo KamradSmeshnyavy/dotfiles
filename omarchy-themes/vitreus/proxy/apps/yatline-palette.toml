@@ -1,0 +1,12 @@
+# Proxy (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#ffd21f"
+magenta = "#ff4d6d"
+red = "#ff4d6d"
+yellow = "#e8b04a"
+green = "#8ee07a"
+cyan = "#c3a6ff"
+blue = "#5aa9ff"
+foreground = "#f2f6f8"
+background = "#10161d"
+dark_background = "#121920"
+lighter_background = "#242b31"

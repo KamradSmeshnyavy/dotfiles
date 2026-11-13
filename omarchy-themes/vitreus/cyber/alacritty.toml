@@ -1,0 +1,44 @@
+# Cyber (Vitreus) — alacritty
+[colors.primary]
+background = "#04070d"
+foreground = "#d6f7ff"
+
+[colors.cursor]
+text = "#001018"
+cursor = "#00e5ff"
+
+[colors.vi_mode_cursor]
+text = "#04070d"
+cursor = "#5ab0ff"
+
+[colors.search.matches]
+foreground = "#04070d"
+background = "#ffd166"
+
+[colors.search.focused_match]
+foreground = "#001018"
+background = "#00e5ff"
+
+[colors.selection]
+text = "#d6f7ff"
+background = "#034551"
+
+[colors.normal]
+black = "#26384a"
+red = "#ff3b5c"
+green = "#7dffb0"
+yellow = "#ff9f43"
+blue = "#5ab0ff"
+magenta = "#c3ff5c"
+cyan = "#b9a3ff"
+white = "#6f93a8"
+
+[colors.bright]
+black = "#6f93a8"
+red = "#ff6680"
+green = "#9affc1"
+yellow = "#ffb46c"
+blue = "#7ec1ff"
+magenta = "#d0ff80"
+cyan = "#c8b7ff"
+white = "#ffffff"

@@ -1,0 +1,17 @@
+# Paper (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#6a90c9", bold]
+    inactiveBorderColor: ["#d9cbae"]
+    searchingActiveBorderColor: ["#7a6420", bold]
+    optionsTextColor: ["#1f6a70"]
+    selectedLineBgColor: ["#e7dfcf"]
+    inactiveViewSelectedLineBgColor: ["#f6eedd"]
+    cherryPickedCommitFgColor: ["#b04038"]
+    cherryPickedCommitBgColor: ["#e7dfcf"]
+    markedBaseCommitFgColor: ["#1f6a70"]
+    markedBaseCommitBgColor: ["#e7dfcf"]
+    unstagedChangesColor: ["#bd3429"]
+    defaultFgColor: ["#3b3631"]
+  authorColors:
+    "*": "#7a4f8a"

@@ -1,0 +1,17 @@
+# Doodle (Vitreus) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#e0457b", bold]
+    inactiveBorderColor: ["#ebe3d2"]
+    searchingActiveBorderColor: ["#8a6a00", bold]
+    optionsTextColor: ["#2a5bb0"]
+    selectedLineBgColor: ["#edebe6"]
+    inactiveViewSelectedLineBgColor: ["#fffdf6"]
+    cherryPickedCommitFgColor: ["#d0342c"]
+    cherryPickedCommitBgColor: ["#edebe6"]
+    markedBaseCommitFgColor: ["#2a5bb0"]
+    markedBaseCommitBgColor: ["#edebe6"]
+    unstagedChangesColor: ["#db1f25"]
+    defaultFgColor: ["#22202e"]
+  authorColors:
+    "*": "#6a3fa0"

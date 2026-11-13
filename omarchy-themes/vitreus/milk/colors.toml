@@ -1,0 +1,39 @@
+# Milkbox (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#7f8cff"
+cursor = "#7f8cff"
+selection = "#c5ccf3"
+selection_foreground = "#45495c"
+selection_background = "#c5ccf3"
+muted = "#7982a1"
+
+background = "#e0e5ee"
+dark_background = "#e6eaf2"
+darker_background = "#e6eaf2"
+lighter_background = "#dce0ea"
+
+foreground = "#45495c"
+dark_foreground = "#7982a1"
+light_foreground = "#5b6482"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#7f8cff"
+hyprland_inactive_border = "#d3d9e5"
+
+red = "#c7173c"
+yellow = "#905626"
+orange = "#905626"
+green = "#386f54"
+cyan = "#874dac"
+blue = "#2c67a2"
+magenta = "#b43a56"
+brown = "#b49680"
+
+bright_red = "#a31331"
+bright_yellow = "#76471f"
+bright_green = "#2e5b45"
+bright_cyan = "#6f3f8d"
+bright_blue = "#245485"
+bright_magenta = "#943047"

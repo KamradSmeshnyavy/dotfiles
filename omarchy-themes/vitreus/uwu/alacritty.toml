@@ -1,0 +1,44 @@
+# UwU (Vitreus) — alacritty
+[colors.primary]
+background = "#e9e2ff"
+foreground = "#3a2a8c"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#ff3d9a"
+
+[colors.vi_mode_cursor]
+text = "#e9e2ff"
+cursor = "#2a56c6"
+
+[colors.search.matches]
+foreground = "#e9e2ff"
+background = "#806200"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#ff3d9a"
+
+[colors.selection]
+text = "#3a2a8c"
+background = "#efb4e3"
+
+[colors.normal]
+black = "#3a3a38"
+red = "#cc0033"
+green = "#1d7256"
+yellow = "#a24f09"
+blue = "#2a56c6"
+magenta = "#c2185b"
+cyan = "#8a2fb8"
+white = "#cfc6f2"
+
+[colors.bright]
+black = "#7a6ad0"
+red = "#a7002a"
+green = "#185d47"
+yellow = "#854107"
+blue = "#2247a2"
+magenta = "#9f144b"
+cyan = "#712797"
+white = "#bdbdb8"

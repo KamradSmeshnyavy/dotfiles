@@ -1,0 +1,12 @@
+# Retro (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#e63a3a"
+magenta = "#ab154c"
+red = "#ab154c"
+yellow = "#705200"
+green = "#396329"
+cyan = "#5b3f8c"
+blue = "#2c5a8c"
+foreground = "#2b2833"
+background = "#d6d0bd"
+dark_background = "#bfb9a5"
+lighter_background = "#b3ad9c"

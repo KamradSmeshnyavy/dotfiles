@@ -1,0 +1,44 @@
+# Proxy (Vitreus) — alacritty
+[colors.primary]
+background = "#10161d"
+foreground = "#f2f6f8"
+
+[colors.cursor]
+text = "#0b0d10"
+cursor = "#ffd21f"
+
+[colors.vi_mode_cursor]
+text = "#10161d"
+cursor = "#5aa9ff"
+
+[colors.search.matches]
+foreground = "#10161d"
+background = "#e8b04a"
+
+[colors.search.focused_match]
+foreground = "#0b0d10"
+background = "#ffd21f"
+
+[colors.selection]
+text = "#f2f6f8"
+background = "#534b1e"
+
+[colors.normal]
+black = "#2a323b"
+red = "#ff4d6d"
+green = "#8ee07a"
+yellow = "#ff7a3d"
+blue = "#5aa9ff"
+magenta = "#ff4d6d"
+cyan = "#c3a6ff"
+white = "#93a1ac"
+
+[colors.bright]
+black = "#93a1ac"
+red = "#ff748d"
+green = "#a7e797"
+yellow = "#ff9768"
+blue = "#7ebcff"
+magenta = "#ff748d"
+cyan = "#d0baff"
+white = "#ffffff"

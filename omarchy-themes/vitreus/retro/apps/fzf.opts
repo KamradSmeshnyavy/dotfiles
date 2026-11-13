@@ -1,0 +1,5 @@
+# Retro (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#d6d0bd,bg+:#b3ad9c,fg:#5c594e,fg+:#2b2833
+--color=hl:#e63a3a,hl+:#e63a3a,info:#6a665a,prompt:#e63a3a
+--color=pointer:#e63a3a,marker:#396329,spinner:#2c5a8c,header:#705200
+--color=border:#a39e8e,label:#2b2833,query:#2b2833,selected-bg:#daa698

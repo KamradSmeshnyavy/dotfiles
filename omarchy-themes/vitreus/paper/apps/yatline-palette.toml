@@ -1,0 +1,12 @@
+# Paper (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#6a90c9"
+magenta = "#b04038"
+red = "#bd3429"
+yellow = "#7a6420"
+green = "#526f2e"
+cyan = "#7a4f8a"
+blue = "#1f6a70"
+foreground = "#3b3631"
+background = "#efe4cd"
+dark_background = "#f6eedd"
+lighter_background = "#e7dfcf"

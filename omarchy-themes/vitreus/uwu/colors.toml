@@ -1,0 +1,39 @@
+# UwU (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#ff3d9a"
+cursor = "#ff3d9a"
+selection = "#efb4e3"
+selection_foreground = "#3a2a8c"
+selection_background = "#efb4e3"
+muted = "#7a6ad0"
+
+background = "#e9e2ff"
+dark_background = "#d4c8ff"
+darker_background = "#d4c8ff"
+lighter_background = "#c8bbf6"
+
+foreground = "#3a2a8c"
+dark_foreground = "#7a6ad0"
+light_foreground = "#6553c9"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#ff3d9a"
+hyprland_inactive_border = "#cfc6f2"
+
+red = "#cc0033"
+yellow = "#a24f09"
+orange = "#a24f09"
+green = "#1d7256"
+cyan = "#8a2fb8"
+blue = "#2a56c6"
+magenta = "#c2185b"
+brown = "#c29178"
+
+bright_red = "#a7002a"
+bright_yellow = "#854107"
+bright_green = "#185d47"
+bright_cyan = "#712797"
+bright_blue = "#2247a2"
+bright_magenta = "#9f144b"

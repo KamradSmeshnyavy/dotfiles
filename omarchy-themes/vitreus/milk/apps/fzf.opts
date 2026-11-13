@@ -1,0 +1,5 @@
+# Milkbox (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#e0e5ee,bg+:#dce0ea,fg:#5b6482,fg+:#45495c
+--color=hl:#7f8cff,hl+:#7f8cff,info:#7982a1,prompt:#7f8cff
+--color=pointer:#7f8cff,marker:#386f54,spinner:#2c67a2,header:#7c5f0e
+--color=border:#d3d9e5,label:#45495c,query:#45495c,selected-bg:#c5ccf3

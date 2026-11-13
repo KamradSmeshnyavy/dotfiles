@@ -1,0 +1,12 @@
+# Milkbox (Vitreus) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#7f8cff"
+magenta = "#b43a56"
+red = "#c7173c"
+yellow = "#7c5f0e"
+green = "#386f54"
+cyan = "#874dac"
+blue = "#2c67a2"
+foreground = "#45495c"
+background = "#e0e5ee"
+dark_background = "#e6eaf2"
+lighter_background = "#dce0ea"

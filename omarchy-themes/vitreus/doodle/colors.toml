@@ -1,0 +1,39 @@
+# Doodle (Vitreus) — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#e0457b"
+cursor = "#e0457b"
+selection = "#f3c4c9"
+selection_foreground = "#22202e"
+selection_background = "#f3c4c9"
+muted = "#6b6577"
+
+background = "#fbf5e8"
+dark_background = "#fffdf6"
+darker_background = "#fffdf6"
+lighter_background = "#edebe6"
+
+foreground = "#22202e"
+dark_foreground = "#6b6577"
+light_foreground = "#6b6577"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#e0457b"
+hyprland_inactive_border = "#ebe3d2"
+
+red = "#db1f25"
+yellow = "#b0540a"
+orange = "#b0540a"
+green = "#2f7a3a"
+cyan = "#6a3fa0"
+blue = "#2a5bb0"
+magenta = "#d0342c"
+brown = "#d29c6e"
+
+bright_red = "#b4191e"
+bright_yellow = "#904508"
+bright_green = "#276430"
+bright_cyan = "#573483"
+bright_blue = "#224b90"
+bright_magenta = "#ab2b24"

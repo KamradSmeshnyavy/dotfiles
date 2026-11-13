@@ -1,0 +1,5 @@
+# Doodle (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#fbf5e8,bg+:#edebe6,fg:#6b6577,fg+:#22202e
+--color=hl:#e0457b,hl+:#e0457b,info:#6b6577,prompt:#e0457b
+--color=pointer:#e0457b,marker:#2f7a3a,spinner:#2a5bb0,header:#8a6a00
+--color=border:#ebe3d2,label:#22202e,query:#22202e,selected-bg:#f3c4c9
