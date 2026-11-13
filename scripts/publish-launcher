@@ -4,7 +4,7 @@
 
 В dotfiles лаунчер полный, а в публичный репо идут только свои скины: порты из omlauch и
 omarchy-quickapps (файлы, где они упомянуты) без лицензии распространять нельзя. Скрипт копирует
-*.qml и *.js без портов и вырезает порты из карты скинов в SkinConfig.qml. manifest.json, README,
+*.qml и *.js без портов (и без скинов с GPL-кодом — glyph) и вырезает их из карты скинов в SkinConfig.qml. manifest.json, README,
 LICENSE и screenshots/ в репо свои — их не трогаем. Коммит и пуш — вручную.
 
   publish-launcher [путь к клону omarchy-launcher-skins]   (по умолчанию ~/src/omarchy-launcher-skins)
@@ -17,7 +17,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 SRC = REPO / "apps/omarchy-shell/plugins/kamradsmeshnyavy.menu"
 DST = Path(sys.argv[1] if len(sys.argv) > 1 else Path.home() / "src/omarchy-launcher-skins").expanduser()
-PORT_MARKERS = ("omlauch", "quickapps")
+# порты без лицензии и скины с GPL-кодом (glyph из glyph-rice: репо лаунчера — MIT) в публичный репо не идут
+PORT_MARKERS = ("omlauch", "quickapps", "GPL-3.0")
 
 if not (DST / "manifest.json").is_file():
     sys.exit(f"нет клона omarchy-launcher-skins в {DST}")

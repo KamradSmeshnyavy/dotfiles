@@ -34,6 +34,8 @@ Item {
     "ironman": "IronmanView.qml",
     // Originals.
     "dotmatrix": "DotMatrixView.qml",
+    // Из glyph-rice (GPL-3.0): панель по центру, сетка кругов, точечные иконки.
+    "glyph": "GlyphView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

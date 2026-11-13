@@ -211,9 +211,9 @@
   "style.launcher.minimal": {
     "icon":"\udb81\udd70",
     "label":"Minimal",
-    "description":"List, DOT-MATRIX, Board, Hexgrid, Drum, Metro",
+    "description":"List, DOT-MATRIX, Glyph, Board, Hexgrid, Drum, Metro",
     "aliases":["skin-minimal"],
-    "checked":"grep -qE '\"skin\":\"(list|dotmatrix|board|hexgrid|drum|metro)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+    "checked":"grep -qE '\"skin\":\"(list|dotmatrix|glyph|board|hexgrid|drum|metro)\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.minimal.list": {
     "icon":"\uf03a",
@@ -228,6 +228,13 @@
     "description":"Nothing monochrome bottom drawer \u00b7 Doto calc",
     "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"dotmatrix\"}' > ~/.config/omarchy/extensions/menu-skin.json",
     "checked":"grep -q '\"skin\":\"dotmatrix\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
+  },
+  "style.launcher.minimal.glyph": {
+    "icon":"\udb81\udc53",
+    "label":"Glyph",
+    "description":"Centre panel, dotted icon circles \u00b7 glyph-rice",
+    "action":"mkdir -p ~/.config/omarchy/extensions && echo '{\"skin\":\"glyph\"}' > ~/.config/omarchy/extensions/menu-skin.json",
+    "checked":"grep -q '\"skin\":\"glyph\"' ~/.config/omarchy/extensions/menu-skin.json 2>/dev/null"
   },
   "style.launcher.minimal.board": {
     "icon":"\udb81\udd70",

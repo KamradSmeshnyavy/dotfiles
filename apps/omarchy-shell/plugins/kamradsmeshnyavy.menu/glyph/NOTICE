@@ -1,0 +1,4 @@
+Скин лаунчера glyph (../GlyphView.qml) и файлы этого каталога взяты из glyph-rice
+(https://github.com/Nebelung-cloud/glyph-rice, launcher/Launcher.qml, charms/Charms.qml, components/*),
+Copyright (c) Nebelung-cloud, и распространяются по GNU GPL v3.0. В публичный репо omarchy-launcher-skins (MIT)
+они не попадают: scripts/publish-launcher их пропускает.
