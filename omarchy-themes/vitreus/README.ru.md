@@ -18,4 +18,4 @@ python3 build.py retro uwu  # выбранные
 ```
 
 Пресеты Customizer **Liquid Retro … Proxy** ставят стиль «Жидкое стекло» на эти темы со шрифтом заголовков темы
-(`omarchy-font-profile vitreus-<тема>`).
+(`omarchy-font-profile vitreus-<тема>`). Основа темы (`"base"` в `~/.config/omarchy/style.json`) меняет и лаунчер `liquid` (`kamradsmeshnyavy.menu/LiquidView.qml`): у пластиковых основ — сплошная карточка с контуром чернилами и жёсткой тенью и шапка Vitreus (значок из четырёх квадратиков, SEARCH › режим, подсказки двумя рядами ячеек); у Retro ещё красный язычок, прорези-ручки, винт и выбор с красным оттенком; у Cyber — светящиеся уголки-скобки, линейка рисок и мигающий код.

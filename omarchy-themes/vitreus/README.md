@@ -18,4 +18,4 @@ python3 build.py retro uwu  # chosen ones
 ```
 
 The Customizer presets **Liquid Retro … Proxy** put the Liquid Glass style on these themes with the theme's title font
-(`omarchy-font-profile vitreus-<theme>`).
+(`omarchy-font-profile vitreus-<theme>`). The theme base (`"base"` in `~/.config/omarchy/style.json`) also reshapes the `liquid` launcher (`kamradsmeshnyavy.menu/LiquidView.qml`): plastic bases get a solid inked card with a hard shadow and the Vitreus header (four-square badge, SEARCH › mode, hints in two rows of cells); Retro adds the red tab, grip slots, a screw and red-tinted selection; Cyber gets glowing corner brackets, a ruler and a blinking readout.
