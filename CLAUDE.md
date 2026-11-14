@@ -82,7 +82,7 @@ omarchy-image-picker-styles, `.customizer` → omarchy-customizer (GPL-3.0: пр
 `tests/compare_*.py` с эталоном `tests/legacy/customizer.sh`), `.widgets` →
 omarchy-desktop-widgets (виджеты, дашборд, меню выключения, обзор столов), `.osd` → omarchy-edge-osd,
 `.notifications` → omarchy-drawer-notifications (оба — клоны стока, правки помечены `// edge:` / `// drawer:`).
-`BarStyle.qml` и `StyleCard.qml` одинаковые в widgets/osd/notifications — правку переносить во все три (BarStyle читает
+`BarStyle.qml`, `StyleCard.qml`, `LiquidGlass.qml` (+ `shaders/liquidglass.frag`, его копия есть и в bar), `MergeFillet.qml` и `MergeInfo.qml` одинаковые в widgets/osd/notifications — правку переносить во все три (BarStyle читает
 токены стиля из `~/.config/omarchy/style.json`, их пишет Customizer → Пресеты → Стиль). Так же `dotmatrix/Palette.qml`
 (палитра стиля DOT-MATRIX, `docs/apps/omarchy-shell-dotmatrix.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer
 и шести DOT-MATRIX-панелях:
