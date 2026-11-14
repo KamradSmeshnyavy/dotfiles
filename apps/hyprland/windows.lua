@@ -11,7 +11,7 @@ hl.layer_rule({ match = { namespace = "omarchy-bar" }, blur = true, ignore_alpha
 -- делает их полупрозрачными, когда бар прозрачный). Пустые части окон (альфа < 0.2) не размываются.
 -- omarchy-widgets / omarchy-widgets-float — карточки виджетов рабочего стола и открепленные поверх окон
 -- (стекло и жидкое стекло без размытия за ними читаются плохо). omarchy-menu — лаунчер: скин liquid — стеклянная карточка.
-for _, ns in ipairs({ "omarchy-dashboard", "omarchy-power", "omarchy-notifications", "omarchy-osd",
+for _, ns in ipairs({ "omarchy-dashboard", "omarchy-power", "omarchy-notifications", "omarchy-osd", "omarchy-dotmatrix-settings",
 	"omarchy-widgets", "omarchy-widgets-float", "omarchy-deck", "omarchy-home", "omarchy-menu" }) do
 	hl.layer_rule({ match = { namespace = ns }, blur = true, ignore_alpha = 0.2 })
 end
