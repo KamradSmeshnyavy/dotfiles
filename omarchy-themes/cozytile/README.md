@@ -14,10 +14,9 @@ and btop use only shades of the accent and the ink. The `-color` twins keep the 
   and `dunstrc`; the terminal background is the dark bar fill, as on its screenshots (there pywal colours the terminal).
 - Windows — no border (qtile `border_width 0`), a soft shadow like its picom.
 - fastfetch — in the spirit of its pfetch: an Arch logo in strokes, keys os / host / kernel / uptime / pkgs / memory.
-- Wallpapers — first its own wallpaper for each theme (`0-original`, as its `autostart_once.sh` sets them). They are other
-  people's pictures (anime art of unknown authors, Unsplash and Pexels photos), so they are not stored in git: `build.py`
-  copies them from a Cozytile clone (`COZYTILE_SRC`, default `~/src/rice-refs/Cozytile`) or downloads them from GitHub into
-  `.originals/` and links them. Then drawn ones: a lavender sky with roofs, a sakura branch, grass blades, a misty pine
+- Wallpapers — first its own wallpaper for each theme (`0-original`, as its `autostart_once.sh` sets them). `build.py`
+  copies them from a Cozytile clone (`COZYTILE_SRC`, default `~/src/rice-refs/Cozytile`) or downloads them from GitHub.
+  Then drawn ones: a lavender sky with roofs, a sakura branch, grass blades, a misty pine
   forest, grey paper (`1-cozytile`), and a plain grainy fill (`2-plain`).
 - Carbon's terminal is grey only, from its `Wallpaper/e-ink.json`.
 - Font profile: `omarchy-font-profile cozytile` (JetBrains Mono Nerd Font everywhere, like its bar and terminal).

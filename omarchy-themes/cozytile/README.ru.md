@@ -13,9 +13,8 @@
   фон терминала — тёмная заливка бара, как на его скриншотах (там терминал красит pywal).
 - Окна — без рамки (у qtile `border_width 0`), с мягкой тенью, как у его picom.
 - fastfetch — в духе его pfetch: логотип Arch штрихами, ключи os / host / kernel / uptime / pkgs / memory.
-- Обои — первыми его обои для каждой темы (`0-original`, как их ставит его `autostart_once.sh`). Это чужие картинки
-  (аниме-арт неизвестных авторов, фото с Unsplash и Pexels), поэтому в git их нет: `build.py` копирует их из клона Cozytile
-  (`COZYTILE_SRC`, по умолчанию `~/src/rice-refs/Cozytile`) или скачивает с GitHub в `.originals/` и ставит ссылкой. Дальше —
+- Обои — первыми его обои для каждой темы (`0-original`, как их ставит его `autostart_once.sh`). `build.py` копирует
+  их из клона Cozytile (`COZYTILE_SRC`, по умолчанию `~/src/rice-refs/Cozytile`) или скачивает с GitHub. Дальше —
   нарисованные: сиреневое небо с крышами, ветка сакуры, травинки, туманный ельник, серая бумага (`1-cozytile`) и ровная
   заливка с зерном (`2-plain`).
 - Терминал Carbon — только серые, по его `Wallpaper/e-ink.json`.

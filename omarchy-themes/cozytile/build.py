@@ -7,8 +7,8 @@
 rofi/settings/launcher/*.rasi (фон, текст, выбор) и dunstrc; фон терминала — тёмная заливка бара, как на его скриншотах
 (у него терминал красит pywal по обоям). По умолчанию темы одноцветные (синтаксис, 16 цветов терминала, статусы, btop — оттенки
 акцента и текста); варианты -color — с разноцветным терминалом из его alacritty/colors.toml. fastfetch — в духе его pfetch:
-логотип Arch штрихами, ключи os / host / kernel / uptime / pkgs / memory акцентом. Обои — первыми его (0-original, в git не
-хранятся — см. ORIGINAL), дальше свои, нарисованные: сиреневое небо
+логотип Arch штрихами, ключи os / host / kernel / uptime / pkgs / memory акцентом. Обои — первыми его (0-original, см.
+ORIGINAL), дальше свои, нарисованные: сиреневое небо
 с облаками и крышами, розовая ветка сакуры, травинки, туманный ельник, серая бумага. Раскладку по приложениям делает
 генератор тем nothing.
 
@@ -264,29 +264,23 @@ def carbon():
     return ImageChops.blend(im, ImageChops.overlay(im, grain), 0.35)
 
 
-# его обои по темам (qtile/autostart_once.sh, `wal -i ~/Wallpaper/…`). Это чужие картинки (аниме-арт неизвестных
-# авторов, фото с Unsplash и Pexels), поэтому в git их нет (.gitignore): build.py берёт их из клона Cozytile
-# (COZYTILE_SRC, по умолчанию ~/src/rice-refs/Cozytile) или скачивает с GitHub в .originals/ и кладёт ссылкой
-# 0-original.* первой в backgrounds/ — тема по умолчанию встаёт на его обои.
+# его обои по темам (qtile/autostart_once.sh, `wal -i ~/Wallpaper/…`): build.py берёт их из клона Cozytile
+# (COZYTILE_SRC, по умолчанию ~/src/rice-refs/Cozytile) или скачивает с GitHub и кладёт файлом 0-original.* первым в
+# backgrounds/ — тема по умолчанию встаёт на его обои.
 ORIGINAL = {"cozy": "Aesthetic2.png", "sakura": "120_-_KnFPX73.jpg", "natura": "claudio-testa-FrlCwXwbwkk-unsplash.jpg",
             "everforest": "fog_forest_2.png", "carbon": "a_road_going_through_a_desert.jpeg"}
 
 
 def original(v):
-    """Путь к его обоям для темы v в .originals/ (копия из клона или загрузка); None — если взять неоткуда."""
-    import shutil
+    """Его обои для темы v: путь к файлу в клоне Cozytile или скачанному во временную папку; None — если взять неоткуда."""
+    import tempfile
     import urllib.parse
     import urllib.request
     name = ORIGINAL[v]
-    cache = os.path.join(HERE, ".originals")
-    os.makedirs(cache, exist_ok=True)
-    dst = os.path.join(cache, name)
-    if os.path.isfile(dst):
-        return dst
     src = os.path.join(os.environ.get("COZYTILE_SRC", os.path.expanduser("~/src/rice-refs/Cozytile")), "Wallpaper", name)
     if os.path.isfile(src):
-        shutil.copyfile(src, dst)
-        return dst
+        return src
+    dst = os.path.join(tempfile.mkdtemp(prefix="cozytile-"), name)
     try:
         url = "https://raw.githubusercontent.com/Darkkal44/Cozytile/main/Wallpaper/" + urllib.parse.quote(name)
         with urllib.request.urlopen(url, timeout=60) as r, open(dst, "wb") as f:
@@ -303,12 +297,18 @@ PAINT = {"cozy": cozy_sky, "sakura": sakura, "natura": natura, "everforest": eve
 def walls(v, t, out_dir):
     from PIL import Image, ImageChops
     os.makedirs(out_dir, exist_ok=True)
-    orig = original(v)
-    if orig:
-        link = os.path.join(out_dir, "0-original" + os.path.splitext(orig)[1])
-        if os.path.lexists(link):
-            os.unlink(link)
-        os.symlink(os.path.abspath(orig), link)
+    import shutil
+    target = None
+    for ext in (".png", ".jpg", ".jpeg"):
+        if os.path.isfile(os.path.join(out_dir, "0-original" + ext)):
+            target = os.path.join(out_dir, "0-original" + ext)
+    if target is None or os.path.islink(target):
+        orig = original(v)
+        if orig:
+            dst = os.path.join(out_dir, "0-original" + os.path.splitext(orig)[1])
+            if os.path.lexists(dst):
+                os.unlink(dst)
+            shutil.copyfile(orig, dst)
     PAINT[v]().save(os.path.join(out_dir, "1-cozytile.jpg"), quality=88, optimize=True)
     plain = Image.new("RGB", (W, H), rgb(t["panel"] if t["mode"] == "dark" else t["bg"]))
     grain = Image.effect_noise((W, H), 16).convert("RGB")
@@ -340,7 +340,7 @@ def fastfetch_conf(t, color):
     conf = {
         "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
         "logo": {"type": "file-raw", "source": "~/.local/state/omarchy/current/theme/apps/cozytile-logo.txt",
-                 "padding": {"top": 1, "left": 2, "right": 6}},
+                 "padding": {"top": 0, "left": 2, "right": 6}},
         "display": {"separator": " ", "color": {"keys": e(key), "title": e(t["accent"]), "output": e(t["fg"])},
                     "key": {"width": 8}},
         "modules": [

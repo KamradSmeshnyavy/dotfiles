@@ -5,7 +5,7 @@
     "type": "file-raw",
     "source": "~/.local/state/omarchy/current/theme/apps/cozytile-logo.txt",
     "padding": {
-      "top": 1,
+      "top": 0,
       "left": 2,
       "right": 6
     }
