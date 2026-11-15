@@ -91,7 +91,82 @@ def palette(v):
     p["hint"] = p["dim"]
     p["ok"] = readable(y["ok"], bg, 4.5)
     p["wallpapers"] = lambda pp, d, y=y: dot_walls(y, d)
+    p["ansi16"] = ansi16(y)
     return p
+
+
+def ansi16(y):
+    """16 цветов терминала как у yami (recolor_apps.rs, ansi): цвета чуть в сторону акцента, 0 — панель, 7 / 15 — текст."""
+    t = lambda c: nb.mix(c, y["accent"], 0.18)
+    return [y["panel"], "#d0352d", t("#78b86a"), t("#d9a03a"), t("#5a7fa8"), t("#9a5aa0"), t("#4f9a96"), y["textDim"],
+            y["textFaint"], "#ff5a4c", t("#a2d692"), t("#f0c46a"), t("#86a6c8"), t("#c486c8"), t("#7cc2bc"), y["text"]]
+
+
+# 闇 — знак yami 14×16 клеток (recolor_data.rs, KANJI)
+KANJI = ["######..######", "#....#..#....#", "######..######", "#....#..#....#", "######..######", "#.....#......#",
+         "#..########..#", "#....#..#....#", "#.##########.#", "#............#", "#...######...#", "#...#....#...#",
+         "#...######...#", "#...#....#...#", "#...######.###", ".............."]
+
+
+def kanji_logo(y):
+    """Логотип fastfetch: 闇 полублоками, четыре полосы от яркого к глубокому акценту и тень справа-снизу (kanji_logo)."""
+    def rgb(h):
+        return nb.hex2rgb(h)
+    bands = [y["bright"], nb.mix(y["bright"], y["accent"], 0.5), y["accent"], nb.mix(y["accent"], y["deep"], 0.5)]
+    shadow = nb.mix(y["deep"], y["bg"], 0.45)
+    gw, gh = len(KANJI[0]), len(KANJI)
+    on = lambda x, yy: 0 <= yy < gh and 0 <= x < gw and KANJI[yy][x] == "#"
+    def px(x, yy):
+        if on(x, yy):
+            return bands[min(3, yy * 4 // gh)]
+        return shadow if on(x - 1, yy - 1) and (x >= gw or yy >= gh - 1) else None
+    rows = []
+    for yy in range(0, gh + 1, 2):
+        line = ""
+        for x in range(gw + 1):
+            a, b = px(x, yy), px(x, yy + 1)
+            if a is None and b is None:
+                line += "\x1b[0m "
+            elif b is None:
+                line += "\x1b[0m\x1b[38;2;%d;%d;%dm▀" % rgb(a)
+            elif a is None:
+                line += "\x1b[0m\x1b[38;2;%d;%d;%dm▄" % rgb(b)
+            else:
+                line += "\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm▀" % (rgb(a) + rgb(b))
+        rows.append(line + "\x1b[0m")
+    return "\n".join(rows) + "\n"
+
+
+def fastfetch_conf(y):
+    """fastfetch как у yami: «YAMI // hyprland», черта, ключи акцентом, полоса палитры (recolor_apps.rs, fastfetch)."""
+    import json
+    e = lambda h: "38;2;%d;%d;%d" % nb.hex2rgb(h)
+    esc = lambda h: "\x1b[%sm" % e(h)
+    sw = "".join("\x1b[48;2;%d;%d;%dm   " % nb.hex2rgb(c) for c in
+                 [y["bg"], y["panel"], y["border"], y["deep"], y["accent"], y["bright"], y["textDim"], y["text"]])
+    line = esc(y["border"]) + "─" * 30
+    mod = lambda typ, key, fmt=None: dict({"type": typ, "key": key}, **({"format": fmt} if fmt else {}))
+    custom = lambda v: {"type": "custom", "format": v}
+    conf = {
+        "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+        "logo": {"type": "file-raw", "source": "~/.local/state/omarchy/current/theme/apps/yami-logo.txt",
+                 "padding": {"top": 1, "left": 2, "right": 4}},
+        "display": {
+            "separator": "  ",
+            "color": {"keys": e(y["accent"]), "title": e(y["bright"]), "output": e(y["text"]), "separator": e(y["border"])},
+            "key": {"width": 8},
+            "bar": {"char": {"elapsed": "■", "total": "·"}, "width": 12, "border": {"left": "", "right": ""}},
+            "percent": {"type": 3, "color": {"green": e(y["ok"]), "yellow": e(y["warn"]), "red": e(y["bright"])}},
+        },
+        "modules": [
+            custom(esc(y["accent"]) + "YAMI " + esc(y["textFaint"]) + "// " + esc(y["textDim"]) + "hyprland"), custom(line),
+            mod("title", "host", "{user-name}@{host-name}"), mod("os", "os", "{pretty-name}"),
+            mod("wm", "wm", "{pretty-name}"), mod("shell", "shell", "{pretty-name}"),
+            mod("terminal", "term", "{pretty-name}"), mod("uptime", "uptime"),
+            "break", custom(sw + "\x1b[0m"),
+        ],
+    }
+    return "// YAMI: omarchy-themes/yami/build.py по палитре темы\n" + json.dumps(conf, indent=2, ensure_ascii=False) + "\n"
 
 
 def dot_walls(y, out_dir):
@@ -130,3 +205,7 @@ if __name__ == "__main__":
         lines = open(f).read().split("\n")
         lines[0] = f"# {PRESETS[v][0]} — omarchy-themes/yami (палитра yami, MIT; сборка: build.py поверх ../nothing/build.py)."
         open(f, "w").write("\n".join(lines))
+        # fastfetch и его логотип — свои, как у yami (вместо точечного «ex nihilo» генератора nothing)
+        y = derive(PRESETS[v][1])
+        open(os.path.join(HERE, v, "apps", "yami-logo.txt"), "w").write(kanji_logo(y))
+        open(os.path.join(HERE, v, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(y))

@@ -1,12 +1,9 @@
+// YAMI: omarchy-themes/yami/build.py по палитре темы
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "type": "file",
-    "source": "~/.config/fastfetch/preset/dotmatrix-arch.txt",
-    "color": {
-      "1": "red",
-      "2": "90"
-    },
+    "type": "file-raw",
+    "source": "~/.local/state/omarchy/current/theme/apps/yami-logo.txt",
     "padding": {
       "top": 1,
       "left": 2,
@@ -16,74 +13,76 @@
   "display": {
     "separator": "  ",
     "color": {
-      "keys": "90",
-      "title": "white",
-      "separator": "90"
+      "keys": "38;2;138;92;240",
+      "title": "38;2;147;98;255",
+      "output": "38;2;230;222;229",
+      "separator": "38;2;56;39;90"
     },
     "key": {
-      "width": 11
+      "width": 8
+    },
+    "bar": {
+      "char": {
+        "elapsed": "■",
+        "total": "·"
+      },
+      "width": 12,
+      "border": {
+        "left": "",
+        "right": ""
+      }
+    },
+    "percent": {
+      "type": 3,
+      "color": {
+        "green": "38;2;120;200;120",
+        "yellow": "38;2;255;170;40",
+        "red": "38;2;147;98;255"
+      }
     }
   },
   "modules": [
     {
-      "type": "title",
-      "format": "{user-name}@{host-name}"
+      "type": "custom",
+      "format": "\u001b[38;2;138;92;240mYAMI \u001b[38;2;97;83;98m// \u001b[38;2;140;125;143mhyprland"
     },
     {
       "type": "custom",
-      "format": "ex nihilo",
-      "outputColor": "90"
+      "format": "\u001b[38;2;56;39;90m──────────────────────────────"
     },
-    "break",
+    {
+      "type": "title",
+      "key": "host",
+      "format": "{user-name}@{host-name}"
+    },
     {
       "type": "os",
-      "key": "OS"
-    },
-    {
-      "type": "kernel",
-      "key": "KERNEL"
-    },
-    {
-      "type": "uptime",
-      "key": "UPTIME"
-    },
-    {
-      "type": "packages",
-      "key": "PACKAGES"
+      "key": "os",
+      "format": "{pretty-name}"
     },
     {
       "type": "wm",
-      "key": "WM"
+      "key": "wm",
+      "format": "{pretty-name}"
     },
     {
       "type": "shell",
-      "key": "SHELL"
+      "key": "shell",
+      "format": "{pretty-name}"
     },
     {
       "type": "terminal",
-      "key": "TERMINAL"
+      "key": "term",
+      "format": "{pretty-name}"
     },
     {
-      "type": "cpu",
-      "key": "CPU"
-    },
-    {
-      "type": "memory",
-      "key": "MEMORY"
-    },
-    {
-      "type": "disk",
-      "key": "DISK",
-      "folders": "/"
-    },
-    {
-      "type": "battery",
-      "key": "BATTERY"
+      "type": "uptime",
+      "key": "uptime"
     },
     "break",
     {
-      "type": "colors",
-      "symbol": "circle"
+      "type": "custom",
+      "format": "\u001b[48;2;13;10;15m   \u001b[48;2;21;16;25m   \u001b[48;2;56;39;90m   \u001b[48;2;86;58;150m   \u001b[48;2;138;92;240m   \u001b[48;2;147;98;255m   \u001b[48;2;140;125;143m   \u001b[48;2;230;222;229m   \u001b[0m"
     }
   ]
 }
