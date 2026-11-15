@@ -1,7 +1,7 @@
 # Cozytile Carbon — alacritty
 [colors.primary]
 background = "#CCCCCC"
-foreground = "#333333"
+foreground = "#373737"
 
 [colors.cursor]
 text = "#CCCCCC"
@@ -9,36 +9,36 @@ cursor = "#555555"
 
 [colors.vi_mode_cursor]
 text = "#CCCCCC"
-cursor = "#333333"
+cursor = "#1A1A1A"
 
 [colors.search.matches]
 foreground = "#CCCCCC"
-background = "#333333"
+background = "#474747"
 
 [colors.search.focused_match]
 foreground = "#CCCCCC"
 background = "#555555"
 
 [colors.selection]
-text = "#333333"
+text = "#373737"
 background = "#c4c4c4"
 
 [colors.normal]
 black = "#333333"
-red = "#A33A3A"
-green = "#4b4b4b"
-yellow = "#555555"
+red = "#474747"
+green = "#666666"
+yellow = "#999999"
 blue = "#333333"
-magenta = "#B6B6B6"
-cyan = "#494949"
-white = "#C2C2C2"
+magenta = "#808080"
+cyan = "#AAAAAA"
+white = "#555555"
 
 [colors.bright]
-black = "#707070"
-red = "#A33A3A"
-green = "#505050"
-yellow = "#444444"
-blue = "#333333"
-magenta = "#8f8f8f"
-cyan = "#3e3e3e"
-white = "#8A8A8A"
+black = "#222222"
+red = "#4D4D4D"
+green = "#3D3D3D"
+yellow = "#5C5C5C"
+blue = "#1A1A1A"
+magenta = "#6E6E6E"
+cyan = "#666666"
+white = "#333333"

@@ -3,7 +3,7 @@
 [🇷🇺 Русский](README.ru.md)
 
 Omarchy themes after [Cozytile](https://github.com/Darkkal44/Cozytile) by Darkkal44 (a Qtile rice). The repository has no
-licence, so only its colours and look are taken here — no files, and none of its wallpapers or images.
+licence, so its colours and look are taken here, and its code is not copied.
 
 Five themes, like its own: **cozy** (lavender dusk), **sakura** (pink), **natura** (dark grass), **everforest** (misty pine
 forest) and the light **carbon** (grey e-paper). They are **one-colour** by default: syntax, the 16 terminal colours, statuses
@@ -14,8 +14,12 @@ and btop use only shades of the accent and the ink. The `-color` twins keep the 
   and `dunstrc`; the terminal background is the dark bar fill, as on its screenshots (there pywal colours the terminal).
 - Windows — no border (qtile `border_width 0`), a soft shadow like its picom.
 - fastfetch — in the spirit of its pfetch: an Arch logo in strokes, keys os / host / kernel / uptime / pkgs / memory.
-- Wallpapers — drawn here: a lavender sky with clouds, roofs and an antenna; a pink sakura branch; grass blades; a misty pine
-  forest; grey paper (`1-cozytile`), or a plain grainy fill (`2-plain`).
+- Wallpapers — first its own wallpaper for each theme (`0-original`, as its `autostart_once.sh` sets them). They are other
+  people's pictures (anime art of unknown authors, Unsplash and Pexels photos), so they are not stored in git: `build.py`
+  copies them from a Cozytile clone (`COZYTILE_SRC`, default `~/src/rice-refs/Cozytile`) or downloads them from GitHub into
+  `.originals/` and links them. Then drawn ones: a lavender sky with roofs, a sakura branch, grass blades, a misty pine
+  forest, grey paper (`1-cozytile`), and a plain grainy fill (`2-plain`).
+- Carbon's terminal is grey only, from its `Wallpaper/e-ink.json`.
 - Font profile: `omarchy-font-profile cozytile` (JetBrains Mono Nerd Font everywhere, like its bar and terminal).
 
 ```sh

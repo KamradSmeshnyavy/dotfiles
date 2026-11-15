@@ -48,3 +48,7 @@ apps/kitty/fonts.conf
 apps/ghostty/fonts.conf
 # генерируется omarchy-tmux-theme при каждой смене темы
 tui/tmux/om-theme.conf
+
+# Cozytile: его обои (чужие картинки) — build.py берёт их из клона или с GitHub, в git не храним
+omarchy-themes/cozytile/.originals/
+omarchy-themes/cozytile/*/backgrounds/0-original.*

@@ -2,16 +2,16 @@
 gui:
   theme:
     activeBorderColor: ["#555555", bold]
-    inactiveBorderColor: ["#b1b1b1"]
-    searchingActiveBorderColor: ["#333333", bold]
-    optionsTextColor: ["#333333"]
-    selectedLineBgColor: ["#b7b7b7"]
+    inactiveBorderColor: ["#b3b3b3"]
+    searchingActiveBorderColor: ["#474747", bold]
+    optionsTextColor: ["#1A1A1A"]
+    selectedLineBgColor: ["#b8b8b8"]
     inactiveViewSelectedLineBgColor: ["#C2C2C2"]
-    cherryPickedCommitFgColor: ["#903434"]
-    cherryPickedCommitBgColor: ["#b7b7b7"]
-    markedBaseCommitFgColor: ["#333333"]
-    markedBaseCommitBgColor: ["#b7b7b7"]
+    cherryPickedCommitFgColor: ["#4D4D4D"]
+    cherryPickedCommitBgColor: ["#b8b8b8"]
+    markedBaseCommitFgColor: ["#1A1A1A"]
+    markedBaseCommitBgColor: ["#b8b8b8"]
     unstagedChangesColor: ["#903434"]
-    defaultFgColor: ["#333333"]
+    defaultFgColor: ["#373737"]
   authorColors:
-    "*": "#525252"
+    "*": "#535353"

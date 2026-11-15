@@ -1,5 +1,5 @@
 # Cozytile Carbon — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#CCCCCC,bg+:#b7b7b7,fg:#525252,fg+:#333333
+--color=bg:#CCCCCC,bg+:#b8b8b8,fg:#565656,fg+:#373737
 --color=hl:#555555,hl+:#555555,info:#707070,prompt:#555555
---color=pointer:#555555,marker:#464646,spinner:#333333,header:#333333
---color=border:#b1b1b1,label:#333333,query:#333333,selected-bg:#c4c4c4
+--color=pointer:#555555,marker:#555555,spinner:#1A1A1A,header:#474747
+--color=border:#b3b3b3,label:#373737,query:#373737,selected-bg:#c4c4c4
