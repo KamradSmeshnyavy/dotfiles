@@ -47,6 +47,8 @@
 #                 у Audiowide, Orbitron, Kalam, Fuzzy Bubbles и Titan One кириллицы нет — она из запасного шрифта).
 #   yami        — система как stock; пиксельный Tiny5 во всей оболочке (стиль yami берёт его как шрифт заголовков),
 #                 терминал и код — Terminess (Tiny5 и DotGothic16, OFL — kamradsmeshnyavy.customizer/fonts/yami, из yami).
+#   rumda       — система как stock; пиксельный Dogica Pixel в оболочке, Terminess в терминале — райс Rumda
+#                 (Dogica Pixel — Roberto Mocci, SIL OFL 1.1, kamradsmeshnyavy.customizer/fonts/rumda).
 #   yami-ui     — пиксельно везде, как в программах самого yami (fontUi): Tiny5 ещё и в приложениях GTK / Qt.
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
@@ -111,6 +113,7 @@ PROFILES=(
   "vitreus-proxy|liquid|$STOCK_FONT|$STOCK_FONT|Titan One|System as stock; Titan One only in the shell titles — the Vitreus Proxy theme"
   "yami|yami|$STOCK_FONT|Terminess Nerd Font Mono|Tiny5|System as stock; the pixel Tiny5 in the whole shell (bar, panels, launcher, widgets) and Terminess in the terminal and code — the yami rice"
   "yami-ui|yami|Tiny5|Terminess Nerd Font Mono|Tiny5|Pixel everywhere like yami's own apps: Tiny5 in GTK / Qt apps (Nautilus, dialogs) and the shell, Terminess in the terminal and code"
+  "rumda|rumda|$STOCK_FONT|Terminess Nerd Font Mono|Dogica Pixel|System as stock; the pixel Dogica Pixel in the shell (bar, panels, launcher) and Terminess in the terminal and code — the Rumda rice"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

@@ -40,6 +40,8 @@ Item {
     "liquid": "LiquidView.qml",
     // По мотивам yami (MIT, код свой): графитовое окно с рамкой в пиксель, вкладки APPS / CLIPBOARD, пиксельный шрифт.
     "yami": "YamiView.qml",
+    // По мотивам Rumda (облик, код свой): маленькое окно по центру, «Search...», одни названия, выбор акцентом.
+    "rumda": "RumdaView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
