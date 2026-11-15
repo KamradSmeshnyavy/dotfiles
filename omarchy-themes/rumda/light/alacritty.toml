@@ -1,0 +1,44 @@
+# Rumda Light — alacritty
+[colors.primary]
+background = "#f5dcc6"
+foreground = "#4e2e1f"
+
+[colors.cursor]
+text = "#fff3e6"
+cursor = "#a1694d"
+
+[colors.vi_mode_cursor]
+text = "#f5dcc6"
+cursor = "#5e3928"
+
+[colors.search.matches]
+foreground = "#f5dcc6"
+background = "#4e2e1f"
+
+[colors.search.focused_match]
+foreground = "#fff3e6"
+background = "#a1694d"
+
+[colors.selection]
+text = "#4e2e1f"
+background = "#dba380"
+
+[colors.normal]
+black = "#4e2e1f"
+red = "#9a4235"
+green = "#7c4e38"
+yellow = "#a1694d"
+blue = "#775948"
+magenta = "#84543d"
+cyan = "#654636"
+white = "#f2bc88"
+
+[colors.bright]
+black = "#8d7666"
+red = "#9a4235"
+green = "#8c5a42"
+yellow = "#c47c4f"
+blue = "#6b4c3c"
+magenta = "#84543d"
+cyan = "#5a3a2b"
+white = "#bdb3a6"

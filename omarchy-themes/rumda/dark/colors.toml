@@ -1,0 +1,39 @@
+# Rumda Dark — omarchy-themes/rumda (по мотивам Rumda; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#c47c4f"
+cursor = "#c47c4f"
+selection = "#784d37"
+selection_foreground = "#f0c997"
+selection_background = "#784d37"
+muted = "#7b674e"
+
+background = "#1c1612"
+dark_background = "#2b221a"
+darker_background = "#1c1612"
+lighter_background = "#3d2e21"
+
+foreground = "#f0c997"
+dark_foreground = "#7b674e"
+light_foreground = "#a68a68"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#c47c4f"
+hyprland_inactive_border = "#3a2d22"
+
+red = "#9a4235"
+yellow = "#c47c4f"
+orange = "#c47c4f"
+green = "#d89f6f"
+cyan = "#d2b084"
+blue = "#bc9d76"
+magenta = "#d68e60"
+brown = "#784e34"
+
+bright_red = "#a04d41"
+bright_yellow = "#d68e60"
+bright_green = "#cf8f61"
+bright_cyan = "#e1bc8e"
+bright_blue = "#cbaa80"
+bright_magenta = "#d68e60"

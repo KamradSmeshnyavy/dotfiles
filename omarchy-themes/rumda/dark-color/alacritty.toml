@@ -1,0 +1,44 @@
+# Rumda Dark Color — alacritty
+[colors.primary]
+background = "#1c1612"
+foreground = "#f0c997"
+
+[colors.cursor]
+text = "#1c1612"
+cursor = "#c47c4f"
+
+[colors.vi_mode_cursor]
+text = "#1c1612"
+cursor = "#6b8a97"
+
+[colors.search.matches]
+foreground = "#1c1612"
+background = "#d68e60"
+
+[colors.search.focused_match]
+foreground = "#1c1612"
+background = "#c47c4f"
+
+[colors.selection]
+text = "#f0c997"
+background = "#784d37"
+
+[colors.normal]
+black = "#20111b"
+red = "#be100e"
+green = "#858162"
+yellow = "#d08b30"
+blue = "#426a79"
+magenta = "#97522c"
+cyan = "#989a9c"
+white = "#968c83"
+
+[colors.bright]
+black = "#5e5252"
+red = "#be100e"
+green = "#858162"
+yellow = "#d08b30"
+blue = "#426a79"
+magenta = "#97522c"
+cyan = "#989a9c"
+white = "#f0c997"

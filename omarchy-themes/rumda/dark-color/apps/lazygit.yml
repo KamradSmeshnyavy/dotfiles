@@ -1,0 +1,17 @@
+# Rumda Dark Color — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#c47c4f", bold]
+    inactiveBorderColor: ["#3a2d22"]
+    searchingActiveBorderColor: ["#d68e60", bold]
+    optionsTextColor: ["#6b8a97"]
+    selectedLineBgColor: ["#3d2e21"]
+    inactiveViewSelectedLineBgColor: ["#2b221a"]
+    cherryPickedCommitFgColor: ["#ae785a"]
+    cherryPickedCommitBgColor: ["#3d2e21"]
+    markedBaseCommitFgColor: ["#6b8a97"]
+    markedBaseCommitBgColor: ["#3d2e21"]
+    unstagedChangesColor: ["#b5746a"]
+    defaultFgColor: ["#f0c997"]
+  authorColors:
+    "*": "#989a9c"

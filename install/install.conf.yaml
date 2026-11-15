@@ -349,6 +349,18 @@
     ~/.config/omarchy/themes/yami-dusk:
       path: omarchy-themes/yami/dusk
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rumda-dark:
+      path: omarchy-themes/rumda/dark
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rumda-light:
+      path: omarchy-themes/rumda/light
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rumda-dark-color:
+      path: omarchy-themes/rumda/dark-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/rumda-light-color:
+      path: omarchy-themes/rumda/light-color
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

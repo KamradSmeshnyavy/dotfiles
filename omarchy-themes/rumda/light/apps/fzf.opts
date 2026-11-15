@@ -1,0 +1,5 @@
+# Rumda Light — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#f5dcc6,bg+:#f0bb90,fg:#71594a,fg+:#4e2e1f
+--color=hl:#a1694d,hl+:#a1694d,info:#8d7666,prompt:#a1694d
+--color=pointer:#a1694d,marker:#784c36,spinner:#5e3928,header:#4e2e1f
+--color=border:#f2bc88,label:#4e2e1f,query:#4e2e1f,selected-bg:#dba380
