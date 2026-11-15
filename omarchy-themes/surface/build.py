@@ -7,8 +7,8 @@ README разрешает брать что угодно со ссылкой н�
 одноцветные (синтаксис, 16 цветов терминала, статусы и btop — оттенки зелени и чернил); варианты -color — с разноцветным
 терминалом самого surface-dots. fastfetch — как его config.jsonc: разделитель « ▐ », значки-ключи, строка «─» под
 заголовком, кружки цветов; логотип — свой Сатурн полублоками (в честь его меню выключения Cassini). Рамки окон — 1 px
-зеленью с прозрачностью, тень как у него. Обои — свои: зернистая «бумага» цвета темы и слои гор зеленью (у него —
-фото с Unsplash и рисунок Амано, их не копируем). Раскладку по приложениям делает генератор тем nothing.
+зеленью с прозрачностью, тень как у него. Обои — первыми его (ORIGINALS), дальше свои: зернистая «бумага» цвета темы и
+слои гор зеленью. Раскладку по приложениям делает генератор тем nothing.
 
   python3 build.py                 все темы
   python3 build.py dark light      выбранные
@@ -111,11 +111,23 @@ def ridge(w, seed, base, amp, rough):
     return out
 
 
+# его обои: главные (hypr/wallpapers) — первыми, у тёмной ещё горы и Земля с его экранов блокировки (ужаты до 3840 px)
+ORIGINALS = {
+    "dark": [("0-original", ".config/hypr/wallpapers/default-dark.jpg", None),
+             ("0r-mountains", ".config/hypr/hyprlock/stellarium/background.jpg", 3840),
+             ("0r-earth", "sddm/themes/stellarium/assets/wall-earth.jpg", 3840)],
+    "light": [("0-original", ".config/hypr/wallpapers/default-light.jpg", None)],
+}
+
+
 def walls(t, out_dir):
-    """Обои: «бумага» с зерном цвета фона и слои гор зеленью, к переднему плану — темнее (у светлой — плотнее);
-    второй вариант — только зерно."""
+    """Обои: первыми — его (ORIGINALS), дальше свои: «бумага» с зерном цвета фона и слои гор зеленью, к переднему плану —
+    темнее (у светлой — плотнее); и вариант только с зерном."""
     from PIL import Image, ImageChops, ImageDraw
     os.makedirs(out_dir, exist_ok=True)
+    sys.path.insert(0, os.path.join(HERE, ".."))
+    import originals
+    originals.place(out_dir, "snes19xx/surface-dots", "main", ORIGINALS[t["mode"]], env="SURFACE_DOTS_SRC")
     W, H = 2880, 1800
     dark = t["mode"] == "dark"
     base = t["bg"]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Темы rumda-* — по мотивам Rumda (github.com/hexonide/rumda; лицензии у репозитория нет — взяты только цвета и облик,
-файлы и рисунки не копируются).
+"""Темы rumda-* — по мотивам Rumda (github.com/hexonide/rumda; лицензии у репозитория нет — взяты цвета, облик и его обои,
+код не копируется).
 
 Палитры — из его Colors.qml (бар, дашборд, рамки) и kitty.conf: тёмная — кофейный графит с карамельным акцентом,
 светлая — песок с коричневыми чернилами. По умолчанию темы одноцветные (синтаксис, 16 цветов терминала, статусы и btop —
@@ -102,10 +102,27 @@ SIT = ["..#.....#.......", "..##...##.......", "..#######.......", ".#########..
        ".##########...#.", "..##....##...##.", "..##....##......"]
 
 
+# его обои (pictures/): главные — первыми (0-original), варианты — следом (0r-…)
+ORIGINALS = {
+    "dark": [("0-original", "pictures/dark-wallpaper.png", None),
+             ("0r-katana", "pictures/dark-wallpaper-original.png", None),
+             ("0r-katana-archived", "pictures/dark-wallpaper-archived.png", None),
+             ("0r-katana-gruv", "pictures/dark-wallpaper-gruv.png", None),
+             ("0r-katana-highcontrast", "pictures/dark-wallpaper-highcontrast.png", None),
+             ("0r-katana-vesper", "pictures/dark-wallpaper_vesper.png", None)],
+    "light": [("0-original", "pictures/light-wallpaper.png", None),
+              ("0r-warm", "pictures/wallpaper-warm.png", None)],
+}
+
+
 def walls(t, out_dir):
-    """Обои: сплошной цвет темы (у тёмной — фон, у светлой — песок бара) и свой пиксельный кот в правом нижнем углу."""
+    """Обои: первыми — его (ORIGINALS), дальше свои: сплошной цвет темы (у тёмной — фон, у светлой — песок бара) и свой
+    пиксельный кот в правом нижнем углу."""
     from PIL import Image, ImageDraw
     os.makedirs(out_dir, exist_ok=True)
+    sys.path.insert(0, os.path.join(HERE, ".."))
+    import originals
+    originals.place(out_dir, "hexonide/rumda", "main", ORIGINALS[t["mode"]])
     W, H = 2880, 1800
     base = t["bg"] if t["mode"] == "dark" else "#f0c997"
     for name, cat in (("1-plain.png", True), ("2-empty.png", False)):
