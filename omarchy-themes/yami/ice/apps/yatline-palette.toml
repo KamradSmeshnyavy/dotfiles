@@ -1,0 +1,12 @@
+# Ice (yami) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#3a9fd0"
+magenta = "#328ab5"
+red = "#e5484d"
+yellow = "#d6c27a"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+foreground = "#e2e2e3"
+background = "#0a0c0e"
+dark_background = "#101417"
+lighter_background = "#191e22"

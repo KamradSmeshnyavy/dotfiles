@@ -1,0 +1,12 @@
+# Blood (yami) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#c4161c"
+magenta = "#c45c60"
+red = "#e5484d"
+yellow = "#d6c27a"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+foreground = "#e9dbda"
+background = "#0f0808"
+dark_background = "#180d0d"
+lighter_background = "#241314"

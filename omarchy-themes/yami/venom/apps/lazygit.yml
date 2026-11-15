@@ -1,0 +1,17 @@
+# Venom (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#5fae34", bold]
+    inactiveBorderColor: ["#294319"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#1c1f16"]
+    inactiveViewSelectedLineBgColor: ["#12150e"]
+    cherryPickedCommitFgColor: ["#53972d"]
+    cherryPickedCommitBgColor: ["#1c1f16"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#1c1f16"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#e4e2db"]
+  authorColors:
+    "*": "#b7a2d9"

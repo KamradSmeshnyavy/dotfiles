@@ -1,0 +1,44 @@
+# Venom (yami) — alacritty
+[colors.primary]
+background = "#0b0d09"
+foreground = "#e4e2db"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#5fae34"
+
+[colors.vi_mode_cursor]
+text = "#0b0d09"
+cursor = "#8fb3d9"
+
+[colors.search.matches]
+foreground = "#0b0d09"
+background = "#d6c27a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#5fae34"
+
+[colors.selection]
+text = "#e4e2db"
+background = "#396621"
+
+[colors.normal]
+black = "#294319"
+red = "#e5484d"
+green = "#9cbf7c"
+yellow = "#d9a05b"
+blue = "#8fb3d9"
+magenta = "#53972d"
+cyan = "#b7a2d9"
+white = "#878779"
+
+[colors.bright]
+black = "#66655a"
+red = "#eb7074"
+green = "#b2cd99"
+yellow = "#e1b57f"
+blue = "#a8c4e1"
+magenta = "#79ae5b"
+cyan = "#c7b6e1"
+white = "#ffffff"

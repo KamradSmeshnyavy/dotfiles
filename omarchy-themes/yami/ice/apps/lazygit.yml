@@ -1,0 +1,17 @@
+# Ice (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#3a9fd0", bold]
+    inactiveBorderColor: ["#1d3e4e"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#191e22"]
+    inactiveViewSelectedLineBgColor: ["#101417"]
+    cherryPickedCommitFgColor: ["#328ab5"]
+    cherryPickedCommitBgColor: ["#191e22"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#191e22"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#e2e2e3"]
+  authorColors:
+    "*": "#b7a2d9"

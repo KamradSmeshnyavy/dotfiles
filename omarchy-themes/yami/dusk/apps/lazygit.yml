@@ -1,0 +1,17 @@
+# Dusk (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#8a5cf0", bold]
+    inactiveBorderColor: ["#38275a"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#1f1925"]
+    inactiveViewSelectedLineBgColor: ["#151019"]
+    cherryPickedCommitFgColor: ["#8864d7"]
+    cherryPickedCommitBgColor: ["#1f1925"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#1f1925"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#e6dee5"]
+  authorColors:
+    "*": "#b7a2d9"

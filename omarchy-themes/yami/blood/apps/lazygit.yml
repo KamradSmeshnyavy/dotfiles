@@ -1,0 +1,17 @@
+# Blood (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#c4161c", bold]
+    inactiveBorderColor: ["#4c1012"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#241314"]
+    inactiveViewSelectedLineBgColor: ["#180d0d"]
+    cherryPickedCommitFgColor: ["#c45c60"]
+    cherryPickedCommitBgColor: ["#241314"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#241314"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#e9dbda"]
+  authorColors:
+    "*": "#b7a2d9"

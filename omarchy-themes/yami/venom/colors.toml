@@ -1,0 +1,39 @@
+# Venom (yami) — omarchy-themes/yami (палитра yami, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#5fae34"
+cursor = "#5fae34"
+selection = "#396621"
+selection_foreground = "#e4e2db"
+selection_background = "#396621"
+muted = "#66655a"
+
+background = "#0b0d09"
+dark_background = "#12150e"
+darker_background = "#0b0d09"
+lighter_background = "#1c1f16"
+
+foreground = "#e4e2db"
+dark_foreground = "#66655a"
+light_foreground = "#878779"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#5fae34"
+hyprland_inactive_border = "#294319"
+
+red = "#e5484d"
+yellow = "#d9a05b"
+orange = "#d9a05b"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+magenta = "#53972d"
+brown = "#7c5e36"
+
+bright_red = "#eb7074"
+bright_yellow = "#e1b57f"
+bright_green = "#b2cd99"
+bright_cyan = "#c7b6e1"
+bright_blue = "#a8c4e1"
+bright_magenta = "#79ae5b"

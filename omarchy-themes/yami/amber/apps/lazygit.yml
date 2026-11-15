@@ -1,0 +1,17 @@
+# Amber (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d98e1f", bold]
+    inactiveBorderColor: ["#533812"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#261d14"]
+    inactiveViewSelectedLineBgColor: ["#19130d"]
+    cherryPickedCommitFgColor: ["#bd7b1b"]
+    cherryPickedCommitBgColor: ["#261d14"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#261d14"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#eae1da"]
+  authorColors:
+    "*": "#b7a2d9"

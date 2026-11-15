@@ -1,0 +1,17 @@
+# Ash (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#a8a29c", bold]
+    inactiveBorderColor: ["#423f3d"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#221e1e"]
+    inactiveViewSelectedLineBgColor: ["#161414"]
+    cherryPickedCommitFgColor: ["#928d88"]
+    cherryPickedCommitBgColor: ["#221e1e"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#221e1e"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#e8e2e0"]
+  authorColors:
+    "*": "#b7a2d9"

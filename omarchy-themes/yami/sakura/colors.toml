@@ -1,0 +1,39 @@
+# Sakura (yami) — omarchy-themes/yami (палитра yami, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#d9577c"
+cursor = "#d9577c"
+selection = "#7e3449"
+selection_foreground = "#eadedf"
+selection_background = "#7e3449"
+muted = "#715c60"
+
+background = "#0f0a0b"
+dark_background = "#191012"
+darker_background = "#0f0a0b"
+lighter_background = "#26181b"
+
+foreground = "#eadedf"
+dark_foreground = "#715c60"
+light_foreground = "#957d81"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#d9577c"
+hyprland_inactive_border = "#532532"
+
+red = "#e5484d"
+yellow = "#d9a05b"
+orange = "#d9a05b"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+magenta = "#c15775"
+brown = "#7e5c37"
+
+bright_red = "#eb7074"
+bright_yellow = "#e1b57f"
+bright_green = "#b2cd99"
+bright_cyan = "#c7b6e1"
+bright_blue = "#a8c4e1"
+bright_magenta = "#cf7c93"

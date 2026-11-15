@@ -1,0 +1,5 @@
+# Venom (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#0b0d09,bg+:#1c1f16,fg:#878779,fg+:#e4e2db
+--color=hl:#5fae34,hl+:#5fae34,info:#66655a,prompt:#5fae34
+--color=pointer:#5fae34,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=border:#294319,label:#e4e2db,query:#e4e2db,selected-bg:#396621

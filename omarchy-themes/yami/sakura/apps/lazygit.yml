@@ -1,0 +1,17 @@
+# Sakura (yami) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d9577c", bold]
+    inactiveBorderColor: ["#532532"]
+    searchingActiveBorderColor: ["#d6c27a", bold]
+    optionsTextColor: ["#8fb3d9"]
+    selectedLineBgColor: ["#26181b"]
+    inactiveViewSelectedLineBgColor: ["#191012"]
+    cherryPickedCommitFgColor: ["#c15775"]
+    cherryPickedCommitBgColor: ["#26181b"]
+    markedBaseCommitFgColor: ["#8fb3d9"]
+    markedBaseCommitBgColor: ["#26181b"]
+    unstagedChangesColor: ["#e5484d"]
+    defaultFgColor: ["#eadedf"]
+  authorColors:
+    "*": "#b7a2d9"

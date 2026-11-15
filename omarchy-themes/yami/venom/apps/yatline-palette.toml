@@ -1,0 +1,12 @@
+# Venom (yami) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#5fae34"
+magenta = "#53972d"
+red = "#e5484d"
+yellow = "#d6c27a"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+foreground = "#e4e2db"
+background = "#0b0d09"
+dark_background = "#12150e"
+lighter_background = "#1c1f16"

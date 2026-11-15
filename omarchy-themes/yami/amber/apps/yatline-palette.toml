@@ -1,0 +1,12 @@
+# Amber (yami) — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d98e1f"
+magenta = "#bd7b1b"
+red = "#e5484d"
+yellow = "#d6c27a"
+green = "#9cbf7c"
+cyan = "#b7a2d9"
+blue = "#8fb3d9"
+foreground = "#eae1da"
+background = "#0f0c08"
+dark_background = "#19130d"
+lighter_background = "#261d14"

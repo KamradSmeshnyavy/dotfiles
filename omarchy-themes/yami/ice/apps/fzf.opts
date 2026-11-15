@@ -1,0 +1,5 @@
+# Ice (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#0a0c0e,bg+:#191e22,fg:#82858b,fg+:#e2e2e3
+--color=hl:#3a9fd0,hl+:#3a9fd0,info:#636469,prompt:#3a9fd0
+--color=pointer:#3a9fd0,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=border:#1d3e4e,label:#e2e2e3,query:#e2e2e3,selected-bg:#245d79

@@ -1,0 +1,44 @@
+# Ice (yami) — alacritty
+[colors.primary]
+background = "#0a0c0e"
+foreground = "#e2e2e3"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#3a9fd0"
+
+[colors.vi_mode_cursor]
+text = "#0a0c0e"
+cursor = "#8fb3d9"
+
+[colors.search.matches]
+foreground = "#0a0c0e"
+background = "#d6c27a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#3a9fd0"
+
+[colors.selection]
+text = "#e2e2e3"
+background = "#245d79"
+
+[colors.normal]
+black = "#1d3e4e"
+red = "#e5484d"
+green = "#9cbf7c"
+yellow = "#d9a05b"
+blue = "#8fb3d9"
+magenta = "#328ab5"
+cyan = "#b7a2d9"
+white = "#82858b"
+
+[colors.bright]
+black = "#636469"
+red = "#eb7074"
+green = "#b2cd99"
+yellow = "#e1b57f"
+blue = "#a8c4e1"
+magenta = "#5fa4c5"
+cyan = "#c7b6e1"
+white = "#ffffff"

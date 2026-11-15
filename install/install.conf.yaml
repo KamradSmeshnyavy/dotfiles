@@ -316,6 +316,27 @@
     ~/.config/omarchy/themes/vitreus-proxy:
       path: omarchy-themes/vitreus/proxy
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-blood:
+      path: omarchy-themes/yami/blood
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-ash:
+      path: omarchy-themes/yami/ash
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-sakura:
+      path: omarchy-themes/yami/sakura
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-amber:
+      path: omarchy-themes/yami/amber
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-venom:
+      path: omarchy-themes/yami/venom
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-ice:
+      path: omarchy-themes/yami/ice
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/yami-dusk:
+      path: omarchy-themes/yami/dusk
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

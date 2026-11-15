@@ -1,0 +1,44 @@
+# Blood (yami) — alacritty
+[colors.primary]
+background = "#0f0808"
+foreground = "#e9dbda"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#c4161c"
+
+[colors.vi_mode_cursor]
+text = "#0f0808"
+cursor = "#8fb3d9"
+
+[colors.search.matches]
+foreground = "#0f0808"
+background = "#d6c27a"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#c4161c"
+
+[colors.selection]
+text = "#e9dbda"
+background = "#731013"
+
+[colors.normal]
+black = "#4c1012"
+red = "#e5484d"
+green = "#9cbf7c"
+yellow = "#d9a05b"
+blue = "#8fb3d9"
+magenta = "#c45c60"
+cyan = "#b7a2d9"
+white = "#937576"
+
+[colors.bright]
+black = "#6f5758"
+red = "#eb7074"
+green = "#b2cd99"
+yellow = "#e1b57f"
+blue = "#a8c4e1"
+magenta = "#d18083"
+cyan = "#c7b6e1"
+white = "#ffffff"

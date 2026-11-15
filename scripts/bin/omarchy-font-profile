@@ -45,6 +45,8 @@
 #                 Audiowide, uwu Mochiy Pop One, cyber Orbitron, milk Zen Kurenaido, doodle Kalam, paper Fuzzy Bubbles,
 #                 proxy Titan One (OFL, kamradsmeshnyavy.customizer/fonts/vitreus; японские урезаны до латиницы и кириллицы,
 #                 у Audiowide, Orbitron, Kalam, Fuzzy Bubbles и Titan One кириллицы нет — она из запасного шрифта).
+#   yami        — система как stock; пиксельный Tiny5 во всей оболочке (стиль yami берёт его как шрифт заголовков),
+#                 терминал и код — Terminess (Tiny5 и DotGothic16, OFL — kamradsmeshnyavy.customizer/fonts/yami, из yami).
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
 # DotMatrix Mono — Geist Mono с включёнными лигатурами; DotMatrix Pixel — Terminess (Terminus) с русскими «в д и й»,
@@ -106,6 +108,7 @@ PROFILES=(
   "vitreus-doodle|liquid|$STOCK_FONT|$STOCK_FONT|Kalam|System as stock; Kalam only in the shell titles — the Vitreus Doodle theme"
   "vitreus-paper|liquid|$STOCK_FONT|$STOCK_FONT|Fuzzy Bubbles|System as stock; Fuzzy Bubbles only in the shell titles — the Vitreus Paper theme"
   "vitreus-proxy|liquid|$STOCK_FONT|$STOCK_FONT|Titan One|System as stock; Titan One only in the shell titles — the Vitreus Proxy theme"
+  "yami|yami|$STOCK_FONT|Terminess Nerd Font Mono|Tiny5|System as stock; the pixel Tiny5 in the whole shell (bar, panels, launcher, widgets) and Terminess in the terminal and code — the yami rice"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

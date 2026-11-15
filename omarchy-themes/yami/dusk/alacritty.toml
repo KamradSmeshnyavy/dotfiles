@@ -1,0 +1,44 @@
+# Dusk (yami) — alacritty
+[colors.primary]
+background = "#0d0a0f"
+foreground = "#e6dee5"
+
+[colors.cursor]
+text = "#0b0909"
+cursor = "#8a5cf0"
+
+[colors.vi_mode_cursor]
+text = "#0d0a0f"
+cursor = "#8fb3d9"
+
+[colors.search.matches]
+foreground = "#0d0a0f"
+background = "#d6c27a"
+
+[colors.search.focused_match]
+foreground = "#0b0909"
+background = "#8a5cf0"
+
+[colors.selection]
+text = "#e6dee5"
+background = "#52378b"
+
+[colors.normal]
+black = "#38275a"
+red = "#e5484d"
+green = "#9cbf7c"
+yellow = "#d9a05b"
+blue = "#8fb3d9"
+magenta = "#8864d7"
+cyan = "#b7a2d9"
+white = "#8c7d8f"
+
+[colors.bright]
+black = "#6a5d6b"
+red = "#eb7074"
+green = "#b2cd99"
+yellow = "#e1b57f"
+blue = "#a8c4e1"
+magenta = "#a286e0"
+cyan = "#c7b6e1"
+white = "#ffffff"
