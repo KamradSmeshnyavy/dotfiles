@@ -34,6 +34,12 @@ Item {
 
     if (payload.mode === "select" || payload.mode === "input") {
       root.openDmenu(payload)
+    } else if (payload.browse === true && payload.menu) {
+      // browse — открыть пункт как список (у «apps» есть и своё действие — стоковая сетка дока); так его
+      // открывает широкий лаунчер surface-wide
+      var bid = root.resolveRoute(payload.menu)
+      root.pendingInitialMenu = bid
+      root.openExistingMenu(bid)
     } else {
       root.openRoute(payload.initialMenu || payload.menu || "root")
     }

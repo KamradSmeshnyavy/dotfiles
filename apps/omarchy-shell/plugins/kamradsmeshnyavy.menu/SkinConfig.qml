@@ -44,6 +44,8 @@ Item {
     "rumda": "RumdaView.qml",
     // По мотивам rofi-лаунчера surface-dots (snes19xx, код свой): узкая панель слева внизу, шапка-обои с поиском, список.
     "surface": "SurfaceView.qml",
+    // Широкий «Programs» из surface-dots (WideDrawer, код свой): сетка 6 столбцов, вкладки Apps / Shaders.
+    "surface-wide": "SurfaceWideView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
