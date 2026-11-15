@@ -43,7 +43,7 @@ IPC are stock.
 | `notifyFollowBar`, `notifyAttach` | `true`, `auto` | as for the dashboard: stick to a solid bar, otherwise a floating card |
 | `notifyCorner` | `top-right` | `top-right` / `top-left` / `top-center` (centred — flows on both sides) |
 | `notifyWidth`, `notifyMax` | `380`, `0` | toast width; how many are visible at once (`0` — all, newest on top) |
-| `notifyCards` | `flat` | `flat` — no border inside the backdrop, `bordered` — stock, `dotmatrix` — DOT-MATRIX hardware cards with a Glyph sweep |
+| `notifyCards` | `flat` | `flat` — no border inside the backdrop, `bordered` — stock, `dotmatrix` — DOT-MATRIX hardware cards with a Glyph sweep, `rumda` — sand cards in the light accent with brown Terminess text and a 2 px border, like the mako setup of Rumda (the Rumda style pairs it with `notifyStyle: stock`, radius 2, width 300) |
 | `notifyBackground`, `notifyAlpha`, `notifyRadius` | | your own look when not following the bar |
 
 ## Sounds

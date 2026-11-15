@@ -41,7 +41,7 @@ OSD со шкалой (громкость, яркость, микрофон — 
 | `notifyFollowBar`, `notifyAttach` | `true`, `auto` | как у дашборда: прилипать к сплошному бару, иначе плавающая карточка |
 | `notifyCorner` | `top-right` | `top-right` / `top-left` / `top-center` (по центру — затёки с обеих сторон) |
 | `notifyWidth`, `notifyMax` | `380`, `0` | ширина тоста; сколько видно сразу (`0` — все, новые сверху) |
-| `notifyCards` | `flat` | `flat` — без рамки внутри подложки, `bordered` — стоковые |
+| `notifyCards` | `flat` | `flat` — без рамки внутри подложки, `bordered` — стоковые, `dotmatrix` — аппаратные карточки DOT-MATRIX с пробегом Glyph, `rumda` — песочные карточки светлым акцентом с коричневым текстом Terminess и рамкой 2 px, как mako у Rumda (стиль Rumda ставит их со `notifyStyle: stock`, радиусом 2 и шириной 300) |
 | `notifyBackground`, `notifyAlpha`, `notifyRadius` | | свой вид, когда не следуем бару |
 
 ## Звуки
