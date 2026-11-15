@@ -30,6 +30,7 @@ Item {
     // Customizer (p): skin — показать этим скином только сейчас, без записи в menu-skin.json;
     // returnTo — payload, с которым Customizer откроется снова, когда меню закроется.
     root.skinOverride = typeof payload.skin === "string" && skinConfig.known.indexOf(payload.skin) !== -1 ? payload.skin : ""
+    root.programsFromApps = false
     root.returnTo = typeof payload.returnTo === "string" ? payload.returnTo : ""
 
     if (payload.mode === "select" || payload.mode === "input") {
@@ -250,6 +251,7 @@ Item {
   // dmenu prompts (theme pickers, text input) keep the card: a select list is
   // the right shape for them.
   property string skinOverride: ""
+  property bool programsFromApps: false
   property string returnTo: ""
   property string skin: root.skinOverride || skinConfig.skin
   readonly property bool skinActive: !root.dmenuActive && root.rowsLoaded && root.skin !== "list"
@@ -911,6 +913,8 @@ Item {
 
   function goBack() {
     if (root.activeMenu === "root") return false
+    // назад из «Programs», открытых пунктом «Apps» у surface, — снова узкий список surface
+    if (root.programsFromApps) { root.programsFromApps = false; root.skinOverride = "" }
 
     if (root.navStack.length > 0) {
       var previous = root.navStack[root.navStack.length - 1]
@@ -940,6 +944,13 @@ Item {
     if (index < 0 || index >= displayModel.count) return
 
     var row = displayModel.get(index)
+    // райс surface: «Apps» открывает широкий лаунчер «Programs» (скин surface-wide) вместо списка / стоковой сетки дока
+    if (root.skin === "surface" && (row.itemId === "apps" || row.target === "apps")) {
+      root.skinOverride = "surface-wide"
+      root.programsFromApps = true
+      root.setActiveMenu("apps", true, fromPointer)
+      return
+    }
     if (row.kind === "menu" || row.kind === "link") {
       root.setActiveMenu(row.target || row.itemId, true, fromPointer)
     } else if (row.kind === "app") {

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Сетка приложений по райсу (Super+Alt+Space, вместо стокового `omarchy-shell omarchy.dock apps`):
+# у райса surface (~/.config/omarchy/style.json → "rice") — широкий лаунчер «Programs» (скин surface-wide
+# kamradsmeshnyavy.menu, вкладки Apps / Shaders), у остальных — стоковая сетка дока Omarchy.
+set -euo pipefail
+
+rice=$(jq -r '.rice // .id // ""' "$HOME/.config/omarchy/style.json" 2>/dev/null || true)
+if [[ $rice == surface ]]; then
+  exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"surface-wide"}'
+fi
+exec omarchy-shell omarchy.dock apps

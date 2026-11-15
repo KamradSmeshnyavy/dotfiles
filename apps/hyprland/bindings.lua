@@ -21,6 +21,10 @@ o.rebind(
 	'uwsm-app -- nautilus --new-window "$(omarchy-cmd-terminal-cwd)"'
 )
 
+-- Сетка приложений по райсу: у surface — «Programs» (скин surface-wide), у остальных — стоковая (scripts/bin/omarchy-apps)
+hl.unbind("SUPER + ALT + SPACE")
+o.bind("SUPER + ALT + SPACE", "Apps", "omarchy-apps")
+
 hl.unbind("SUPER + SHIFT + B")
 o.bind("SUPER + SHIFT + B", "Browser", "omarchy-launch-browser")
 o.rebind("SUPER + SHIFT + ALT + B", "Browser (private)", "omarchy-launch-browser --private")

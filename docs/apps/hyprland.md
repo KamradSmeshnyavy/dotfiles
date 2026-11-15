@@ -40,6 +40,7 @@ toggles. Package updates improve the defaults without rewriting these files.
 | `Super + M` | DOT-MATRIX settings panel (Wi-Fi, BT, sound, DND, night light) |
 | `` Super + ` `` | workspace overview |
 | `Super + Alt + D` | dashboard |
+| `Super + Alt + Space` | app grid by rice (`omarchy-apps`): surface — the «Programs» launcher, others — the stock dock grid |
 | `Super + Esc` | power menu from the right edge |
 | `Super + Alt + C` / `+ Shift` | screen shader on/off / next (CRT, TFT) |
 | `Super + Alt + O` / `+ Shift` | next / previous transparency preset |

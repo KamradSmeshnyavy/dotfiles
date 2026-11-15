@@ -252,6 +252,9 @@
     ~/.local/bin/omarchy-lock-themes:
       path: scripts/bin/omarchy-lock-themes
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-apps:
+      path: scripts/bin/omarchy-apps
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/bookmarks-sync:
       path: scripts/bin/bookmarks-sync
       if: "[ `uname` = Linux ]"
