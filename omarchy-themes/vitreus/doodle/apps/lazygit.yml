@@ -3,15 +3,15 @@ gui:
   theme:
     activeBorderColor: ["#e0457b", bold]
     inactiveBorderColor: ["#ebe3d2"]
-    searchingActiveBorderColor: ["#8a6a00", bold]
-    optionsTextColor: ["#2a5bb0"]
+    searchingActiveBorderColor: ["#22202e", bold]
+    optionsTextColor: ["#5a2541"]
     selectedLineBgColor: ["#edebe6"]
     inactiveViewSelectedLineBgColor: ["#fffdf6"]
-    cherryPickedCommitFgColor: ["#d0342c"]
+    cherryPickedCommitFgColor: ["#db1f25"]
     cherryPickedCommitBgColor: ["#edebe6"]
-    markedBaseCommitFgColor: ["#2a5bb0"]
+    markedBaseCommitFgColor: ["#5a2541"]
     markedBaseCommitBgColor: ["#edebe6"]
     unstagedChangesColor: ["#db1f25"]
     defaultFgColor: ["#22202e"]
   authorColors:
-    "*": "#6a3fa0"
+    "*": "#6b6577"

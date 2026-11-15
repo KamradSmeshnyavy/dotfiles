@@ -9,11 +9,11 @@ cursor = "#7f8cff"
 
 [colors.vi_mode_cursor]
 text = "#e0e5ee"
-cursor = "#2c67a2"
+cursor = "#5862a2"
 
 [colors.search.matches]
 foreground = "#e0e5ee"
-background = "#7c5f0e"
+background = "#5f657f"
 
 [colors.search.focused_match]
 foreground = "#ffffff"
@@ -24,21 +24,21 @@ text = "#45495c"
 background = "#c5ccf3"
 
 [colors.normal]
-black = "#3a3a38"
+black = "#6c7390"
 red = "#c7173c"
-green = "#386f54"
-yellow = "#905626"
-blue = "#2c67a2"
-magenta = "#b43a56"
-cyan = "#874dac"
+green = "#7681cd"
+yellow = "#7f8cff"
+blue = "#959dc6"
+magenta = "#6672e6"
+cyan = "#888fa8"
 white = "#d3d9e5"
 
 [colors.bright]
 black = "#7982a1"
-red = "#a31331"
-green = "#2e5b45"
-yellow = "#76471f"
-blue = "#245485"
-magenta = "#943047"
-cyan = "#6f3f8d"
+red = "#ee6a86"
+green = "#7a86e3"
+yellow = "#aab3ff"
+blue = "#9198b0"
+magenta = "#aab3ff"
+cyan = "#7e85a0"
 white = "#bdbdb8"

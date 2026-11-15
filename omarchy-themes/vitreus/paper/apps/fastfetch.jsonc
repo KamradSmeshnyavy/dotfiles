@@ -1,12 +1,9 @@
+// Vitreus: omarchy-themes/vitreus/build.py по палитре темы
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "type": "file",
-    "source": "~/.config/fastfetch/preset/dotmatrix-arch.txt",
-    "color": {
-      "1": "red",
-      "2": "90"
-    },
+    "type": "file-raw",
+    "source": "~/.local/state/omarchy/current/theme/apps/vitreus-logo.txt",
     "padding": {
       "top": 1,
       "left": 2,
@@ -16,74 +13,76 @@
   "display": {
     "separator": "  ",
     "color": {
-      "keys": "90",
-      "title": "white",
-      "separator": "90"
+      "keys": "38;2;79;118;176",
+      "title": "38;2;106;144;201",
+      "output": "38;2;59;54;49",
+      "separator": "38;2;217;203;174"
     },
     "key": {
-      "width": 11
+      "width": 8
+    },
+    "bar": {
+      "char": {
+        "elapsed": "■",
+        "total": "·"
+      },
+      "width": 12,
+      "border": {
+        "left": "",
+        "right": ""
+      }
+    },
+    "percent": {
+      "type": 3,
+      "color": {
+        "green": "38;2;106;144;201",
+        "yellow": "38;2;79;118;176",
+        "red": "38;2;217;89;79"
+      }
     }
   },
   "modules": [
     {
-      "type": "title",
-      "format": "{user-name}@{host-name}"
+      "type": "custom",
+      "format": "\u001b[38;2;106;144;201mVITREUS \u001b[38;2;133;123;108m// \u001b[38;2;59;54;49mpaper"
     },
     {
       "type": "custom",
-      "format": "ex nihilo",
-      "outputColor": "90"
+      "format": "\u001b[38;2;217;203;174m──────────────────────────────"
     },
-    "break",
+    {
+      "type": "title",
+      "key": "host",
+      "format": "{user-name}@{host-name}"
+    },
     {
       "type": "os",
-      "key": "OS"
-    },
-    {
-      "type": "kernel",
-      "key": "KERNEL"
-    },
-    {
-      "type": "uptime",
-      "key": "UPTIME"
-    },
-    {
-      "type": "packages",
-      "key": "PACKAGES"
+      "key": "os",
+      "format": "{pretty-name}"
     },
     {
       "type": "wm",
-      "key": "WM"
+      "key": "wm",
+      "format": "{pretty-name}"
     },
     {
       "type": "shell",
-      "key": "SHELL"
+      "key": "shell",
+      "format": "{pretty-name}"
     },
     {
       "type": "terminal",
-      "key": "TERMINAL"
+      "key": "term",
+      "format": "{pretty-name}"
     },
     {
-      "type": "cpu",
-      "key": "CPU"
-    },
-    {
-      "type": "memory",
-      "key": "MEMORY"
-    },
-    {
-      "type": "disk",
-      "key": "DISK",
-      "folders": "/"
-    },
-    {
-      "type": "battery",
-      "key": "BATTERY"
+      "type": "uptime",
+      "key": "uptime"
     },
     "break",
     {
-      "type": "colors",
-      "symbol": "circle"
+      "type": "custom",
+      "format": "\u001b[48;2;239;228;205m   \u001b[48;2;246;238;221m   \u001b[48;2;217;203;174m   \u001b[48;2;90;77;61m   \u001b[48;2;79;118;176m   \u001b[48;2;106;144;201m   \u001b[48;2;169;193;230m   \u001b[48;2;217;89;79m   \u001b[48;2;133;123;108m   \u001b[48;2;59;54;49m   \u001b[0m"
     }
   ]
 }

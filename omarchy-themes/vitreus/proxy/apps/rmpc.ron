@@ -12,12 +12,12 @@
     header_background_color: "#10161d",
     modal_background_color: "#10161d",
     preview_label_style: (fg: "#ff4d6d"),
-    preview_metadata_group_style: (fg: "#ffd21f"),
+    preview_metadata_group_style: (fg: "#fff07a"),
     tab_bar: (
         active_style: (fg: "#10161d", bg: "#ffd21f", modifiers: "Bold"),
         inactive_style: (fg: "#f2f6f8", bg: "#10161d", modifiers: ""),
     ),
-    highlighted_item_style: (fg: "#ff7a3d", modifiers: "Italic"),
+    highlighted_item_style: (fg: "#ffd21f", modifiers: "Italic"),
     current_item_style: (fg: "#10161d", bg: "#ffd21f", modifiers: "Bold"),
     borders_style: (fg: "#ffd21f", modifiers: "Bold"),
     highlight_border_style: (fg: "#ffd21f"),
@@ -59,7 +59,7 @@
             width: "20%",
         ),
         (
-            prop: (kind: Property(Title), style: (fg: "#ffd21f"),
+            prop: (kind: Property(Title), style: (fg: "#fff07a"),
                 highlighted_item_style: (fg: "#f2f6f8", modifiers: "Bold"),
                 default: (kind: Property(Filename), style: (fg: "#f2f6f8"),)
             ),
@@ -72,7 +72,7 @@
             width: "30%",
         ),
         (
-            prop: (kind: Property(Duration), style: (fg: "#ffd21f"),
+            prop: (kind: Property(Duration), style: (fg: "#fff07a"),
                 default: (kind: Text("-"))
             ),
             width: "15%",
@@ -160,8 +160,8 @@
                     (kind: Text("]"),style: (fg: "#ffd21f", modifiers: "Bold"))
                 ],
                 center: [
-                    (kind: Property(Song(Artist)), style: (fg: "#ffd21f", modifiers: "Bold"),
-                        default: (kind: Text("Unknown Artist"), style: (fg: "#ffd21f", modifiers: "Bold"))
+                    (kind: Property(Song(Artist)), style: (fg: "#fff07a", modifiers: "Bold"),
+                        default: (kind: Text("Unknown Artist"), style: (fg: "#fff07a", modifiers: "Bold"))
                     ),
                     (kind: Text(" - ")),
                     (kind: Property(Song(Album)),style: (fg: "#ffd21f" ),

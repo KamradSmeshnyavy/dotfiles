@@ -9,6 +9,12 @@ Vitreus не задаёт — они подобраны здесь в тон к�
 
   python3 build.py            все темы
   python3 build.py retro uwu  выбранные
+  python3 build.py --color    разноцветный синтаксис и терминал (как было); по умолчанию — одноцветно
+
+По умолчанию темы одноцветные: синтаксис, 16 цветов терминала, статусы и btop — только оттенки mint (акцента) и чернил
+темы (ink, faint, off), без чужих зелёных и фиолетовых. Сам Vitreus терминал, btop и fastfetch не красит (у него свой
+терминал во вкладке Desk), поэтому они сделаны здесь в его цветах; fastfetch — «VITREUS // тема», полая стеклянная V
+полублоками от minthi к mintlo и полоса палитры темы.
 """
 import colorsys
 import os
@@ -95,6 +101,119 @@ def readable(c, bg, need):
     return c
 
 
+COLOR = "--color" in sys.argv
+
+
+def mono_syntax(t, bg):
+    """Синтаксис оттенками акцента и чернил: ключевые слова — mintlo / minthi (что читается на фоне), строки — акцент к
+    чернилам, числа — сам акцент, типы — чернила, функции — чернила к акценту, свойства — faint, особое — alert."""
+    dark = t["mode"] == "dark"
+    strong = t["minthi"] if dark else t["mintlo"]
+    return {"keyword": strong, "string": nb.mix(t["mint"], t["ink"], 0.5), "number": t["mint"], "type": t["ink"],
+            "function": nb.mix(t["ink"], strong, 0.35), "property": t["faint"], "special": t["alert"],
+            "constant": nb.mix(strong, t["ink"], 0.4)}
+
+
+def ansi16_mono(t, p):
+    """16 цветов терминала одним цветом: красный — alert, «зелёный» — акцент к чернилам, «жёлтый» — акцент, синий и
+    голубой — тона чернил, пурпурный — mintlo / minthi; 0 / 8 / 7 / 15 — фон, faint и чернила (как у тёмной или светлой)."""
+    dark = t["mode"] == "dark"
+    ink, faint, mint = t["ink"], t["faint"], t["mint"]
+    strong = t["minthi"] if dark else t["mintlo"]
+    soft = t["mintlo"] if dark else t["minthi"]
+    black = t["off"] if dark else ink
+    white = faint if dark else t["off"]
+    base = [black, p["error"], nb.mix(mint, ink, 0.45), mint, nb.mix(faint, mint, 0.2), strong, nb.mix(faint, ink, 0.4), white]
+    lift = [p["comment"], t["alert"], nb.mix(mint, ink, 0.25), soft, nb.mix(faint, ink, 0.2), soft, nb.mix(faint, ink, 0.6),
+            "#ffffff" if dark else "#bdbdb8"]
+    return base + lift
+
+
+def btop_theme(t):
+    """btop в цветах темы: рамки — off, графики от mintlo через mint к minthi, как у btop yami."""
+    dark = t["mode"] == "dark"
+    acc, lo, hi, line = t["mint"], t["mintlo"], t["minthi"], t["off"]
+    deep, bright = (lo, hi) if dark else (hi, lo)
+    th = [("main_bg", t["tint"]), ("main_fg", t["ink"]), ("title", t["ink"]), ("hi_fg", bright), ("selected_bg", acc),
+          ("selected_fg", t["onmint"]), ("inactive_fg", t["faint"]), ("graph_text", t["faint"]), ("meter_bg", t["panel"]),
+          ("proc_misc", acc), ("cpu_box", line), ("mem_box", line), ("net_box", line), ("proc_box", line), ("div_line", line),
+          ("temp_start", deep), ("temp_mid", acc), ("temp_end", t["alert"]), ("cpu_start", deep), ("cpu_mid", acc),
+          ("cpu_end", bright), ("free_start", line), ("free_mid", deep), ("free_end", acc), ("cached_start", line),
+          ("cached_mid", nb.mix(deep, t["faint"], 0.5)), ("cached_end", t["faint"]), ("available_start", line),
+          ("available_mid", deep), ("available_end", acc), ("used_start", deep), ("used_mid", acc), ("used_end", bright),
+          ("download_start", line), ("download_mid", deep), ("download_end", acc), ("upload_start", line),
+          ("upload_mid", nb.mix(acc, t["ink"], 0.3)), ("upload_end", t["ink"]), ("process_start", deep), ("process_mid", acc),
+          ("process_end", bright)]
+    return "# Vitreus: omarchy-themes/vitreus/build.py по палитре темы\n" + "".join(f'theme[{k}]="{v}"\n' for k, v in th)
+
+
+# полая «стеклянная» V, как буква с баннера Vitreus (14 × 14 клеток)
+VEE = ["###........###", "#.#........#.#", "#..#......#..#", "#..#......#..#", ".#..#....#..#.", ".#..#....#..#.",
+       "..#..#..#..#..", "..#..#..#..#..", "...#..##..#...", "...#......#...", "....#....#....", "....#....#....",
+       ".....#..#.....", "......##......"]
+
+
+def vee_logo(t):
+    """Логотип fastfetch: V полублоками, четыре полосы от minthi через mint к mintlo, тень цвета off справа-снизу."""
+    rgb = nb.hex2rgb
+    bands = [t["minthi"], nb.mix(t["minthi"], t["mint"], 0.5), t["mint"], t["mintlo"]]
+    shadow = t["off"]
+    gw, gh = len(VEE[0]), len(VEE)
+    on = lambda x, y: 0 <= y < gh and 0 <= x < gw and VEE[y][x] == "#"
+    def px(x, y):
+        if on(x, y):
+            return bands[min(3, y * 4 // gh)]
+        return shadow if on(x - 1, y - 1) else None
+    rows = []
+    for y in range(0, gh + 1, 2):
+        line = ""
+        for x in range(gw + 1):
+            a, b = px(x, y), px(x, y + 1)
+            if a is None and b is None:
+                line += "\x1b[0m "
+            elif b is None:
+                line += "\x1b[0m\x1b[38;2;%d;%d;%dm▀" % rgb(a)
+            elif a is None:
+                line += "\x1b[0m\x1b[38;2;%d;%d;%dm▄" % rgb(b)
+            else:
+                line += "\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm▀" % (rgb(a) + rgb(b))
+        rows.append(line + "\x1b[0m")
+    return "\n".join(rows) + "\n"
+
+
+def fastfetch_conf(v, t):
+    """fastfetch Vitreus: «VITREUS // тема», черта цвета off, ключи акцентом, полоса из одиннадцати цветов темы."""
+    import json
+    e = lambda h: "38;2;%d;%d;%d" % nb.hex2rgb(h)
+    esc = lambda h: "\x1b[%sm" % e(h)
+    order = ["tint", "panel", "off", "deep", "mintlo", "mint", "minthi", "alert", "faint", "ink"]
+    sw = "".join("\x1b[48;2;%d;%d;%dm   " % nb.hex2rgb(t[k]) for k in order)
+    key = t["minthi"] if t["mode"] == "dark" else t["mintlo"]
+    mod = lambda typ, k, fmt=None: dict({"type": typ, "key": k}, **({"format": fmt} if fmt else {}))
+    custom = lambda s: {"type": "custom", "format": s}
+    conf = {
+        "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+        "logo": {"type": "file-raw", "source": "~/.local/state/omarchy/current/theme/apps/vitreus-logo.txt",
+                 "padding": {"top": 1, "left": 2, "right": 4}},
+        "display": {
+            "separator": "  ",
+            "color": {"keys": e(key), "title": e(t["mint"]), "output": e(t["ink"]), "separator": e(t["off"])},
+            "key": {"width": 8},
+            "bar": {"char": {"elapsed": "■", "total": "·"}, "width": 12, "border": {"left": "", "right": ""}},
+            "percent": {"type": 3, "color": {"green": e(t["mint"]), "yellow": e(key), "red": e(t["alert"])}},
+        },
+        "modules": [
+            custom(esc(t["mint"]) + "VITREUS " + esc(t["faint"]) + "// " + esc(t["ink"]) + t["title"].split(" (")[0].lower()),
+            custom(esc(t["off"]) + "─" * 30),
+            mod("title", "host", "{user-name}@{host-name}"), mod("os", "os", "{pretty-name}"),
+            mod("wm", "wm", "{pretty-name}"), mod("shell", "shell", "{pretty-name}"),
+            mod("terminal", "term", "{pretty-name}"), mod("uptime", "uptime"),
+            "break", custom(sw + "\x1b[0m"),
+        ],
+    }
+    return "// Vitreus: omarchy-themes/vitreus/build.py по палитре темы\n" + json.dumps(conf, indent=2, ensure_ascii=False) + "\n"
+
+
 def palette(v):
     t = VITREUS[v]
     bg, fg = t["tint"], t["ink"]
@@ -109,8 +228,12 @@ def palette(v):
         "diff_add": nb.mix(bg, "#3fae5a", 0.18), "diff_del": nb.mix(bg, t["alert"], 0.18), "diff_change": nb.mix(bg, t["mint"], 0.14),
         "min_de": 8,
     }
-    for role, c in t["syntax"].items():
+    syn = t["syntax"] if COLOR else mono_syntax(t, bg)
+    for role, c in syn.items():
         p[role] = readable(c, bg, 4.5)
+    if not COLOR:
+        p["min_de"] = 0
+        p["diff_add"] = nb.mix(bg, t["mint"], 0.18)
     # слоты ANSI = роли (yellow — типы): жёлтым терминалу даём числа, они тёплые у всех тем
     p["ansi_yellow"] = p["number"]
     p["warn"] = p["number"]
@@ -119,6 +242,8 @@ def palette(v):
     if not dark:
         p["light_mode_file"] = True
     p["wallpapers"] = lambda pp, d, t=t: liquid_walls(t, d)
+    if not COLOR:
+        p["ansi16"] = ansi16_mono(t, p)
     return p
 
 
@@ -146,7 +271,7 @@ def liquid_walls(t, out_dir):
 
 
 if __name__ == "__main__":
-    for v in sys.argv[1:] or list(VITREUS):
+    for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(VITREUS):
         nb.PALETTES[v] = palette(v)
         nb.build(v)
         # шапка colors.toml генератора называет nothing — здесь своя
@@ -154,3 +279,9 @@ if __name__ == "__main__":
         lines = open(f).read().split("\n")
         lines[0] = f"# {VITREUS[v]['title']} — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py)."
         open(f, "w").write("\n".join(lines))
+        # fastfetch, его логотип и btop — свои, в цветах темы (вместо точечного «ex nihilo» генератора nothing)
+        t = VITREUS[v]
+        open(os.path.join(HERE, v, "apps", "vitreus-logo.txt"), "w").write(vee_logo(t))
+        open(os.path.join(HERE, v, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(v, t))
+        if not COLOR:
+            open(os.path.join(HERE, v, "btop.theme"), "w").write(btop_theme(t))

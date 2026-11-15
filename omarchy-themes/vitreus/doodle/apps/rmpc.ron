@@ -17,7 +17,7 @@
         active_style: (fg: "#fbf5e8", bg: "#e0457b", modifiers: "Bold"),
         inactive_style: (fg: "#22202e", bg: "#fbf5e8", modifiers: ""),
     ),
-    highlighted_item_style: (fg: "#b0540a", modifiers: "Italic"),
+    highlighted_item_style: (fg: "#d42361", modifiers: "Italic"),
     current_item_style: (fg: "#fbf5e8", bg: "#e0457b", modifiers: "Bold"),
     borders_style: (fg: "#e0457b", modifiers: "Bold"),
     highlight_border_style: (fg: "#e0457b"),

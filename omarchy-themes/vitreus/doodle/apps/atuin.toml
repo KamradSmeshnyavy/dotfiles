@@ -2,10 +2,10 @@
 name = "omarchy"
 
 [colors]
-AlertInfo = "#2f7a3a"
-AlertWarn = "#b0540a"
+AlertInfo = "#813254"
+AlertWarn = "#d42361"
 AlertError = "#db1f25"
-Annotation = "#2a5bb0"
+Annotation = "#5a2541"
 Base = "#22202e"
 Guidance = "#6b6577"
 Important = "#e0457b"
