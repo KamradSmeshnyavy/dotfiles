@@ -33,3 +33,14 @@
 - bat и delta — `BAT_THEME=ansi`, они рисуют на подобранных вручную ANSI-цветах терминала.
 - Обои — точечные фото dotmatrix, перекрашенные в цвета варианта.
 - DOT-MATRIX-интерфейс (бар, панели, уведомления, lock) берёт цвета темы сам — палитра DOT-MATRIX в режиме `theme`.
+
+## Одноцветные двойники (`-mono`)
+
+`nothing-glyph-dark-mono`, `nothing-glyph-light-mono`, `nothing-steel-mono` и `nothing-ashlight-mono` — те же палитры, но
+синтаксис, статусы и 16 цветов терминала только в серых тонах от `dim` к `fg` и в красной семье (`keyword`, `special`,
+`error`): без пастели терминала glyph-rice и без холодной стали Steel (`mono()` в `palettes.py`). Они стоят по умолчанию у
+стилей Glyph и DOT-MATRIX и в пресете Glyph; разноцветные темы остаются в списке как были.
+
+```sh
+python3 build.py glyph-dark-mono glyph-light-mono steel-mono ashlight-mono
+```

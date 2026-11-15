@@ -1,0 +1,17 @@
+# Glyph Light Mono (glyph-rice) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#d9d9d9"]
+    searchingActiveBorderColor: ["#181818", bold]
+    optionsTextColor: ["#0b0b0b"]
+    selectedLineBgColor: ["#ffffff"]
+    inactiveViewSelectedLineBgColor: ["#f1f1f1"]
+    cherryPickedCommitFgColor: ["#8a0f15"]
+    cherryPickedCommitBgColor: ["#ffffff"]
+    markedBaseCommitFgColor: ["#0b0b0b"]
+    markedBaseCommitBgColor: ["#ffffff"]
+    unstagedChangesColor: ["#b3121a"]
+    defaultFgColor: ["#0b0b0b"]
+  authorColors:
+    "*": "#313131"

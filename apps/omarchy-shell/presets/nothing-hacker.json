@@ -1,8 +1,8 @@
 {
   "name": "nothing-hacker",
   "note": "change borders",
-  "theme": "nothing-steel",
-  "wallpaper": "~/dotfiles/omarchy-themes/nothing/steel/backgrounds/1-galaxy.png",
+  "theme": "nothing-steel-mono",
+  "wallpaper": "~/.config/omarchy/themes/nothing-steel-mono/backgrounds/1-galaxy.png",
   "anims": "DOT-MATRIX",
   "opacity": "dotmatrix",
   "blur": "dotmatrix",

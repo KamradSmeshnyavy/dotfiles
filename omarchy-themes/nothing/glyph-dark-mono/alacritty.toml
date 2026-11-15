@@ -1,0 +1,44 @@
+# Glyph Dark Mono (glyph-rice) — alacritty
+[colors.primary]
+background = "#000000"
+foreground = "#f2f2f2"
+
+[colors.cursor]
+text = "#ffffff"
+cursor = "#d71921"
+
+[colors.vi_mode_cursor]
+text = "#000000"
+cursor = "#f2f2f2"
+
+[colors.search.matches]
+foreground = "#000000"
+background = "#dedede"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#d71921"
+
+[colors.selection]
+text = "#f2f2f2"
+background = "#2e0c0e"
+
+[colors.normal]
+black = "#0e0e0e"
+red = "#d71921"
+green = "#ababab"
+yellow = "#d8d8d8"
+blue = "#bababa"
+magenta = "#ff8a90"
+cyan = "#c9c9c9"
+white = "#8c8c8c"
+
+[colors.bright]
+black = "#6e6e6e"
+red = "#f0434b"
+green = "#bfbfbf"
+yellow = "#ededed"
+blue = "#cecece"
+magenta = "#fba9ad"
+cyan = "#dedede"
+white = "#f2f2f2"

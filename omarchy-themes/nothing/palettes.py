@@ -160,6 +160,35 @@ PALETTES = {
 SYNTAX = ["keyword", "string", "number", "type", "function", "property", "special", "constant"]
 
 
+def _mix(a, b, k):
+    a, b = a.lstrip("#"), b.lstrip("#")
+    ca = [int(a[i:i + 2], 16) for i in (0, 2, 4)]
+    cb = [int(b[i:i + 2], 16) for i in (0, 2, 4)]
+    return "#%02x%02x%02x" % tuple(round(x + (y - x) * k) for x, y in zip(ca, cb))
+
+
+def mono(base, title):
+    """Одноцветный двойник палитры: серые тона от dim к fg и красная семья (keyword, special, error) — синтаксис,
+    статусы и 16 цветов терминала без пастели и холодной стали (как сам glyph-rice в nvim и btop)."""
+    m = dict(base)
+    fg, dim, acc = base["fg"], base["dim"], base["accent"]
+    g = lambda k: _mix(dim, fg, k)
+    m.update({"title": title, "tonal": False, "min_de": 0,
+              "string": g(0.25), "number": g(0.55), "type": g(0.8), "function": fg, "property": g(0.4), "constant": g(0.65),
+              "warn": g(0.8), "info": g(0.4), "hint": g(0.25), "ok": fg})
+    m.pop("ansi_yellow", None)
+    dark = base["mode"] == "dark"
+    m["ansi16"] = [base["panel"] if dark else fg, acc, g(0.3), g(0.75), g(0.45), base["special"], g(0.6), dim if dark else base["line"],
+                   base["comment"], base["error"], g(0.5), g(0.95), g(0.65), _mix(base["special"], fg, 0.3), g(0.8), fg if dark else "#bdbdb8"]
+    return m
+
+
+# Одноцветные двойники (по умолчанию у стилей Glyph и DOT-MATRIX; разноцветные остаются как есть)
+for _name, _title in (("glyph-dark", "Glyph Dark Mono (glyph-rice)"), ("glyph-light", "Glyph Light Mono (glyph-rice)"),
+                      ("steel", "Nothing Steel Mono"), ("ashlight", "Nothing Ash Light Mono")):
+    PALETTES[_name + "-mono"] = mono(PALETTES[_name], _title)
+
+
 def rgb(h):
     h = h.lstrip("#")
     return tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))

@@ -295,6 +295,18 @@
     ~/.config/omarchy/themes/nothing-glyph-light:
       path: omarchy-themes/nothing/glyph-light
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-glyph-dark-mono:
+      path: omarchy-themes/nothing/glyph-dark-mono
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-glyph-light-mono:
+      path: omarchy-themes/nothing/glyph-light-mono
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-steel-mono:
+      path: omarchy-themes/nothing/steel-mono
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/nothing-ashlight-mono:
+      path: omarchy-themes/nothing/ashlight-mono
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-retro:
       path: omarchy-themes/vitreus/retro
       if: "[ `uname` = Linux ]"

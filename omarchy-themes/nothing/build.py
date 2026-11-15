@@ -865,6 +865,9 @@ WALLPAPERS = {
                    ("blackhole.png", "accent")],
     "glyph-light": [("01-night.png", "fg"), ("02-arch.png", "accent"), ("galaxy.png", "dim"), ("antenna.png", "fg")],
 }
+# у одноцветных двойников — те же обои, что у их тем; цвет точек в одну краску
+for _v in ("glyph-dark", "glyph-light", "steel", "ashlight"):
+    WALLPAPERS[_v + "-mono"] = [(f, r if r in ("fg", "dim", "accent") else "fg") for f, r in WALLPAPERS[_v]]
 
 
 def wallpapers(variant, p, out_dir):

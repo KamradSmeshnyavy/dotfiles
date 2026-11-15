@@ -1,0 +1,39 @@
+# Glyph Dark Mono (glyph-rice) — omarchy-themes/nothing (палитра: palettes.py, сборка: build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#d71921"
+cursor = "#d71921"
+selection = "#2e0c0e"
+selection_foreground = "#f2f2f2"
+selection_background = "#2e0c0e"
+muted = "#6e6e6e"
+
+background = "#000000"
+dark_background = "#0e0e0e"
+darker_background = "#000000"
+lighter_background = "#1a1a1a"
+
+foreground = "#f2f2f2"
+dark_foreground = "#6e6e6e"
+light_foreground = "#8c8c8c"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#d71921"
+hyprland_inactive_border = "#2a2a2a"
+
+red = "#d71921"
+yellow = "#d8d8d8"
+orange = "#c4c4c4"
+green = "#ababab"
+cyan = "#c9c9c9"
+blue = "#bababa"
+magenta = "#ff8a90"
+brown = "#6c6c6c"
+
+bright_red = "#f0434b"
+bright_yellow = "#ededed"
+bright_green = "#bfbfbf"
+bright_cyan = "#dedede"
+bright_blue = "#cecece"
+bright_magenta = "#fba9ad"

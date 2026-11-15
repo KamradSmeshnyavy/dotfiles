@@ -1,0 +1,17 @@
+# Glyph Dark Mono (glyph-rice) — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#d71921", bold]
+    inactiveBorderColor: ["#2a2a2a"]
+    searchingActiveBorderColor: ["#dedede", bold]
+    optionsTextColor: ["#f2f2f2"]
+    selectedLineBgColor: ["#1a1a1a"]
+    inactiveViewSelectedLineBgColor: ["#0e0e0e"]
+    cherryPickedCommitFgColor: ["#ff8a90"]
+    cherryPickedCommitBgColor: ["#1a1a1a"]
+    markedBaseCommitFgColor: ["#f2f2f2"]
+    markedBaseCommitBgColor: ["#1a1a1a"]
+    unstagedChangesColor: ["#f0434b"]
+    defaultFgColor: ["#f2f2f2"]
+  authorColors:
+    "*": "#b5b5b5"

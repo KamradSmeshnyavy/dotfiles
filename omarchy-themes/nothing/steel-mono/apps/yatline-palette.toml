@@ -1,0 +1,12 @@
+# Nothing Steel Mono — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#d71921"
+magenta = "#b8cfe2"
+red = "#ff4d55"
+yellow = "#cfd6dc"
+green = "#a8b2ba"
+cyan = "#b3bbc3"
+blue = "#dde3e8"
+foreground = "#dde3e8"
+background = "#000000"
+dark_background = "#0a0c0e"
+lighter_background = "#171b1f"
