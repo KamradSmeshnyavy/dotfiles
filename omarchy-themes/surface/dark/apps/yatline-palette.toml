@@ -1,0 +1,12 @@
+# Surface Dark — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#a7c080"
+magenta = "#e67e80"
+red = "#e67e80"
+yellow = "#e5dfc5"
+green = "#c3ce9f"
+cyan = "#9da9a0"
+blue = "#d2d6b0"
+foreground = "#e5dfc5"
+background = "#141719"
+dark_background = "#1e2326"
+lighter_background = "#2d353b"

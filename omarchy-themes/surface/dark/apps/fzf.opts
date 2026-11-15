@@ -1,0 +1,5 @@
+# Surface Dark — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#141719,bg+:#2d353b,fg:#9da9a0,fg+:#e5dfc5
+--color=hl:#a7c080,hl+:#a7c080,info:#727166,prompt:#a7c080
+--color=pointer:#a7c080,marker:#c3ce9f,spinner:#d2d6b0,header:#e5dfc5
+--color=border:#374145,label:#e5dfc5,query:#e5dfc5,selected-bg:#3a4438

@@ -49,6 +49,9 @@
 #                 терминал и код — Terminess (Tiny5 и DotGothic16, OFL — kamradsmeshnyavy.customizer/fonts/yami, из yami).
 #   rumda       — система как stock; пиксельный Dogica Pixel в оболочке, Terminess в терминале — райс Rumda
 #                 (Dogica Pixel — Roberto Mocci, SIL OFL 1.1, kamradsmeshnyavy.customizer/fonts/rumda).
+#   surface     — система как stock; Manrope в оболочке, терминал и код — CMU Typewriter Text, как у surface-dots
+#                 (Manrope, Newsreader, EB Garamond — OFL, Google Fonts; CMU Typewriter — OFL, cm-unicode;
+#                 kamradsmeshnyavy.customizer/fonts/surface).
 #   yami-ui     — пиксельно везде, как в программах самого yami (fontUi): Tiny5 ещё и в приложениях GTK / Qt.
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
@@ -114,6 +117,7 @@ PROFILES=(
   "yami|yami|$STOCK_FONT|Terminess Nerd Font Mono|Tiny5|System as stock; the pixel Tiny5 in the whole shell (bar, panels, launcher, widgets) and Terminess in the terminal and code — the yami rice"
   "yami-ui|yami|Tiny5|Terminess Nerd Font Mono|Tiny5|Pixel everywhere like yami's own apps: Tiny5 in GTK / Qt apps (Nautilus, dialogs) and the shell, Terminess in the terminal and code"
   "rumda|rumda|$STOCK_FONT|Terminess Nerd Font Mono|Dogica Pixel|System as stock; the pixel Dogica Pixel in the shell (bar, panels, launcher) and Terminess in the terminal and code — the Rumda rice"
+  "surface|surface|$STOCK_FONT|CMU Typewriter Text|Manrope|System as stock; Manrope in the shell (bar, panels, launcher) and the typewriter CMU Typewriter Text in the terminal and code — the surface-dots rice"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

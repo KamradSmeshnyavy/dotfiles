@@ -1,0 +1,12 @@
+# Surface Light — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#4f6b5b"
+magenta = "#bb3c3e"
+red = "#bb3c3e"
+yellow = "#252e33"
+green = "#3c5049"
+cyan = "#546670"
+blue = "#32403f"
+foreground = "#252e33"
+background = "#f0ece6"
+dark_background = "#e3ded6"
+lighter_background = "#d8d2c8"

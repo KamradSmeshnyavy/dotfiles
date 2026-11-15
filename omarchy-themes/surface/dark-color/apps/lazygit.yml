@@ -1,0 +1,17 @@
+# Surface Dark Color — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#a7c080", bold]
+    inactiveBorderColor: ["#374145"]
+    searchingActiveBorderColor: ["#d9bb80", bold]
+    optionsTextColor: ["#83b6af"]
+    selectedLineBgColor: ["#2d353b"]
+    inactiveViewSelectedLineBgColor: ["#1e2326"]
+    cherryPickedCommitFgColor: ["#d39bb6"]
+    cherryPickedCommitBgColor: ["#2d353b"]
+    markedBaseCommitFgColor: ["#83b6af"]
+    markedBaseCommitBgColor: ["#2d353b"]
+    unstagedChangesColor: ["#e67e80"]
+    defaultFgColor: ["#e5dfc5"]
+  authorColors:
+    "*": "#87c095"

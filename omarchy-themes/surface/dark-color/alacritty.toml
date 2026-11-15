@@ -1,0 +1,44 @@
+# Surface Dark Color — alacritty
+[colors.primary]
+background = "#141719"
+foreground = "#e5dfc5"
+
+[colors.cursor]
+text = "#232a2e"
+cursor = "#a7c080"
+
+[colors.vi_mode_cursor]
+text = "#141719"
+cursor = "#83b6af"
+
+[colors.search.matches]
+foreground = "#141719"
+background = "#d9bb80"
+
+[colors.search.focused_match]
+foreground = "#232a2e"
+background = "#a7c080"
+
+[colors.selection]
+text = "#e5dfc5"
+background = "#3a4438"
+
+[colors.normal]
+black = "#3c474d"
+red = "#a04f50"
+green = "#7aa265"
+yellow = "#d9bb80"
+blue = "#83b6af"
+magenta = "#d39bb6"
+cyan = "#87c095"
+white = "#868d80"
+
+[colors.bright]
+black = "#868d80"
+red = "#a04f50"
+green = "#729e5a"
+yellow = "#d9bb80"
+blue = "#83b6af"
+magenta = "#d39bb6"
+cyan = "#87c095"
+white = "#e5dfc5"

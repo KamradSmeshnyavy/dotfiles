@@ -361,6 +361,18 @@
     ~/.config/omarchy/themes/rumda-light-color:
       path: omarchy-themes/rumda/light-color
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/surface-dark:
+      path: omarchy-themes/surface/dark
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/surface-light:
+      path: omarchy-themes/surface/light
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/surface-dark-color:
+      path: omarchy-themes/surface/dark-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/surface-light-color:
+      path: omarchy-themes/surface/light-color
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

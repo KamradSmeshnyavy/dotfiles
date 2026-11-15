@@ -1,0 +1,44 @@
+# Surface Light — alacritty
+[colors.primary]
+background = "#f0ece6"
+foreground = "#252e33"
+
+[colors.cursor]
+text = "#f0ece6"
+cursor = "#4f6b5b"
+
+[colors.vi_mode_cursor]
+text = "#f0ece6"
+cursor = "#32403f"
+
+[colors.search.matches]
+foreground = "#f0ece6"
+background = "#252e33"
+
+[colors.search.focused_match]
+foreground = "#f0ece6"
+background = "#4f6b5b"
+
+[colors.selection]
+text = "#252e33"
+background = "#dfe6cf"
+
+[colors.normal]
+black = "#252e33"
+red = "#c74042"
+green = "#608552"
+yellow = "#4f6b5b"
+blue = "#46555e"
+magenta = "#4a6b70"
+cyan = "#38444b"
+white = "#c9c2b6"
+
+[colors.bright]
+black = "#848584"
+red = "#c74042"
+green = "#445c51"
+yellow = "#496255"
+blue = "#3c4a52"
+magenta = "#435f64"
+cyan = "#2e393f"
+white = "#a39e93"
