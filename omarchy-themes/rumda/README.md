@@ -13,6 +13,9 @@ use only shades of the accent and the ink. `rumda-dark-color` and `rumda-light-c
   an own pixel cat face (`apps/rumda-logo.txt`).
 - Wallpapers — the plain theme colour with an own pixel cat silhouette in the corner (`1-plain`), or without it.
 - The shell font is the pixel **Dogica Pixel** (Roberto Mocci, SIL OFL 1.1, `kamradsmeshnyavy.customizer/fonts/rumda`).
+- Windows get Rumda's double border: the brown 3 px border, a 13 px band of the background (11 px of sand in the light
+  theme) and an outer sand line — through the borders-plus-plus plugin (`just hypr-plugins`, see `docs/apps/hyprland.md`);
+  without it only the single border is drawn.
 
 ```sh
 python3 build.py            # all themes

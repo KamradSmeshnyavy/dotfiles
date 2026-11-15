@@ -14,6 +14,9 @@
   пиксельная мордочка кота (`apps/rumda-logo.txt`).
 - Обои — сплошной цвет темы со своим пиксельным силуэтом кота в углу (`1-plain`) или без него.
 - Шрифт оболочки — пиксельный **Dogica Pixel** (Roberto Mocci, SIL OFL 1.1, `kamradsmeshnyavy.customizer/fonts/rumda`).
+- У окон — двойная рамка Rumda: коричневая рамка 3 px, полоса цвета фона 13 px (у светлой — песочная 11 px) и внешняя
+  песочная линия — через плагин borders-plus-plus (`just hypr-plugins`, см. `docs/apps/hyprland.ru.md`); без него
+  рисуется только одна рамка.
 
 ```sh
 python3 build.py            # все темы

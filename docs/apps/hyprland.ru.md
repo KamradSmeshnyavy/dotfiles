@@ -71,3 +71,9 @@
 `~/.local/state/omarchy-customizer/animations.lua` и `~/.local/state/hypr/{opacity,blur,screen-shader}` и применяет их
 заново после каждого `hyprctl reload`. Чтобы при перезагрузке не мелькали значения по умолчанию, `looknfeel.lua`
 подключает хук Customizer `hypr/customizer.lua`.
+
+Добавочные рамки окон даёт плагин [borders-plus-plus](https://github.com/hyprwm/hyprland-plugins/tree/main/borders-plus-plus)
+(официальный hyprwm/hyprland-plugins). `just hypr-plugins` собирает его под запущенный Hyprland (коммит из `hyprpm.toml`,
+иначе `main`) в `~/.local/lib/hypr-plugins/`; после обновления Hyprland — пересобрать. `looknfeel.lua` грузит его, если
+файл есть, и берёт настройки из глобальной таблицы `omarchy_theme_borders`, которую может задать `hyprland.lua` темы
+(так делают темы rumda: двойная рамка Rumda); у остальных тем добавочных рамок нет.

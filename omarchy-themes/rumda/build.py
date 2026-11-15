@@ -200,12 +200,22 @@ def btop_theme(t):
 def hypr_lua(t):
     """Рамка и тень окон как у Rumda: одна рамка для активного и неактивного окна (тёмная — коричневая #784d37,
     светлая — песочная #f2bc88); у светлой — жёсткая тень 5 × 4 коричневым, у тёмной тени нет (прозрачная).
-    Включает тень стиль (Customizer → hyprGeometry.shadow), здесь — только её вид."""
+    Включает тень стиль (Customizer → hyprGeometry.shadow), здесь — только её вид.
+    Двойная рамка как у Rumda — плагин borders-plus-plus (apps/hyprland/looknfeel.lua грузит его и берёт
+    `omarchy_theme_borders`): за основной рамкой полоса цвета фона (тёмная — 13 px #1c1612, светлая — 11 px
+    песочным) и ещё одна песочная #f5dcc6 толщиной основной."""
     dark = t["mode"] == "dark"
     frame = t["frame"].lstrip("#")
     shadow = "0x00000000" if dark else "0xaa784d37"
+    band, size = ("1c1612", 13) if dark else ("f5dcc6", 11)
     return f"""-- {t['title']}: рамка и тень окон как у Rumda (omarchy-themes/rumda/build.py).
 local border = "rgb({frame})"
+
+-- двойная рамка: читает apps/hyprland/looknfeel.lua (плагин borders-plus-plus)
+omarchy_theme_borders = {{
+	add_borders = 2, natural_rounding = true, border_size_1 = {size}, border_size_2 = -1,
+	col = {{ border_1 = "rgb({band})", border_2 = "rgb(f5dcc6)" }},
+}}
 
 hl.config({{
 	general = {{ col = {{ active_border = border, inactive_border = border }} }},

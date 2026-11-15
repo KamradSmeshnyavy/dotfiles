@@ -71,3 +71,9 @@ Animations, transparency, blur and the window-corner rule are set from the Custo
 `~/.local/state/omarchy-customizer/animations.lua` and `~/.local/state/hypr/{opacity,blur,screen-shader}` and re-applies
 them after every `hyprctl reload`. For a reload without a flash of defaults, `looknfeel.lua` loads the Customizer hook
 `hypr/customizer.lua`.
+
+Extra window borders come from the [borders-plus-plus](https://github.com/hyprwm/hyprland-plugins/tree/main/borders-plus-plus)
+plugin (official hyprwm/hyprland-plugins). `just hypr-plugins` builds it for the running Hyprland (the commit from
+`hyprpm.toml`, otherwise `main`) into `~/.local/lib/hypr-plugins/`; rebuild after a Hyprland update. `looknfeel.lua` loads
+it when the file is there and takes its settings from the global table `omarchy_theme_borders`, which a theme's
+`hyprland.lua` may set (the rumda themes do: Rumda's double border); with any other theme there are no extra borders.

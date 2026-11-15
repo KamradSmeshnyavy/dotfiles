@@ -48,6 +48,22 @@ do
 	end
 end
 
+-- Добавочные рамки окон — плагин borders-plus-plus (hyprwm/hyprland-plugins, собирает `just hypr-plugins`).
+-- Тема просит их глобальной таблицей `omarchy_theme_borders` в своём hyprland.lua (он грузится раньше, см. rumda);
+-- у остальных тем добавочных рамок нет. Нет собранного плагина — ничего не делаем. Пока плагин не загружен
+-- (первый проход конфига), его ключей ещё нет — pcall глушит ошибку, Hyprland перечитает конфиг после загрузки.
+do
+	local so = os.getenv("HOME") .. "/.local/lib/hypr-plugins/borders-plus-plus.so"
+	local f = io.open(so, "r")
+	if f then
+		f:close()
+		hl.plugin.load(so)
+		local spec = omarchy_theme_borders or { add_borders = 0 }
+		omarchy_theme_borders = nil
+		pcall(hl.config, { plugin = { borders_plus_plus = spec } })
+	end
+end
+
 -- Opt another application in to Omarchy's standard transparency.
 -- Find its class with: hyprctl clients
 -- o.transparent_window("my-app")
