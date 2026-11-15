@@ -1,0 +1,12 @@
+# Bruteon Color — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#ffb77a"
+magenta = "#526a68"
+red = "#a93f34"
+yellow = "#735c33"
+green = "#58654a"
+cyan = "#925049"
+blue = "#48677e"
+foreground = "#161110"
+background = "#efe0d6"
+dark_background = "#f5ebe6"
+lighter_background = "#e3c0a5"

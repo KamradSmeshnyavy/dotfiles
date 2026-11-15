@@ -1,0 +1,91 @@
+// Bruteon: omarchy-themes/bruteon/build.py
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "none"
+  },
+  "display": {
+    "separator": "  ›  ",
+    "color": {
+      "separator": "38;2;136;86;67",
+      "output": "38;2;22;17;16",
+      "keys": "1;38;2;22;17;16"
+    },
+    "key": {
+      "width": 12
+    }
+  },
+  "modules": [
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;255;180;171m\u001b[48;2;255;180;171m\u001b[38;2;22;17;16m\u001b[1m ARCH LINUX \u001b[0m\u001b[38;2;255;180;171m\u001b[0m  \u001b[38;2;195;203;151m\u001b[48;2;195;203;151m\u001b[38;2;22;17;16m\u001b[1m HYPRLAND \u001b[0m\u001b[38;2;195;203;151m\u001b[0m"
+    },
+    {
+      "type": "custom",
+      "format": ""
+    },
+    {
+      "type": "title",
+      "key": "{icon}  user",
+      "keyIcon": "",
+      "keyColor": "38;2;255;180;171",
+      "format": "{user-name}@{host-name}"
+    },
+    {
+      "type": "os",
+      "key": "{icon}  os",
+      "keyIcon": "",
+      "keyColor": "38;2;195;203;151",
+      "format": "{pretty-name}"
+    },
+    {
+      "type": "kernel",
+      "key": "{icon}  kernel",
+      "keyIcon": "",
+      "keyColor": "38;2;255;183;122",
+      "format": "{sysname} {release}"
+    },
+    {
+      "type": "wm",
+      "key": "{icon}  wm",
+      "keyIcon": "",
+      "keyColor": "38;2;255;179;161",
+      "format": "{pretty-name}"
+    },
+    {
+      "type": "shell",
+      "key": "{icon}  shell",
+      "keyIcon": "",
+      "keyColor": "38;2;242;193;106",
+      "format": "{pretty-name} {version}"
+    },
+    {
+      "type": "packages",
+      "key": "{icon}  pkgs",
+      "keyIcon": "",
+      "keyColor": "38;2;255;203;213",
+      "format": "{all}"
+    },
+    {
+      "type": "uptime",
+      "key": "{icon}  uptime",
+      "keyIcon": "",
+      "keyColor": "38;2;197;225;165"
+    },
+    {
+      "type": "memory",
+      "key": "{icon}  memory",
+      "keyIcon": "󰍛",
+      "keyColor": "38;2;194;195;233",
+      "format": "{used} / {total} ({percentage})"
+    },
+    {
+      "type": "custom",
+      "format": ""
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;255;180;171m██  \u001b[38;2;195;203;151m██  \u001b[38;2;227;192;165m██  \u001b[38;2;255;183;122m██  \u001b[38;2;255;183;122m██  \u001b[38;2;195;203;151m██\u001b[0m"
+    }
+  ]
+}

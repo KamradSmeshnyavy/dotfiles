@@ -406,6 +406,12 @@
     ~/.config/omarchy/themes/cozytile-carbon-color:
       path: omarchy-themes/cozytile/carbon-color
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/bruteon-light:
+      path: omarchy-themes/bruteon/light
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/bruteon-light-color:
+      path: omarchy-themes/bruteon/light-color
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

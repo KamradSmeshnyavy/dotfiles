@@ -1,0 +1,17 @@
+# Bruteon Color — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#ffb77a", bold]
+    inactiveBorderColor: ["#b9aca4"]
+    searchingActiveBorderColor: ["#735c33", bold]
+    optionsTextColor: ["#48677e"]
+    selectedLineBgColor: ["#e3c0a5"]
+    inactiveViewSelectedLineBgColor: ["#f5ebe6"]
+    cherryPickedCommitFgColor: ["#526a68"]
+    cherryPickedCommitBgColor: ["#e3c0a5"]
+    markedBaseCommitFgColor: ["#48677e"]
+    markedBaseCommitBgColor: ["#e3c0a5"]
+    unstagedChangesColor: ["#a93f34"]
+    defaultFgColor: ["#161110"]
+  authorColors:
+    "*": "#925049"
