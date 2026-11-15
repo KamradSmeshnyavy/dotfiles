@@ -170,27 +170,32 @@ def fastfetch_conf(y):
 
 
 def dot_walls(y, out_dir):
-    """Графит с точечной сеткой (шаг 48 px, точка 3 px) и мягким светом из правого нижнего угла — фон yami."""
+    """Графит с точечной сеткой (шаг 48 px, точка 3 px), свечение акцента из правого нижнего угла и водяной знак 闇
+    там же — фон yami. 1-grid — со свечением, 2-dark — только сетка и знак. Перерисовываются при каждой сборке."""
     from PIL import Image, ImageDraw, ImageFilter
     os.makedirs(out_dir, exist_ok=True)
     W, H = 2880, 1800
-    for name, glow in (("1-grid.png", 0.10), ("2-dark.png", 0.0)):
-        dst = os.path.join(out_dir, name)
-        if os.path.exists(dst):
-            continue
+    for name, glow in (("1-grid.png", 0.32), ("2-dark.png", 0.0)):
         im = Image.new("RGB", (W, H), nb.hex2rgb(y["bg"]))
         if glow:
             g = Image.new("L", (W // 8, H // 8), 0)
-            ImageDraw.Draw(g).ellipse([W // 8 * 0.55, H // 8 * 0.45, W // 8 * 1.4, H // 8 * 1.4], fill=255)
-            g = g.filter(ImageFilter.GaussianBlur(40)).resize((W, H), Image.BILINEAR)
-            lit = Image.new("RGB", (W, H), nb.hex2rgb(nb.mix(y["bg"], y["textDim"], glow * 2.2)))
+            ImageDraw.Draw(g).ellipse([W // 8 * 0.6, H // 8 * 0.5, W // 8 * 1.45, H // 8 * 1.45], fill=255)
+            g = g.filter(ImageFilter.GaussianBlur(42)).resize((W, H), Image.BILINEAR)
+            lit = Image.new("RGB", (W, H), nb.hex2rgb(nb.mix(y["bg"], y["deep"], glow)))
             im = Image.composite(lit, im, g)
         d = ImageDraw.Draw(im)
         dot = nb.hex2rgb(nb.mix(y["bg"], y["textFaint"], 0.55))
         for yy in range(24, H, 48):
             for xx in range(24, W, 48):
                 d.rectangle([xx, yy, xx + 2, yy + 2], fill=dot)
-        im.save(dst, optimize=True)
+        # водяной знак: 闇 клетками 8 px у правого нижнего угла
+        c, mark = 8, nb.hex2rgb(nb.mix(y["bg"], y["deep"], 0.55))
+        ox, oy = W - 120 - len(KANJI[0]) * c, H - 96 - len(KANJI) * c
+        for ry, row in enumerate(KANJI):
+            for rx, ch in enumerate(row):
+                if ch == "#":
+                    d.rectangle([ox + rx * c, oy + ry * c, ox + rx * c + c - 1, oy + ry * c + c - 1], fill=mark)
+        im.save(os.path.join(out_dir, name), optimize=True)
 
 
 if __name__ == "__main__":
