@@ -46,6 +46,8 @@ Item {
     "surface": "SurfaceView.qml",
     // Широкий «Programs» из surface-dots (WideDrawer, код свой): сетка 6 столбцов, вкладки Apps / Shaders.
     "surface-wide": "SurfaceWideView.qml",
+    // По мотивам rofi-лаунчера Cozytile (облик, код свой): карточка 400 px, шапка-обои с «Search», 5 строк.
+    "cozytile": "CozytileView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
