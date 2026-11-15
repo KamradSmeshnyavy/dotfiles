@@ -1,0 +1,44 @@
+# Cozytile Carbon Color — alacritty
+[colors.primary]
+background = "#CCCCCC"
+foreground = "#333333"
+
+[colors.cursor]
+text = "#CCCCCC"
+cursor = "#555555"
+
+[colors.vi_mode_cursor]
+text = "#CCCCCC"
+cursor = "#325879"
+
+[colors.search.matches]
+foreground = "#CCCCCC"
+background = "#615134"
+
+[colors.search.focused_match]
+foreground = "#CCCCCC"
+background = "#555555"
+
+[colors.selection]
+text = "#333333"
+background = "#c4c4c4"
+
+[colors.normal]
+black = "#333333"
+red = "#92464b"
+green = "#637f4f"
+yellow = "#957d4f"
+blue = "#40719b"
+magenta = "#814e90"
+cyan = "#37767e"
+white = "#6B6B6B"
+
+[colors.bright]
+black = "#555555"
+red = "#984c52"
+green = "#698555"
+yellow = "#9b8356"
+blue = "#4678a2"
+magenta = "#885496"
+cyan = "#3e7d85"
+white = "#444444"

@@ -1,0 +1,12 @@
+# Cozytile Natura Color — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#607767"
+magenta = "#55B6C2"
+red = "#C46A6A"
+yellow = "#E5C07A"
+green = "#98C379"
+cyan = "#E06B74"
+blue = "#62AEEF"
+foreground = "#B2BEBC"
+background = "#0F1212"
+dark_background = "#202222"
+lighter_background = "#2c2e2e"

@@ -52,6 +52,7 @@
 #   surface     — система как stock; Manrope в оболочке, терминал и код — CMU Typewriter Text, как у surface-dots
 #                 (Manrope, Newsreader, EB Garamond — OFL, Google Fonts; CMU Typewriter — OFL, cm-unicode;
 #                 kamradsmeshnyavy.customizer/fonts/surface).
+#   cozytile    — система как stock; JetBrains Mono Nerd Font в оболочке, терминале и коде, как у Cozytile.
 #   yami-ui     — пиксельно везде, как в программах самого yami (fontUi): Tiny5 ещё и в приложениях GTK / Qt.
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
@@ -118,6 +119,7 @@ PROFILES=(
   "yami-ui|yami|Tiny5|Terminess Nerd Font Mono|Tiny5|Pixel everywhere like yami's own apps: Tiny5 in GTK / Qt apps (Nautilus, dialogs) and the shell, Terminess in the terminal and code"
   "rumda|rumda|$STOCK_FONT|Terminess Nerd Font Mono|Dogica Pixel|System as stock; the pixel Dogica Pixel in the shell (bar, panels, launcher) and Terminess in the terminal and code — the Rumda rice"
   "surface|surface|$STOCK_FONT|CMU Typewriter Text|Manrope|System as stock; Manrope in the shell (bar, panels, launcher) and the typewriter CMU Typewriter Text in the terminal and code — the surface-dots rice"
+  "cozytile|cozytile|$STOCK_FONT|JetBrainsMono Nerd Font|JetBrainsMono Nerd Font|System as stock; JetBrains Mono Nerd Font in the shell, the terminal and code — the Cozytile rice"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

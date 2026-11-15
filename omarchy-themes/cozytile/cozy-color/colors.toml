@@ -1,0 +1,39 @@
+# Cozytile Cozy Color — omarchy-themes/cozytile (по мотивам Cozytile; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#CAA9E0"
+cursor = "#CAA9E0"
+selection = "#534c61"
+selection_foreground = "#D8DEF5"
+selection_background = "#534c61"
+muted = "#77798d"
+
+background = "#282738"
+dark_background = "#353446"
+darker_background = "#282738"
+lighter_background = "#424254"
+
+foreground = "#D8DEF5"
+dark_foreground = "#77798d"
+light_foreground = "#9a9eb3"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#CAA9E0"
+hyprland_inactive_border = "#49485b"
+
+red = "#E06B74"
+yellow = "#E5C07A"
+orange = "#E5C07A"
+green = "#98C379"
+cyan = "#55B6C2"
+blue = "#62AEEF"
+magenta = "#C778DD"
+brown = "#907b5c"
+
+bright_red = "#EA757E"
+bright_yellow = "#EFCA84"
+bright_green = "#A2CD83"
+bright_cyan = "#5FC0CC"
+bright_blue = "#6CB8F9"
+bright_magenta = "#D282E7"

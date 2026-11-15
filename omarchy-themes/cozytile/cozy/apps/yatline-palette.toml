@@ -1,0 +1,12 @@
+# Cozytile Cozy — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#CAA9E0"
+magenta = "#E06B74"
+red = "#E06B74"
+yellow = "#D8DEF5"
+green = "#d0c1e9"
+cyan = "#9a9eb3"
+blue = "#bfcef3"
+foreground = "#D8DEF5"
+background = "#282738"
+dark_background = "#353446"
+lighter_background = "#424254"

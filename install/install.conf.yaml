@@ -376,6 +376,36 @@
     ~/.config/omarchy/themes/surface-light-color:
       path: omarchy-themes/surface/light-color
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-cozy:
+      path: omarchy-themes/cozytile/cozy
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-cozy-color:
+      path: omarchy-themes/cozytile/cozy-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-sakura:
+      path: omarchy-themes/cozytile/sakura
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-sakura-color:
+      path: omarchy-themes/cozytile/sakura-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-natura:
+      path: omarchy-themes/cozytile/natura
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-natura-color:
+      path: omarchy-themes/cozytile/natura-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-everforest:
+      path: omarchy-themes/cozytile/everforest
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-everforest-color:
+      path: omarchy-themes/cozytile/everforest-color
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-carbon:
+      path: omarchy-themes/cozytile/carbon
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/cozytile-carbon-color:
+      path: omarchy-themes/cozytile/carbon-color
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

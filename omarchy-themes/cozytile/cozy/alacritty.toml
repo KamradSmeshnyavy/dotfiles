@@ -1,0 +1,44 @@
+# Cozytile Cozy — alacritty
+[colors.primary]
+background = "#282738"
+foreground = "#D8DEF5"
+
+[colors.cursor]
+text = "#282738"
+cursor = "#CAA9E0"
+
+[colors.vi_mode_cursor]
+text = "#282738"
+cursor = "#bfcef3"
+
+[colors.search.matches]
+foreground = "#282738"
+background = "#D8DEF5"
+
+[colors.search.focused_match]
+foreground = "#282738"
+background = "#CAA9E0"
+
+[colors.selection]
+text = "#D8DEF5"
+background = "#534c61"
+
+[colors.normal]
+black = "#353446"
+red = "#E06B74"
+green = "#ceb9e6"
+yellow = "#CAA9E0"
+blue = "#91B1F0"
+magenta = "#A491AD"
+cyan = "#bfc4db"
+white = "#9a9eb3"
+
+[colors.bright]
+black = "#77798d"
+red = "#E06B74"
+green = "#ccb1e3"
+yellow = "#d1c4ea"
+blue = "#a6bef2"
+magenta = "#b4a8c3"
+cyan = "#ccd1e8"
+white = "#D8DEF5"

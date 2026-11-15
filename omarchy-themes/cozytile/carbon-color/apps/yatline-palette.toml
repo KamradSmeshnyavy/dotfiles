@@ -1,0 +1,12 @@
+# Cozytile Carbon Color — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#555555"
+magenta = "#2b5c62"
+red = "#903434"
+yellow = "#615134"
+green = "#485d3a"
+cyan = "#813e42"
+blue = "#325879"
+foreground = "#333333"
+background = "#CCCCCC"
+dark_background = "#C2C2C2"
+lighter_background = "#b7b7b7"

@@ -1,0 +1,12 @@
+# Cozytile Sakura — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#E5B9C6"
+magenta = "#E06B74"
+red = "#E06B74"
+yellow = "#EFE6E4"
+green = "#eacdd4"
+cyan = "#a9a3a8"
+blue = "#e4d4e4"
+foreground = "#EFE6E4"
+background = "#282739"
+dark_background = "#353447"
+lighter_background = "#444254"

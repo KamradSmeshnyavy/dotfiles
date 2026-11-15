@@ -1,0 +1,39 @@
+# Cozytile Carbon Color — omarchy-themes/cozytile (по мотивам Cozytile; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#555555"
+cursor = "#555555"
+selection = "#c4c4c4"
+selection_foreground = "#333333"
+selection_background = "#c4c4c4"
+muted = "#707070"
+
+background = "#CCCCCC"
+dark_background = "#C2C2C2"
+darker_background = "#C2C2C2"
+lighter_background = "#b7b7b7"
+
+foreground = "#333333"
+dark_foreground = "#707070"
+light_foreground = "#525252"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#555555"
+hyprland_inactive_border = "#b1b1b1"
+
+red = "#92464b"
+yellow = "#957d4f"
+orange = "#615134"
+green = "#637f4f"
+cyan = "#37767e"
+blue = "#40719b"
+magenta = "#814e90"
+brown = "#918878"
+
+bright_red = "#984c52"
+bright_yellow = "#9b8356"
+bright_green = "#698555"
+bright_cyan = "#3e7d85"
+bright_blue = "#4678a2"
+bright_magenta = "#885496"

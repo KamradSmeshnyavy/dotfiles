@@ -1,0 +1,17 @@
+# Cozytile Cozy Color — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#CAA9E0", bold]
+    inactiveBorderColor: ["#49485b"]
+    searchingActiveBorderColor: ["#E5C07A", bold]
+    optionsTextColor: ["#62AEEF"]
+    selectedLineBgColor: ["#424254"]
+    inactiveViewSelectedLineBgColor: ["#353446"]
+    cherryPickedCommitFgColor: ["#55B6C2"]
+    cherryPickedCommitBgColor: ["#424254"]
+    markedBaseCommitFgColor: ["#62AEEF"]
+    markedBaseCommitBgColor: ["#424254"]
+    unstagedChangesColor: ["#E06B74"]
+    defaultFgColor: ["#D8DEF5"]
+  authorColors:
+    "*": "#E06B74"

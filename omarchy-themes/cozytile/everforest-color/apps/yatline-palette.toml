@@ -1,0 +1,12 @@
+# Cozytile Everforest Color — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#86918A"
+magenta = "#55B6C2"
+red = "#E67E80"
+yellow = "#E5C07A"
+green = "#98C379"
+cyan = "#E06B74"
+blue = "#62AEEF"
+foreground = "#BDC2BE"
+background = "#232A2E"
+dark_background = "#343F44"
+lighter_background = "#3f494e"

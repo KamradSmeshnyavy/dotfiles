@@ -1,0 +1,90 @@
+# Cozytile Everforest — helix
+"ui.background" = { bg = "bg" }
+"ui.text" = "fg"
+"ui.text.focus" = { fg = "fg", bg = "raised" }
+"ui.cursor" = { fg = "on_accent", bg = "dim" }
+"ui.cursor.primary" = { fg = "on_accent", bg = "accent" }
+"ui.cursor.match" = { bg = "line", modifiers = ["bold"] }
+"ui.selection" = { bg = "raised" }
+"ui.selection.primary" = { bg = "selection" }
+"ui.linenr" = "comment"
+"ui.linenr.selected" = "fg"
+"ui.cursorline.primary" = { bg = "panel" }
+"ui.statusline" = { fg = "dim", bg = "panel" }
+"ui.statusline.inactive" = { fg = "comment", bg = "panel" }
+"ui.statusline.normal" = { fg = "on_accent", bg = "accent", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "bg", bg = "string", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "bg", bg = "special", modifiers = ["bold"] }
+"ui.popup" = { bg = "panel" }
+"ui.window" = "line"
+"ui.help" = { fg = "fg", bg = "panel" }
+"ui.menu" = { fg = "fg", bg = "panel" }
+"ui.menu.selected" = { bg = "raised" }
+"ui.virtual.whitespace" = "line"
+"ui.virtual.ruler" = { bg = "panel" }
+"ui.virtual.inlay-hint" = "comment"
+"comment" = { fg = "comment", modifiers = ["italic"] }
+"keyword" = "keyword"
+"keyword.function" = "keyword"
+"string" = "string"
+"string.regexp" = "special"
+"constant" = "constant"
+"constant.numeric" = "number"
+"constant.builtin.boolean" = "number"
+"constant.character.escape" = "special"
+"type" = "type"
+"type.builtin" = "type"
+"function" = "function"
+"function.macro" = "special"
+"variable" = "fg"
+"variable.parameter" = "fg"
+"variable.other.member" = "property"
+"variable.builtin" = "keyword"
+"attribute" = "special"
+"namespace" = "type"
+"tag" = "keyword"
+"label" = "special"
+"operator" = "dim"
+"punctuation" = "dim"
+"constructor" = "type"
+"markup.heading" = { fg = "accent", modifiers = ["bold"] }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.link.url" = { fg = "function", modifiers = ["underlined"] }
+"markup.raw" = "string"
+"markup.list" = "keyword"
+"markup.quote" = "dim"
+"diff.plus" = "ok"
+"diff.minus" = "error"
+"diff.delta" = "info"
+"error" = "error"
+"warning" = "warn"
+"info" = "info"
+"hint" = "hint"
+"diagnostic.error" = { underline = { style = "curl", color = "error" } }
+"diagnostic.warning" = { underline = { style = "curl", color = "warn" } }
+
+[palette]
+bg = "#232A2E"
+panel = "#343F44"
+raised = "#3f494e"
+line = "#444f53"
+fg = "#BDC2BE"
+dim = "#8e9493"
+comment = "#717778"
+accent = "#86918A"
+selection = "#424b4b"
+keyword = "#8d9891"
+string = "#9fa7a1"
+number = "#D3C6AA"
+type = "#BDC2BE"
+function = "#c5c3b7"
+property = "#8e9493"
+special = "#E67E80"
+constant = "#cac4b2"
+error = "#E67E80"
+warn = "#D3C6AA"
+info = "#D3C6AA"
+hint = "#8e9493"
+ok = "#9fa7a1"
+on_accent = "#232A2E"

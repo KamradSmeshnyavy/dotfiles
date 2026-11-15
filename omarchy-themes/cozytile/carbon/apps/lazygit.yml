@@ -1,0 +1,17 @@
+# Cozytile Carbon — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#555555", bold]
+    inactiveBorderColor: ["#b1b1b1"]
+    searchingActiveBorderColor: ["#333333", bold]
+    optionsTextColor: ["#333333"]
+    selectedLineBgColor: ["#b7b7b7"]
+    inactiveViewSelectedLineBgColor: ["#C2C2C2"]
+    cherryPickedCommitFgColor: ["#903434"]
+    cherryPickedCommitBgColor: ["#b7b7b7"]
+    markedBaseCommitFgColor: ["#333333"]
+    markedBaseCommitBgColor: ["#b7b7b7"]
+    unstagedChangesColor: ["#903434"]
+    defaultFgColor: ["#333333"]
+  authorColors:
+    "*": "#525252"

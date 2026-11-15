@@ -1,0 +1,5 @@
+# Cozytile Natura — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
+--color=bg:#0F1212,bg+:#2c2e2e,fg:#798280,fg+:#B2BEBC
+--color=hl:#607767,hl+:#607767,info:#626968,prompt:#607767
+--color=pointer:#607767,marker:#85978d,spinner:#b2bebc,header:#B2BEBC
+--color=border:#323534,label:#B2BEBC,query:#B2BEBC,selected-bg:#343d37
