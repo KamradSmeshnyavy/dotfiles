@@ -42,6 +42,8 @@ Item {
     "yami": "YamiView.qml",
     // По мотивам Rumda (облик, код свой): маленькое окно по центру, «Search...», одни названия, выбор акцентом.
     "rumda": "RumdaView.qml",
+    // По мотивам rofi-лаунчера surface-dots (snes19xx, код свой): узкая панель слева внизу, шапка-обои с поиском, список.
+    "surface": "SurfaceView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
