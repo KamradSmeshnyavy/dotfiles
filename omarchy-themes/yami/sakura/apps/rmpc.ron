@@ -11,13 +11,13 @@
     text_color: "#eadedf",
     header_background_color: "#0f0a0b",
     modal_background_color: "#0f0a0b",
-    preview_label_style: (fg: "#e5484d"),
+    preview_label_style: (fg: "#ff6692"),
     preview_metadata_group_style: (fg: "#ff6692"),
     tab_bar: (
         active_style: (fg: "#0f0a0b", bg: "#d9577c", modifiers: "Bold"),
         inactive_style: (fg: "#eadedf", bg: "#0f0a0b", modifiers: ""),
     ),
-    highlighted_item_style: (fg: "#d9a05b", modifiers: "Italic"),
+    highlighted_item_style: (fg: "#c15775", modifiers: "Italic"),
     current_item_style: (fg: "#0f0a0b", bg: "#d9577c", modifiers: "Bold"),
     borders_style: (fg: "#d9577c", modifiers: "Bold"),
     highlight_border_style: (fg: "#d9577c"),
@@ -54,7 +54,7 @@
     song_table_format: [
         (
             prop: (kind: Property(Artist), style: (fg: "#d9577c"),
-                default: (kind: Text("Unknown"), style: (fg: "#e5484d"))
+                default: (kind: Text("Unknown"), style: (fg: "#ff6692"))
             ),
             width: "20%",
         ),
@@ -67,7 +67,7 @@
         ),
         (
             prop: (kind: Property(Album), style: (fg: "#d9577c"),
-                default: (kind: Text("Unknown Album"), style: (fg: "#e5484d"))
+                default: (kind: Text("Unknown Album"), style: (fg: "#ff6692"))
             ),
             width: "30%",
         ),

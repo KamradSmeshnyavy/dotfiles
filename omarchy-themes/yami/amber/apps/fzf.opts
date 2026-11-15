@@ -1,5 +1,5 @@
 # Amber (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
 --color=bg:#0f0c08,bg+:#261d14,fg:#958376,fg+:#eae1da
 --color=hl:#d98e1f,hl+:#d98e1f,info:#716258,prompt:#d98e1f
---color=pointer:#d98e1f,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=pointer:#d98e1f,marker:#e4c193,spinner:#efd2ac,header:#eae1da
 --color=border:#533812,label:#eae1da,query:#eae1da,selected-bg:#7e5415

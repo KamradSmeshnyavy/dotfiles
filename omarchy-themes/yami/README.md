@@ -14,6 +14,8 @@ yami's pixel background.
 
 The terminal's 16 colours follow yami (`recolor_apps.rs`, `ansi`): the usual hues shifted 18 % towards the accent, colour 0 the panel, 7 / 15 the text. fastfetch is yami's own too: the 闇 sign drawn in half blocks in four bands from the bright to the deep accent with a shadow, «YAMI // hyprland», keys in the accent and a strip of the palette (`apps/fastfetch.jsonc`, `apps/yami-logo.txt`).
 
+The themes are **one-colour** by default, like yami itself on its screenshots: syntax, the 16 terminal colours and statuses use only shades of the accent and the graphite grey, and btop is exactly yami's (`btop.theme`, from `recolor_apps.rs`, `btop`). `python3 build.py --color` builds the colourful variant (yami's `ansi` and muted syntax colours) instead.
+
 ```sh
 python3 build.py             # all themes
 python3 build.py blood ash   # chosen ones

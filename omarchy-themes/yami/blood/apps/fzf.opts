@@ -1,5 +1,5 @@
 # Blood (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
 --color=bg:#0f0808,bg+:#241314,fg:#937576,fg+:#e9dbda
 --color=hl:#c4161c,hl+:#c4161c,info:#6f5758,prompt:#c4161c
---color=pointer:#c4161c,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=pointer:#c4161c,marker:#db9092,spinner:#eeacac,header:#e9dbda
 --color=border:#4c1012,label:#e9dbda,query:#e9dbda,selected-bg:#731013

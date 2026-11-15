@@ -1,5 +1,5 @@
 # Dusk (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
 --color=bg:#0d0a0f,bg+:#1f1925,fg:#8c7d8f,fg+:#e6dee5
 --color=hl:#8a5cf0,hl+:#8a5cf0,info:#6a5d6b,prompt:#8a5cf0
---color=pointer:#8a5cf0,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=pointer:#8a5cf0,marker:#c3ade9,spinner:#d1bfec,header:#e6dee5
 --color=border:#38275a,label:#e6dee5,query:#e6dee5,selected-bg:#52378b

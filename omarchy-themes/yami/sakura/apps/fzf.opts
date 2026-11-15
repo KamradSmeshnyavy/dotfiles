@@ -1,5 +1,5 @@
 # Sakura (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
 --color=bg:#0f0a0b,bg+:#26181b,fg:#957d81,fg+:#eadedf
 --color=hl:#d9577c,hl+:#d9577c,info:#715c60,prompt:#d9577c
---color=pointer:#d9577c,marker:#9cbf7c,spinner:#8fb3d9,header:#d6c27a
+--color=pointer:#d9577c,marker:#e4abb9,spinner:#efc0cc,header:#eadedf
 --color=border:#532532,label:#eadedf,query:#eadedf,selected-bg:#7e3449

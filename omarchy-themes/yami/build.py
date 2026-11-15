@@ -9,6 +9,10 @@
 
   python3 build.py              все темы
   python3 build.py blood ash    выбранные
+  python3 build.py --color      разноцветный синтаксис и терминал (как ansi у yami); по умолчанию — одноцветно
+
+По умолчанию темы одноцветные, как сам yami на снимках (btop, fastfetch): синтаксис, 16 цветов терминала и статусы —
+только оттенки акцента и серого графита; btop — ровно как пишет yami (recolor_apps.rs, btop).
 """
 import colorsys
 import os
@@ -69,6 +73,17 @@ def derive(accent, tint=1.0):
     }
 
 
+COLOR = "--color" in sys.argv
+
+
+def mono_syntax(y):
+    """Синтаксис в оттенках акцента и графита: ключевые слова и константы — яркий акцент, строки — акцент к тексту,
+    числа — glow, типы и функции — текст, свойства — приглушённый текст, особое — сам акцент."""
+    return {"keyword": y["bright"], "string": nb.mix(y["accent"], y["text"], 0.62), "number": y["glow"],
+            "type": y["text"], "function": nb.mix(y["text"], y["bright"], 0.25), "property": y["textDim"],
+            "special": y["accent"], "constant": nb.mix(y["bright"], y["text"], 0.45)}
+
+
 def palette(v):
     title, accent = PRESETS[v]
     y = derive(accent)
@@ -83,15 +98,22 @@ def palette(v):
         "diff_add": nb.mix(bg, "#78c878", 0.18), "diff_del": nb.mix(bg, "#e5484d", 0.18), "diff_change": nb.mix(bg, accent, 0.14),
         "min_de": 8,
     }
-    syn = dict(SYNTAX, keyword=y["bright"], special=y["glow"])
+    syn = dict(SYNTAX, keyword=y["bright"], special=y["glow"]) if COLOR else mono_syntax(y)
     for role, c in syn.items():
         p[role] = readable(c, bg, 4.5)
     p["ansi_yellow"] = p["number"]
-    p["warn"] = readable(y["warn"], bg, 4.5)
+    p["warn"] = readable(y["warn"] if COLOR else y["glow"], bg, 4.5)
     p["hint"] = p["dim"]
-    p["ok"] = readable(y["ok"], bg, 4.5)
+    p["ok"] = readable(y["ok"] if COLOR else nb.mix(y["accent"], y["text"], 0.45), bg, 4.5)
+    if not COLOR:
+        # одним цветом роли ближе друг к другу, чем требует генератор для разноцветных тем
+        p["min_de"] = 0
+        p["error"] = readable(y["bright"], bg, 4.5)
+        p["info"] = readable(y["textDim"], bg, 4.5)
+        p["diff_add"] = nb.mix(bg, y["text"], 0.12)
+        p["diff_del"] = nb.mix(bg, y["accent"], 0.22)
     p["wallpapers"] = lambda pp, d, y=y: dot_walls(y, d)
-    p["ansi16"] = ansi16(y)
+    p["ansi16"] = ansi16(y) if COLOR else ansi16_mono(y)
     return p
 
 
@@ -100,6 +122,32 @@ def ansi16(y):
     t = lambda c: nb.mix(c, y["accent"], 0.18)
     return [y["panel"], "#d0352d", t("#78b86a"), t("#d9a03a"), t("#5a7fa8"), t("#9a5aa0"), t("#4f9a96"), y["textDim"],
             y["textFaint"], "#ff5a4c", t("#a2d692"), t("#f0c46a"), t("#86a6c8"), t("#c486c8"), t("#7cc2bc"), y["text"]]
+
+
+def ansi16_mono(y):
+    """16 цветов терминала одним цветом: красный — акцент, «зелёный» — акцент к тексту, «жёлтый» — glow, синий и голубой —
+    серые тона, пурпурный — deep к яркому; яркие варианты светлее. Так ls, git, btop и подсветка не дают фиолетового и
+    зелёного, а остаются в палитре fastfetch."""
+    a, t, d, f = y["accent"], y["text"], y["textDim"], y["textFaint"]
+    base = [y["panel"], a, nb.mix(a, t, 0.45), y["glow"], nb.mix(d, a, 0.15), nb.mix(y["deep"], y["bright"], 0.5), nb.mix(d, t, 0.35), d]
+    lift = [f, y["bright"], nb.mix(a, t, 0.65), nb.mix(y["glow"], t, 0.35), nb.mix(d, t, 0.45), y["bright"], nb.mix(d, t, 0.6), t]
+    return base + lift
+
+
+def btop_theme(y):
+    """btop как у yami (recolor_apps.rs, btop): рамки — border, графики от deep через акцент к яркому."""
+    acc, deep, bright, border = y["accent"], y["deep"], y["bright"], y["border"]
+    m1, m2, m3 = nb.mix(y["textFaint"], acc, 0.5), nb.mix(deep, y["textDim"], 0.5), nb.mix(acc, y["text"], 0.3)
+    th = [("main_bg", y["bg"]), ("main_fg", y["text"]), ("title", y["text"]), ("hi_fg", bright), ("selected_bg", deep),
+          ("selected_fg", "#ffffff"), ("inactive_fg", y["textFaint"]), ("graph_text", y["textDim"]), ("meter_bg", y["surfaceHi"]),
+          ("proc_misc", acc), ("cpu_box", border), ("mem_box", border), ("net_box", border), ("proc_box", border),
+          ("div_line", border), ("temp_start", m1), ("temp_mid", acc), ("temp_end", bright), ("cpu_start", deep),
+          ("cpu_mid", acc), ("cpu_end", bright), ("free_start", border), ("free_mid", deep), ("free_end", acc),
+          ("cached_start", border), ("cached_mid", m2), ("cached_end", y["textDim"]), ("available_start", border),
+          ("available_mid", deep), ("available_end", acc), ("used_start", deep), ("used_mid", acc), ("used_end", bright),
+          ("download_start", border), ("download_mid", deep), ("download_end", acc), ("upload_start", border),
+          ("upload_mid", m3), ("upload_end", y["text"]), ("process_start", deep), ("process_mid", acc), ("process_end", bright)]
+    return "# YAMI: omarchy-themes/yami/build.py по палитре темы (как recolor_apps.rs, btop)\n" + "".join(f'theme[{k}]="{v}"\n' for k, v in th)
 
 
 # 闇 — знак yami 14×16 клеток (recolor_data.rs, KANJI)
@@ -199,7 +247,7 @@ def dot_walls(y, out_dir):
 
 
 if __name__ == "__main__":
-    for v in sys.argv[1:] or list(PRESETS):
+    for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(PRESETS):
         nb.PALETTES[v] = palette(v)
         # у генератора nothing есть свой вариант ash со своими обоями — на время сборки он не мешает
         saved = nb.WALLPAPERS.pop(v, None)
@@ -214,3 +262,4 @@ if __name__ == "__main__":
         y = derive(PRESETS[v][1])
         open(os.path.join(HERE, v, "apps", "yami-logo.txt"), "w").write(kanji_logo(y))
         open(os.path.join(HERE, v, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(y))
+        open(os.path.join(HERE, v, "btop.theme"), "w").write(btop_theme(y))
