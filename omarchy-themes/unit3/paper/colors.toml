@@ -1,0 +1,39 @@
+# Unit-3 Paper — omarchy-themes/unit3 (по мотивам Unit-3, samyns, MIT; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "light"
+
+accent = "#6e2a2a"
+cursor = "#6e2a2a"
+selection = "#b79e8b"
+selection_foreground = "#2e2a1f"
+selection_background = "#b79e8b"
+muted = "#766f5a"
+
+background = "#d6cfb5"
+dark_background = "#ccc4a6"
+darker_background = "#ccc4a6"
+lighter_background = "#b8af93"
+
+foreground = "#2e2a1f"
+dark_foreground = "#766f5a"
+light_foreground = "#5a5541"
+bright_foreground = "#000000"
+
+hyprland_active_border = "#6e2a2a"
+hyprland_inactive_border = "#aca690"
+
+red = "#6e2a2a"
+yellow = "#7a6a3e"
+orange = "#605331"
+green = "#463f2e"
+cyan = "#3a5a5a"
+blue = "#3a4a5a"
+magenta = "#5a3a4a"
+brown = "#958b6c"
+
+bright_red = "#8a3a3a"
+bright_yellow = "#786c46"
+bright_green = "#6a5f4a"
+bright_cyan = "#467373"
+bright_blue = "#4a6a7a"
+bright_magenta = "#7a4a6a"

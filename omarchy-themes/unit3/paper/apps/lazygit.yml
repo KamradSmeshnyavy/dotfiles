@@ -1,0 +1,17 @@
+# Unit-3 Paper — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#6e2a2a", bold]
+    inactiveBorderColor: ["#aca690"]
+    searchingActiveBorderColor: ["#2e2a1f", bold]
+    optionsTextColor: ["#3a4a5a"]
+    selectedLineBgColor: ["#b8af93"]
+    inactiveViewSelectedLineBgColor: ["#ccc4a6"]
+    cherryPickedCommitFgColor: ["#6e2a2a"]
+    cherryPickedCommitBgColor: ["#b8af93"]
+    markedBaseCommitFgColor: ["#3a4a5a"]
+    markedBaseCommitBgColor: ["#b8af93"]
+    unstagedChangesColor: ["#6e2a2a"]
+    defaultFgColor: ["#2e2a1f"]
+  authorColors:
+    "*": "#5a5541"

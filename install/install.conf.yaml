@@ -418,6 +418,12 @@
     ~/.config/omarchy/themes/bruteon-dark-color:
       path: omarchy-themes/bruteon/dark-color
       if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/unit3-dark:
+      path: omarchy-themes/unit3/dark
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/unit3-paper:
+      path: omarchy-themes/unit3/paper
+      if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
       path: omarchy-themes/dot-matrix
       if: "[ `uname` = Linux ]"

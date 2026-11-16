@@ -1,0 +1,90 @@
+# Unit-3 — helix
+"ui.background" = { bg = "bg" }
+"ui.text" = "fg"
+"ui.text.focus" = { fg = "fg", bg = "raised" }
+"ui.cursor" = { fg = "on_accent", bg = "dim" }
+"ui.cursor.primary" = { fg = "on_accent", bg = "accent" }
+"ui.cursor.match" = { bg = "line", modifiers = ["bold"] }
+"ui.selection" = { bg = "raised" }
+"ui.selection.primary" = { bg = "selection" }
+"ui.linenr" = "comment"
+"ui.linenr.selected" = "fg"
+"ui.cursorline.primary" = { bg = "panel" }
+"ui.statusline" = { fg = "dim", bg = "panel" }
+"ui.statusline.inactive" = { fg = "comment", bg = "panel" }
+"ui.statusline.normal" = { fg = "on_accent", bg = "accent", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "bg", bg = "string", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "bg", bg = "special", modifiers = ["bold"] }
+"ui.popup" = { bg = "panel" }
+"ui.window" = "line"
+"ui.help" = { fg = "fg", bg = "panel" }
+"ui.menu" = { fg = "fg", bg = "panel" }
+"ui.menu.selected" = { bg = "raised" }
+"ui.virtual.whitespace" = "line"
+"ui.virtual.ruler" = { bg = "panel" }
+"ui.virtual.inlay-hint" = "comment"
+"comment" = { fg = "comment", modifiers = ["italic"] }
+"keyword" = "keyword"
+"keyword.function" = "keyword"
+"string" = "string"
+"string.regexp" = "special"
+"constant" = "constant"
+"constant.numeric" = "number"
+"constant.builtin.boolean" = "number"
+"constant.character.escape" = "special"
+"type" = "type"
+"type.builtin" = "type"
+"function" = "function"
+"function.macro" = "special"
+"variable" = "fg"
+"variable.parameter" = "fg"
+"variable.other.member" = "property"
+"variable.builtin" = "keyword"
+"attribute" = "special"
+"namespace" = "type"
+"tag" = "keyword"
+"label" = "special"
+"operator" = "dim"
+"punctuation" = "dim"
+"constructor" = "type"
+"markup.heading" = { fg = "accent", modifiers = ["bold"] }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.link.url" = { fg = "function", modifiers = ["underlined"] }
+"markup.raw" = "string"
+"markup.list" = "keyword"
+"markup.quote" = "dim"
+"diff.plus" = "ok"
+"diff.minus" = "error"
+"diff.delta" = "info"
+"error" = "error"
+"warning" = "warn"
+"info" = "info"
+"hint" = "hint"
+"diagnostic.error" = { underline = { style = "curl", color = "error" } }
+"diagnostic.warning" = { underline = { style = "curl", color = "warn" } }
+
+[palette]
+bg = "#0b0a09"
+panel = "#111008"
+raised = "#1a1814"
+line = "#27241f"
+fg = "#c8b89a"
+dim = "#8a7f6a"
+comment = "#6d6658"
+accent = "#c8b89a"
+selection = "#443e34"
+keyword = "#c87060"
+string = "#60a880"
+number = "#c8a860"
+type = "#c8b89a"
+function = "#6090c8"
+property = "#8a7f6a"
+special = "#c87060"
+constant = "#c8a860"
+error = "#c87060"
+warn = "#c8a860"
+info = "#6090c8"
+hint = "#8a7f6a"
+ok = "#60a880"
+on_accent = "#0b0a09"

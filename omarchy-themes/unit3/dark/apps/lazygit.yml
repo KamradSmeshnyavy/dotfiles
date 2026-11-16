@@ -1,0 +1,17 @@
+# Unit-3 — lazygit
+gui:
+  theme:
+    activeBorderColor: ["#c8b89a", bold]
+    inactiveBorderColor: ["#27241f"]
+    searchingActiveBorderColor: ["#c8b89a", bold]
+    optionsTextColor: ["#6090c8"]
+    selectedLineBgColor: ["#1a1814"]
+    inactiveViewSelectedLineBgColor: ["#111008"]
+    cherryPickedCommitFgColor: ["#c87060"]
+    cherryPickedCommitBgColor: ["#1a1814"]
+    markedBaseCommitFgColor: ["#6090c8"]
+    markedBaseCommitBgColor: ["#1a1814"]
+    unstagedChangesColor: ["#c87060"]
+    defaultFgColor: ["#c8b89a"]
+  authorColors:
+    "*": "#8a7f6a"

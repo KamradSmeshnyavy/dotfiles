@@ -1,0 +1,12 @@
+# Unit-3 Paper — палитра yatline (scripts/omarchy-yatline-theme)
+accent = "#6e2a2a"
+magenta = "#6e2a2a"
+red = "#6e2a2a"
+yellow = "#2e2a1f"
+green = "#4f5a2e"
+cyan = "#5a5541"
+blue = "#3a4a5a"
+foreground = "#2e2a1f"
+background = "#d6cfb5"
+dark_background = "#ccc4a6"
+lighter_background = "#b8af93"
