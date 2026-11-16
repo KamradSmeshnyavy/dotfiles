@@ -48,6 +48,8 @@ Item {
     "surface-wide": "SurfaceWideView.qml",
     // По мотивам rofi-лаунчера Cozytile (облик, код свой): карточка 400 px, шапка-обои с «Search», 5 строк.
     "cozytile": "CozytileView.qml",
+    // По мотивам меню Unit-3 (samyns, MIT): бежевый лист NieR 780 × 540 с сеткой, колонкой слева, поиском и списком.
+    "unit3": "Unit3View.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

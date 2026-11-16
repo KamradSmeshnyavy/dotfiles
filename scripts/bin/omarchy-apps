@@ -10,5 +10,7 @@ case $rice in
   surface) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"surface-wide"}' ;;
   # Cozytile: его rofi-лаунчер (drun) — сразу список приложений скином cozytile
   cozytile) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"cozytile"}' ;;
+  # Unit-3: его меню NieR — сразу список приложений скином unit3
+  unit3) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"unit3"}' ;;
 esac
 exec omarchy-shell omarchy.dock apps
