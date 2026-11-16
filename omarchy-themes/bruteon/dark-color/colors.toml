@@ -1,0 +1,39 @@
+# Bruteon Dark Color — omarchy-themes/bruteon (по мотивам Bruteon; сборка: build.py поверх ../nothing/build.py).
+# Слоты совпадают с ролями: green = строки, blue = функции, red = ошибки и т.д.
+mode = "dark"
+
+accent = "#ffb77a"
+cursor = "#ffb77a"
+selection = "#6c5039"
+selection_foreground = "#f3e6dc"
+selection_background = "#6c5039"
+muted = "#947460"
+
+background = "#1d1816"
+dark_background = "#2a2320"
+darker_background = "#1d1816"
+lighter_background = "#4a372c"
+
+foreground = "#f3e6dc"
+dark_foreground = "#947460"
+light_foreground = "#c79b7f"
+bright_foreground = "#ffffff"
+
+hyprland_active_border = "#ffb77a"
+hyprland_inactive_border = "#524c48"
+
+red = "#ff8a80"
+yellow = "#f2c16a"
+orange = "#ffb77a"
+green = "#c5e1a5"
+cyan = "#87aeaa"
+blue = "#90caf9"
+magenta = "#b478c8"
+brown = "#996f4d"
+
+bright_red = "#ffb3a1"
+bright_yellow = "#ffb77a"
+bright_green = "#c3cb97"
+bright_cyan = "#87aeaa"
+bright_blue = "#c2c3e9"
+bright_magenta = "#ffcbd5"

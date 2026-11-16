@@ -313,7 +313,7 @@ set(0, "TodoFgNOTE", { fg = "#346795" })
 set(0, "TodoBgWARN", { fg = "#efe0d6", bg = "#815c3e", bold = true })
 set(0, "TodoFgWARN", { fg = "#815c3e" })
 vim.g.terminal_color_0 = "#161110"
-vim.g.terminal_color_1 = "#c0473b"
+vim.g.terminal_color_1 = "#a93f34"
 vim.g.terminal_color_2 = "#7a4824"
 vim.g.terminal_color_3 = "#a57650"
 vim.g.terminal_color_4 = "#6b3b05"
@@ -321,7 +321,7 @@ vim.g.terminal_color_5 = "#885643"
 vim.g.terminal_color_6 = "#5a3a2f"
 vim.g.terminal_color_7 = "#827873"
 vim.g.terminal_color_8 = "#625955"
-vim.g.terminal_color_9 = "#c0473b"
+vim.g.terminal_color_9 = "#a93f34"
 vim.g.terminal_color_10 = "#976028"
 vim.g.terminal_color_11 = "#a57568"
 vim.g.terminal_color_12 = "#714839"

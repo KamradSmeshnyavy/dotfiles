@@ -7,7 +7,9 @@
 
 *|*:root {
   --brute-ink: var(--om-fg);
-  --brute-card: color-mix(in srgb, var(--om-bg) 55%, white);
+  /* карточки: на светлой теме — к белому, на тёмной — чуть светлее фона; текст на пастели — всегда тёмный */
+  --brute-card: light-dark(color-mix(in srgb, var(--om-bg) 55%, white), color-mix(in srgb, var(--om-bg) 90%, var(--om-fg)));
+  --brute-on-pastel: #161110;
   --brute-peach: #ffb77a;
   --brute-green: #c5e1a5;
   --brute-pink: #ffcbd5;
@@ -41,7 +43,8 @@
   box-shadow: 3px 3px 0 var(--brute-ink) !important;
 }
 .tabbrowser-tab .tab-label { color: var(--brute-ink) !important; font-weight: 600 !important; }
-.tabbrowser-tab[selected] .tab-label, .tabbrowser-tab[visuallyselected] .tab-label { font-weight: 800 !important; }
+.tabbrowser-tab[selected] .tab-label, .tabbrowser-tab[visuallyselected] .tab-label { font-weight: 800 !important; color: var(--brute-on-pastel) !important; }
+.tabbrowser-tab[selected] .tab-close-button, .tabbrowser-tab[visuallyselected] .tab-close-button { fill: var(--brute-on-pastel) !important; }
 .tabbrowser-tab .tab-close-button { fill: var(--brute-ink) !important; border-radius: 50% !important; }
 .tabbrowser-tab .tab-close-button:hover { background: var(--brute-pink) !important; outline: 1.5px solid var(--brute-ink) !important; }
 #tabs-newtab-button .toolbarbutton-icon, #new-tab-button .toolbarbutton-icon {
@@ -49,7 +52,7 @@
   border: 2px solid var(--brute-ink) !important;
   border-radius: 7px !important;
   box-shadow: 2px 2px 0 var(--brute-ink) !important;
-  fill: var(--brute-ink) !important;
+  fill: var(--brute-on-pastel) !important;
 }
 
 /* адресная строка — карточка с контуром и тенью; в фокусе — зелёная, тень больше */
@@ -73,6 +76,7 @@
 #nav-bar toolbarbutton:not([disabled]):not(#urlbar *):hover > .toolbarbutton-badge-stack {
   background: var(--brute-lavender) !important;
   border-color: var(--brute-ink) !important;
+  fill: var(--brute-on-pastel) !important;
   box-shadow: 2px 2px 0 var(--brute-ink) !important;
 }
 toolbarbutton { fill: var(--brute-ink) !important; }
@@ -88,7 +92,7 @@ menupopup, panel {
 }
 menuitem:hover, menu:hover, .subviewbutton:hover {
   background: var(--brute-peach) !important;
-  color: var(--brute-ink) !important;
+  color: var(--brute-on-pastel) !important;
 }
 .urlbarView { border: 2px solid var(--brute-ink) !important; border-radius: 10px !important; box-shadow: 5px 5px 0 var(--brute-ink) !important; background: var(--brute-card) !important; }
-.urlbarView-row[selected] > .urlbarView-row-inner { background: var(--brute-peach) !important; color: var(--brute-ink) !important; }
+.urlbarView-row[selected] > .urlbarView-row-inner { background: var(--brute-peach) !important; color: var(--brute-on-pastel) !important; }

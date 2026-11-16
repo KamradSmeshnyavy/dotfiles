@@ -59,7 +59,8 @@ theme name="":
 app-themes *args:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-app-themes {{args}}
 
-# Плагины Hyprland из hyprwm/hyprland-plugins (сейчас borders-plus-plus — двойные рамки Rumda) → ~/.local/lib/hypr-plugins;
+# Плагины Hyprland из hyprwm/hyprland-plugins (borders-plus-plus — двойные рамки Rumda, hyprbars — заголовки окон Bruteon)
+# → ~/.local/lib/hypr-plugins;
 # грузит их apps/hyprland/looknfeel.lua. После обновления Hyprland пересобрать (старый плагин он не загрузит).
 [linux]
 hypr-plugins:
@@ -72,10 +73,12 @@ hypr-plugins:
     hc=$(hyprctl version -j | jq -r .commit)
     pin=$(grep -o "\[\"$hc\", \"[0-9a-f]*\"\]" "$src/hyprpm.toml" | grep -o '[0-9a-f]\{40\}' | tail -1 || true)
     git -C "$src" checkout -q --detach "${pin:-origin/main}"
-    make -C "$src/borders-plus-plus" -s
     mkdir -p "$HOME/.local/lib/hypr-plugins"
-    install -m 755 "$src/borders-plus-plus/borders-plus-plus.so" "$HOME/.local/lib/hypr-plugins/"
-    echo "borders-plus-plus собран ($(git -C "$src" rev-parse --short HEAD)); загрузится при входе или после смены темы"
+    for p in borders-plus-plus hyprbars; do
+        make -C "$src/$p" -s
+        install -m 755 "$src/$p/$p.so" "$HOME/.local/lib/hypr-plugins/"
+    done
+    echo "плагины собраны ($(git -C "$src" rev-parse --short HEAD)); загрузятся при входе или после смены темы"
 
 # Тема «dynamic» из обоев через matugen (без пути — текущие; --scheme vibrant, --mode light, --no-apply)
 [linux]

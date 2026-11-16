@@ -4,12 +4,14 @@
 
 Необрутализм на тёплой бумаге: кремовые карточки #f5ebe6 на фоне #efe0d6, толстый тёмный контур #161110 и жёсткая тень
 без размытия, пастельные акценты — персик, лосось, зелёный, розовый, лаванда, голубой. Цвета сняты с его скриншотов.
-По умолчанию тема одноцветная (синтаксис, 16 цветов терминала, btop — оттенки коричневого и персика); вариант -color —
+Тёмная — своя, в его духе (уголь, светлый контур и тень).
+По умолчанию темы одноцветные (синтаксис, 16 цветов терминала, btop — оттенки коричневого и персика); вариант -color —
 с пастельной радугой его терминала (кружки fastfetch, cava). fastfetch — как у него: пилюли «ARCH LINUX» и «HYPRLAND»,
 строки «значок · ключ › значение», внизу — пастельные пилюли цветов. Окна — рамка 3 px цветом контура и жёсткая тень
 6 × 6 (decoration.shadow.sharp). Обои — свои: мягкий градиент от голубого неба к персиковому закату и крему, как у него.
 
-  python3 build.py
+  python3 build.py              обе темы
+  python3 build.py dark         выбранные
 """
 import math
 import os
@@ -20,38 +22,50 @@ sys.path.insert(0, os.path.join(HERE, "..", "nothing"))
 import build as nb  # noqa: E402
 from palettes import contrast  # noqa: E402
 
-T = {
-    "title": "Bruteon", "mode": "light",
+LIGHT = {
+    "title": "Bruteon", "mode": "light", "wall": ("#a7b9d1", "#f4b896", "#f7e4d6", "#e8b9ad"),
     "bg": "#efe0d6", "card": "#f5ebe6", "title_bar": "#e3c0a5", "ink": "#161110", "muted": "#885643", "brown": "#6b3b05",
     "peach": "#ffb77a", "salmon": "#ffb3a1", "red": "#ff8a80", "rose": "#ffb4ab", "green": "#c5e1a5", "olive": "#c3cb97",
     "pink": "#ffcbd5", "lavender": "#c2c3e9", "blue": "#90caf9", "teal": "#87aeaa", "yellow": "#f2c16a", "purple": "#b478c8",
 }
+# тёмная — своя, в его духе: тёплый уголь, карточки чуть светлее, контур и жёсткая тень — светлыми чернилами,
+# пастель та же (текст на ней — тёмный), обои — сумерки
+DARK = dict(LIGHT, **{
+    "title": "Bruteon Dark", "mode": "dark", "wall": ("#2b3550", "#7a4a4a", "#1d1816", "#4a3047"),
+    "bg": "#1d1816", "card": "#2a2320", "title_bar": "#4a372c", "ink": "#f3e6dc", "muted": "#c79b7f", "brown": "#f0c39a",
+})
+VARIANTS = {"light": LIGHT, "dark": DARK}
+T = LIGHT
 PASTEL = ["peach", "green", "pink", "lavender", "blue", "salmon"]
 
 
 def readable(c, bg, need):
+    dark = sum(nb.hex2rgb(bg)) < 384
     for _ in range(40):
         if contrast(c, bg) >= need:
             break
-        c = nb.mix(c, "#000000", 0.06)
+        c = nb.mix(c, "#ffffff" if dark else "#000000", 0.06)
     return c
 
 
-def palette(color):
-    t = T
+def palette(v, color):
+    t = VARIANTS[v]
+    dark = t["mode"] == "dark"
     bg, fg = t["bg"], t["ink"]
     acc = t["peach"]
     dim = t["muted"]
     p = {
-        "mode": "light", "title": t["title"] + (" Color" if color else ""),
-        "name": "bruteon-light" + ("-color" if color else ""), "out": os.path.join(HERE, "light" + ("-color" if color else "")),
+        "mode": t["mode"], "title": t["title"] + (" Color" if color else ""),
+        "name": f"bruteon-{v}" + ("-color" if color else ""), "out": os.path.join(HERE, v + ("-color" if color else "")),
         "bg": bg, "panel": t["card"], "raised": t["title_bar"], "line": nb.mix(bg, fg, 0.25),
         "fg": fg, "dim": readable(dim, bg, 4.5), "comment": readable(nb.mix(dim, bg, 0.3), bg, 3),
-        "accent": acc, "on_accent": fg, "selection": nb.mix(bg, acc, 0.55),
-        "error": readable("#c0473b", bg, 4.5), "info": readable("#3f7cb3", bg, 4.5),
+        "accent": acc, "on_accent": "#161110", "selection": nb.mix(bg, acc, 0.35 if dark else 0.55),
+        "error": readable("#ff8a80" if dark else "#c0473b", bg, 4.5), "info": readable("#90caf9" if dark else "#3f7cb3", bg, 4.5),
         "diff_add": nb.mix(bg, t["green"], 0.5), "diff_del": nb.mix(bg, t["red"], 0.45), "diff_change": nb.mix(bg, t["blue"], 0.4),
-        "min_de": 0, "light_mode_file": True,
+        "min_de": 0,
     }
+    if not dark:
+        p["light_mode_file"] = True
     if color:
         # его пастель, затемнённая до читаемости на кремовом
         dk = lambda k, n=4.5: readable(t[k], bg, n)
@@ -63,27 +77,30 @@ def palette(color):
     else:
         br, mu = t["brown"], t["muted"]
         syn = {"keyword": br, "string": nb.mix(mu, acc, 0.35), "number": readable(acc, bg, 3.5), "type": fg,
-               "function": nb.mix(fg, br, 0.5), "property": mu, "special": "#c0473b", "constant": nb.mix(br, acc, 0.4)}
+               "function": nb.mix(fg, br, 0.5), "property": mu, "special": p["error"], "constant": nb.mix(br, acc, 0.4)}
         g = lambda k: nb.mix(mu, fg, k)
-        p["ansi16"] = [fg, "#c0473b", nb.mix(br, mu, 0.5), readable(acc, bg, 3), br, mu, g(0.4), nb.mix(fg, bg, 0.5),
-                       nb.mix(fg, bg, 0.35), "#c0473b", nb.mix(br, acc, 0.3), readable(t["salmon"], bg, 3), g(0.2), g(0.6), g(0.8), fg]
+        err = p["error"]
+        p["ansi16"] = ([t["card"], err, nb.mix(br, mu, 0.5), acc, br, mu, g(0.4), nb.mix(fg, bg, 0.3),
+                        nb.mix(fg, bg, 0.6), err, nb.mix(br, acc, 0.3), t["salmon"], g(0.2), g(0.6), g(0.8), fg] if dark else
+                       [fg, err, nb.mix(br, mu, 0.5), readable(acc, bg, 3), br, mu, g(0.4), nb.mix(fg, bg, 0.5),
+                        nb.mix(fg, bg, 0.35), err, nb.mix(br, acc, 0.3), readable(t["salmon"], bg, 3), g(0.2), g(0.6), g(0.8), fg])
     for role, c in syn.items():
         p[role] = readable(c, bg, 4.5)
     p["ansi_yellow"] = p["number"]
     p["warn"] = readable(acc, bg, 4.5)
     p["hint"] = p["dim"]
     p["ok"] = p["string"]
-    p["wallpapers"] = lambda pp, d: walls(d)
+    p["wallpapers"] = lambda pp, d, t=t: walls(t, d)
     return p
 
 
-def walls(out_dir):
+def walls(t, out_dir):
     """Мягкий закат, как на его скриншотах: голубое небо слева сверху, персиковое пятно справа, кремовый низ; лёгкое зерно."""
     from PIL import Image, ImageChops, ImageFilter
     os.makedirs(out_dir, exist_ok=True)
     W, H = 2880, 1800
     sw, sh = 288, 180
-    sky, peach, cream, rose = nb.hex2rgb("#a7b9d1"), nb.hex2rgb("#f4b896"), nb.hex2rgb("#f7e4d6"), nb.hex2rgb("#e8b9ad")
+    sky, peach, cream, rose = (nb.hex2rgb(c) for c in t["wall"])
     im = Image.new("RGB", (sw, sh))
     px = im.load()
     for y in range(sh):
@@ -101,7 +118,7 @@ def walls(out_dir):
     grain = Image.effect_noise((W, H), 10).convert("RGB")
     im = ImageChops.blend(im, ImageChops.overlay(im, grain), 0.18)
     im.save(os.path.join(out_dir, "1-sunset.jpg"), quality=90, optimize=True)
-    Image.new("RGB", (W, H), nb.hex2rgb(T["bg"])).save(os.path.join(out_dir, "2-paper.jpg"), quality=90)
+    Image.new("RGB", (W, H), nb.hex2rgb(t["bg"])).save(os.path.join(out_dir, "2-paper.jpg"), quality=90)
 
 
 def fastfetch_conf(color):
@@ -112,7 +129,7 @@ def fastfetch_conf(color):
     fg = lambda h: "\x1b[38;2;%d;%d;%dm" % rgb(h)
     bgc = lambda h: "\x1b[48;2;%d;%d;%dm" % rgb(h)
     ink = T["ink"]
-    pill = lambda text, c: fg(c) + "" + bgc(c) + fg(ink) + "\x1b[1m " + text + " \x1b[0m" + fg(c) + "\x1b[0m"
+    pill = lambda text, c: fg(c) + "" + bgc(c) + fg("#161110") + "\x1b[1m " + text + " \x1b[0m" + fg(c) + "\x1b[0m"
     dots = "  ".join(fg(T[k]) + "██" for k in ["rose", "olive", "title_bar", "peach", "peach", "olive"]) + "\x1b[0m"
     icol = lambda k: "38;2;%d;%d;%d" % rgb(T[k] if color else T["muted"])
     rows = [("user", "", "rose", "title", "{user-name}@{host-name}"), ("os", "", "olive", "os", "{pretty-name}"),
@@ -150,8 +167,9 @@ def btop_theme(color):
 
 
 def hypr_lua():
-    """Окна как у Bruteon: рамка цветом контура, жёсткая тень 6 × 6 без размытия."""
+    """Окна как у Bruteon: рамка цветом контура, жёсткая тень 6 × 6 без размытия, заголовки с кнопкой ✕."""
     ink = T["ink"].lstrip("#")
+    card = T["card"].lstrip("#")
     return f"""-- Bruteon: рамка цветом контура и жёсткая тень без размытия (omarchy-themes/bruteon/build.py).
 local border = "rgb({ink})"
 hl.config({{
@@ -159,19 +177,35 @@ hl.config({{
 	group = {{ col = {{ border_active = border, border_inactive = border }} }},
 	decoration = {{ shadow = {{ range = 1, render_power = 4, sharp = true, offset = "6 6", color = "rgba({ink}ff)", color_inactive = "rgba({ink}ff)" }} }},
 }})
+-- заголовки окон, как на его скриншотах (плагин hyprbars, грузит apps/hyprland/looknfeel.lua; собрать — just hypr-plugins):
+-- полоса цветом карточки внутри общей рамки, жирное имя слева, справа — розовая плитка ✕ (двойной клик — развернуть)
+omarchy_theme_bars = {{
+	config = {{
+		bar_height = 28, bar_color = "rgb({card})", ["col.text"] = "rgb({ink})",
+		bar_text_font = "JetBrainsMono Nerd Font", bar_text_size = 11, bar_text_weight = "bold", bar_text_align = "left",
+		bar_padding = 10, bar_button_padding = 6, bar_part_of_window = true, bar_precedence_over_border = true,
+		on_double_click = [[hyprctl dispatch 'hl.dsp.window.fullscreen({{ mode = "maximized", action = "toggle" }})']],
+	}},
+	buttons = {{
+		{{ bg_color = "rgb(ffcbd5)", fg_color = "rgb(161110)", size = 16, icon = "✕", action = "hyprctl dispatch 'hl.dsp.window.close()'" }},
+		{{ bg_color = "rgb(c5e1a5)", fg_color = "rgb(161110)", size = 16, icon = "", action = [[hyprctl dispatch 'hl.dsp.window.fullscreen({{ mode = "maximized", action = "toggle" }})']] }},
+	}},
+}}
 """
 
 
 if __name__ == "__main__":
-    for color in (False, True):
-        key = "light" + ("-color" if color else "")
-        nb.PALETTES[key] = palette(color)
-        nb.build(key)
-        out = os.path.join(HERE, key)
-        f = os.path.join(out, "colors.toml")
-        lines = open(f).read().split("\n")
-        lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/bruteon (по мотивам Bruteon; сборка: build.py поверх ../nothing/build.py)."
-        open(f, "w").write("\n".join(lines))
-        open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(color))
-        open(os.path.join(out, "btop.theme"), "w").write(btop_theme(color))
-        open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())
+    for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(VARIANTS):
+        T = VARIANTS[v]
+        for color in (False, True):
+            key = v + ("-color" if color else "")
+            nb.PALETTES[key] = palette(v, color)
+            nb.build(key)
+            out = os.path.join(HERE, key)
+            f = os.path.join(out, "colors.toml")
+            lines = open(f).read().split("\n")
+            lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/bruteon (по мотивам Bruteon; сборка: build.py поверх ../nothing/build.py)."
+            open(f, "w").write("\n".join(lines))
+            open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(color))
+            open(os.path.join(out, "btop.theme"), "w").write(btop_theme(color))
+            open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())

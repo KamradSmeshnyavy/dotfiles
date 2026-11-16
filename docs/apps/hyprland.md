@@ -78,3 +78,8 @@ plugin (official hyprwm/hyprland-plugins). `just hypr-plugins` builds it for the
 `hyprpm.toml`, otherwise `main`) into `~/.local/lib/hypr-plugins/`; rebuild after a Hyprland update. `looknfeel.lua` loads
 it when the file is there and takes its settings from the global table `omarchy_theme_borders`, which a theme's
 `hyprland.lua` may set (the rumda themes do: Rumda's double border); with any other theme there are no extra borders.
+Window titlebars come the same way from [hyprbars](https://github.com/hyprwm/hyprland-plugins/tree/main/hyprbars): a theme
+asks for them with the table `omarchy_theme_bars` (`config` — `plugin:hyprbars` keys, `buttons` — a list for
+`hl.plugin.hyprbars.add_button`; the bruteon themes do: a bar in the card colour with a bold title and ✕ / maximize tiles).
+Without the table the plugin is not loaded at all; if Omarchy's own titlebars (`omarchy-hyprland-titlebars`) are installed,
+ours are skipped, since both are called hyprbars.

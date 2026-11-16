@@ -64,6 +64,34 @@ do
 	end
 end
 
+-- Заголовки окон — плагин hyprbars (оттуда же). Тема просит их таблицей `omarchy_theme_bars` в своём hyprland.lua:
+-- { config = { …ключи plugin:hyprbars… }, buttons = { { bg_color, fg_color, size, icon, action }, … } } (см. bruteon).
+-- Не просит — плагин не грузим вовсе, и при смене темы Hyprland его выгрузит. Кнопки плагин сбрасывает при перечитывании.
+-- Стоят заголовки самой Omarchy (omarchy-hyprland-titlebars, плавающие столы) — свой hyprbars не грузим: имя то же.
+do
+	local so = os.getenv("HOME") .. "/.local/lib/hypr-plugins/hyprbars.so"
+	local f = io.open(so, "r")
+	local spec = omarchy_theme_bars
+	omarchy_theme_bars = nil
+	local stock = io.open("/usr/lib/omarchy-hyprland-titlebars/titlebars.so", "r")
+	if stock then
+		stock:close()
+		spec = nil
+	end
+	if f then
+		f:close()
+		if spec then
+			hl.plugin.load(so)
+			pcall(hl.config, { plugin = { hyprbars = spec.config or {} } })
+			if hl.plugin.hyprbars then
+				for _, b in ipairs(spec.buttons or {}) do
+					pcall(hl.plugin.hyprbars.add_button, b)
+				end
+			end
+		end
+	end
+end
+
 -- Opt another application in to Omarchy's standard transparency.
 -- Find its class with: hyprctl clients
 -- o.transparent_window("my-app")

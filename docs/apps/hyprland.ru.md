@@ -78,3 +78,7 @@
 иначе `main`) в `~/.local/lib/hypr-plugins/`; после обновления Hyprland — пересобрать. `looknfeel.lua` грузит его, если
 файл есть, и берёт настройки из глобальной таблицы `omarchy_theme_borders`, которую может задать `hyprland.lua` темы
 (так делают темы rumda: двойная рамка Rumda); у остальных тем добавочных рамок нет.
+Так же приходят заголовки окон из [hyprbars](https://github.com/hyprwm/hyprland-plugins/tree/main/hyprbars): тема просит их
+таблицей `omarchy_theme_bars` (`config` — ключи `plugin:hyprbars`, `buttons` — список для `hl.plugin.hyprbars.add_button`;
+так делают темы bruteon: полоса цветом карточки с жирным заголовком и плитками ✕ / развернуть). Без таблицы плагин не
+грузится вовсе; если стоят заголовки самой Omarchy (`omarchy-hyprland-titlebars`), свои пропускаем — оба зовутся hyprbars.
