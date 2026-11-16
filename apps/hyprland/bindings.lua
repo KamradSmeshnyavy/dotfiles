@@ -24,6 +24,9 @@ o.rebind(
 -- Сетка приложений по райсу: у surface — «Programs» (скин surface-wide), у остальных — стоковая (scripts/bin/omarchy-apps)
 hl.unbind("SUPER + ALT + SPACE")
 o.bind("SUPER + ALT + SPACE", "Apps", "omarchy-apps")
+-- Плеер райса (kamradsmeshnyavy.widgets PlayerHost.qml): у каждого райса свой вид
+hl.unbind("SUPER + ALT + M")
+o.bind("SUPER + ALT + M", "Player", "omarchy-shell widgets togglePlayer")
 
 hl.unbind("SUPER + SHIFT + B")
 o.bind("SUPER + SHIFT + B", "Browser", "omarchy-launch-browser")
