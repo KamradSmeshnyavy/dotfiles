@@ -86,7 +86,8 @@ it closes. No wrapper is needed (the desktop entry runs `/usr/lib/firefox/firefo
 ### Firefox views by style
 
 `omarchy-firefox-chrome` picks the userChrome view from the Customizer style (`~/.config/omarchy/style.json` id):
-`chrome/<id>.css` — flat, glass, fluent, paper, neumorph, brutal, retro, neon (dotmatrix → `dotmatrix.css`). Without a style it
+`chrome/<id>.css` — flat, glass, liquid, fluent, paper, neumorph, brutal, retro, neon, bruteon (neo-brutalism: tabs as outlined tiles with a
+hard shadow, the selected one peach, the urlbar a card turning green on focus, outlined menus) (dotmatrix → `dotmatrix.css`). Without a style it
 falls back to the font profile (DOT-MATRIX profiles → `dotmatrix.css`, otherwise `stock.css`). All views sit on `base.css` and the
 theme's `--om-*`; `--om-font-title` is the profile's title font, `--om-texture` the Paper grain (light / dark variant,
 linked into `chrome/omarchy/`). Visual check: a throwaway `--profile <scratch> --no-remote --new-instance` with only
