@@ -50,6 +50,8 @@ Item {
     "cozytile": "CozytileView.qml",
     // По мотивам меню Unit-3 (samyns, MIT): бежевый лист NieR 780 × 540 с сеткой, колонкой слева, поиском и списком.
     "unit3": "Unit3View.qml",
+    // По мотивам стиля Space (elifouts/Dotfiles, GPL-3.0): маленький терминал «~/run $» под баром.
+    "space": "SpaceView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

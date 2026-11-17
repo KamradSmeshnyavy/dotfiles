@@ -12,5 +12,7 @@ case $rice in
   cozytile) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"cozytile"}' ;;
   # Unit-3: его меню NieR — сразу список приложений скином unit3
   unit3) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"unit3"}' ;;
+  # Space: его «маленький терминал» под баром — сразу список приложений скином space
+  space) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"space"}' ;;
 esac
 exec omarchy-shell omarchy.dock apps
