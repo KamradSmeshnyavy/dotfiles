@@ -135,6 +135,13 @@ out onto the desktop wear the same look inside their card, without the separator
 line). Off for one module — `"riceStyle": false` in its entry in `shell.json`; for the whole bar —
 `"riceModules": false` in `bar-skin.json` (Customizer → Bar Tweaks → Modules → "Added modules wear the rice's look").
 
+## Flexible modules
+
+A layout entry with `"flex": true` gives up its length when the modules don't fit along the bar: it shrinks, down to
+nothing, until the rest fits (otherwise the centre slides over the side sections). Rumda's sand waves are flexible, so
+on a 900 px-high screen its vertical bar takes up to two added modules without overlaps; with more the bar is simply
+too short.
+
 ## A new preset
 
 - Skin: drop a JSON file into `skins/` of the `kamradsmeshnyavy.bar` plugin, it appears in Bar Skin at once.
