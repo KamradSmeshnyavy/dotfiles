@@ -55,6 +55,7 @@
 #   cozytile    — система как stock; JetBrains Mono Nerd Font в оболочке, терминале и коде, как у Cozytile.
 #   unit3       — система как stock; Share Tech Mono в оболочке, терминале и коде, как у Unit-3 (NieR)
 #                 (Share Tech Mono — Carrois Type Design, SIL OFL 1.1, kamradsmeshnyavy.customizer/fonts/unit3).
+#   space       — система как stock; JetBrains Mono Nerd Font в оболочке, терминале и коде, как у Space (elifouts).
 #   yami-ui     — пиксельно везде, как в программах самого yami (fontUi): Tiny5 ещё и в приложениях GTK / Qt.
 # Caveat, Pangolin, Pixelify Sans и Monaspace Radon (OFL) лежат в kamradsmeshnyavy.customizer/fonts.
 #
@@ -123,6 +124,7 @@ PROFILES=(
   "surface|surface|$STOCK_FONT|CMU Typewriter Text|Manrope|System as stock; Manrope in the shell (bar, panels, launcher) and the typewriter CMU Typewriter Text in the terminal and code — the surface-dots rice"
   "cozytile|cozytile|$STOCK_FONT|JetBrainsMono Nerd Font|JetBrainsMono Nerd Font|System as stock; JetBrains Mono Nerd Font in the shell, the terminal and code — the Cozytile rice"
   "unit3|unit3|$STOCK_FONT|Share Tech Mono|Share Tech Mono|System as stock; Share Tech Mono in the shell, the terminal and code — the Unit-3 rice (NieR:Automata)"
+  "space|space|$STOCK_FONT|JetBrainsMono Nerd Font|JetBrainsMono Nerd Font|System as stock; JetBrains Mono Nerd Font in the shell, the terminal and code — the Space rice (elifouts)"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).
