@@ -117,11 +117,14 @@ LibreOffice/OnlyOffice (partly, via GTK3).
 
 ## Theme from wallpaper
 
-`just theme-from-wallpaper [image] [--scheme vibrant|expressive|…] [--mode light]` (`scripts/omarchy-wallpaper-theme`,
-on `PATH` as `omarchy-wallpaper-theme`) runs the wallpaper through matugen and writes the theme
-`~/.config/omarchy/themes/dynamic`: just `colors.toml` (Material You + ANSI colours blended towards the wallpaper),
-`icons.theme` (Yaru by accent hue) and the wallpaper itself. Everything else — terminals, btop, nvim, Hyprland, the
-templates above, slots, browsers — `omarchy-theme-set` generates. Customizer → Theme has “🎨 Theme from wallpaper” rows.
+The theme `dynamic` is a rice-less dynamic theme: `omarchy-rice-dynamic build plain [image]` (or `set plain --scheme …
+--mode …` to remember the mode). It works on any wallpaper (the current one if none is given) and uses Iris, the
+modes and the recolouring on wallpaper change described below. The engine is only `colors`: `colors.toml` + Omarchy
+templates. In the `accent` mode the palette is the theme that was on before `dynamic`, with the accent from the
+wallpaper; set to the other light / dark, it is turned over. `just theme-from-wallpaper [image] [--scheme …]
+[--mode …]` (`scripts/omarchy-wallpaper-theme`) is a wrapper around it: the old matugen scheme names still work as
+aliases, and matugen is no longer needed. Customizer → Theme and the “No rice” section of the Dynamic tab have
+“🎨 Dynamic” rows (apply, colours, light / dark). The launcher command `dynamic` sets the mode.
 
 ### Dynamic theme of a rice
 

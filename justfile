@@ -80,7 +80,7 @@ hypr-plugins:
     done
     echo "плагины собраны ($(git -C "$src" rev-parse --short HEAD)); загрузятся при входе или после смены темы"
 
-# Тема «dynamic» из обоев через matugen (без пути — текущие; --scheme vibrant, --mode light, --no-apply)
+# Тема «dynamic» из обоев без райса (omarchy-rice-dynamic build plain; без пути — текущие; --scheme vivid, --mode light, --no-apply)
 [linux]
 theme-from-wallpaper *args:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-wallpaper-theme {{args}}

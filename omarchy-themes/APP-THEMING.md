@@ -124,11 +124,14 @@ spicetify), LibreOffice/OnlyOffice (частично — GTK3).
 
 ## Тема из обоев
 
-`just theme-from-wallpaper [обои] [--scheme vibrant|expressive|…] [--mode light]` (`scripts/omarchy-wallpaper-theme`,
-в `PATH` как `omarchy-wallpaper-theme`) прогоняет обои через matugen и пишет тему
-`~/.config/omarchy/themes/dynamic`: только `colors.toml` (Material You + ANSI-цвета, смещённые к цвету обоев),
-`icons.theme` (Yaru по оттенку акцента) и сами обои. Остальное — терминалы, btop, nvim, Hyprland, шаблоны выше,
-слоты, браузеры — генерирует `omarchy-theme-set`. В Customizer → Тема — строки «🎨 Тема из обоев».
+Тема `dynamic` — dynamic без райса: `omarchy-rice-dynamic build plain [обои]` (или `set plain --scheme … --mode …`,
+чтобы запомнить режим). Работает на любых обоях (без аргумента — на текущих) и использует Iris, режимы и перекраску
+при смене обоев, описанные ниже. Движок только `colors`: `colors.toml` + шаблоны Omarchy. В режиме `accent`
+палитра — тема, что стояла до `dynamic`, а акцент — с обоев; если выбрать противоположную светлую / тёмную, палитра
+переворачивается. `just theme-from-wallpaper [обои] [--scheme …] [--mode …]` (`scripts/omarchy-wallpaper-theme`) —
+обёртка над этим: прежние имена схем matugen работают как алиасы, сам matugen больше не нужен. В Customizer → Тема
+и в разделе «Без райса» вкладки Dynamic есть строки «🎨 Dynamic» (применить, цвета, светлая / тёмная); команда
+лаунчера `dynamic` задаёт режим.
 
 ### Динамическая тема райса
 

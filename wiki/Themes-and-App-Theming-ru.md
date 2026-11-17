@@ -7,7 +7,7 @@
 ```sh
 just theme                  # список
 just theme nothing          # применить (то же, что `omarchy theme set nothing`)
-just theme-from-wallpaper   # «динамическая» тема из текущих обоев (matugen; --scheme vibrant, --mode light)
+just theme-from-wallpaper   # «динамическая» тема из текущих обоев (Iris; --scheme vivid|pure|mono…, --mode light)
 ```
 
 Или в Customizer: Рабочий стол → Тема (с превью палитры), или `>theme` в лаунчере.

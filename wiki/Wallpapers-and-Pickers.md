@@ -31,4 +31,4 @@ Super+Shift+Ctrl+Space (themes), Super+Ctrl+Space (wallpapers).
 
 - **Recolor** — any picture into the current theme's palette (lutgen).
 - **Dotify** — LED dot-matrix wallpapers and an Arch glyph generator.
-- **Theme from wallpaper** — `just theme-from-wallpaper` / `>dynamic` in the launcher (matugen).
+- **Theme from wallpaper** — `just theme-from-wallpaper` / `>dynamic` in the launcher (Iris, colour modes, recolours on wallpaper change); for rices — Customizer → Dynamic.

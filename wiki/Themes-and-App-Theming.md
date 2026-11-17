@@ -8,7 +8,7 @@ itself touches.
 ```sh
 just theme                  # list
 just theme nothing          # apply (same as `omarchy theme set nothing`)
-just theme-from-wallpaper   # a "dynamic" theme from the current wallpaper (matugen; --scheme vibrant, --mode light)
+just theme-from-wallpaper   # a "dynamic" theme from the current wallpaper (Iris; --scheme vivid|pure|mono…, --mode light)
 ```
 
 Or in the Customizer: Desktop → Theme (with a preview of the palette), or `>theme` in the launcher.

@@ -31,4 +31,4 @@ Super+Shift+Ctrl+Space (темы), Super+Ctrl+Space (обои).
 
 - **Recolor** — любая картинка в палитру текущей темы (lutgen).
 - **Dotify** — LED-обои из точек и генератор глифа Arch.
-- **Тема из обоев** — `just theme-from-wallpaper` / `>dynamic` в лаунчере (matugen).
+- **Тема из обоев** — `just theme-from-wallpaper` / `>dynamic` в лаунчере (Iris, режимы цветов, перекраска при смене обоев); у райсов — Customizer → Dynamic.

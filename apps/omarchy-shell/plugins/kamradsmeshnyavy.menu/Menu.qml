@@ -171,7 +171,7 @@ Item {
       "for d in \"$HOME\"/.config/omarchy/themes/*/ \"${OMARCHY_PATH:-$HOME/.local/share/omarchy}\"/themes/*/; do b=${d%/}; printf 'theme\\t%s\\n' \"${b##*/}\"; done | sort -u; " +
       "for f in \"$HOME\"/.config/omarchy/bar-skins/*.json; do printf 'uskin\\t%s\\n' \"$f\"; done; " +
       "for f in \"$HOME\"/.config/omarchy/plugins/kamradsmeshnyavy.bar/skins/*.json; do printf 'skin\\t%s\\n' \"$f\"; done; " +
-      "command -v omarchy-wallpaper-theme >/dev/null && echo wallpaper-theme; " +
+      "command -v omarchy-rice-dynamic >/dev/null && echo wallpaper-theme; " +
       "for p in widgets customizer; do [ -f \"$HOME/.config/omarchy/plugins/kamradsmeshnyavy.$p/manifest.json\" ] && printf 'plugin\\t%s\\n' \"$p\"; done; true"]
     stdout: StdioCollector {
       onStreamFinished: {

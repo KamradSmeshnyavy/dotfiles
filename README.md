@@ -91,7 +91,7 @@ The Customizer finds the other plugins on its own. Everything at once — its
 | Category | What's used |
 | :--- | :--- |
 | 🪟 **WM** | **Hyprland** with a Lua config (`apps/hyprland/`), applied via `hyprctl eval`. macOS (secondary) — yabai / AeroSpace / skhd / SketchyBar. |
-| 🎨 **Themes** | Hand-made Omarchy themes in `omarchy-themes/` (Nothing, DOT-MATRIX, Rose Pine Hacker, Pastel Hacker, Catppuccin Mocha, Nord, Black Arch, …) plus a theme from any wallpaper (matugen). TUI apps follow the theme through slots ([APP-THEMING](omarchy-themes/APP-THEMING.en.md)), browsers through Dark Reader, Stylus and Surfingkeys ([BROWSER-THEMING](omarchy-themes/BROWSER-THEMING.md)), Limine and Plymouth too. |
+| 🎨 **Themes** | Hand-made Omarchy themes in `omarchy-themes/` (Nothing, DOT-MATRIX, Rose Pine Hacker, Pastel Hacker, Catppuccin Mocha, Nord, Black Arch, …) plus a theme from any wallpaper (Iris, recolours on wallpaper change; per rice too). TUI apps follow the theme through slots ([APP-THEMING](omarchy-themes/APP-THEMING.en.md)), browsers through Dark Reader, Stylus and Surfingkeys ([BROWSER-THEMING](omarchy-themes/BROWSER-THEMING.md)), Limine and Plymouth too. |
 | 🔤 **Fonts** | `omarchy-font-profile` — 21 system-wide font profiles (terminals, GTK, VS Code, browsers, shell), own DotMatrix fonts built from OFL sources. |
 | 🖥️ **Terminals** | **Kitty** (main), Ghostty (shaders and cursors are submodules). |
 | 🐚 **Shells** | **Nushell** (main), Zsh, Fish; prompt — **Starship**. |

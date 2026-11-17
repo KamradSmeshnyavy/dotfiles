@@ -63,11 +63,13 @@ function catalog(data, ru) {
   list = list.filter(function(c) { return !needs[c.name] || (data.plugins && data.plugins[needs[c.name]]) })
   if (data.wallpaperTheme) {
     list.splice(1, 0, {
-      name: "dynamic", icon: "󰏘", desc: t("Theme from the wallpaper (matugen)", "Тема из обоев (matugen)"),
+      name: "dynamic", icon: "󰏘", desc: t("Theme from the wallpaper (follows it)", "Тема из обоев (следует за ними)"),
+      // режимы omarchy-rice-dynamic (тема dynamic «без райса»): set запоминает режим — тема перекрашивается при смене обоев
       args: function() {
-        return ["tonal-spot", "vibrant", "expressive", "fruit-salad", "monochrome", "light"].map(function(s) {
-          return { icon: "󰏘", label: s, detail: "omarchy-wallpaper-theme",
-            action: "omarchy-wallpaper-theme " + (s === "light" ? "--mode light" : "--scheme " + s) }
+        return ["wallpaper", "soft", "vivid", "pure", "mono", "grey", "vitreus", "light", "dark"].map(function(s) {
+          var light = s === "light" || s === "dark"
+          return { icon: "󰏘", label: s, detail: "omarchy-rice-dynamic",
+            action: "omarchy-rice-dynamic set plain " + (light ? "--mode " + s : "--scheme " + s) }
         })
       }
     })

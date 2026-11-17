@@ -92,7 +92,7 @@ Customizer сам находит остальные плагины. Всё ср�
 | Категория | Что используется |
 | :--- | :--- |
 | 🪟 **WM** | **Hyprland** с конфигом на Lua (`apps/hyprland/`), применяется через `hyprctl eval`. macOS (вторичная) — yabai / AeroSpace / skhd / SketchyBar. |
-| 🎨 **Темы** | Свои темы Omarchy в `omarchy-themes/` (Nothing, DOT-MATRIX, Rose Pine Hacker, Pastel Hacker, Catppuccin Mocha, Nord, Black Arch, …) и тема из любых обоев (matugen). TUI-приложения следуют теме через слоты ([APP-THEMING](omarchy-themes/APP-THEMING.md)), браузеры — через Dark Reader, Stylus и Surfingkeys ([BROWSER-THEMING](omarchy-themes/BROWSER-THEMING.md)), Limine и Plymouth тоже. |
+| 🎨 **Темы** | Свои темы Omarchy в `omarchy-themes/` (Nothing, DOT-MATRIX, Rose Pine Hacker, Pastel Hacker, Catppuccin Mocha, Nord, Black Arch, …) и тема из любых обоев (Iris, перекрашивается при смене обоев; есть и у каждого райса). TUI-приложения следуют теме через слоты ([APP-THEMING](omarchy-themes/APP-THEMING.md)), браузеры — через Dark Reader, Stylus и Surfingkeys ([BROWSER-THEMING](omarchy-themes/BROWSER-THEMING.md)), Limine и Plymouth тоже. |
 | 🔤 **Шрифты** | `omarchy-font-profile` — 21 профиль шрифтов всей системы (терминалы, GTK, VS Code, браузеры, оболочка), свои шрифты DotMatrix из OFL-исходников. |
 | 🖥️ **Терминалы** | **Kitty** (основной), Ghostty (шейдеры и курсоры — сабмодули). |
 | 🐚 **Оболочки** | **Nushell** (основная), Zsh, Fish; промпт — **Starship**. |

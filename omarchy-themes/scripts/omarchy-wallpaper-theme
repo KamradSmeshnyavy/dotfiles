@@ -1,79 +1,41 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
-Тема Omarchy «dynamic» из обоев (matugen, Material You).
+Тема Omarchy «dynamic» из обоев — обёртка над `omarchy-rice-dynamic build plain` (Iris, все режимы dynamic).
 
-Использование: omarchy-wallpaper-theme [ОБОИ] [--scheme ТИП] [--mode dark|light] [--prefer P]
-                                       [--contrast -1..1] [--no-apply]
+Использование: omarchy-wallpaper-theme [ОБОИ] [--scheme РЕЖИМ] [--mode dark|light|auto] [--no-apply]
 
-Без ОБОЕВ берутся текущие. Пишет ~/.config/omarchy/themes/dynamic (colors.toml, icons.theme, обои)
-и применяет её через omarchy-theme-set: всё остальное (терминалы, btop, nvim, hyprland, TUI-слоты,
-браузеры) Omarchy и хук theme-set генерируют из colors.toml сами.
+Без ОБОЕВ берутся текущие. Прежние имена схем matugen (tonal-spot, vibrant, monochrome, …) переводятся в режимы
+dynamic (wallpaper, vivid, grey, …); --prefer и --contrast matugen больше не нужны и принимаются молча. Это разовая
+сборка: запомнить режим для перекраски при смене обоев — `omarchy-rice-dynamic set plain --scheme …`.
 """
-import argparse, os, shutil, subprocess, sys, tempfile
+import argparse
+import os
+import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from wallpaper_colors import SCHEMES, Error, colors_toml, material_palette, matugen, yaru  # noqa: E402
-
-HOME = Path.home()
-THEMES = HOME / ".config/omarchy/themes"
-TARGET = THEMES / "dynamic"
-MARKER = ".omarchy-wallpaper-theme"
-CURRENT_BG = HOME / ".local/state/omarchy/current/background"
-
-
-def write_theme(image, p, mode, scheme):
-    THEMES.mkdir(parents=True, exist_ok=True)
-    build = Path(tempfile.mkdtemp(prefix=".dynamic-", dir=THEMES))
-    build.chmod(0o755)
-    (build / MARKER).write_text(f"{image}\n")
-    (build / "colors.toml").write_text(colors_toml(p, mode, image, scheme))
-    if icons := yaru(p["accent"], mode):
-        (build / "icons.theme").write_text(icons + "\n")
-    (build / "backgrounds").mkdir()
-    shutil.copy2(image, build / "backgrounds" / image.name)
-    (build / "README.md").write_text(
-        f"# dynamic\n\nТема из обоев `{image.name}` (matugen scheme-{scheme}, {mode}).\n"
-        "Пересоздаётся `just theme-from-wallpaper`, руками не править.\n")
-
-    if TARGET.is_symlink() or (TARGET.exists() and not (TARGET / MARKER).exists()):
-        shutil.rmtree(build)
-        sys.exit(f"omarchy-wallpaper-theme: {TARGET} создан не этим скриптом — не трогаю")
-    old = None
-    if TARGET.exists():
-        old = TARGET.with_name(f".dynamic-old-{os.getpid()}")
-        TARGET.rename(old)
-    build.rename(TARGET)
-    if old:
-        shutil.rmtree(old)
+HERE = Path(__file__).resolve().parent
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
-    ap.add_argument("image", nargs="?", type=Path)
-    ap.add_argument("--scheme", default="tonal-spot", choices=SCHEMES)
-    ap.add_argument("--mode", default="dark", choices=["dark", "light"])
-    ap.add_argument("--prefer", default="saturation",
-                    choices=["darkness", "lightness", "saturation", "less-saturation", "value"])
-    ap.add_argument("--contrast", type=float)
+    ap.add_argument("image", nargs="?")
+    ap.add_argument("--scheme")
+    ap.add_argument("--mode", choices=["dark", "light", "auto"])
+    ap.add_argument("--prefer")      # matugen, больше не нужен
+    ap.add_argument("--contrast")    # matugen, больше не нужен
     ap.add_argument("--no-apply", action="store_true", help="только записать тему")
     args = ap.parse_args()
-
-    image = (args.image or CURRENT_BG).resolve()
-    if not image.is_file():
-        sys.exit(f"omarchy-wallpaper-theme: нет файла {image}")
-
-    # Живые обои (видео / GIF): цвета — из кадра (wallpaper_colors.still), а в тему копируется сам файл.
-    try:
-        m = matugen(image, args.scheme, args.mode, args.prefer, args.contrast)
-    except Error as e:
-        sys.exit(f"omarchy-wallpaper-theme: {e}")
-    p = material_palette(m, args.mode)
-    write_theme(image, p, args.mode, args.scheme)
-    print(f"dynamic: {image.name}, scheme-{args.scheme}, {args.mode}, accent {p['accent']}")
-    if not args.no_apply:
-        subprocess.run(["omarchy-theme-set", "dynamic"], check=True)
+    cmd = [str(HERE / "omarchy-rice-dynamic"), "build", "plain"]
+    if args.image:
+        cmd.append(args.image)
+    if args.scheme:
+        cmd += ["--scheme", args.scheme]  # omarchy-rice-dynamic принимает и прежние имена (алиасы)
+    if args.mode:
+        cmd += ["--mode", args.mode]
+    if args.no_apply:
+        cmd.append("--no-apply")
+    os.execv(cmd[0], cmd)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
