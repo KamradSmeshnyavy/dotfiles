@@ -114,6 +114,27 @@ Bar Tweaks, preset `compact-focus`:
 
 Floating windows are not counted for `single`. The Customizer mock-up shows the bar in its normal state.
 
+## Added modules follow the rice
+
+A module that was not drawn for the active rice (`"rice"` in `~/.config/omarchy/style.json`) — a stock one, another
+plugin's, a general one of ours like RunCat — wears the rice's look (`RiceLook.qml` decides, `RiceDress.qml` draws it
+under the module in `ModuleSlot`):
+
+| Rice | Added module |
+|---|---|
+| Bruteon | a pastel tile with an outline and a hard shadow, icons and text dark (`shaders/ricetint.frag`); the colour is picked by the module id |
+| Rumda | a Rumda card (background mixed with text, 2 px rim) |
+| surface | a pill in the card colour |
+| Cozytile | icons and text in the accent, a slash on the right |
+| Unit-3 | a thin line on the left, like between its right modules |
+| yami · Vitreus · Glyph · DOT-MATRIX | a square cell / rounded backdrop / circle / thin outline on hover |
+
+The rice's own modules (its `modules/<Rice>*.qml`, the skin's workspaces, the spacer) stay as they are. A module drawn
+for another rice gets the backdrop but is not recoloured (it has its own colours), nor is the tray. Modules dragged
+out onto the desktop wear the same look inside their card, without the separators (the Cozytile slash, the Unit-3
+line). Off for one module — `"riceStyle": false` in its entry in `shell.json`; for the whole bar —
+`"riceModules": false` in `bar-skin.json` (Customizer → Bar Tweaks → Modules → "Added modules wear the rice's look").
+
 ## A new preset
 
 - Skin: drop a JSON file into `skins/` of the `kamradsmeshnyavy.bar` plugin, it appears in Bar Skin at once.

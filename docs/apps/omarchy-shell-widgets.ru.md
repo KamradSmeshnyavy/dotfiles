@@ -24,6 +24,11 @@
 
 cava и опрос `/proc` запускаются один раз на все мониторы; выключенный виджет не тратит ничего. `desktopWidgets: false` выключает все виджеты рабочего стола (слой не создаётся).
 
+Виджеты стола тоже следуют райсу (`widgetStyle: style`): на Unit-3 карточка — лист NieR (фон 92 %, черта 1 px, сетка
+и уголки-скобки), на Cozytile, Rumda, surface и Glyph — карточка дашборда этого райса. У Bruteon, yami, Vitreus и
+DOT-MATRIX её даёт материал (brutal, pixel, стекло, своя карточка). Карточка, слитая с баром или рамкой, остаётся
+карточкой стиля — она умеет рисовать стык.
+
 ## Дашборд
 
 `Super+Alt+D` (`omarchy-shell widgets toggleDashboard`, есть `openDashboard` / `closeDashboard`) —

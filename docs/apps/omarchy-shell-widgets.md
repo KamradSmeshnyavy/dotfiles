@@ -25,6 +25,11 @@ through, except for the player buttons and the interactive cards (todo, quote, p
 cava and the `/proc` poll start once for all monitors; a disabled widget costs nothing. `desktopWidgets: false` turns
 off every desktop widget (the layer is not even created).
 
+Desktop widgets follow the rice too (`widgetStyle: style`): on Unit-3 a card is a NieR sheet (92 % background, 1 px line,
+grid and corner brackets), on Cozytile, Rumda, surface and Glyph — the card of that rice's dashboard. Bruteon, yami,
+Vitreus and DOT-MATRIX get it from their material (brutal, pixel, glass, own card). A card merged with the bar or
+frame stays the style card, which knows how to draw the joint.
+
 ## Dashboard
 
 `Super+Alt+D` (`omarchy-shell widgets toggleDashboard`, also `openDashboard` / `closeDashboard`) — the panel "grows"
