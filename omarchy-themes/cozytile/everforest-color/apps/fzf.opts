@@ -1,5 +1,0 @@
-# Cozytile Everforest Color — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#232A2E,bg+:#3f494e,fg:#8e9493,fg+:#BDC2BE
---color=hl:#86918A,hl+:#86918A,info:#717778,prompt:#86918A
---color=pointer:#86918A,marker:#98C379,spinner:#62AEEF,header:#E5C07A
---color=border:#444f53,label:#BDC2BE,query:#BDC2BE,selected-bg:#424b4b

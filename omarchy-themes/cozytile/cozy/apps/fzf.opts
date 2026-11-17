@@ -1,5 +1,0 @@
-# Cozytile Cozy — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#282738,bg+:#424254,fg:#9a9eb3,fg+:#D8DEF5
---color=hl:#CAA9E0,hl+:#CAA9E0,info:#77798d,prompt:#CAA9E0
---color=pointer:#CAA9E0,marker:#d0c1e9,spinner:#bfcef3,header:#D8DEF5
---color=border:#49485b,label:#D8DEF5,query:#D8DEF5,selected-bg:#534c61

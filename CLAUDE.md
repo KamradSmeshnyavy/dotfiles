@@ -32,7 +32,7 @@ dotfiles/
 ├── tui/                 # терминальные инструменты (nvim, helix, git, lazygit, yazi, tmux, …)
 ├── shells/              # nushell (основной), zshrc, fish, starship.toml
 ├── cli/                 # ssh, p10k, todo
-├── omarchy-themes/      # темы Omarchy, хуки и скрипты синхронизации тем
+├── omarchy-themes/      # темы Omarchy, хуки и скрипты синхронизации тем; rices/ — сабмодуль omarchy-rices (темы райсов)
 ├── scripts/             # bin/ → ~/.local/bin, check-links, install-skill.nu
 ├── skills/              # AI-скиллы + linux_install_map.json
 ├── macos/               # nix-darwin flake
@@ -70,7 +70,12 @@ dotfiles/
 ## Сабмодули
 
 `.dotbot`, `apps/ghostty/shaders`, `apps/ghostty/cursors`, `apps/sketchybar`,
-`omarchy-themes/thinkpad-boot-screen`. После клонирования: `git submodule update --init --recursive`.
+`omarchy-themes/thinkpad-boot-screen`, `omarchy-themes/rices`. После клонирования: `git submodule update --init --recursive`.
+
+Темы райсов (vitreus, unit3, yami, bruteon, cozytile, rumda, surface, nothing/Glyph, dot-matrix), их генераторы и
+`omarchy-rice-dynamic` (+ Iris) — сабмодуль `omarchy-themes/rices` = публичный репо omarchy-rices (GPL-3.0; у него свой
+`install.sh`, ставит Customizer компаньоном `rices`). Правка темы райса = коммит и пуш в сабмодуле, затем указатель.
+Оригинальные обои райсов (`0-original.*`, `0r-*`) в его git не входят — скачиваются при сборке.
 
 Свои плагины omarchy-shell — тоже сабмодули, это отдельные публичные репо (правка = коммит и пуш в
 сабмодуле, затем коммит нового указателя в dotfiles): `kamradsmeshnyavy.bar` → omarchy-bar-skins,

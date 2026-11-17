@@ -1,5 +1,0 @@
-# Bruteon Color — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#efe0d6,bg+:#e3c0a5,fg:#885643,fg+:#161110
---color=hl:#ffb77a,hl+:#ffb77a,info:#9d7768,prompt:#ffb77a
---color=pointer:#ffb77a,marker:#58654a,spinner:#48677e,header:#735c33
---color=border:#b9aca4,label:#161110,query:#161110,selected-bg:#f8c9a3

@@ -56,3 +56,6 @@
 [submodule "apps/omarchy-shell/plugins/kamradsmeshnyavy.agents"]
 	path = apps/omarchy-shell/plugins/kamradsmeshnyavy.agents
 	url = https://github.com/KamradSmeshnyavy/omarchy-dotmatrix-agents
+[submodule "omarchy-themes/rices"]
+	path = omarchy-themes/rices
+	url = https://github.com/KamradSmeshnyavy/omarchy-rices

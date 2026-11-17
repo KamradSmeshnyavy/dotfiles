@@ -1,5 +1,0 @@
-# Unit-3 — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#0b0a09,bg+:#1a1814,fg:#8a7f6a,fg+:#c8b89a
---color=hl:#c8b89a,hl+:#c8b89a,info:#6d6658,prompt:#c8b89a
---color=pointer:#c8b89a,marker:#60a880,spinner:#6090c8,header:#c8b89a
---color=border:#27241f,label:#c8b89a,query:#c8b89a,selected-bg:#443e34

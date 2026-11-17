@@ -1,5 +1,0 @@
-# Ash (yami) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#0e0c0c,bg+:#221e1e,fg:#8f8685,fg+:#e8e2e0
---color=hl:#a8a29c,hl+:#a8a29c,info:#6d6463,prompt:#a8a29c
---color=pointer:#a8a29c,marker:#d0cac6,spinner:#e4dedb,header:#e8e2e0
---color=border:#423f3d,label:#e8e2e0,query:#e8e2e0,selected-bg:#635e5b

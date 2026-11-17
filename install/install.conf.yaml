@@ -182,7 +182,7 @@
       path: omarchy-themes/scripts/omarchy-wallpaper-theme
       if: "[ `uname` = Linux ]"
     ~/.local/bin/omarchy-rice-dynamic:
-      path: omarchy-themes/scripts/omarchy-rice-dynamic
+      path: omarchy-themes/rices/scripts/omarchy-rice-dynamic
       if: "[ `uname` = Linux ]"
     ~/.config/systemd/user/omarchy-stylus-server.service:
       path: omarchy-themes/systemd/omarchy-stylus-server.service
@@ -275,160 +275,160 @@
       path: omarchy-themes/black-arch-pastel
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-signal:
-      path: omarchy-themes/nothing/signal
+      path: omarchy-themes/rices/nothing/signal
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-cmf:
-      path: omarchy-themes/nothing/cmf
+      path: omarchy-themes/rices/nothing/cmf
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-glyph:
-      path: omarchy-themes/nothing/glyph
+      path: omarchy-themes/rices/nothing/glyph
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-ash:
-      path: omarchy-themes/nothing/ash
+      path: omarchy-themes/rices/nothing/ash
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-ember:
-      path: omarchy-themes/nothing/ember
+      path: omarchy-themes/rices/nothing/ember
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-steel:
-      path: omarchy-themes/nothing/steel
+      path: omarchy-themes/rices/nothing/steel
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-ashlight:
-      path: omarchy-themes/nothing/ashlight
+      path: omarchy-themes/rices/nothing/ashlight
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-glyph-dark:
-      path: omarchy-themes/nothing/glyph-dark
+      path: omarchy-themes/rices/nothing/glyph-dark
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-glyph-light:
-      path: omarchy-themes/nothing/glyph-light
+      path: omarchy-themes/rices/nothing/glyph-light
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-glyph-dark-mono:
-      path: omarchy-themes/nothing/glyph-dark-mono
+      path: omarchy-themes/rices/nothing/glyph-dark-mono
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-glyph-light-mono:
-      path: omarchy-themes/nothing/glyph-light-mono
+      path: omarchy-themes/rices/nothing/glyph-light-mono
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-steel-mono:
-      path: omarchy-themes/nothing/steel-mono
+      path: omarchy-themes/rices/nothing/steel-mono
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-ashlight-mono:
-      path: omarchy-themes/nothing/ashlight-mono
+      path: omarchy-themes/rices/nothing/ashlight-mono
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-retro:
-      path: omarchy-themes/vitreus/retro
+      path: omarchy-themes/rices/vitreus/retro
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-uwu:
-      path: omarchy-themes/vitreus/uwu
+      path: omarchy-themes/rices/vitreus/uwu
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-cyber:
-      path: omarchy-themes/vitreus/cyber
+      path: omarchy-themes/rices/vitreus/cyber
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-milk:
-      path: omarchy-themes/vitreus/milk
+      path: omarchy-themes/rices/vitreus/milk
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-doodle:
-      path: omarchy-themes/vitreus/doodle
+      path: omarchy-themes/rices/vitreus/doodle
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-paper:
-      path: omarchy-themes/vitreus/paper
+      path: omarchy-themes/rices/vitreus/paper
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/vitreus-proxy:
-      path: omarchy-themes/vitreus/proxy
+      path: omarchy-themes/rices/vitreus/proxy
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-blood:
-      path: omarchy-themes/yami/blood
+      path: omarchy-themes/rices/yami/blood
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-ash:
-      path: omarchy-themes/yami/ash
+      path: omarchy-themes/rices/yami/ash
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-sakura:
-      path: omarchy-themes/yami/sakura
+      path: omarchy-themes/rices/yami/sakura
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-amber:
-      path: omarchy-themes/yami/amber
+      path: omarchy-themes/rices/yami/amber
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-venom:
-      path: omarchy-themes/yami/venom
+      path: omarchy-themes/rices/yami/venom
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-ice:
-      path: omarchy-themes/yami/ice
+      path: omarchy-themes/rices/yami/ice
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/yami-dusk:
-      path: omarchy-themes/yami/dusk
+      path: omarchy-themes/rices/yami/dusk
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/rumda-dark:
-      path: omarchy-themes/rumda/dark
+      path: omarchy-themes/rices/rumda/dark
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/rumda-light:
-      path: omarchy-themes/rumda/light
+      path: omarchy-themes/rices/rumda/light
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/rumda-dark-color:
-      path: omarchy-themes/rumda/dark-color
+      path: omarchy-themes/rices/rumda/dark-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/rumda-light-color:
-      path: omarchy-themes/rumda/light-color
+      path: omarchy-themes/rices/rumda/light-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/surface-dark:
-      path: omarchy-themes/surface/dark
+      path: omarchy-themes/rices/surface/dark
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/surface-light:
-      path: omarchy-themes/surface/light
+      path: omarchy-themes/rices/surface/light
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/surface-dark-color:
-      path: omarchy-themes/surface/dark-color
+      path: omarchy-themes/rices/surface/dark-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/surface-light-color:
-      path: omarchy-themes/surface/light-color
+      path: omarchy-themes/rices/surface/light-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-cozy:
-      path: omarchy-themes/cozytile/cozy
+      path: omarchy-themes/rices/cozytile/cozy
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-cozy-color:
-      path: omarchy-themes/cozytile/cozy-color
+      path: omarchy-themes/rices/cozytile/cozy-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-sakura:
-      path: omarchy-themes/cozytile/sakura
+      path: omarchy-themes/rices/cozytile/sakura
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-sakura-color:
-      path: omarchy-themes/cozytile/sakura-color
+      path: omarchy-themes/rices/cozytile/sakura-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-natura:
-      path: omarchy-themes/cozytile/natura
+      path: omarchy-themes/rices/cozytile/natura
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-natura-color:
-      path: omarchy-themes/cozytile/natura-color
+      path: omarchy-themes/rices/cozytile/natura-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-everforest:
-      path: omarchy-themes/cozytile/everforest
+      path: omarchy-themes/rices/cozytile/everforest
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-everforest-color:
-      path: omarchy-themes/cozytile/everforest-color
+      path: omarchy-themes/rices/cozytile/everforest-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-carbon:
-      path: omarchy-themes/cozytile/carbon
+      path: omarchy-themes/rices/cozytile/carbon
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/cozytile-carbon-color:
-      path: omarchy-themes/cozytile/carbon-color
+      path: omarchy-themes/rices/cozytile/carbon-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/bruteon-light:
-      path: omarchy-themes/bruteon/light
+      path: omarchy-themes/rices/bruteon/light
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/bruteon-light-color:
-      path: omarchy-themes/bruteon/light-color
+      path: omarchy-themes/rices/bruteon/light-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/bruteon-dark:
-      path: omarchy-themes/bruteon/dark
+      path: omarchy-themes/rices/bruteon/dark
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/bruteon-dark-color:
-      path: omarchy-themes/bruteon/dark-color
+      path: omarchy-themes/rices/bruteon/dark-color
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/unit3-dark:
-      path: omarchy-themes/unit3/dark
+      path: omarchy-themes/rices/unit3/dark
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/unit3-paper:
-      path: omarchy-themes/unit3/paper
+      path: omarchy-themes/rices/unit3/paper
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/dot-matrix:
-      path: omarchy-themes/dot-matrix
+      path: omarchy-themes/rices/dot-matrix
       if: "[ `uname` = Linux ]"
     # Шрифты стиля DOT-MATRIX (Doto, Space Grotesk, Space Mono) живут в плагине customizer.
     ~/.local/share/fonts/dotmatrix:

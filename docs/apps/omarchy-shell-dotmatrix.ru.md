@@ -171,5 +171,5 @@ Customizer → Пресеты → DOT-MATRIX ссылается на стиль 
 
 - Блокировка, выход, перезагрузка и выключение — через `omarchy-system-*`, ночной свет — `omarchy-toggle-nightlight`
   (демон hyprsunset не убивается).
-- Тема `omarchy-themes/dot-matrix` — только цвета и обои; Plymouth и SDDM лежат отдельно в `omarchy-themes/dot-matrix-boot`
+- Тема `omarchy-themes/rices/dot-matrix` — только цвета и обои; Plymouth и SDDM лежат отдельно в `omarchy-themes/dot-matrix-boot`
   и ставятся вручную.

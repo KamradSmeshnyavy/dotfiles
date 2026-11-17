@@ -1,5 +1,0 @@
-# Cyber (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#04070d,bg+:#1a2432,fg:#6f93a8,fg+:#d6f7ff
---color=hl:#00e5ff,hl+:#00e5ff,info:#6f93a8,prompt:#00e5ff
---color=pointer:#00e5ff,marker:#6beeff,spinner:#b7f6ff,header:#d6f7ff
---color=border:#26384a,label:#d6f7ff,query:#d6f7ff,selected-bg:#034551

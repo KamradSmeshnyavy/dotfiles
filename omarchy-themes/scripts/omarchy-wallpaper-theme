@@ -25,7 +25,9 @@ def main():
     ap.add_argument("--contrast")    # matugen, больше не нужен
     ap.add_argument("--no-apply", action="store_true", help="только записать тему")
     args = ap.parse_args()
-    cmd = [str(HERE / "omarchy-rice-dynamic"), "build", "plain"]
+    import shutil
+    tool = shutil.which("omarchy-rice-dynamic") or str(HERE.parent / "rices/scripts/omarchy-rice-dynamic")
+    cmd = [tool, "build", "plain"]
     if args.image:
         cmd.append(args.image)
     if args.scheme:

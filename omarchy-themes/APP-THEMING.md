@@ -136,13 +136,14 @@ spicetify), LibreOffice/OnlyOffice (частично — GTK3).
 ### Динамическая тема райса
 
 `just rice-dynamic build <райс> [обои] [--engine rice|colors] [--scheme …] [--mode dark|light|auto]`
-(`scripts/omarchy-rice-dynamic`, в `PATH`) пишет `~/.config/omarchy/themes/dynamic-<райс>` и применяет её. Цвета
+(`rices/scripts/omarchy-rice-dynamic`, в `PATH`; темы райсов — в сабмодуле `omarchy-themes/rices` =
+[omarchy-rices](https://github.com/KamradSmeshnyavy/omarchy-rices), подробности — в его README) пишет `~/.config/omarchy/themes/dynamic-<райс>` и применяет её. Цвета
 берутся с обоев, обои — из пула райса.
 
-- **Чтение цветов**: Iris (`scripts/iris_colors.py`, MIT, копия github.com/Harman1307/iris) — им Vitreus читает обои
+- **Чтение цветов**: Iris (`rices/scripts/iris_colors.py`, MIT, копия github.com/Harman1307/iris) — им Vitreus читает обои
   для Glass. Фон, панели, текст, акцент (самый заметный цвет) и красный / зелёный / жёлтый он берёт из реальных
   цветов картинки. В копии одна правка: оттенок кластера считается круговым средним, и красный с оранжевым больше не
-  дают в сумме зелёный акцент. `nothing/dynamic_map.py` раскладывает результат по слотам как vitreus.luau
+  дают в сумме зелёный акцент. `rices/nothing/dynamic_map.py` раскладывает результат по слотам как vitreus.luau
   (`iris_palette` / `build_palette`): акцент усиливается (Bold), mintlo / minthi ∓ светлота, deep, off, контраст 4.5.
 - **Режим `vitreus`** — точно как Vitreus: `dynamic_map.vitreus_palette` — построчный перенос `iris_palette` /
   `build_palette` (всегда тёмная, на стекле, акцент Bold, те же шаги контраста и округление). Движок rice кладёт
@@ -171,7 +172,7 @@ spicetify), LibreOffice/OnlyOffice (частично — GTK3).
   `bruteon`, `cozytile`, `rumda`, `surface` и `glyph` (`nothing`). Вариант облика находится по `base` пресета или по имени
   его темы (`yami-blood` → `blood`, `nothing-glyph-dark-mono` → `glyph-dark-mono`). `colors` (прежде `material`) пишет
   только `colors.toml`, остальное делают шаблоны Omarchy.
-- **Пул**: `omarchy-themes/<райс>/wallpapers/`, `backgrounds/` всех вариантов (одинаковые копии — один раз) и свои в
+- **Пул**: `omarchy-themes/rices/<райс>/wallpapers/`, `backgrounds/` всех вариантов (одинаковые копии — один раз) и свои в
   `~/.config/omarchy/backgrounds/dynamic-<райс>/`. Пополнять через `omarchy-rice-dynamic add <райс> ФАЙЛ…
   --local|--repo` или с Wallhaven: `wallhaven search <райс> ЗАПРОС` кладёт SFW-миниатюры в кэш, `wallhaven get <райс>
   ID…` скачивает выбранные в локальный каталог.

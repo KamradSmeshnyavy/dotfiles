@@ -179,5 +179,5 @@ backup taken before the first preset or style. "Reset window geometry" removes g
 
 - Lock, log out, reboot and shut down go through `omarchy-system-*`, night light through `omarchy-toggle-nightlight`
   (the hyprsunset daemon is not killed).
-- The `omarchy-themes/dot-matrix` theme is only colours and wallpapers; Plymouth and SDDM live separately in
+- The `omarchy-themes/rices/dot-matrix` theme is only colours and wallpapers; Plymouth and SDDM live separately in
   `omarchy-themes/dot-matrix-boot` and are installed by hand.

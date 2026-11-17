@@ -129,13 +129,14 @@ aliases, and matugen is no longer needed. Customizer → Theme and the “No ric
 ### Dynamic theme of a rice
 
 `just rice-dynamic build <rice> [wallpaper] [--engine rice|colors] [--scheme …] [--mode dark|light|auto]`
-(`scripts/omarchy-rice-dynamic`, on `PATH`) writes `~/.config/omarchy/themes/dynamic-<rice>` and applies it. Its
+(`rices/scripts/omarchy-rice-dynamic`, on `PATH`; the themes of the rices live in the submodule
+`omarchy-themes/rices` = [omarchy-rices](https://github.com/KamradSmeshnyavy/omarchy-rices), its README has the details) writes `~/.config/omarchy/themes/dynamic-<rice>` and applies it. Its
 colours come from the wallpaper, and the wallpapers are the rice's pool.
 
-- **Reading the colours**: Iris (`scripts/iris_colors.py`, MIT, a copy of github.com/Harman1307/iris) is what Vitreus
+- **Reading the colours**: Iris (`rices/scripts/iris_colors.py`, MIT, a copy of github.com/Harman1307/iris) is what Vitreus
   uses for Glass. It takes the background, panels, text, the accent (the most striking colour) and red / green /
   yellow from the picture's real colours. One fix is made in the copy: a cluster's hue is a circular mean, so red
-  and orange no longer average out to a green accent. `nothing/dynamic_map.py` maps it to slots the way vitreus.luau
+  and orange no longer average out to a green accent. `rices/nothing/dynamic_map.py` maps it to slots the way vitreus.luau
   does (`iris_palette` / `build_palette`): a Bold push on the accent, mintlo / minthi ∓ lightness, deep, off, and
   contrast 4.5.
 - **`vitreus` mode** is exactly Vitreus: `dynamic_map.vitreus_palette` is a line-by-line port of `iris_palette` /
@@ -167,7 +168,7 @@ colours come from the wallpaper, and the wallpapers are the rice's pool.
   `cozytile`, `rumda`, `surface` and `glyph` (`nothing`). The look's variant is found by the preset's `base` or by its
   theme name (`yami-blood` → `blood`, `nothing-glyph-dark-mono` → `glyph-dark-mono`). `colors` (formerly `material`)
   writes only `colors.toml`, and Omarchy templates do the rest.
-- **Pool**: `omarchy-themes/<rice>/wallpapers/`, the `backgrounds/` of every variant (identical copies count once)
+- **Pool**: `omarchy-themes/rices/<rice>/wallpapers/`, the `backgrounds/` of every variant (identical copies count once)
   and your own in `~/.config/omarchy/backgrounds/dynamic-<rice>/`. Add to it with `omarchy-rice-dynamic add <rice>
   FILE… --local|--repo` or from Wallhaven: `wallhaven search <rice> QUERY` puts SFW thumbnails into the cache, and
   `wallhaven get <rice> ID…` downloads the picks into the local folder.

@@ -121,7 +121,8 @@ television, gitui, rmpc, nushell, tmux, fzf читают тему из файл�
 - Коммиты подписываются SSH-ключом (`tui/git/`).
 - pre-commit: `gitleaks` (`.githooks/pre-commit`); обходить `--no-verify` только при ложном срабатывании.
 - Сабмодули (`.gitmodules`): `.dotbot`, `apps/ghostty/shaders`, `apps/ghostty/cursors`, `apps/sketchybar`,
-  `omarchy-themes/thinkpad-boot-screen`. После клонирования: `git submodule update --init --recursive`.
+  `omarchy-themes/thinkpad-boot-screen`, `omarchy-themes/rices` (публичный omarchy-rices: темы райсов, генераторы,
+  `omarchy-rice-dynamic`). После клонирования: `git submodule update --init --recursive`.
 - Плагины omarchy-shell `kamradsmeshnyavy.{bar,lock,background,image-picker,customizer}` — сабмодули,
   отдельные публичные репо (omarchy-bar-skins, omarchy-lock-designs, omarchy-wallpaper-fx,
   omarchy-image-picker-styles, omarchy-customizer — последний под GPL-3.0). Customizer самодостаточен:

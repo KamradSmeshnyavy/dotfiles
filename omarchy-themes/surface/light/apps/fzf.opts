@@ -1,5 +1,0 @@
-# Surface Light — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#f0ece6,bg+:#d8d2c8,fg:#546670,fg+:#252e33
---color=hl:#4f6b5b,hl+:#4f6b5b,info:#848584,prompt:#4f6b5b
---color=pointer:#4f6b5b,marker:#3c5049,spinner:#32403f,header:#252e33
---color=border:#c9c2b6,label:#252e33,query:#252e33,selected-bg:#dfe6cf

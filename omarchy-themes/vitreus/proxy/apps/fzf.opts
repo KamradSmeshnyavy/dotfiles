@@ -1,5 +1,0 @@
-# Proxy (Vitreus) — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#10161d,bg+:#242b31,fg:#93a1ac,fg+:#f2f6f8
---color=hl:#ffd21f,hl+:#ffd21f,info:#93a1ac,prompt:#ffd21f
---color=pointer:#ffd21f,marker:#f8e48c,spinner:#f7f4cc,header:#f2f6f8
---color=border:#2a323b,label:#f2f6f8,query:#f2f6f8,selected-bg:#534b1e

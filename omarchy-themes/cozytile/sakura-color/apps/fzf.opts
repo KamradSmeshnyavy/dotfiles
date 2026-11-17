@@ -1,5 +1,0 @@
-# Cozytile Sakura Color — fzf: совпадения в сигнальном цвете, выбранная строка — приподнятый фон
---color=bg:#282739,bg+:#444254,fg:#a9a3a8,fg+:#EFE6E4
---color=hl:#E5B9C6,hl+:#E5B9C6,info:#827d86,prompt:#E5B9C6
---color=pointer:#E5B9C6,marker:#98C379,spinner:#62AEEF,header:#E5C07A
---color=border:#4b495a,label:#EFE6E4,query:#EFE6E4,selected-bg:#6a5a6a
