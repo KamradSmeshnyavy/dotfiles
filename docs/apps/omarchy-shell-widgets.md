@@ -60,6 +60,23 @@ Night light), 24-segment LED sliders, expandable Wi-Fi/Bluetooth/Audio lists (de
 [omarchy-shell-dotmatrix.md](omarchy-shell-dotmatrix.md)), notification history, session actions with a two-click red
 confirmation.
 
+Rice menus (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument, `menus/` on the shared
+`menus/SectionBody.qml` and `MenuData.qml`) share the same section contents. **Wi-Fi**: a saved network connects with
+its NetworkManager profile, no password asked; a new one asks for the password in a field right under its row, and a
+failed attempt deletes the profile nmcli created, so a wrong password is not remembered. The status line shows
+"connecting…" or nmcli's error. `›` on a saved network (or a click on the connected one) opens its card: address,
+gateway, DNS in use, connect / disconnect, auto-connect, **DNS** — presets (router, Cloudflare, Google, Quad9, AdGuard,
+Yandex) or your own addresses (IPv4 and IPv6 mixed), applied at once with `nmcli dev reapply` without reconnecting —
+show password, new password, forget (second press confirms). Below the list: saved networks out of range, a hidden
+network (name, then password) and rescan. **Bluetooth**: a new device is paired, trusted and connected in one press,
+battery level in the row; `›` — connect, trusted (auto-connect), forget. **Audio**: volume, microphone and its level,
+outputs and inputs. Esc steps back (field → card → section → menu). Unit-3 (NieR) and surface Hub keep their own
+lists but also connect saved networks without a password.
+
+Keyboard (`KeyNav.qml`, every menu and dashboard): a target inside a scrolling list is scrolled into view, the
+selection ring hides instead of drawing over the panel when the wheel takes the target away, and after the list is
+rebuilt the selection stays on the row in the same place.
+
 `edgeHover: true` adds screen-edge dwell hot zones that open the dashboard, the settings panel and the launcher.
 
 ## Power menu
