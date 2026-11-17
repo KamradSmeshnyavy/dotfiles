@@ -63,7 +63,9 @@ DOT-MATRIX у правого края, вырастает из угла рамк
 [omarchy-shell-dotmatrix.ru.md](omarchy-shell-dotmatrix.ru.md)), история уведомлений, действия сессии с красным
 подтверждением вторым кликом.
 
-Меню райсов (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument, `menus/` на общих
+**Space** (по мотивам стиля Space из [elifouts/Dotfiles](https://github.com/elifouts/Dotfiles), GPL-3.0): дашборд — визор (`DashSpace.qml` — уголки, часы, плашки со срезанным углом: система, процессор, память, видеокарта, связь, музыка, шкалы из клеток), Super+M — бортовой компьютер (`menus/MenuSpace.qml` — корабль в центре, разделы — планеты на наклонной орбите; колесо или `[` `]` крутят её, выбранная планета подлетает и разворачивается в плашку HUD), плеер — плашка NOW PLAYING (`players/PlayerSpace.qml`). Подписи проступают через шум (`SpaceDecode.qml`, копия барной).
+
+Меню райсов (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument / space, `menus/` на общих
 `menus/SectionBody.qml` и `MenuData.qml`) показывают одно и то же содержимое разделов. **Wi-Fi**: сохранённая сеть
 подключается своим профилем NetworkManager, без пароля; новая просит пароль в поле прямо под строкой, а неудачная
 попытка удаляет профиль, который создал nmcli, — неверный пароль не запоминается. Строка состояния показывает

@@ -127,6 +127,7 @@ under the module in `ModuleSlot`):
 | surface | a pill in the card colour |
 | Cozytile | icons and text in the accent, a slash on the right |
 | Unit-3 | a thin line on the left, like between its right modules |
+| Space | a 2 px accent line under it on hover, like its own modules |
 | yami · Vitreus · Glyph · DOT-MATRIX | a square cell / rounded backdrop / circle / thin outline on hover |
 
 The rice's own modules (its `modules/<Rice>*.qml`, the skin's workspaces, the spacer) stay as they are. A module drawn
