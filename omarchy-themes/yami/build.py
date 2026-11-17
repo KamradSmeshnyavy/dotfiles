@@ -48,12 +48,13 @@ def lum(h):
 
 
 def readable(c, bg, need):
-    """Поднять яркость до нужного контраста к тёмному фону."""
+    """Поднять яркость до нужного контраста к тёмному фону (к светлому — затемнить: dynamic, перевёрнутая yami)."""
     from palettes import contrast
+    toward = "#000000" if lum(bg) > 0.5 else "#ffffff"
     for _ in range(30):
         if contrast(c, bg) >= need:
             break
-        c = nb.mix(c, "#ffffff", 0.06)
+        c = nb.mix(c, toward, 0.06)
     return c
 
 
@@ -84,12 +85,21 @@ def mono_syntax(y):
             "special": y["accent"], "constant": nb.mix(y["bright"], y["text"], 0.45)}
 
 
+# готовые палитры yami (dynamic: от акцента обоев, возможно перевёрнутые в светлую) — вместо derive(PRESETS[v][1])
+DERIVED = {}
+
+
+def yami_of(v):
+    return DERIVED.get(v) or derive(PRESETS[v][1])
+
+
 def palette(v):
     title, accent = PRESETS[v]
-    y = derive(accent)
+    y = yami_of(v)
+    accent = y["accent"]
     bg = y["bg"]
     p = {
-        "mode": "dark", "title": title,
+        "mode": y.get("mode", "dark"), "title": title,
         "name": f"yami-{v}", "out": os.path.join(HERE, v),
         "bg": bg, "panel": y["panel"], "raised": y["surface"], "line": y["border"],
         "fg": y["text"], "dim": readable(y["textDim"], bg, 4.5), "comment": readable(y["textFaint"], bg, 3),
@@ -112,6 +122,8 @@ def palette(v):
         p["info"] = readable(y["textDim"], bg, 4.5)
         p["diff_add"] = nb.mix(bg, y["text"], 0.12)
         p["diff_del"] = nb.mix(bg, y["accent"], 0.22)
+    if p["mode"] == "light":
+        p["light_mode_file"] = True
     p["wallpapers"] = lambda pp, d, y=y: dot_walls(y, d)
     p["ansi16"] = ansi16(y) if COLOR else ansi16_mono(y)
     return p
@@ -246,20 +258,58 @@ def dot_walls(y, out_dir):
         im.save(os.path.join(out_dir, name), optimize=True)
 
 
+def make(v, out=None, name=None):
+    """Собрать пресет v (ключ PRESETS) в out (по умолчанию — каталог в репо)."""
+    p = palette(v)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[v] = p
+    # у генератора nothing есть свой вариант ash со своими обоями — на время сборки он не мешает
+    saved = nb.WALLPAPERS.pop(v, None)
+    nb.build(v)
+    if saved is not None:
+        nb.WALLPAPERS[v] = saved
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {PRESETS[v][0]} — omarchy-themes/yami (палитра yami, MIT; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    # fastfetch и его логотип — свои, как у yami (вместо точечного «ex nihilo» генератора nothing)
+    y = yami_of(v)
+    open(os.path.join(out, "apps", "yami-logo.txt"), "w").write(kanji_logo(y))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(y))
+    open(os.path.join(out, "btop.theme"), "w").write(btop_theme(y))
+
+
+# omarchy-rice-dynamic: yami весь строится от одного акцента (derive) и всегда тёмный; светлая — переворот палитры
+DYNAMIC_BASE = "blood"
+DYNAMIC_MODE = "dark"
+FLIP_ROLES = {"bg": "surface", "panel": "surface", "surface": "surface", "surfaceHi": "surface", "border": "surface",
+              "dim": "surface", "selection": "surface", "text": "text", "textDim": "text", "textFaint": "text",
+              "deep": "color", "glow": "color", "bright": "color", "ok": "color", "warn": "color"}
+
+
+def base_modes():
+    return {v: "dark" for v in PRESETS if v != "dynamic"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) по-yami: вся палитра — derive от акцента обоев (родной
+    алгоритм yami, recolor_math.rs); режимы задают сам акцент (тише, ярче, моно, серый). Светлая (dark / light явно или
+    flip в режиме accent) — та же палитра, перевёрнутая: фоны светлые, текст тёмный, акцент — до контраста."""
+    import dynamic_map as dm
+    y = derive(s["accent"])
+    if s["mode"] == "light":
+        y = dm.flip(y, FLIP_ROLES, "light", "bg")
+        y["accent"] = dm.flip_color(y["accent"], "color", False, y["bg"])
+        y["onAccent"] = "#0b0909" if lum(y["accent"]) > 0.6 else "#ffffff"
+        y["mode"] = "light"
+    PRESETS["dynamic"] = ("Dynamic (yami)", y["accent"])
+    DERIVED["dynamic"] = y
+    make("dynamic", out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(PRESETS):
-        nb.PALETTES[v] = palette(v)
-        # у генератора nothing есть свой вариант ash со своими обоями — на время сборки он не мешает
-        saved = nb.WALLPAPERS.pop(v, None)
-        nb.build(v)
-        if saved is not None:
-            nb.WALLPAPERS[v] = saved
-        f = os.path.join(HERE, v, "colors.toml")
-        lines = open(f).read().split("\n")
-        lines[0] = f"# {PRESETS[v][0]} — omarchy-themes/yami (палитра yami, MIT; сборка: build.py поверх ../nothing/build.py)."
-        open(f, "w").write("\n".join(lines))
-        # fastfetch и его логотип — свои, как у yami (вместо точечного «ex nihilo» генератора nothing)
-        y = derive(PRESETS[v][1])
-        open(os.path.join(HERE, v, "apps", "yami-logo.txt"), "w").write(kanji_logo(y))
-        open(os.path.join(HERE, v, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(y))
-        open(os.path.join(HERE, v, "btop.theme"), "w").write(btop_theme(y))
+        make(v)

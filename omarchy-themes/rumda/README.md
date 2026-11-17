@@ -23,3 +23,7 @@ use only shades of the accent and the ink. `rumda-dark-color` and `rumda-light-c
 python3 build.py            # all themes
 python3 build.py dark       # chosen ones
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): caramel steps of the background, a frame of the accent towards the background; terminal colours of the other variant when turned over. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

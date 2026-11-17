@@ -44,3 +44,7 @@
 ```sh
 python3 build.py glyph-dark-mono glyph-light-mono steel-mono ashlight-mono
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): the Glyph rice: on the one-colour base (…-mono) the same rule `palettes.mono` — greys from dim to fg and the red family. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

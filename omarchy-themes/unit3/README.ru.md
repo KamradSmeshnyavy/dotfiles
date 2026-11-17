@@ -20,3 +20,7 @@ NieR:Automata (MIT). Цвета взяты из его конфигов.
 python3 build.py          # обе
 python3 build.py paper    # только выбранные
 ```
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): приглушённые цвета (насыщенность не выше 0.4), рамка окна цветом текста; Бумагу можно сделать тёмной, тёмную — светлой. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

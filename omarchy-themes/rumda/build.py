@@ -244,19 +244,63 @@ hl.config({{
 """
 
 
+def make(v, color, out=None, name=None):
+    """Собрать вариант v (ключ RUMDA) — обычный или разноцветный (color) — в out (по умолчанию — каталог в репо)."""
+    key = v + ("-color" if color else "")
+    p = palette(v, color)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[key] = p
+    nb.build(key)
+    t = RUMDA[v]
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {p['title']} — omarchy-themes/rumda (по мотивам Rumda; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    open(os.path.join(out, "apps", "rumda-logo.txt"), "w").write(cat_logo(t))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(v, t, color))
+    open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t))
+    open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+
+# omarchy-rice-dynamic: вариант по умолчанию, режимы вариантов, роли цветов для переворота палитры
+DYNAMIC_BASE = "dark"
+FLIP_ROLES = {"bg": "surface", "panel": "surface", "module": "surface", "border": "surface", "selection": "surface",
+              "frame": "auto", "fg": "text", "accent": "color", "accent2": "color", "error": "color"}
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in RUMDA.items() if v != "dynamic"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) в духе Rumda: карамельные ступени фона (panel → module →
+    border), рамка — акцент к фону, акцент и его светлый тон. scheme accent — вариант base как есть, с обоев только
+    акцент; flip — та же палитра в противоположном режиме (16 цветов терминала — от другого варианта)."""
+    import dynamic_map as dm
+    if scheme == "accent":
+        t = dict(RUMDA[base])
+        if flip:
+            other = next(x for k, x in RUMDA.items() if k != "dynamic" and x["mode"] == s["mode"])
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "bg")
+            t["mode"], t["ansi"] = s["mode"], list(other["ansi"])
+        to_dark = t["mode"] == "dark"
+        acc = dm.flip_color(s["accent"], "color", to_dark, t["bg"])
+        t.update(accent=acc, accent2=dm.shade(acc, 0.08 if to_dark else -0.08))
+    else:
+        bg, fg, acc = s["bg"], s["fg"], s["accent"]
+        t = {"mode": s["mode"], "bg": bg, "panel": s["panel"], "module": s["raised"], "border": s["line"],
+             "frame": nb.mix(acc, bg, 0.45), "fg": fg, "accent": acc,
+             "accent2": s["accent_hi"] if s["mode"] == "dark" else s["accent_lo"], "error": s["alert"],
+             "selection": nb.mix(bg, acc, 0.4),
+             "ansi": list(RUMDA["dark" if s["mode"] == "dark" else "light"]["ansi"])}
+    t["title"] = "Rumda Dynamic"
+    RUMDA["dynamic"] = t
+    make("dynamic", False, out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(RUMDA):
         for color in (False, True):
-            key = v + ("-color" if color else "")
-            nb.PALETTES[key] = palette(v, color)
-            nb.build(key)
-            t = RUMDA[v]
-            out = os.path.join(HERE, key)
-            f = os.path.join(out, "colors.toml")
-            lines = open(f).read().split("\n")
-            lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/rumda (по мотивам Rumda; сборка: build.py поверх ../nothing/build.py)."
-            open(f, "w").write("\n".join(lines))
-            open(os.path.join(out, "apps", "rumda-logo.txt"), "w").write(cat_logo(t))
-            open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(v, t, color))
-            open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t))
-            open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+            make(v, color)

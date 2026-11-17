@@ -181,6 +181,9 @@
     ~/.local/bin/omarchy-wallpaper-theme:
       path: omarchy-themes/scripts/omarchy-wallpaper-theme
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-rice-dynamic:
+      path: omarchy-themes/scripts/omarchy-rice-dynamic
+      if: "[ `uname` = Linux ]"
     ~/.config/systemd/user/omarchy-stylus-server.service:
       path: omarchy-themes/systemd/omarchy-stylus-server.service
       if: "[ `uname` = Linux ]"

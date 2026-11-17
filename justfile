@@ -85,6 +85,11 @@ hypr-plugins:
 theme-from-wallpaper *args:
     {{justfile_directory()}}/omarchy-themes/scripts/omarchy-wallpaper-theme {{args}}
 
+# Динамическая тема райса: цвета из обоев, обои — пул райса (build / set / add / list; см. APP-THEMING.md)
+[linux]
+rice-dynamic *args:
+    {{justfile_directory()}}/omarchy-themes/scripts/omarchy-rice-dynamic {{args}}
+
 # Limine и Plymouth в цветах текущей темы (нужен sudo; --dry-run — только показать изменения)
 [linux]
 boot-theme *args:

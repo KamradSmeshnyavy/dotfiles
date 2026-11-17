@@ -23,3 +23,7 @@ python3 build.py blood ash   # chosen ones
 
 The shell font of the rice — the pixel Tiny5 — comes with the `yami` font profile (`omarchy-font-profile yami`, fonts in
 `kamradsmeshnyavy.customizer/fonts/yami`, OFL).
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): the whole yami palette is `derive` from the wallpaper's accent (yami's own algorithm); light — the same palette turned over. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

@@ -25,3 +25,7 @@ and btop use only shades of the accent and the ink. The `-color` twins keep the 
 python3 build.py              # all themes
 python3 build.py cozy carbon  # chosen ones
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): soft background, a pastel accent and a second colour from the wallpaper; any variant (Carbon too) can be turned light ↔ dark. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

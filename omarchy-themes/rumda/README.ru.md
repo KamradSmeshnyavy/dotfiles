@@ -24,3 +24,7 @@
 python3 build.py            # все темы
 python3 build.py dark       # выбранные
 ```
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): карамельные ступени фона, рамка — акцент к фону; при перевороте 16 цветов терминала — от второго варианта. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

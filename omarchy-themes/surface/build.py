@@ -264,19 +264,70 @@ hl.config({{
 """
 
 
+def make(v, color, out=None, name=None):
+    """Собрать вариант v (ключ SURFACE) — обычный или разноцветный (color) — в out (по умолчанию — каталог в репо)."""
+    key = v + ("-color" if color else "")
+    p = palette(v, color)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[key] = p
+    nb.build(key)
+    t = SURFACE[v]
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {p['title']} — omarchy-themes/surface (по мотивам surface-dots; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    open(os.path.join(out, "apps", "saturn-logo.txt"), "w").write(saturn_logo(t))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(t, color, "saturn-logo.txt"))
+    open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t, color))
+    open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+
+# omarchy-rice-dynamic: вариант по умолчанию, режимы вариантов, роли цветов для переворота палитры
+DYNAMIC_BASE = "dark"
+FLIP_ROLES = {"bg": "surface", "panel": "surface", "raised": "surface", "line": "surface", "selection": "surface",
+              "fg": "text", "dim": "text", "accent": "color", "accent2": "color", "bar": "color", "deep": "color",
+              "error": "color", "warm": "color"}
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in SURFACE.items() if v != "dynamic"}
+
+
+def _borders(t):
+    """Рамка окна — акцент с прозрачностью, неактивная — линия (как rgba(87b158aa) у surface-dots)."""
+    t["border"] = f"rgba({t['accent'].lstrip('#')}aa)"
+    t["border_off"] = f"rgba({t['line'].lstrip('#')}aa)"
+    return t
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) в духе surface-dots: спокойный фон, акцент и его бирюзовый
+    сосед, тёплый цвет для предупреждений. scheme accent — вариант base как есть, с обоев только акцент (и bar);
+    flip — та же палитра в противоположном режиме (16 цветов терминала — от другого варианта)."""
+    import dynamic_map as dm
+    if scheme == "accent":
+        t = dict(SURFACE[base])
+        if flip:
+            other = next(x for k, x in SURFACE.items() if k != "dynamic" and x["mode"] == s["mode"])
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "bg")
+            t["mode"], t["ansi"] = s["mode"], list(other["ansi"])
+        acc = dm.flip_color(s["accent"], "color", t["mode"] == "dark", t["bg"])
+        t.update(accent=acc, bar=acc)
+    else:
+        bg, fg, acc = s["bg"], s["fg"], s["accent"]
+        t = {"mode": s["mode"], "bg": bg, "panel": s["panel"], "raised": s["raised"], "line": s["line"], "fg": fg,
+             "dim": s["dim"], "accent": acc, "accent2": s["accent_hi"] if s["mono"] else s["cyan"], "bar": acc,
+             "deep": s["accent_lo"], "error": s["alert"], "warm": s["accent_hi"] if s["mono"] else s["orange"],
+             "selection": nb.mix(bg, acc, 0.25),
+             "ansi": list(SURFACE["dark" if s["mode"] == "dark" else "light"]["ansi"])}
+    t["title"] = "Surface Dynamic"
+    SURFACE["dynamic"] = _borders(t)
+    make("dynamic", False, out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(SURFACE):
         for color in (False, True):
-            key = v + ("-color" if color else "")
-            nb.PALETTES[key] = palette(v, color)
-            nb.build(key)
-            t = SURFACE[v]
-            out = os.path.join(HERE, key)
-            f = os.path.join(out, "colors.toml")
-            lines = open(f).read().split("\n")
-            lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/surface (по мотивам surface-dots; сборка: build.py поверх ../nothing/build.py)."
-            open(f, "w").write("\n".join(lines))
-            open(os.path.join(out, "apps", "saturn-logo.txt"), "w").write(saturn_logo(t))
-            open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(t, color, "saturn-logo.txt"))
-            open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t, color))
-            open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+            make(v, color)

@@ -194,18 +194,71 @@ omarchy_theme_bars = {{
 """
 
 
+def make(v, color, out=None, name=None):
+    """Собрать вариант v (ключ VARIANTS) — обычный или разноцветный (color) — в out (по умолчанию — каталог в репо)."""
+    global T
+    T = VARIANTS[v]
+    key = v + ("-color" if color else "")
+    p = palette(v, color)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[key] = p
+    nb.build(key)
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {p['title']} — omarchy-themes/bruteon (по мотивам Bruteon; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(color))
+    open(os.path.join(out, "btop.theme"), "w").write(btop_theme(color))
+    open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())
+
+
+# omarchy-rice-dynamic: вариант по умолчанию, режимы вариантов, роли цветов для переворота палитры. Пастель не
+# переворачивается: у Bruteon Dark она та же, что у светлой (текст на ней — тёмный).
+DYNAMIC_BASE = "light"
+FLIP_ROLES = {"bg": "surface", "card": "surface", "title_bar": "surface", "ink": "text", "muted": "text",
+              "brown": "text"}
+# пастели Bruteon ← цвета терминала из обоев
+PASTEL_FROM = {"peach": "accent", "red": "red", "salmon": "orange", "rose": "red", "green": "green", "olive": "yellow",
+               "pink": "magenta", "lavender": "blue", "blue": "blue", "teal": "cyan", "yellow": "yellow",
+               "purple": "magenta"}
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in VARIANTS.items() if v != "dynamic"}
+
+
+def _pastel(c):
+    return nb.mix(c, "#ffffff", 0.45)
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) в духе Bruteon: кремовые (или угольные) карточки, чернила,
+    коричневый, а цвета — пастелью из оттенков обоев (сам оттенок, смешанный с белым). scheme accent — вариант base как
+    есть, с обоев только персик (акцент) и коричневый; flip — та же палитра в противоположном режиме."""
+    import dynamic_map as dm
+    if scheme == "accent":
+        t = dict(VARIANTS[base])
+        if flip:
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "bg")
+            t["mode"] = s["mode"]
+        to_dark = t["mode"] == "dark"
+        t.update(peach=_pastel(s["accent"]),
+                 brown=dm.ensure(s["accent_hi"] if to_dark else s["accent_lo"], t["bg"], 4.5, 1 if to_dark else -1))
+    else:
+        dark = s["mode"] == "dark"
+        t = dict(VARIANTS["dark" if dark else "light"])
+        t.update(mode=s["mode"], bg=s["bg"], card=s["panel"], title_bar=s["raised"], ink=s["fg"], muted=s["dim"],
+                 brown=s["accent_hi"] if dark else s["accent_lo"])
+        t.update({k: _pastel(s[src]) for k, src in PASTEL_FROM.items()})
+    t["title"] = "Bruteon Dynamic"
+    VARIANTS["dynamic"] = t
+    make("dynamic", False, out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(VARIANTS):
-        T = VARIANTS[v]
         for color in (False, True):
-            key = v + ("-color" if color else "")
-            nb.PALETTES[key] = palette(v, color)
-            nb.build(key)
-            out = os.path.join(HERE, key)
-            f = os.path.join(out, "colors.toml")
-            lines = open(f).read().split("\n")
-            lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/bruteon (по мотивам Bruteon; сборка: build.py поверх ../nothing/build.py)."
-            open(f, "w").write("\n".join(lines))
-            open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(color))
-            open(os.path.join(out, "btop.theme"), "w").write(btop_theme(color))
-            open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())
+            make(v, color)

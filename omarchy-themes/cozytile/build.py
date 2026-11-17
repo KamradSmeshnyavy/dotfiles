@@ -378,19 +378,61 @@ hl.config({{
 """
 
 
+def make(v, color, out=None, name=None):
+    """Собрать вариант v (ключ COZY) — обычный или разноцветный (color) — в out (по умолчанию — каталог в репо)."""
+    key = v + ("-color" if color else "")
+    p = palette(v, color)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[key] = p
+    nb.build(key)
+    t = COZY[v]
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {p['title']} — omarchy-themes/cozytile (по мотивам Cozytile; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    open(os.path.join(out, "apps", "cozytile-logo.txt"), "w").write(logo(t))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(t, color))
+    open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t, color))
+    open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+
+
+# omarchy-rice-dynamic: вариант по умолчанию, режимы вариантов, роли цветов для переворота палитры
+DYNAMIC_BASE = "cozy"
+FLIP_ROLES = {"bg": "surface", "panel": "surface", "select": "surface", "fg": "text", "accent": "color",
+              "accent2": "color", "deep": "auto", "error": "color"}
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in COZY.items() if v != "dynamic"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) в духе Cozytile: мягкий фон, пастельный акцент и второй цвет,
+    приглушённое выделение. scheme accent — вариант base как есть, с обоев только акцент (accent2 — его соседний тон);
+    flip — та же палитра в противоположном режиме."""
+    import dynamic_map as dm
+    if scheme == "accent":
+        t = dict(COZY[base])
+        if flip:
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "bg")
+            t["mode"] = s["mode"]
+        to_dark = t["mode"] == "dark"
+        acc = dm.flip_color(s["accent"], "color", to_dark, t["bg"])
+        t.update(accent=acc, accent2=dm.shade(acc, 0.12 if to_dark else -0.12))
+    else:
+        acc = s["accent"]
+        a2 = s["accent_hi"] if s["mono"] else s["blue"]
+        t = {"mode": s["mode"], "bg": s["bg"], "panel": s["panel"], "fg": s["fg"], "accent": acc, "accent2": a2,
+             "select": nb.mix(acc, s["bg"], 0.3), "deep": nb.mix(acc, s["bg"], 0.55), "error": s["alert"]}
+    t["title"] = "Cozytile Dynamic"
+    COZY["dynamic"] = t
+    make("dynamic", False, out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(COZY):
         for color in (False, True):
-            key = v + ("-color" if color else "")
-            nb.PALETTES[key] = palette(v, color)
-            nb.build(key)
-            t = COZY[v]
-            out = os.path.join(HERE, key)
-            f = os.path.join(out, "colors.toml")
-            lines = open(f).read().split("\n")
-            lines[0] = f"# {nb.PALETTES[key]['title']} — omarchy-themes/cozytile (по мотивам Cozytile; сборка: build.py поверх ../nothing/build.py)."
-            open(f, "w").write("\n".join(lines))
-            open(os.path.join(out, "apps", "cozytile-logo.txt"), "w").write(logo(t))
-            open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(t, color))
-            open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t, color))
-            open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua(t))
+            make(v, color)

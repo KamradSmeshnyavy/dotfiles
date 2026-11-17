@@ -21,3 +21,7 @@ NieR:Automata look (MIT). Colours are taken from its configs.
 python3 build.py          # both
 python3 build.py paper    # only these
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): muted colours (saturation at most 0.4), window border in the text colour; Paper can be turned dark and the dark variant light. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

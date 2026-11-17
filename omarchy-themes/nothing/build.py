@@ -945,6 +945,66 @@ def build(variant):
     print(f"{name}: {len(files)} files")
 
 
+# ── omarchy-rice-dynamic (райс Glyph): палитра генератора прямо из слотов dynamic_map ──
+DYNAMIC_BASE = "glyph-dark-mono"
+# роли ключей палитры для переворота: серые роли синтаксиса и статусов — auto (серое → text, цветное → color)
+FLIP_ROLES = {"panel": "surface", "raised": "surface", "line": "surface", "selection": "surface",
+              "diff_add": "surface", "diff_del": "surface", "diff_change": "surface", "fg": "text", "dim": "text",
+              "comment": "text", **{k: "auto" for k in ("string", "number", "type", "function", "property", "constant",
+                                                       "warn", "info", "hint", "ok", "ansi_yellow")},
+              "keyword": "color", "special": "color", "error": "color"}
+
+
+def base_modes():
+    return {k: v["mode"] for k, v in PALETTES.items() if k.startswith("glyph") and k != "dynamic"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="wallpaper", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice) для Glyph. Не accent: роли генератора из слотов обоев; у
+    одноцветной основы (…-mono, как у райса по умолчанию) — её же правило palettes.mono: серые от dim к fg и красная
+    семья. accent — вариант base как есть, с обоев только акцент; flip — та же палитра в противоположном режиме
+    (16 цветов терминала — от противоположного glyph-варианта)."""
+    import dynamic_map as dm
+    from palettes import mono
+    if scheme == "accent":
+        p = dict(PALETTES[base])
+        if flip:
+            to = s["mode"]
+            p = dm.flip(p, FLIP_ROLES, to, "bg")
+            twin = base.replace("dark", "@").replace("light", "dark").replace("@", "light")
+            if twin in PALETTES:
+                p["ansi16"] = list(PALETTES[twin]["ansi16"])
+            p["mode"] = to
+        acc = dm.flip_color(s["accent"], "color", p["mode"] == "dark", p["bg"])
+        p.update(accent=acc, selection=mix(p["bg"], acc, 0.3),
+                 on_accent="#ffffff" if dm.contrast("#ffffff", acc) >= dm.contrast("#000000", acc) else "#000000")
+    else:
+        bg, fg, dim = s["bg"], s["fg"], s["dim"]
+        syn = s["syntax"]
+        p = {"mode": s["mode"], "bg": bg, "panel": s["panel"], "raised": s["raised"], "line": s["line"],
+             "fg": fg, "dim": dim, "comment": dm.ensure(mix(dim, bg, 0.3), bg, 3.0, 1 if s["mode"] == "dark" else -1),
+             "accent": s["accent"], "on_accent": s["on_accent"], "selection": mix(bg, s["accent"], 0.3),
+             **syn, "error": s["alert"], "warn": s["yellow"], "info": s["blue"], "hint": dim, "ok": s["green"],
+             "diff_add": mix(bg, s["green"], 0.18), "diff_del": mix(bg, s["alert"], 0.18),
+             "diff_change": mix(bg, s["accent"], 0.14), "min_de": 0,
+             "ansi16": [s["panel"], s["red"], s["green"], s["yellow"], s["blue"], s["magenta"], s["cyan"], dim,
+                        s["line"], s["alert"], s["green"], s["yellow"], s["blue"], s["magenta"], s["cyan"], fg]}
+        if base.endswith("-mono"):
+            p = mono(p, "")
+    if p["mode"] == "light":
+        p["light_mode_file"] = True
+    # контраст, который требует check(): роли синтаксиса и статусов — 4.5, комментарий — 3
+    way = 1 if p["mode"] == "dark" else -1
+    for k in ("fg", "dim", "error", "warn", "keyword", "string", "number", "type", "function", "property", "special",
+              "constant"):
+        p[k] = dm.ensure(p[k], p["bg"], 4.5, way)
+    p["comment"] = dm.ensure(p["comment"], p["bg"], 3.0, way)
+    p.update(title="Glyph Dynamic", name=name, out=out, min_de=0)
+    p.pop("wallpapers", None)
+    PALETTES["dynamic"] = p
+    build("dynamic")
+
+
 if __name__ == "__main__":
     for v in sys.argv[1:] or list(PALETTES):
         build(v)

@@ -222,7 +222,8 @@ def palette(v):
         "mode": t["mode"], "title": t["title"],
         "name": f"vitreus-{v}", "out": os.path.join(HERE, v),
         "bg": bg, "panel": t["panel"], "raised": nb.mix(t["panel"], fg, 0.08), "line": t["off"],
-        "fg": readable(fg, bg, 7), "dim": readable(t["faint"], bg, 4.5), "comment": readable(t["faint"], bg, 3),
+        # exact (dynamic, режим vitreus): цвета Vitreus как есть — текст уже держит 4.5 к стеклу, светлее tint
+        "fg": readable(fg, bg, 4.5 if t.get("exact") else 7), "dim": readable(t["faint"], bg, 4.5), "comment": readable(t["faint"], bg, 3),
         "accent": t["mint"], "on_accent": t["onmint"], "selection": nb.mix(bg, t["mint"], 0.28),
         "error": readable(t["alert"], bg, 4.5), "info": readable(t["mintlo"] if not dark else t["minthi"], bg, 4.5),
         "diff_add": nb.mix(bg, "#3fae5a", 0.18), "diff_del": nb.mix(bg, t["alert"], 0.18), "diff_change": nb.mix(bg, t["mint"], 0.14),
@@ -270,18 +271,73 @@ def liquid_walls(t, out_dir):
         im.save(dst, optimize=True)
 
 
+def make(v, out=None, name=None):
+    """Собрать тему варианта v (ключ VITREUS) в out (по умолчанию — каталог варианта в репо)."""
+    p = palette(v)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[v] = p
+    nb.build(v)
+    out = p["out"]
+    t = VITREUS[v]
+    # шапка colors.toml генератора называет nothing — здесь своя
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {t['title']} — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    # fastfetch, его логотип и btop — свои, в цветах темы (вместо точечного «ex nihilo» генератора nothing)
+    open(os.path.join(out, "apps", "vitreus-logo.txt"), "w").write(vee_logo(t))
+    open(os.path.join(out, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(v, t))
+    if not COLOR:
+        open(os.path.join(out, "btop.theme"), "w").write(btop_theme(t))
+
+
+# omarchy-rice-dynamic: варианты, на которые может опираться dynamic, и их режим (dark / light)
+DYNAMIC_BASE = "cyber"
+DYNAMIC_MODE = "dark"   # Glass у Vitreus всегда тёмный: Iris --dark 1
+DYNAMIC_GLASS = True    # и --glass: фон под прозрачность, текст держит контраст к стеклу (vitreus.luau → iris_palette)
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in VITREUS.items() if v != "dynamic"}
+
+
+# роли одиннадцати цветов для переворота палитры варианта (dynamic_map.flip): deep у Retro / Paper — тёмные чернила,
+# у Cyber / Proxy / Doodle — второй цвет, поэтому auto (по хроме)
+FLIP_ROLES = {"tint": "surface", "panel": "surface", "off": "surface", "ink": "text", "faint": "text",
+              "deep": "auto", "alert": "color"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="tonal-spot", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice): слоты dynamic_map → одиннадцать цветов Vitreus, как
+    build_palette Glass (mint — акцент Iris, mintlo / minthi ∓ светлота, deep — фон к чёрному, off — фон к тексту).
+    scheme accent — палитра варианта base как есть, с обоев только mint / mintlo / minthi / onmint; flip — та же
+    палитра в противоположном режиме (Retro тёмная): фоны и чернила перевёрнуты по светлоте, оттенки те же."""
+    if s.get("exact"):
+        t = dict(s["vitreus"], mode="dark", exact=True, syntax=dict(s["syntax"]))
+    elif scheme == "accent":
+        t = dict(VITREUS[base])
+        if flip:
+            import dynamic_map as dm
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "tint")
+            t["syntax"] = {k: dm.flip_color(c, "color", s["mode"] == "dark", t["tint"]) for k, c in t["syntax"].items()}
+            t["mode"] = s["mode"]
+            # акцент — тот же, что в родной версии варианта, только светлотой до контраста к новому фону
+            mint = dm.flip_color(s["accent"], "color", s["mode"] == "dark", t["tint"])
+            on = "#10161a" if dm.contrast("#10161a", mint) >= dm.contrast("#f5f7f5", mint) else "#f5f7f5"
+            s = dict(s, accent=mint, accent_lo=dm.shade(mint, -0.10), accent_hi=dm.shade(mint, 0.16), on_accent=on)
+        t.update(mint=s["accent"], mintlo=s["accent_lo"], minthi=s["accent_hi"], onmint=s["on_accent"])
+    else:
+        t = {"mode": s["mode"], "ink": s["fg"], "faint": s["dim"], "mint": s["accent"], "mintlo": s["accent_lo"],
+             "minthi": s["accent_hi"], "onmint": s["on_accent"], "tint": s["bg"], "panel": s["panel"], "deep": s["deep"],
+             "off": s["line"], "alert": s["alert"],
+             "syntax": dict(s["syntax"])}
+    t["title"] = "Dynamic (Vitreus)"
+    VITREUS["dynamic"] = t
+    make("dynamic", out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(VITREUS):
-        nb.PALETTES[v] = palette(v)
-        nb.build(v)
-        # шапка colors.toml генератора называет nothing — здесь своя
-        f = os.path.join(HERE, v, "colors.toml")
-        lines = open(f).read().split("\n")
-        lines[0] = f"# {VITREUS[v]['title']} — omarchy-themes/vitreus (палитра Vitreus, MIT; сборка: build.py поверх ../nothing/build.py)."
-        open(f, "w").write("\n".join(lines))
-        # fastfetch, его логотип и btop — свои, в цветах темы (вместо точечного «ex nihilo» генератора nothing)
-        t = VITREUS[v]
-        open(os.path.join(HERE, v, "apps", "vitreus-logo.txt"), "w").write(vee_logo(t))
-        open(os.path.join(HERE, v, "apps", "fastfetch.jsonc"), "w").write(fastfetch_conf(v, t))
-        if not COLOR:
-            open(os.path.join(HERE, v, "btop.theme"), "w").write(btop_theme(t))
+        make(v)

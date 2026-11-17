@@ -123,6 +123,65 @@ on `PATH` as `omarchy-wallpaper-theme`) runs the wallpaper through matugen and w
 `icons.theme` (Yaru by accent hue) and the wallpaper itself. Everything else — terminals, btop, nvim, Hyprland, the
 templates above, slots, browsers — `omarchy-theme-set` generates. Customizer → Theme has “🎨 Theme from wallpaper” rows.
 
+### Dynamic theme of a rice
+
+`just rice-dynamic build <rice> [wallpaper] [--engine rice|colors] [--scheme …] [--mode dark|light|auto]`
+(`scripts/omarchy-rice-dynamic`, on `PATH`) writes `~/.config/omarchy/themes/dynamic-<rice>` and applies it. Its
+colours come from the wallpaper, and the wallpapers are the rice's pool.
+
+- **Reading the colours**: Iris (`scripts/iris_colors.py`, MIT, a copy of github.com/Harman1307/iris) is what Vitreus
+  uses for Glass. It takes the background, panels, text, the accent (the most striking colour) and red / green /
+  yellow from the picture's real colours. One fix is made in the copy: a cluster's hue is a circular mean, so red
+  and orange no longer average out to a green accent. `nothing/dynamic_map.py` maps it to slots the way vitreus.luau
+  does (`iris_palette` / `build_palette`): a Bold push on the accent, mintlo / minthi ∓ lightness, deep, off, and
+  contrast 4.5.
+- **`vitreus` mode** is exactly Vitreus: `dynamic_map.vitreus_palette` is a line-by-line port of `iris_palette` /
+  `build_palette` (always dark, on glass, Bold accent, the same contrast steps and rounding). The rice engine puts its
+  eleven colours into the theme as they are (`exact`: no lift of the text to contrast 7), and the code and terminal
+  are in shades of the accent, as in one-colour Vitreus.
+- **Look** (`--look`, a preset of a rice variant): the form the dynamic theme wears. Retro with the wallpaper's
+  colours is still Retro, as in Vitreus. Customizer applies the preset with the theme `dynamic-<rice>`, and the
+  `accent` mode takes the palette of the look's variant.
+- **Other modes** (`--scheme`): `wallpaper` (read the Vitreus way, plus code and terminal colours from the picture), `soft` (quieter), `vivid` (brighter, without going acid), `pure` / `pure-soft` / `pure-vivid`
+  (as wallpaper / soft / vivid, but the terminal and code use only hues that are really on the picture, from Iris's
+  clusters; noise in near-black shadows is ignored, missing slots are lightness steps of those hues, and red stays
+  for errors), `mono`
+  (one hue of the wallpaper in different lightness; red stays for errors), `grey` (Vitreus's greys with Iris off) and
+  `accent` (the variant's palette as is, only the accent from the wallpaper). The old matugen names are aliases.
+- **The colors engine in the `accent` mode** (any rice, DOT-MATRIX too, which has no generator): the palette is the
+  look theme's `colors.toml` as is, and the accent, cursor and selection come from the wallpaper. Set to the other
+  light / dark, it is turned over by the keys' roles (`dynamic_map.colors_from_variant`).
+- **Light / dark in the `accent` mode**: `auto` keeps the mode of the look's variant. Set to `dark` on a light variant
+  (or `light` on a dark one), it gives the same palette turned over: `dynamic_map.flip`. It works in OKLab, so hues
+  and chroma stay the same. Backgrounds and lines move to the other side (dark: L' = 0.16 + (1 − L)·0.6). Ink and
+  muted text swap lightness but keep their order. The accent is the same one as in the variant's own mode and moves
+  only far enough in lightness to keep contrast. Retro dark is dark putty with the Famicom red. Unit-3 takes the 16
+  terminal colours from its other variant.
+- **Light / dark**: `auto` follows the wallpaper (Iris decides by its brightness). A rice may keep its own mode:
+  Vitreus Glass is always dark and on glass (`DYNAMIC_MODE`, `DYNAMIC_GLASS` in `build.py`).
+- **Engines**: `rice` puts the slots into the rice's palette, and its `build.py` (function `dynamic`) builds every app
+  theme in the rice's character. This works for every rice with a generator: `vitreus`, `unit3`, `yami`, `bruteon`,
+  `cozytile`, `rumda`, `surface` and `glyph` (`nothing`). The look's variant is found by the preset's `base` or by its
+  theme name (`yami-blood` → `blood`, `nothing-glyph-dark-mono` → `glyph-dark-mono`). `colors` (formerly `material`)
+  writes only `colors.toml`, and Omarchy templates do the rest.
+- **Pool**: `omarchy-themes/<rice>/wallpapers/`, the `backgrounds/` of every variant (identical copies count once)
+  and your own in `~/.config/omarchy/backgrounds/dynamic-<rice>/`. Add to it with `omarchy-rice-dynamic add <rice>
+  FILE… --local|--repo` or from Wallhaven: `wallhaven search <rice> QUERY` puts SFW thumbnails into the cache, and
+  `wallhaven get <rice> ID…` downloads the picks into the local folder.
+- **Recolour on change**: the `kamradsmeshnyavy.background` plugin calls `omarchy-rice-dynamic on-wallpaper` (log in
+  `$XDG_RUNTIME_DIR/omarchy-rice-dynamic.log`). When the theme on the desktop (`current/theme/dynamic.json`) was built
+  from other wallpaper, the theme is rebuilt and applied with `OMARCHY_THEME_SKIP_BACKGROUND=1` (otherwise re-applying
+  the same theme moves on to the next wallpaper) and `OMARCHY_DYNAMIC_RECOLOR=1` (the theme-set hook then skips the
+  thumbnail cache). There is one worker (flock), and the last request wins.
+- The script runs on `/usr/bin/python3`: the python from mise has no Pillow / NumPy, and the `rice` engine failed
+  silently with it.
+- Settings per rice are kept in `~/.config/omarchy/dynamic.json` (`set` writes them; `build` with flags is a one-off).
+  Customizer → Rices has a “· Dynamic” row per rice. Everything else is on its own **Dynamic** tab (in the Rices
+  group): tiles for on / off, look, colours, engine, light / dark, Wallhaven (type a query, pick pictures in the
+  wallpaper picker one by one, Esc to stop) and adding wallpapers. Below them is a grid of the rice's wallpapers with
+  previews; ⏎ sets one and the theme recolours. The tiles are drawn from the theme's colours
+  (`~/.cache/omarchy-customizer/dynamic`). Vitreus Glass is `dynamic-vitreus`.
+
 ## Boot
 
 `just boot-theme` (`scripts/omarchy-boot-theme`, needs sudo) recolours the header of `/boot/limine.conf`

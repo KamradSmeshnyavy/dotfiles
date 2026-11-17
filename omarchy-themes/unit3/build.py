@@ -118,14 +118,81 @@ hl.config({{
 """
 
 
+def make(v, out=None, name=None):
+    """Собрать тему варианта v (ключ VARIANTS) в out (по умолчанию — каталог варианта в репо)."""
+    global T
+    T = VARIANTS[v]
+    p = palette(v)
+    if out:
+        p["out"], p["name"] = out, name
+        p.pop("wallpapers", None)  # у dynamic-* фоны — пул обоев райса (omarchy-rice-dynamic)
+    nb.PALETTES[v] = p
+    nb.build(v)
+    out = p["out"]
+    f = os.path.join(out, "colors.toml")
+    lines = open(f).read().split("\n")
+    lines[0] = f"# {T['title']} — omarchy-themes/unit3 (по мотивам Unit-3, samyns, MIT; сборка: build.py поверх ../nothing/build.py)."
+    open(f, "w").write("\n".join(lines))
+    open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())
+
+
+# omarchy-rice-dynamic: вариант, на который опирается dynamic, и режимы вариантов
+DYNAMIC_BASE = "dark"
+
+
+def base_modes():
+    return {v: t["mode"] for v, t in VARIANTS.items() if v != "dynamic"}
+
+
+def _muted(c, cap=0.4):
+    import colorsys
+    r, g, b = (x / 255 for x in nb.hex2rgb(c))
+    h, l, s = colorsys.rgb_to_hls(r, g, b)
+    r, g, b = colorsys.hls_to_rgb(h, l, min(s, cap))
+    return nb.rgb2hex(round(r * 255), round(g * 255), round(b * 255))
+
+
+# роли цветов для переворота палитры варианта (dynamic_map.flip); 16 цветов терминала при перевороте — от другого варианта
+FLIP_ROLES = {"bg": "surface", "panel": "surface", "raised": "surface", "border_off": "surface", "fg": "text",
+              "dim": "text", "red": "color", "green": "color", "blue": "color", "gold": "color"}
+
+
+def dynamic(s, out, name, base=DYNAMIC_BASE, scheme="tonal-spot", flip=False):
+    """Тема из обоев (omarchy-rice-dynamic, движок rice). Характер Unit-3 сохраняется: приглушённые цвета (насыщенность
+    не выше 0.4), рамка окна цветом текста, 16 цветов терминала тёмными тонами. scheme accent — вариант base как есть,
+    с обоев только акцент и курсор; flip — та же палитра в противоположном режиме (Бумага тёмная)."""
+    if scheme == "accent":
+        t = dict(VARIANTS[base])
+        if flip:
+            import dynamic_map as dm
+            other = next(v for k, v in VARIANTS.items() if k != "dynamic" and v["mode"] == s["mode"])
+            t = dm.flip(t, FLIP_ROLES, s["mode"], "bg")
+            t["mode"], t["ansi16"] = s["mode"], list(other["ansi16"])
+            to_dark = s["mode"] == "dark"
+            s = dict(s, accent=dm.flip_color(s["accent"], "color", to_dark, t["bg"]),
+                     accent_lo=dm.flip_color(s["accent_lo"], "color", to_dark, t["bg"]))
+        t.update(accent=_muted(s["accent"], 0.5), cursor=_muted(s["accent_lo"], 0.5))
+    else:
+        bg, fg = s["bg"], s["fg"]
+        if s["mono"]:
+            red, green, blue, gold = s["accent"], nb.mix(fg, s["dim"], 0.5), s["dim"], nb.mix(s["accent"], fg, 0.5)
+            mag, cyan = nb.mix(s["accent"], s["dim"], 0.5), nb.mix(fg, s["dim"], 0.3)
+        else:
+            red, green, blue, gold, mag, cyan = (nb.mix(_muted(s[k]), fg, 0.15)
+                                                 for k in ("red", "green", "blue", "yellow", "magenta", "cyan"))
+        hues = [red, green, gold, blue, mag, cyan]
+        dark = s["mode"] == "dark"
+        low = [nb.mix(c, bg, 0.45 if dark else 0.0) for c in hues]
+        t = {"mode": s["mode"], "bg": bg, "panel": s["panel"], "raised": s["raised"], "fg": fg, "dim": s["dim"],
+             "accent": _muted(s["accent"], 0.5), "border_off": s["raised"], "red": red, "green": green, "blue": blue,
+             "gold": gold, "cursor": _muted(s["accent_lo"], 0.5),
+             "ansi16": [nb.mix(bg, fg, 0.04)] + low + [fg if dark else s["dim"],
+                        nb.mix(bg, fg, 0.15)] + hues + [nb.mix(fg, "#ffffff", 0.3) if dark else fg]}
+    t["title"] = "Unit-3 Dynamic"
+    VARIANTS["dynamic"] = t
+    make("dynamic", out, name)
+
+
 if __name__ == "__main__":
     for v in [a for a in sys.argv[1:] if not a.startswith("--")] or list(VARIANTS):
-        T = VARIANTS[v]
-        nb.PALETTES[v] = palette(v)
-        nb.build(v)
-        out = os.path.join(HERE, v)
-        f = os.path.join(out, "colors.toml")
-        lines = open(f).read().split("\n")
-        lines[0] = f"# {T['title']} — omarchy-themes/unit3 (по мотивам Unit-3, samyns, MIT; сборка: build.py поверх ../nothing/build.py)."
-        open(f, "w").write("\n".join(lines))
-        open(os.path.join(out, "hyprland.lua"), "w").write(hypr_lua())
+        make(v)

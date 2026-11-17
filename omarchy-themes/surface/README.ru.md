@@ -26,3 +26,7 @@
 python3 build.py            # все темы
 python3 build.py dark       # выбранные
 ```
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): спокойный фон, акцент и его бирюзовый сосед, тёплый цвет для предупреждений; рамка окон — за акцентом. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

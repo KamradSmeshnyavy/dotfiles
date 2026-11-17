@@ -27,3 +27,7 @@ the colours, curves and layout come from it, with credit here. Its wallpapers ar
 python3 build.py            # all themes
 python3 build.py dark       # chosen ones
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): calm background, an accent and its teal neighbour, a warm colour for warnings; window borders follow the accent. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

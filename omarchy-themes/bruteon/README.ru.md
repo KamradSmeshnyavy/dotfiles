@@ -25,3 +25,7 @@
 python3 build.py          # обе
 python3 build.py dark     # только выбранные
 ```
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): кремовые или угольные карточки, чернила и коричневый, а пастели — из оттенков обоев (смешаны с белым); при перевороте пастель остаётся. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

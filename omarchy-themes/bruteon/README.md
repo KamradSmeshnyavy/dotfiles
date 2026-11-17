@@ -23,3 +23,7 @@ lighter, the outline and the hard shadow in light ink `#f3e6dc`, the same pastel
 python3 build.py          # all
 python3 build.py dark     # only these
 ```
+
+## Dynamic
+
+`dynamic-<rice>` from the wallpaper (`../scripts/omarchy-rice-dynamic`, rice engine, `build.py` → `dynamic()`): cream or charcoal cards, ink and brown, and pastels made from the wallpaper's hues (mixed with white); the pastels stay when the palette is turned over. Details: `../APP-THEMING.en.md`, Customizer → Dynamic.

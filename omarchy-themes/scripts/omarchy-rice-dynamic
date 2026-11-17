@@ -1,0 +1,580 @@
+#!/usr/bin/python3
+"""
+Динамическая тема райса: цвета из обоев, обои — пул райса.
+
+  omarchy-rice-dynamic build РАЙС [ОБОИ] [--engine rice|colors] [--scheme S] [--mode dark|light|auto] [--base ВАРИАНТ]
+                                         [--no-apply]
+  omarchy-rice-dynamic add РАЙС ФАЙЛ… (--local | --repo)
+  omarchy-rice-dynamic list [РАЙС]            пул обоев райса (без РАЙСА — райсы и их настройки)
+  omarchy-rice-dynamic set РАЙС [--engine …] [--scheme …] [--mode …] [--base …]   запомнить настройки и пересобрать
+  omarchy-rice-dynamic on-wallpaper ОБОИ      хук смены обоев: пересобрать текущую dynamic-* под них
+  omarchy-rice-dynamic wallhaven search РАЙС ЗАПРОС [--page N]   миниатюры с wallhaven.cc (SFW) в кэш, печатает каталог
+  omarchy-rice-dynamic wallhaven get РАЙС ID… [--local | --repo]  скачать выбранные в пул (по умолчанию локально)
+
+Тема пишется в ~/.config/omarchy/themes/dynamic-<райс>. Её backgrounds/ — ссылки на пул: wallpapers/ райса и
+backgrounds/ всех его вариантов в репо; свои обои (add --local) лежат в ~/.config/omarchy/backgrounds/dynamic-<райс>/,
+этот каталог Omarchy и так показывает в выборе обоев темы.
+
+Цвета читает Iris, как Vitreus для Glass (iris_colors.py, ../nothing/dynamic_map.py); режимы — dynamic_map.SCHEMES.
+Движки: rice — палитра райса из обоев, всё собирает его build.py (omarchy-themes/<райс>/build.py, функция dynamic);
+colors (прежде material) — только colors.toml, остальное генерирует Omarchy.
+Настройки по райсам — ~/.config/omarchy/dynamic.json.
+"""
+import argparse
+import fcntl
+import importlib.util
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent  # omarchy-themes/
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(ROOT / "nothing"))
+import wallpaper_colors as wc  # noqa: E402
+import dynamic_map as dm  # noqa: E402
+
+HOME = Path.home()
+THEMES = HOME / ".config/omarchy/themes"
+LOCAL = HOME / ".config/omarchy/backgrounds"
+SETTINGS = HOME / ".config/omarchy/dynamic.json"
+STATE = HOME / ".local/state/omarchy"
+CURRENT_BG = STATE / "current/background"
+CURRENT_NAME = STATE / "current/theme.name"
+RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp"))
+LOCK = RUNTIME / "omarchy-rice-dynamic.lock"
+REQUEST = RUNTIME / "omarchy-rice-dynamic.request"
+MARKER = ".omarchy-wallpaper-theme"
+APPLIED = "dynamic.json"  # копия маркера без точки: omarchy-theme-set копирует её в current/theme — так видно, что применено
+PREFIX = "dynamic-"
+
+# id райса (rices.json Customizer) → каталог в omarchy-themes, где он не совпадает
+DIRS = {"glyph": "nothing", "dotmatrix": "dot-matrix"}
+DEFAULTS = {"engine": "rice", "scheme": "wallpaper", "mode": None, "base": None, "look": None}
+# look — пресет варианта райса (Customizer presets/<look>.json), в облике которого стоит dynamic: Retro в цветах обоев
+# остаётся Retro, как в Vitreus. Применяет облик Customizer; здесь из него берётся основа (base) для режима accent.
+PRESETS = ROOT.parent / "apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/presets"
+ENGINES = {"material": "colors"}  # прежнее имя
+
+
+def die(msg):
+    sys.exit(f"omarchy-rice-dynamic: {msg}")
+
+
+def rice_dir(rice):
+    d = ROOT / DIRS.get(rice, rice)
+    if not d.is_dir() or rice.startswith(".") or "/" in rice:
+        die(f"нет райса {rice} ({d})")
+    return d
+
+
+def generator(rice):
+    """build.py райса, если он умеет dynamic, иначе None (тогда только движок material)."""
+    f = rice_dir(rice) / "build.py"
+    if not f.is_file() or "def dynamic(" not in f.read_text():
+        return None
+    spec = importlib.util.spec_from_file_location(f"rice_build_{rice}", f)
+    mod = importlib.util.module_from_spec(spec)
+    sys.argv = [str(f)]  # build.py читают флаги (--color) из argv при импорте
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def load_settings():
+    try:
+        return json.loads(SETTINGS.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def settings(rice, **over):
+    s = dict(DEFAULTS, **load_settings().get(rice, {}))
+    s.update({k: v for k, v in over.items() if v is not None})
+    if s.get("mode") == "auto":  # явный auto перекрывает сохранённый dark / light
+        s["mode"] = None
+    s["engine"] = ENGINES.get(s["engine"], s["engine"])
+    s["scheme"] = dm.canon(s["scheme"])
+    return s
+
+
+def save_settings(rice, s):
+    all_ = load_settings()
+    all_[rice] = {k: s[k] for k in DEFAULTS if s.get(k) is not None}
+    SETTINGS.parent.mkdir(parents=True, exist_ok=True)
+    tmp = SETTINGS.with_suffix(".tmp")
+    tmp.write_text(json.dumps(all_, indent=2, ensure_ascii=False) + "\n")
+    tmp.replace(SETTINGS)
+
+
+def media(d):
+    if not d.is_dir():
+        return []
+    return sorted(p for p in d.iterdir() if p.is_file() and wc.is_media(p))
+
+
+def ident(f):
+    """Одинаковые обои в разных вариантах (копии, не ссылки) — один элемент пула: размер + начало файла."""
+    import hashlib
+    with open(f, "rb") as fh:
+        return f.stat().st_size, hashlib.sha1(fh.read(1 << 20)).hexdigest()
+
+
+def pool(rice):
+    """Весь пул: wallpapers/ райса, backgrounds/ его вариантов и свои обои (локальные), без повторов."""
+    d = rice_dir(rice)
+    files = media(d / "wallpapers") + media(d / "backgrounds")  # backgrounds/ — у райса из одной темы (dot-matrix)
+    for v in sorted(x for x in d.iterdir() if x.is_dir() and x.name not in ("wallpapers", "backgrounds")):
+        files += media(v / "backgrounds")
+    files += media(LOCAL / f"{PREFIX}{rice}")
+    seen, out = set(), []
+    for f in files:
+        k = ident(f.resolve())
+        if k not in seen:
+            seen.add(k)
+            out.append(f)
+    return out
+
+
+def marker(name):
+    try:
+        return json.loads((THEMES / name / MARKER).read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def applied():
+    """Маркер темы, которая сейчас на столе (current/theme/dynamic.json); не dynamic-* — None."""
+    if not current_theme().startswith(PREFIX):
+        return None
+    try:
+        return json.loads((STATE / "current/theme" / APPLIED).read_text())
+    except (OSError, ValueError):
+        return marker(current_theme())
+
+
+def current_theme():
+    try:
+        return CURRENT_NAME.read_text().strip()
+    except OSError:
+        return ""
+
+
+def link_name(f, rice):
+    """Имя ссылки в backgrounds/: <вариант>-<файл>, чтобы одинаковые имена разных вариантов не сталкивались."""
+    d = rice_dir(rice)
+    rel = f.relative_to(d) if f.is_relative_to(d) else Path(f.name)
+    parts = rel.parts
+    if len(parts) == 3 and parts[1] == "backgrounds" and parts[0] != "wallpapers":
+        return f"{parts[0]}-{parts[2]}"
+    return rel.name
+
+
+def default_look(rice):
+    """Облик по умолчанию: dynamic.preset райса в rices.json, иначе его первый вариант."""
+    try:
+        for r in json.loads(RICES.read_text())["rices"]:
+            if r.get("id") == rice:
+                dyn = r.get("dynamic") if isinstance(r.get("dynamic"), dict) else {}
+                return dyn.get("preset") or (r.get("variants") or [{}])[0].get("preset")
+    except (OSError, ValueError, KeyError):
+        pass
+    return None
+
+
+def theme_key(rice, theme, strip=True):
+    """Ключ варианта в build.py по имени темы пресета: yami-blood → blood, nothing-glyph-dark-mono → glyph-dark,
+    bruteon-dark → dark, cozytile-cozy-color → cozy."""
+    t = theme
+    for pre in (DIRS.get(rice, rice) + "-", rice + "-"):
+        if t.startswith(pre):
+            t = t[len(pre):]
+            break
+    if strip:  # сначала пробуется ключ как есть (glyph-dark-mono), потом без суффиксов
+        for suf in ("-color", "-mono"):
+            t = t.removesuffix(suf)
+    return t
+
+
+def build(rice, image=None, apply=True, **over):
+    s = settings(rice, **over)
+    name = PREFIX + rice
+    gen = generator(rice)
+    if s["engine"] == "rice" and gen is None:
+        print(f"{rice}: у build.py нет dynamic — движок colors", file=sys.stderr)
+        s["engine"] = "colors"
+    if s["scheme"] not in dm.SCHEMES:
+        die(f"нет режима {s['scheme']} (есть: {', '.join(dm.SCHEMES)})")
+
+    walls = pool(rice)
+    if image is None:
+        cur = CURRENT_BG.resolve() if CURRENT_BG.exists() else None
+        old = marker(name)
+        if cur and cur in {w.resolve() for w in walls}:
+            image = cur
+        elif old and Path(old.get("image", "")).is_file():
+            image = Path(old["image"])
+        elif walls:
+            image = walls[0]
+        else:
+            die(f"у райса {rice} нет обоев")
+    image = Path(image).expanduser().resolve()
+    if not image.is_file():
+        die(f"нет файла {image}")
+
+    modes = gen.base_modes() if gen and hasattr(gen, "base_modes") else {}
+    look = s.get("look") or default_look(rice)
+    preset = {}
+    if look:
+        try:
+            preset = json.loads((PRESETS / f"{look}.json").read_text())
+        except (OSError, ValueError):
+            preset = {}
+    look_base = None
+    for cand in (preset.get("base"), theme_key(rice, preset.get("theme") or "", strip=False),
+                 theme_key(rice, preset.get("theme") or "")):
+        if cand and cand in modes:
+            look_base = cand  # у Glass основа glass — палитры нет, берётся вариант по умолчанию
+            break
+    base = s["base"] or look_base or (getattr(gen, "DYNAMIC_BASE", None) if gen else None)
+    # движок colors, режим accent: палитра — colors.toml темы облика (любой райс, даже без генератора)
+    variant_colors = None
+    if s["engine"] == "colors" and s["scheme"] == "accent" and preset.get("theme"):
+        for d in (THEMES / preset["theme"], HOME / ".local/share/omarchy/themes" / preset["theme"]):
+            if (d / "colors.toml").is_file():
+                text = (d / "colors.toml").read_text()
+                vm = dm.parse_colors_toml(text)[0] or ("light" if (d / "light.mode").exists() else "dark")
+                variant_colors = (text, vm)
+                break
+    if base and modes and base not in modes:
+        die(f"у {rice} нет варианта {base} (есть: {', '.join(modes)})")
+    # auto (None): режим, который райс держит для dynamic (Vitreus Glass — всегда тёмный), иначе решает Iris по обоям
+    mode = s["mode"] or (getattr(gen, "DYNAMIC_MODE", None) if gen and s["engine"] == "rice" else None)
+    flip = False
+    if variant_colors:
+        mode = s["mode"] or variant_colors[1]
+        flip = mode != variant_colors[1]
+    elif s["scheme"] == "accent" and modes and base:
+        # палитра варианта как есть — его режим; явный dark / light другого знака — та же палитра, перевёрнутая
+        mode = s["mode"] or modes[base]
+        flip = mode != modes[base]
+    glass = bool(getattr(gen, "DYNAMIC_GLASS", False)) and s["engine"] == "rice"
+
+    THEMES.mkdir(parents=True, exist_ok=True)
+    target = THEMES / name
+    if target.is_symlink() or (target.exists() and not (target / MARKER).exists()):
+        die(f"{target} создан не этим скриптом — не трогаю")
+    tmp = Path(tempfile.mkdtemp(prefix=f".{name}-", dir=THEMES))
+    try:
+        tmp.chmod(0o755)
+        # переворот палитры: акцент с обоев читается в режиме варианта (тот же, что у его «родной» версии), а в новый
+        # режим его переводит build.py — только светлотой, до контраста к новому фону
+        vmode = variant_colors[1] if variant_colors else (modes[base] if flip else None)
+        seed = dm.seed(image, s["scheme"], vmode if flip else mode, glass)
+        if flip:
+            seed["mode"] = mode
+        mode = seed["mode"]
+        if s["engine"] == "rice":
+            kw = {"flip": True} if flip else {}  # build.py без flip — как раньше
+            gen.dynamic(seed, str(tmp), name, base=base, scheme=s["scheme"], **kw)
+        elif variant_colors:
+            text, acc = dm.colors_from_variant(variant_colors[0], variant_colors[1], seed, image, mode)
+            (tmp / "colors.toml").write_text(text)
+            if mode == "light":
+                (tmp / "light.mode").write_text("")
+            if icons := wc.yaru(acc, mode):
+                (tmp / "icons.theme").write_text(icons + "\n")
+        else:
+            (tmp / "colors.toml").write_text(dm.colors_toml(seed, image, s["scheme"]))
+            if mode == "light":
+                (tmp / "light.mode").write_text("")
+            if icons := wc.yaru(seed["accent"], mode):
+                (tmp / "icons.theme").write_text(icons + "\n")
+        accent = seed["accent"]
+        try:  # что вышло в теме (после переворота / подгонки контраста), а не что прочитано с обоев
+            accent = (tmp / "colors.toml").read_text().split('\naccent = "', 1)[1][:7]
+        except (OSError, IndexError):
+            pass
+        bg = tmp / "backgrounds"
+        shutil.rmtree(bg, ignore_errors=True)
+        bg.mkdir()
+        for w in walls:
+            if w.resolve().parent != (LOCAL / name).resolve():  # свои обои Omarchy подмешивает сам
+                (bg / link_name(w, rice)).symlink_to(w.resolve())
+        if image not in {w.resolve() for w in walls}:
+            (bg / image.name).symlink_to(image)
+        info = {"rice": rice, "image": str(image), "engine": s["engine"], "scheme": s["scheme"], "mode": mode,
+                "base": base, "look": look, "flip": flip}
+        (tmp / MARKER).write_text(json.dumps(info, ensure_ascii=False) + "\n")
+        (tmp / APPLIED).write_text(json.dumps(info, ensure_ascii=False) + "\n")
+        (tmp / "README.md").write_text(
+            f"# {name}\n\nТема райса {rice} из обоев `{image.name}` (движок {s['engine']}, режим {s['scheme']}, {mode}).\n"
+            "Пересоздаётся `omarchy-rice-dynamic`, руками не править.\n")
+    except BaseException:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+    old = None
+    if target.exists():
+        old = target.with_name(f".{name}-old-{os.getpid()}")
+        target.rename(old)
+    tmp.rename(target)
+    if old:
+        shutil.rmtree(old)
+    print(f"{name}: {image.name}, {s['engine']}, {s['scheme']}, {mode}, accent {accent}")
+
+    if apply:
+        # Обои не трогаем (OMARCHY_THEME_SKIP_BACKGROUND): иначе omarchy-theme-set той же темы перешёл бы на следующие.
+        env = dict(os.environ, OMARCHY_THEME_SKIP_BACKGROUND="1")
+        if current_theme() == name:
+            env["OMARCHY_DYNAMIC_RECOLOR"] = "1"  # та же тема в новых цветах: хук theme-set не кэширует миниатюры заново
+        subprocess.run(["omarchy-theme-set", name], check=True, env=env)
+        if not CURRENT_BG.exists() or CURRENT_BG.resolve() != image:
+            # хук on-wallpaper увидит, что тема уже из этих обоев, и ничего не сделает
+            subprocess.run(["omarchy-theme-bg-set", str(image)], check=False)
+    return info
+
+
+def on_wallpaper(image):
+    """Хук смены обоев. Один рабочий процесс (flock): остальные только оставляют запрос, последний побеждает."""
+    image = Path(image).expanduser()
+    if not image.is_file():
+        return
+    REQUEST.write_text(str(image.resolve()) + "\n")
+    while True:
+        with open(LOCK, "w") as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return  # работает другой — он заберёт запрос
+            while True:
+                info = applied()
+                want = REQUEST.read_text().strip() if REQUEST.exists() else ""
+                if not info or not want or not Path(want).is_file() or want == info.get("image"):
+                    break
+                try:
+                    build(info["rice"], want, apply=True)
+                except SystemExit as e:
+                    print(e, file=sys.stderr)
+                    break
+        # запрос мог прийти, пока мы отпускали lock
+        info = applied()
+        want = REQUEST.read_text().strip() if REQUEST.exists() else ""
+        if not info or not want or want == info.get("image"):
+            return
+
+
+def add(rice, files, repo):
+    dest = rice_dir(rice) / "wallpapers" if repo else LOCAL / f"{PREFIX}{rice}"
+    dest.mkdir(parents=True, exist_ok=True)
+    added = []
+    for f in map(Path, files):
+        f = f.expanduser()
+        if not f.is_file() or not wc.is_media(f):
+            print(f"пропуск {f}: не картинка и не видео", file=sys.stderr)
+            continue
+        out = dest / f.name
+        if out.exists() and out.resolve() != f.resolve():
+            out = dest / f"{f.stem}-{os.urandom(2).hex()}{f.suffix}"
+        if out.resolve() != f.resolve():
+            shutil.copy2(f, out)
+        added.append(out)
+        print(out)
+    # пересобрать ссылки backgrounds/ без применения; если тема текущая — докинуть ссылки и в current/theme
+    if (THEMES / f"{PREFIX}{rice}" / MARKER).exists():
+        build(rice, apply=False)
+        if current_theme() == f"{PREFIX}{rice}":
+            refresh_backgrounds(rice)
+    return added
+
+
+def refresh_backgrounds(rice):
+    """Тема текущая: новые обои должны появиться и в ~/.local/state/omarchy/current/theme/backgrounds."""
+    src = THEMES / f"{PREFIX}{rice}" / "backgrounds"
+    dst = STATE / "current/theme/backgrounds"
+    if not dst.is_dir():
+        return
+    for f in src.iterdir():
+        t = dst / f.name
+        if not t.exists() and not t.is_symlink():
+            t.symlink_to(os.readlink(f))
+
+
+# ── Wallhaven (как bin/vitreus-wallhaven у Vitreus: только SFW, без ключа) ──
+WH_API = "https://wallhaven.cc/api/v1/search?"
+WH_CACHE = HOME / ".cache/omarchy-rice-dynamic/wallhaven"
+WH_UA = {"User-Agent": "omarchy-rice-dynamic"}
+
+
+def _http(url, timeout=30):
+    import urllib.request
+    with urllib.request.urlopen(urllib.request.Request(url, headers=WH_UA), timeout=timeout) as r:
+        return r.read()
+
+
+def wallhaven_search(rice, query, page=1):
+    """Страница результатов (24): миниатюры в кэш <райс>/, index.json — id → адрес полного файла. Печатает каталог."""
+    import re
+    import urllib.parse
+    rice_dir(rice)
+    q = {"q": query, "purity": "100", "categories": "110", "sorting": "relevance", "atleast": "1920x1080",
+         "page": str(page)}
+    data = json.loads(_http(WH_API + urllib.parse.urlencode(q)))["data"]
+    d = WH_CACHE / rice
+    shutil.rmtree(d, ignore_errors=True)  # каталог наш (кэш), не путь из ввода
+    d.mkdir(parents=True)
+    index = {}
+    for it in data:
+        wid, full, th = it.get("id", ""), it.get("path", ""), (it.get("thumbs") or {}).get("large", "")
+        if not re.fullmatch(r"[a-z0-9]{4,10}", wid) or not full.startswith("https://w.wallhaven.cc/") \
+                or not th.startswith("https://th.wallhaven.cc/"):
+            continue
+        try:
+            (d / f"wallhaven-{wid}.jpg").write_bytes(_http(th))
+        except OSError as e:
+            print(f"миниатюра {wid}: {e}", file=sys.stderr)
+            continue
+        index[wid] = {"url": full, "res": it.get("resolution", "")}
+    (d / "index.json").write_text(json.dumps(index))
+    print(d)
+    return d
+
+
+def wallhaven_get(rice, ids, repo=False):
+    """Скачать полные обои по id (из последнего поиска) в пул: локально или в репо."""
+    import re
+    d = WH_CACHE / rice
+    try:
+        index = json.loads((d / "index.json").read_text())
+    except (OSError, ValueError):
+        index = {}
+    files = []
+    tmpd = Path(tempfile.mkdtemp(prefix="wallhaven-", dir=RUNTIME))
+    for wid in ids:
+        wid = Path(wid).stem.removeprefix("wallhaven-")  # можно отдать путь миниатюры из пикера
+        if not re.fullmatch(r"[a-z0-9]{4,10}", wid):
+            continue
+        url = (index.get(wid) or {}).get("url") or json.loads(_http(f"https://wallhaven.cc/api/v1/w/{wid}"))["data"]["path"]
+        if not url.startswith("https://w.wallhaven.cc/"):
+            continue
+        f = tmpd / f"wallhaven-{wid}{Path(url).suffix.lower()}"
+        f.write_bytes(_http(url, 120))
+        files.append(f)
+    added = add(rice, [str(f) for f in files], repo) if files else []
+    for f in files:
+        f.unlink(missing_ok=True)
+    tmpd.rmdir()
+    return added
+
+
+RICES = ROOT.parent / "apps/omarchy-shell/plugins/kamradsmeshnyavy.customizer/rices.json"
+
+
+def list_rices(fast=False):
+    """Райсы вкладки «Райсы» Customizer (rices.json), у которых есть каталог в omarchy-themes."""
+    try:
+        ids = [r["id"] for r in json.loads(RICES.read_text())["rices"]]
+    except (OSError, ValueError, KeyError):
+        ids = [d.name for d in sorted(ROOT.iterdir()) if (d / "build.py").is_file()]
+    out = {}
+    for rice in ids:
+        d = ROOT / DIRS.get(rice, rice)
+        if not d.is_dir():
+            continue
+        f = d / "build.py"
+        has = f.is_file() and "def dynamic(" in f.read_text()
+        st = settings(rice)
+        if not has:
+            st["engine"] = "colors"
+        out[rice] = dict(st, engines=["rice", "colors"] if has else ["colors"],
+                         walls=None if fast else len(pool(rice)), theme=f"{PREFIX}{rice}")
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    def opts(p):
+        p.add_argument("--engine", choices=["rice", "colors", "material"])
+        p.add_argument("--scheme", choices=dm.SCHEMES + list(dm.ALIASES))
+        p.add_argument("--mode", choices=["dark", "light", "auto"], help="auto — режим варианта, на который опирается тема")
+        p.add_argument("--base")
+        p.add_argument("--look", help="пресет варианта райса, в облике которого dynamic (Liquid-Retro, …)")
+
+    b = sub.add_parser("build")
+    b.add_argument("rice")
+    b.add_argument("image", nargs="?")
+    b.add_argument("--no-apply", action="store_true")
+    opts(b)
+    st = sub.add_parser("set")
+    st.add_argument("rice")
+    st.add_argument("--no-apply", action="store_true")
+    opts(st)
+    a = sub.add_parser("add")
+    a.add_argument("rice")
+    a.add_argument("files", nargs="+")
+    g = a.add_mutually_exclusive_group(required=True)
+    g.add_argument("--local", action="store_true")
+    g.add_argument("--repo", action="store_true")
+    ls = sub.add_parser("list")
+    ls.add_argument("rice", nargs="?")
+    ls.add_argument("--json", action="store_true")
+    ls.add_argument("--fast", action="store_true", help="без подсчёта обоев")
+    w = sub.add_parser("on-wallpaper")
+    w.add_argument("image")
+    wh = sub.add_parser("wallhaven")
+    whs = wh.add_subparsers(dest="wh", required=True)
+    ws = whs.add_parser("search")
+    ws.add_argument("rice")
+    ws.add_argument("query")
+    ws.add_argument("--page", type=int, default=1)
+    wg = whs.add_parser("get")
+    wg.add_argument("rice")
+    wg.add_argument("ids", nargs="+")
+    wg.add_argument("--repo", action="store_true")
+    wg.add_argument("--local", action="store_true")
+    args = ap.parse_args()
+
+    try:
+        if args.cmd in ("build", "set"):
+            over = {k: getattr(args, k) for k in DEFAULTS}
+            auto = over.get("mode") == "auto"  # settings() превращает его в None
+            if args.cmd == "set":  # build с флагами — разовая сборка, настройки не трогает
+                st = settings(args.rice, **over)
+                if auto:
+                    st["mode"] = None
+                save_settings(args.rice, st)
+            build(args.rice, getattr(args, "image", None), apply=not args.no_apply, **over)
+        elif args.cmd == "wallhaven":
+            if args.wh == "search":
+                wallhaven_search(args.rice, args.query, args.page)
+            else:
+                wallhaven_get(args.rice, args.ids, args.repo)
+        elif args.cmd == "add":
+            add(args.rice, args.files, args.repo)
+        elif args.cmd == "list":
+            if args.rice:
+                walls = [str(p) for p in pool(args.rice)]
+                print(json.dumps(walls, ensure_ascii=False) if args.json else "\n".join(walls))
+            else:
+                r = list_rices(args.fast)
+                print(json.dumps(r, ensure_ascii=False, indent=None if args.json else 2))
+        elif args.cmd == "on-wallpaper":
+            # фоновый режим (хук плагина обоев): stdout / stderr некому читать — в лог
+            with open(RUNTIME / "omarchy-rice-dynamic.log", "a") as log:
+                sys.stdout = sys.stderr = log
+                try:
+                    on_wallpaper(args.image)
+                except BaseException:
+                    import traceback
+                    traceback.print_exc()
+                    raise
+    except wc.Error as e:
+        die(str(e))
+
+
+if __name__ == "__main__":
+    main()

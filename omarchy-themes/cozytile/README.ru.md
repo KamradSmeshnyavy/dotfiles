@@ -24,3 +24,7 @@
 python3 build.py              # все темы
 python3 build.py cozy carbon  # выбранные
 ```
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): мягкий фон, пастельный акцент и второй цвет с обоев; любой вариант (и Carbon) можно перевернуть светлая ↔ тёмная. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

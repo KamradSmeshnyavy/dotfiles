@@ -4,7 +4,12 @@
 
 Seven Omarchy themes from the themes of [Vitreus](https://github.com/natepayn3/Vitreus) (MIT, © natepayn3): `vitreus-retro`,
 `-uwu`, `-cyber`, `-milk`, `-doodle`, `-paper`, `-proxy`. Vitreus's own Glass has no palette — it takes its colours from the
-wallpaper, which is the `dynamic` theme here.
+wallpaper, which is the `dynamic-vitreus` theme here (`omarchy-rice-dynamic`, see `../APP-THEMING.en.md`). Its
+eleven colours are read from any wallpaper of the rice (`build.py`, function `dynamic`), and it recolours itself when
+the wallpaper changes. The colours are read the way Vitreus does it, with Iris (`../scripts/iris_colors.py`). The colour mode is a setting: `vitreus` (exactly
+Vitreus's eleven colours), as the wallpaper, soft, vivid, monochrome in the wallpaper's tone, grey, or the palette of a variant with only the accent from the
+wallpaper. The look is a setting too: Retro, Cyber… in the wallpaper's colours, as Vitreus does it. Wallpapers can be fetched
+from Wallhaven, like Vitreus does (Customizer → Dynamic).
 
 Each Vitreus theme has eleven interface colours (ink, faint, mint — the accent, mintlo / minthi, onmint, tint — the
 background, panel, deep, off, alert); `build.py` lays them out over every app with the generator of the `nothing` themes

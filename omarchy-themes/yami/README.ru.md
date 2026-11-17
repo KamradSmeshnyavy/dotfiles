@@ -22,3 +22,7 @@ python3 build.py blood ash   # выбранные
 
 Шрифт оболочки райса — пиксельный Tiny5 — ставит профиль шрифтов `yami` (`omarchy-font-profile yami`, шрифты в
 `kamradsmeshnyavy.customizer/fonts/yami`, OFL).
+
+## Dynamic
+
+`dynamic-<райс>` из обоев (`../scripts/omarchy-rice-dynamic`, движок rice, `build.py` → `dynamic()`): вся палитра yami — `derive` от акцента обоев (родной алгоритм yami); светлая — та же палитра, перевёрнутая. Подробнее — `../APP-THEMING.md`, Customizer → Dynamic.

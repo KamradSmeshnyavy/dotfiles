@@ -4,7 +4,12 @@
 
 Семь тем Omarchy из тем [Vitreus](https://github.com/natepayn3/Vitreus) (MIT, © natepayn3): `vitreus-retro`, `-uwu`,
 `-cyber`, `-milk`, `-doodle`, `-paper`, `-proxy`. Своей палитры у Glass в Vitreus нет — цвета берутся с обоев, здесь это
-тема `dynamic`.
+тема `dynamic-vitreus` (`omarchy-rice-dynamic`, см. `../APP-THEMING.md`). Её одиннадцать цветов читаются с любых
+обоев райса (`build.py`, функция `dynamic`), а при смене обоев тема перекрашивается сама. Цвета читаются, как у Vitreus, —
+Iris (`../scripts/iris_colors.py`). Режим цветов задаётся настройкой: `vitreus` (в
+точности одиннадцать цветов Vitreus), как обои, тише, ярче, монохром в тоне обоев, серый
+или палитра варианта с акцентом из обоев. Облик — тоже настройка: Retro, Cyber… в цветах обоев, как в Vitreus. Обои можно скачать с Wallhaven, как в Vitreus
+(Customizer → Dynamic).
 
 У темы Vitreus одиннадцать цветов интерфейса (ink, faint, mint — акцент, mintlo / minthi, onmint, tint — фон, panel, deep,
 off, alert); `build.py` раскладывает их по всем приложениям генератором тем `nothing` (`../nothing/build.py`). Синтаксиса
