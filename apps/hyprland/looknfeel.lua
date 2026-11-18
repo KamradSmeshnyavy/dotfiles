@@ -48,6 +48,17 @@ do
 	end
 end
 
+-- Панель настроек Sheet (Super+Alt+I, kamradsmeshnyavy.widgets/sheet): то, что поменяли в ней, — поверх Customizer
+-- (как overrides.lua у elifouts/Dotfiles). Файл пишет sheet.py; нет файла — ничего.
+do
+	local sheet = os.getenv("HOME") .. "/.config/omarchy/sheet.lua"
+	local f = io.open(sheet, "r")
+	if f then
+		f:close()
+		dofile(sheet)
+	end
+end
+
 -- Добавочные рамки окон — плагин borders-plus-plus (hyprwm/hyprland-plugins, собирает `just hypr-plugins`).
 -- Тема просит их глобальной таблицей `omarchy_theme_borders` в своём hyprland.lua (он грузится раньше, см. rumda);
 -- у остальных тем добавочных рамок нет. Нет собранного плагина — ничего не делаем. Пока плагин не загружен
