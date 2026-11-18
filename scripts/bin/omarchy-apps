@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Сетка приложений по райсу (Super+Alt+Space, вместо стокового `omarchy-shell omarchy.dock apps`):
 # у райса surface (~/.config/omarchy/style.json → "rice") — широкий лаунчер «Programs» (скин surface-wide
-# kamradsmeshnyavy.menu, вкладки Apps / Shaders), у cozytile — список приложений его лаунчером, у остальных —
-# стоковая сетка дока Omarchy.
+# kamradsmeshnyavy.menu, вкладки Apps / Shaders), у cozytile — список приложений его лаунчером, у остальных — список
+# приложений выбранным скином лаунчера, а при стоковом скине list — стоковая сетка дока Omarchy.
 set -euo pipefail
 
 rice=$(jq -r '.rice // .id // ""' "$HOME/.config/omarchy/style.json" 2>/dev/null || true)
@@ -15,4 +15,10 @@ case $rice in
   # Space: его «маленький терминал» под баром — сразу список приложений скином space
   space) exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true,"skin":"space"}' ;;
 esac
+# Остальные: если у лаунчера выбран свой скин (не стоковая карточка list) — список приложений этим же скином,
+# а не стоковая сетка дока другого вида
+skin=$(jq -r '.skin // ""' "$HOME/.config/omarchy/extensions/menu-skin.json" 2>/dev/null || true)
+if [[ -n $skin && $skin != list && $skin != null ]]; then
+  exec omarchy-shell shell summon omarchy.menu '{"menu":"apps","browse":true}'
+fi
 exec omarchy-shell omarchy.dock apps

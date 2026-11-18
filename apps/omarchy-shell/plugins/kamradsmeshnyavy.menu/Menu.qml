@@ -951,6 +951,12 @@ Item {
       root.setActiveMenu("apps", true, fromPointer)
       return
     }
+    // остальные скины (кроме стоковой карточки list): «Apps» — список программ в этом же скине, а не стоковая
+    // сетка дока другого вида
+    if (root.skin !== "list" && (row.itemId === "apps" || row.target === "apps")) {
+      root.setActiveMenu("apps", true, fromPointer)
+      return
+    }
     if (row.kind === "menu" || row.kind === "link") {
       root.setActiveMenu(row.target || row.itemId, true, fromPointer)
     } else if (row.kind === "app") {
@@ -1734,6 +1740,11 @@ Item {
           event.accepted = true
         } else if ((event.key === Qt.Key_Backspace || (event.key === Qt.Key_Left && !root.spatialSkin)) && !root.filterText) {
           root.goBack()
+          event.accepted = true
+        } else if (event.key === Qt.Key_Tab && skinLoader.item && skinLoader.item.tabCmd === true) {
+          // скин с «режимами строки» (space: ~/run ↔ ~/cmd): Tab — включить / снять префикс команд «>»
+          var ft = root.filterText.replace(/^\s+/, "")
+          root.setFilter(ft.charAt(0) === ">" ? ft.slice(1) : ">" + ft)
           event.accepted = true
         } else if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
           root.select((event.modifiers & Qt.ShiftModifier) ? -1 : 1)

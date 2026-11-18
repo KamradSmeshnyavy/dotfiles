@@ -6,11 +6,12 @@
 //   @  окна Hyprland: «@fire» — перейти к окну
 //   !  веб-поиск: «!g запрос», «!yt …», «!gh …»; без известного bang — DuckDuckGo
 //   ;  история буфера обмена (cliphist): «;ссылка»; Enter — вернуть в буфер
+//   ?  справка: все префиксы; Enter по строке — вписать префикс в поиск
 // Строки — того же вида, что у Commands.js: action — shell-команда, её выполняет Menu.runAction.
 // ctx: { charms: {emoji,kaomoji,symbols}, windows: [{address,cls,title,ws}], calc: {expr,result,busy},
 //        clips: [{line,text}], clipsLoaded: bool }
 
-var PREFIXES = "=:@!;"
+var PREFIXES = "=:@!;?"
 
 function modeOf(text) {
   var c = String(text || "").charAt(0)
@@ -61,6 +62,26 @@ function rows(mode, text, ctx, ru) {
   var t = function(en, r) { return ru ? r : en }
   var q = String(text || "").slice(1)
   var out = []
+
+  if (mode === "?") {
+    // справка по префиксам; > (команды) — не режим Modes, но тоже префикс лаунчера
+    var help = [["=", "󰃬", t("calculator, units and currencies", "калькулятор, единицы и валюты"), "=2^10 · =5 km to mi"],
+                [":", "󰞅", t("emoji, kaomoji and symbols", "эмодзи, каомодзи и символы"), ":fire · :k cat · :s arrow"],
+                ["@", "", t("open windows", "открытые окна"), "@firefox"],
+                ["!", "󰖟", t("web search", "поиск в вебе"), "!g … · !yt … · !gh …"],
+                [";", "󰅍", t("clipboard history", "история буфера обмена"), ";link"],
+                [">", "", t("launcher commands", "команды лаунчера"), ">theme · >bar · >wallpaper"],
+                ["?", "󰋖", t("this help", "эта справка"), "?"]]
+    var f = q.trim().toLowerCase()
+    for (var i = 0; i < help.length; i++) {
+      var h = help[i]
+      if (f && (h[0] + " " + h[2]).toLowerCase().indexOf(f) === -1) continue
+      var r = hint("help." + i, h[1], h[0] + "   " + h[2], h[3])
+      r.action = h[0] === "?" ? "?" : h[0]
+      out.push(r)
+    }
+    return out
+  }
 
   if (mode === "=") {
     var expr = q.trim()
