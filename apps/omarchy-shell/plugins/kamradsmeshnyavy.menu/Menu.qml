@@ -1735,6 +1735,14 @@ Item {
           if (root.filterText) root.setFilter("")
           else root.cancel()
           event.accepted = true
+        } else if (skinLoader.item && skinLoader.item.digitLaunch === true && !root.filterText
+                   && !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier))
+                   && event.key >= Qt.Key_1 && event.key <= Qt.Key_9 && event.key - Qt.Key_1 < displayModel.count) {
+          // скин «нумерованное меню» (crt): цифра при пустой строке — сразу запустить строку с этим номером
+          root.cursorActive = true
+          root.selectedIndex = event.key - Qt.Key_1
+          root.activateFromSkin(event.key - Qt.Key_1)
+          event.accepted = true
         } else if (Util.editsFilter(event, root.filterText)) {
           root.setFilter(Util.editedFilter(event, root.filterText))
           event.accepted = true

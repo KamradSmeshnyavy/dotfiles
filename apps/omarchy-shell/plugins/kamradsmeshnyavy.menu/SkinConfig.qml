@@ -52,6 +52,8 @@ Item {
     "unit3": "Unit3View.qml",
     // По мотивам стиля Space (elifouts/Dotfiles, GPL-3.0): маленький терминал «~/run $» под баром.
     "space": "SpaceView.qml",
+    // По мотивам стиля Retro (elifouts/Dotfiles, GPL-3.0): нумерованное «Program menu» в двойной рамке.
+    "crt": "CrtView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
