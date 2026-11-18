@@ -67,6 +67,8 @@ DOT-MATRIX у правого края, вырастает из угла рамк
 
 **Retro CRT** (по мотивам стиля Retro из [elifouts/Dotfiles](https://github.com/elifouts/Dotfiles), GPL-3.0): дашборд — его экран состояния на весь экран (`DashCrt.qml` — имя машины, клетки QUICK KEYS, LIVE LOAD и SESSION, рамки SYSTEM / TASKS / NOW PLAYING; включается как трубка), обзор столов — все окна таблицей (`OverviewTable.qml`, `overviewStyle: table` — Enter — туда, `x` — закрыть, 1–9 — на стол), Super+M — «Главное меню ЭВМ» (`menus/MenuCrt.qml` — нумерованное меню: цифра выбирает строку, 1–3 открывают сеть / Bluetooth / звук в той же рамке, 4–7 — переключатели), плеер — рамка NOW PLAYING с визуализатором из клеток (`players/PlayerCrt.qml`). Общие детали — `Crt{Pal,Type,Box,Button,Tube,Media}.qml` по его `Retro/common`.
 
+**Терминал на обоях** (`term`, по мотивам его виджета `term` и `desk.sh`): виджет только сообщает своё место; `omarchy-desk-term` (`scripts/bin`) держит там настоящий bash в прозрачной `kitten panel` на фоновом слое — щёлкни и пиши. Перезапускается, только когда меняется место или размер; при смене темы через сокет kitty меняются лишь шрифт и фон. По умолчанию включён в стиле Retro CRT, в остальных выключен; `term` / `termAnchor` — во вкладке «Виджеты» Customizer. **Панель настроек → SCREEN** (у тем с трубкой): его ручки ЭЛТ-шейдера и фильтр обоев текущей темы.
+
 Меню райсов (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument / space / crt, `menus/` на общих
 `menus/SectionBody.qml` и `MenuData.qml`) показывают одно и то же содержимое разделов. **Wi-Fi**: сохранённая сеть
 подключается своим профилем NetworkManager, без пароля; новая просит пароль в поле прямо под строкой, а неудачная

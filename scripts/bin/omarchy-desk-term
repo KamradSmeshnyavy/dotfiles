@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# omarchy-desk-term — живой терминал на обоях (виджет «Терминал» kamradsmeshnyavy.widgets, TermWidget.qml).
+# Порт utilities/desk.sh из github.com/elifouts/Dotfiles (GPL-3.0, Eli Fouts): в месте виджета держится `kitten panel`
+# kitty на фоновом слое (под виджетами, над обоями), фокус — по клику. Перезапускается, только если сменилось место
+# или размер; шрифт и прозрачность меняются на лету через сокет kitty. Цикл выходит, когда Hyprland закрылся, а первый
+# show в новой сессии убивает остатки старой. Приглашение — starship: у райса Retro CRT — его READY > (STARSHIP_CONFIG
+# из ~/.local/state/omarchy/current/theme/starship.toml, если есть).
+#
+#   omarchy-desk-term show <ключ> <монитор> <x> <y> <w> <h> <pad> <кегль> <фон> <прозрачность> [шрифт]
+#   omarchy-desk-term hide <ключ> | stop
+set -uo pipefail
+RUN="${XDG_RUNTIME_DIR:-/tmp}/omarchy-desk"
+LIVE="${XDG_RUNTIME_DIR:-/tmp}/hypr/${HYPRLAND_INSTANCE_SIGNATURE:-}/.socket.sock"
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+
+greet() {
+    clear
+    printf '\e[2m%s@%s  ·  %s\e[0m\n' "$USER" "$(cat /proc/sys/kernel/hostname)" "$(. /etc/os-release; echo "$NAME")"
+    printf '\e[2mlast login  %s\e[0m\n' "$(date '+%a %d %b %y  %H:%M')"
+    printf 'ready.\n'
+}
+
+hide() {
+    rm -f "$RUN/$1" "$RUN/look/$1" "$RUN/sock/$1"
+    pkill -f "^/bin/bash .*omarchy-desk-term loop $1\$"
+    pkill -f "^[^ ]*kitty \+kitten panel .*--app-id=desk-$1 "
+}
+
+fresh() {
+    [ "$(cat "$RUN/.his" 2>/dev/null)" = "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && return
+    pkill -f "^/bin/bash .*omarchy-desk-term loop "
+    pkill -f "^[^ ]*kitty \+kitten panel .*--app-id=desk-"
+    mkdir -p "$RUN/look" "$RUN/sock"
+    find "$RUN" -maxdepth 2 -type f -delete 2>/dev/null
+    printf '%s' "${HYPRLAND_INSTANCE_SIGNATURE:-}" > "$RUN/.his"
+}
+
+# bash -i с приглашением starship (свой ~/.bashrc — тоже)
+rcfile() {
+    local rc="$RUN/bashrc"
+    {
+        echo '[ -f ~/.bashrc ] && . ~/.bashrc'
+        echo 'command -v starship >/dev/null && eval "$(starship init bash)"'
+        declare -f greet
+        echo 'greet'
+    } > "$rc"
+    printf '%s' "$rc"
+}
+
+loop() {
+    local geo out x y w h pad size bg alpha font sw sh look
+    geo="$(cat "$RUN/$1" 2>/dev/null)"
+    read -r out x y w h pad <<<"$geo"
+    read -r sw sh < <(hyprctl monitors -j | jq -r --arg o "$out" '.[] | select(.name == $o) | .scale as $k | [.width, .height] as $s | (if .transform % 2 == 1 then [$s[1], $s[0]] else $s end) | map(. / $k | floor) | "\(.[0]) \(.[1])"' 2>/dev/null)
+    look="$HOME/.local/state/omarchy/current/theme/starship.toml"
+    [ -f "$look" ] || look="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
+    while [ -n "$geo" ] && [ -S "$LIVE" ] && [ "$(cat "$RUN/$1" 2>/dev/null)" = "$geo" ]; do
+        read -r size bg alpha font <"$RUN/look/$1"
+        rm -f "$RUN/sock/$1"
+        kitten panel --app-id="desk-$1" --edge=none --layer=background --output-name="$out" --focus-policy=on-demand \
+            --margin-left="$x" --margin-top="$y" --margin-right="$((${sw:-$((x + w))} - x - w))" --margin-bottom="$((${sh:-$((y + h))} - y - h))" \
+            --listen-on="unix:$RUN/sock/$1" \
+            -o allow_remote_control=socket-only -o background="$bg" -o background_opacity="$alpha" -o dynamic_background_opacity=yes \
+            -o font_size="$size" ${font:+-o "font_family=$font"} \
+            -o cursor_shape=block -o cursor_blink_interval=0 -o cursor_trail=0 -o window_padding_width="$((pad * 3 / 4))" \
+            -o confirm_os_window_close=0 -o enable_audio_bell=no \
+            env NOFETCH=1 STARSHIP_CONFIG="$look" bash --rcfile "$(rcfile)" -i >/dev/null 2>&1
+        sleep 0.4
+    done
+}
+
+case "${1:-}" in
+    show)
+        key="$2" geo="${*:3:6}" look="${*:9}"
+        mkdir -p "$RUN"
+        { flock 9; fresh; } 9>"$RUN.lock"
+        if [ "$(cat "$RUN/$key" 2>/dev/null)" = "$geo" ] && pgrep -f "^/bin/bash .*omarchy-desk-term loop $key\$" >/dev/null; then
+            [ "$(cat "$RUN/look/$key" 2>/dev/null)" = "$look" ] && exit 0
+            printf '%s' "$look" > "$RUN/look/$key"
+            read -r size bg alpha font <<<"$look"
+            kitten @ --to "unix:$RUN/sock/$key" load-config -o font_size="$size" -o background="$bg" ${font:+-o "font_family=$font"} >/dev/null 2>&1
+            kitten @ --to "unix:$RUN/sock/$key" set-background-opacity "$alpha" >/dev/null 2>&1
+            exit 0
+        fi
+        hide "$key"
+        printf '%s' "$look" > "$RUN/look/$key"
+        printf '%s' "$geo" > "$RUN/$key"
+        setsid -f /bin/bash "$SELF" loop "$key" </dev/null >/dev/null 2>&1 ;;
+    hide) hide "$2" ;;
+    stop) for f in "$RUN"/*; do [ -f "$f" ] && [ "${f##*/}" != bashrc ] && hide "${f##*/}"; done ;;
+    loop) loop "$2" ;;
+    *) echo "usage: omarchy-desk-term show <key> <output> <x> <y> <w> <h> <pad> <pt> <bg> <alpha> [font] | hide <key> | stop" >&2; exit 2 ;;
+esac

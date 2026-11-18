@@ -252,6 +252,9 @@
     ~/.local/bin/omarchy-curtain:
       path: scripts/bin/omarchy-curtain
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-desk-term:
+      path: scripts/bin/omarchy-desk-term
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/omarchy-lock-themes:
       path: scripts/bin/omarchy-lock-themes
       if: "[ `uname` = Linux ]"
