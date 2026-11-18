@@ -71,6 +71,8 @@ confirmation.
 
 **Terminal on the wallpaper** (`term`, after his `term` widget and `desk.sh`): the widget only reports where it stands; `omarchy-desk-term` (`scripts/bin`) keeps a real bash there in a transparent `kitten panel` on the background layer — click it and type. It restarts only when its place or size changes; a theme change only swaps the font and background over kitty's socket. On by default in the Retro CRT style, off in the others; `term` / `termAnchor` in the Customizer's Widgets tab. **Settings sheet → SCREEN** (themes with a tube): his CRT knobs and wallpaper filter for the current theme.
 
+**Settings sheet skins** (`settingsSkin`: auto — by the rice): `space` — his Space settings (the bottom strip that unfolds), `crt` — his Retro SETUP (`sheet/SheetCrt.qml`): numbered pages on the left, 1–9 jump; CORE (rice, bar boxes / default / zen, text size and font for the whole Retro shell), COLORS (his tubes and schemes with accent swatches — colours change apart from the wallpaper, `omarchy-crt-colors`), SCREEN, PROFILES (the rice's profiles; the Customizer's Rices tab has one entry per rice). In the Retro style the wallpaper picker is his SCREENS (folders of his library, favorites, filtered preview).
+
 Rice menus (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument / space / crt, `menus/` on the shared
 `menus/SectionBody.qml` and `MenuData.qml`) share the same section contents. **Wi-Fi**: a saved network connects with
 its NetworkManager profile, no password asked; a new one asks for the password in a field right under its row, and a

@@ -6,3 +6,4 @@ ghostty
 lla
 scooter
 television
+python-pywal16
