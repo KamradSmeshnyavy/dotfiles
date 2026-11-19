@@ -184,6 +184,25 @@
     ~/.local/bin/omarchy-rice-dynamic:
       path: omarchy-themes/rices/scripts/omarchy-rice-dynamic
       if: "[ `uname` = Linux ]"
+    # скрипты райсов elifouts (Space, Retro CRT, Modern) из сабмодуля omarchy-rices
+    ~/.local/bin/omarchy-crt-colors:
+      path: omarchy-themes/rices/crt/colors.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-crt-filter:
+      path: omarchy-themes/rices/crt/filter.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-crt-library:
+      path: omarchy-themes/rices/crt/library.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-crt-shader:
+      path: omarchy-themes/rices/crt/shader.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-modern-colors:
+      path: omarchy-themes/rices/modern/colors.py
+      if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-space-world:
+      path: omarchy-themes/rices/space/world.py
+      if: "[ `uname` = Linux ]"
     ~/.config/systemd/user/omarchy-stylus-server.service:
       path: omarchy-themes/systemd/omarchy-stylus-server.service
       if: "[ `uname` = Linux ]"
@@ -279,6 +298,61 @@
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/black-arch-pastel:
       path: omarchy-themes/black-arch-pastel
+      if: "[ `uname` = Linux ]"
+    # темы райсов elifouts: Space, Retro CRT, Modern (сабмодуль omarchy-rices)
+    ~/.config/omarchy/themes/crt-amber:
+      path: omarchy-themes/rices/crt/amber
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-arcade:
+      path: omarchy-themes/rices/crt/arcade
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-car:
+      path: omarchy-themes/rices/crt/car
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-cyan:
+      path: omarchy-themes/rices/crt/cyan
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-paper:
+      path: omarchy-themes/rices/crt/paper
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-phosphor:
+      path: omarchy-themes/rices/crt/phosphor
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-wallpaper:
+      path: omarchy-themes/rices/crt/wallpaper
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-windows:
+      path: omarchy-themes/rices/crt/windows
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/crt-zen:
+      path: omarchy-themes/rices/crt/zen
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/modern-default:
+      path: omarchy-themes/rices/modern/default
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/modern-gruvbox:
+      path: omarchy-themes/rices/modern/gruvbox
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/modern-neon:
+      path: omarchy-themes/rices/modern/neon
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/modern-sun:
+      path: omarchy-themes/rices/modern/sun
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/modern-zen:
+      path: omarchy-themes/rices/modern/zen
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/space-atlas:
+      path: omarchy-themes/rices/space/atlas
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/space-dusk:
+      path: omarchy-themes/rices/space/dusk
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/space-frost:
+      path: omarchy-themes/rices/space/frost
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/space-mars:
+      path: omarchy-themes/rices/space/mars
       if: "[ `uname` = Linux ]"
     ~/.config/omarchy/themes/nothing-signal:
       path: omarchy-themes/rices/nothing/signal
