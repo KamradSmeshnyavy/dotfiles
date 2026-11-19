@@ -168,6 +168,9 @@ o.rebind("SUPER + grave", "Workspace overview", "omarchy-shell widgets toggleOve
 -- Super+Shift+` (Super+~) в стоке отправляет окно в Quake-консоль, но показать её нечем (Super+` — обзор), и окно
 -- терялось. Вместо этого — вернуть окна оттуда на текущий стол; спрятать окно — скретчпад (Super+Shift+D / Super+D).
 o.rebind("SUPER + SHIFT + grave", "Return windows from Quake console", "omarchy-qconsole-return")
+-- Быстрая смена профиля текущего райса (Customizer scripts/rice-profile.py): следующий / предыдущий
+o.bind("SUPER + ALT + P", "Next rice profile", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/rice-profile.py next")
+o.bind("SUPER + ALT + SHIFT + P", "Previous rice profile", "~/.config/omarchy/plugins/kamradsmeshnyavy.customizer/scripts/rice-profile.py prev")
 -- Режим правки виджетов: перетаскивание, «поверх окон», вернуть на место (kamradsmeshnyavy.widgets)
 o.bind("SUPER + CTRL + W", "Edit desktop widgets", "omarchy-shell widgets toggleEdit")
 -- Дашборд из-под бара / рамки (плагин kamradsmeshnyavy.widgets).
