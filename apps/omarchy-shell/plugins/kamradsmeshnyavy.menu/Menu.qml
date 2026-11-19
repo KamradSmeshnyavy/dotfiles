@@ -1711,6 +1711,10 @@ Item {
           root.activateFromSkin(index)
         })
         view.dismissRequested.connect(function() { root.cancel() })
+        // вкладки скина (modern): открыть раздел, вписать префикс, выполнить команду
+        if (view.menuRequested) view.menuRequested.connect(function(id) { root.setFilter(""); root.setActiveMenu(id, id !== "root") })
+        if (view.filterRequested) view.filterRequested.connect(function(text) { root.setFilter(text) })
+        if (view.runRequested) view.runRequested.connect(function(cmd) { root.cancel(); Quickshell.execDetached(cmd) })
         view.backRequested.connect(function() { if (!root.goBack()) root.cancel() })
       }
     }

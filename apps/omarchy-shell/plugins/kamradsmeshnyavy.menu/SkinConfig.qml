@@ -54,6 +54,8 @@ Item {
     "space": "SpaceView.qml",
     // По мотивам стиля Retro (elifouts/Dotfiles, GPL-3.0): нумерованное «Program menu» в двойной рамке.
     "crt": "CrtView.qml",
+    // По мотивам стиля Modern (elifouts/Dotfiles, GPL-3.0): карточка-стекло с циферблатом и вкладками Home / Apps / Commands / Keybinds.
+    "modern": "ModernView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",
