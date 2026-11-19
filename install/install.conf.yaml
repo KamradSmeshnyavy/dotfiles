@@ -246,6 +246,9 @@
     ~/.local/bin/omarchy-font-profile:
       path: scripts/bin/omarchy-font-profile
       if: "[ `uname` = Linux ]"
+    ~/.local/bin/omarchy-qconsole-return:
+      path: scripts/bin/omarchy-qconsole-return
+      if: "[ `uname` = Linux ]"
     ~/.local/bin/omasnap:
       path: scripts/bin/omasnap
       if: "[ `uname` = Linux ]"

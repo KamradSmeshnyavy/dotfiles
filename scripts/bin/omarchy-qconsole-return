@@ -1,0 +1,18 @@
+#!/bin/bash
+# omarchy-qconsole-return — вернуть все окна со скрытого стола Quake-консоли (special:qconsole) на текущий стол.
+# Super+` у нас — обзор столов, поэтому показать qconsole клавишей нельзя, и окно, отправленное туда, «пропадает».
+# Бинд — Super+Shift+` (Super+~) в apps/hyprland/bindings.lua.
+set -euo pipefail
+
+ws=$(hyprctl activeworkspace -j | jq -r '.id')
+mapfile -t addrs < <(hyprctl clients -j | jq -r '.[] | select(.workspace.name == "special:qconsole") | .address')
+
+if [ "${#addrs[@]}" -eq 0 ]; then
+  notify-send -a "Hyprland" "Quake-консоль" "Там нет окон"
+  exit 0
+fi
+
+for a in "${addrs[@]}"; do
+  hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$ws', follow = false, window = 'address:$a' }))" >/dev/null
+done
+notify-send -a "Hyprland" "Quake-консоль" "Возвращено окон: ${#addrs[@]}"
