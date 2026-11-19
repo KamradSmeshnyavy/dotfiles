@@ -27,6 +27,8 @@ declare -A SLOTS=(
   [fastfetch.jsonc]=$HOME/.config/fastfetch/config.jsonc
   # не в ~/.config: путь задан в FZF_DEFAULT_OPTS_FILE (env.nu, .zshrc)
   [fzf.opts]=$STATE/app-themes/fzf.opts
+  # приглашение Starship: STARSHIP_CONFIG (env.nu, .zshrc); у райсов — starship.toml в корне темы (Retro, Space, Modern)
+  [starship.toml]=$STATE/app-themes/starship.toml
   # опции -o для wl-kbptr: читает apps/hyprland/scripts/kbptr-wrapper.sh
   [wl-kbptr.opts]=$STATE/app-themes/wl-kbptr.opts
 )
@@ -106,6 +108,7 @@ link_slots() {
   local name src
   for name in "${!SLOTS[@]}"; do
     src=$THEME/apps/$name
+    [[ ! -e $src && $name == starship.toml && -e $THEME/starship.toml ]] && src=$THEME/starship.toml
     [[ -e $src ]] || src=${GENERATED[$name]:-$DEFAULTS/$name}
     link_slot "${SLOTS[$name]}" "$src"
   done

@@ -25,6 +25,7 @@ to `app-defaults/<file>` (the previous behaviour: terminal colours or the app's 
 | `tmux.conf` | `~/.config/tmux/om-app-theme.conf` | `tmux.conf`, after `om-theme.conf`; reloaded immediately |
 | `fastfetch.jsonc` | `~/.config/fastfetch/config.jsonc` | read by fastfetch itself |
 | `fzf.opts` | `~/.local/state/omarchy/app-themes/fzf.opts` | `FZF_DEFAULT_OPTS_FILE` in `env.nu` / `.zshrc` |
+| `starship.toml` (or at the theme root — the Retro / Space / Modern rices) | `~/.local/state/omarchy/app-themes/starship.toml` | `STARSHIP_CONFIG` in `env.nu` / `.zshrc`; without one — `shells/starship.toml`. Colours are ANSI names, so they follow the terminal palette. cava is themed by Omarchy itself (`cava_theme`) |
 
 If a theme has no `apps/yatline.lua` or `apps/fzf.opts`, the script generates them from its `colors.toml`
 (`scripts/omarchy-yatline-theme`, `scripts/omarchy-fzf-theme` → `~/.local/state/omarchy/app-themes/generated-*`);

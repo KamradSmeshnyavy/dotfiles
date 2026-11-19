@@ -17,6 +17,9 @@ $env.BAT_THEME = "ansi"
 $env.LG_CONFIG_FILE = $"($env.HOME)/.config/lazygit/config.yml,($env.HOME)/.config/lazygit/theme.yml"
 # Цвета fzf от темы Omarchy (omarchy-app-themes → слот fzf)
 $env.FZF_DEFAULT_OPTS_FILE = $"($env.HOME)/.local/state/omarchy/app-themes/fzf.opts"
+# приглашение Starship по теме (omarchy-app-themes: у райсов — их приглашение, иначе shells/starship.toml)
+let starship_slot = $"($env.HOME)/.local/state/omarchy/app-themes/starship.toml"
+if ($starship_slot | path exists) { $env.STARSHIP_CONFIG = $starship_slot }
 # Переменные темы Omarchy (omarchy-app-themes)
 let omarchy_app_env = $"($env.HOME)/.local/state/omarchy/app-theme.json"
 if ($omarchy_app_env | path exists) { load-env (open $omarchy_app_env) }

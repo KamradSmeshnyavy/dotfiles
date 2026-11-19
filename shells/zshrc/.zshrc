@@ -263,6 +263,8 @@ fi
 export NIX_CONF_DIR=$HOME/.config/nix
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
 export FZF_DEFAULT_OPTS_FILE="$HOME/.local/state/omarchy/app-themes/fzf.opts"
+# приглашение Starship по теме (omarchy-app-themes: у райсов — их приглашение, иначе shells/starship.toml)
+[[ -e $HOME/.local/state/omarchy/app-themes/starship.toml ]] && export STARSHIP_CONFIG="$HOME/.local/state/omarchy/app-themes/starship.toml"
 # Переменные темы Omarchy (omarchy-app-themes)
 [[ -f ~/.local/state/omarchy/app-theme.zsh ]] && source ~/.local/state/omarchy/app-theme.zsh
 export PATH=/run/current-system/sw/bin:$PATH
