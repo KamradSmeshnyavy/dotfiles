@@ -215,7 +215,7 @@ SkinBase {
         model: [["home", "󰋜", "Home"], ["apps", "󰀻", "Apps"], ["cmd", "󰆍", "Commands"], ["keys", "󰌌", "Keybinds"]]
         Rectangle {
           required property var modelData
-          readonly property bool on: modelData[0] === "home" ? root.home : modelData[0] === "apps" ? root.apps : modelData[0] === "cmd" ? root.cmd : false
+          readonly property bool on: modelData[0] === "home" ? root.home : modelData[0] === "apps" ? root.apps : modelData[0] === "cmd" ? root.cmd : root.title === "Keybindings"
           width: 118; height: 40; radius: 12
           color: on ? root.a(root.accent, 0.35) : tba.containsMouse ? root.a(root.foreground, 0.07) : "transparent"
           Text { anchors.centerIn: parent; text: parent.modelData[1] + "  " + parent.modelData[2]; font.family: root.ui; font.pixelSize: 13; color: parent.on ? root.foreground : root.a(root.foreground, 0.45) }
@@ -226,7 +226,7 @@ SkinBase {
               if (k === "home") root.menuRequested("root")
               else if (k === "apps") root.menuRequested("apps")
               else if (k === "cmd") root.filterRequested(">")
-              else root.runRequested(["omarchy-menu-keybindings"])
+              else root.menuRequested("keybinds")
             }
           }
         }

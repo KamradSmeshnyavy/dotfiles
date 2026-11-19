@@ -428,6 +428,15 @@ Item {
   // re-runs every time its submenu is entered, so a font installed since the
   // shell started shows up without restarting it.
   readonly property var providers: ({
+    // Все сочетания клавиш (omarchy-menu-keybindings --print: «КЛАВИШИ → описание»): строка — описание, подпись —
+    // клавиши; поиск — по обоим. Шпаргалка: Enter только закрывает меню.
+    "keybinds": {
+      script: "omarchy-menu-keybindings --print 2>/dev/null | awk -F ' → ' 'NF>=2 { k=$1; sub(/[ \\t]+$/, \"\", k); printf \"%s\\t%s\\t\\n\", $2, k }'",
+      icon: "\udb80\udf0c",
+      volatile: true,
+      describe: function(value) { return value },
+      actionFor: function(value) { return "true" }
+    },
     "fonts": {
       // omarchy-font-list keeps only spacing=100 fonts; dual-width ones (spacing=90,
       // e.g. Maple Mono NF CN with CJK glyphs) are monospace for Latin too, so list them.
@@ -570,7 +579,7 @@ Item {
         label: label,
         title: "",
         target: "",
-        description: "",
+        description: spec.describe ? spec.describe(value) : "",
         action: spec.actionFor(value),
         provider: "",
         aliases: [],
@@ -787,7 +796,8 @@ Item {
         if (!root.isDescendantOf(entry.id, active)) continue
         if (!root.matchesQuery(entry, query)) continue
 
-        var detail = root.parentPathFor(entry.id)
+        // хоткеи: в поиске под строкой — сами клавиши, а не путь раздела
+        var detail = entry.parent === "keybinds" && entry.description ? entry.description : root.parentPathFor(entry.id)
         var row = root.displayRow(entry, detail, root.searchScore(entry, query))
         if (entry.parent === active) currentRows.push(row)
         else drilldownRows.push(row)

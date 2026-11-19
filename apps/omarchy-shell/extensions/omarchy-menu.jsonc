@@ -32,6 +32,8 @@
   // ~/.config/omarchy/extensions/menu-skin.json; it hot-reloads on write.
   // Pick a category, then a skin. *-hack skins are the originals redrawn as
   // minimal terminal-style twins. Generated; edit the lists, not each row.
+  // Все сочетания клавиш списком в скине лаунчера (провайдер keybinds в kamradsmeshnyavy.menu/Menu.qml)
+  "keybinds": {"icon":"\udb80\udf0c","label":"Keybindings","aliases":["keys","hotkeys","binds"],"provider":"keybinds"},
   "style.launcher": {"icon":"\udb80\udc3d","label":"Launcher skin","aliases":["skin","launcher"]},
   "style.launcher.space": {
     "icon":"\udb83\ude1b",
