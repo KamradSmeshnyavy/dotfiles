@@ -1336,15 +1336,20 @@ Item {
       if (root.guardsPending) Qt.callLater(function() { root.evaluateGuards() })
     }
   }
+  // скин может попросить подержать окно после закрытия — доиграть свою анимацию (LiquidView: капля втягивается в бар)
+  readonly property bool skinHolding: root.skinActive && !!skinLoader.item && skinLoader.item.holding === true
   PanelWindow {
     id: panel
-    visible: root.opened && root.rowsLoaded
+    visible: (root.opened || root.skinHolding) && root.rowsLoaded
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
     WlrLayershell.namespace: "omarchy-menu"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: root.opened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
+    // пока скин доигрывает закрытие, клики проходят насквозь
+    mask: root.opened ? null : emptyMask
+    Region { id: emptyMask }
 
     // The card opens centered exactly as always. The first search keystroke
     // or submenu move freezes the top line where it currently sits — from

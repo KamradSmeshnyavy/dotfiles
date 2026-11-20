@@ -3,6 +3,7 @@ import QtQuick.Effects
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import qs.Commons
 
 // Liquid — стеклянная карточка по мотивам лаунчера Vitreus (github.com/natepayn3/Vitreus, MIT; код свой): сверху
@@ -14,6 +15,9 @@ import qs.Commons
 //   углы почти квадратные; шапка как у лаунчера Vitreus — значок из четырёх квадратиков, SEARCH, режим поиска; подсказки
 //   двумя рядами ячеек; retro — ещё красный язычок сверху, прорези-ручки и винт, выбор с красным оттенком;
 //   cyber — стекло с уголками-скобками, линейкой рисок и мигающим «терминальным» кодом.
+// «Капля» (style.json appear drip, у liquid — по умолчанию; panel-shadow.json panelAppear — выбор пользователя): лаунчер
+// вытекает из кнопки меню на баре одним куском с баром, как у Vitreus (DrawerGeom + DripMotion + LiquidGlass — копии из
+// kamradsmeshnyavy.widgets), содержимое проявляется после формы; закрылся — втягивается обратно, бар колышется.
 SkinBase {
   id: root
 
@@ -25,13 +29,57 @@ SkinBase {
 
   // основа темы
   property string base: "glass"
+  property var look: ({})
   FileView {
     path: Quickshell.env("HOME") + "/.config/omarchy/style.json"
     watchChanges: true
     printErrors: false
     onFileChanged: reload()
-    onLoaded: { try { var d = JSON.parse(text()); root.base = String(d.material === "liquid" && d.base ? d.base : "glass") } catch (e) { root.base = "glass" } }
+    onLoaded: { try { var d = JSON.parse(text()); root.look = d || {}; root.base = String(d.material === "liquid" && d.base ? d.base : "glass") } catch (e) { root.base = "glass"; root.look = {} } }
   }
+  property string panelAppear: "auto"
+  FileView {
+    path: Quickshell.env("HOME") + "/.config/omarchy/panel-shadow.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: { try { root.panelAppear = String(JSON.parse(text()).panelAppear || "auto") } catch (e) { root.panelAppear = "auto" } }
+    onLoadFailed: root.panelAppear = "auto"
+  }
+  readonly property real motion: { var m = Number(look.motion); return isFinite(m) ? Math.max(0, m) : 1 }
+  readonly property string appear: panelAppear === "drip" || panelAppear === "classic" ? panelAppear
+    : look.appear === "drip" || look.appear === "classic" ? String(look.appear) : (look.material === "liquid" ? "drip" : "classic")
+  readonly property bool drip: appear === "drip" && motion > 0 && geo.barLayer.width > 0
+
+  // ── капля из бара ──
+  BarGeom { id: geo }
+  DripMotion {
+    id: drop
+    active: root.drip
+    open: root.live
+    motion: root.motion
+    revealDelay: 180
+    screenName: Hyprland.focusedMonitor ? String(Hyprland.focusedMonitor.name) : ""
+    rippleOrigin: Qt.point(dg.startRect.x + dg.startRect.width / 2, dg.startRect.y + dg.startRect.height / 2)
+  }
+  // окно меню держится открытым, пока капля втягивается (Menu.qml смотрит holding)
+  readonly property bool holding: drop.active && !root.live && drop.d > 0.002
+  DrawerGeom {
+    id: dg
+    geo: geo
+    bodyWidth: card.width
+    bodyHeight: card.height
+    progress: drop.d
+    anchorIds: ["kamradsmeshnyavy.menu", "omarchy.launcher", "vit-icons"]
+    scrW: root.width
+    scrH: root.height
+    drip: true
+    sag: drop.sag
+    wobble: drop.wobble
+    squareness: root.sq
+    panelRadius: root.cardR
+  }
+  onLiveChanged: if (live) geo.refresh()
   readonly property bool plastic: ["retro", "doodle", "proxy", "milk", "paper"].indexOf(base) !== -1
   readonly property bool retro: base === "retro"
   readonly property bool cyber: base === "cyber"
@@ -61,29 +109,84 @@ SkinBase {
 
   // жёсткая тень пластика — копия карточки со сдвигом, без размытия
   Rectangle {
-    visible: root.plastic && root.hard.x > 0
-    x: card.x + root.hard.x; y: card.y + root.hard.y
-    width: card.width; height: card.height
-    radius: card.radius
+    visible: root.plastic && root.hard.x > 0 && (!root.drip || drop.d > 0.6)
+    x: (root.drip ? dg.morph.x : card.x) + root.hard.x; y: (root.drip ? dg.morph.y : card.y) + root.hard.y
+    width: root.drip ? dg.morph.width : card.width; height: root.drip ? dg.morph.height : card.height
+    radius: root.drip ? dg.dripRadius : card.radius
     color: root.hardColor
-    opacity: root.t
+    opacity: root.drip ? Math.min(1, (drop.d - 0.6) * 2.5) : root.t
+  }
+  // тело капли: стекло одним куском с баром (перешеек, крылья у рамки) или пластик со слитыми краями
+  LiquidGlass {
+    id: body
+    visible: root.drip && !root.plastic && drop.d > 0.001
+    x: dg.morph.x; y: dg.morph.y
+    width: dg.morph.width; height: dg.morph.height
+    radius: dg.dripRadius
+    screenOrigin: Qt.point(x, y)
+    tintColor: root.background
+    bleed: 2 * dg.fillet + 70
+    readonly property rect neck: dg.neckFor(Qt.rect(x, y, width, height))
+    joinRect: dg.merge || dg.neckK > 0 ? Qt.rect(neck.x - x, neck.y - y, neck.width, neck.height) : Qt.rect(0, 0, 0, 0)
+    joinRadius: 2.5
+    joinK: dg.neckK
+    join2Rect: dg.wing.width > 0 && dg.wingK > 0.5 ? Qt.rect(dg.wing.x - x, dg.wing.y - y, dg.wing.width, dg.wing.height) : Qt.rect(0, 0, 0, 0)
+    join2K: dg.wingK
+    cutRect: Qt.rect(dg.cut.x - x, dg.cut.y - y, dg.cut.width, dg.cut.height)
+    cut2Rect: dg.cut2.width > 0 ? Qt.rect(dg.cut2.x - x, dg.cut2.y - y, dg.cut2.width, dg.cut2.height) : Qt.rect(0, 0, 0, 0)
+  }
+  Item {
+    id: plasticBody
+    visible: root.drip && root.plastic && drop.d > 0.001
+    readonly property var edges: drop.d > 0.6 ? dg.mergeEdges : []
+    function merged(e) { return edges.indexOf(e) !== -1 }
+    readonly property real ext: 3
+    function grow(e) { return merged(e) ? root.bw + 12 : 0 }
+    function cutOut(e) { return merged(e) ? ext : 0 }
+    x: dg.morph.x - cutOut("left"); y: dg.morph.y - cutOut("top")
+    width: dg.morph.width + cutOut("left") + cutOut("right"); height: dg.morph.height + cutOut("top") + cutOut("bottom")
+    clip: edges.length > 0
+    Rectangle {
+      x: plasticBody.cutOut("left") - plasticBody.grow("left"); y: plasticBody.cutOut("top") - plasticBody.grow("top")
+      width: dg.morph.width + plasticBody.grow("left") + plasticBody.grow("right")
+      height: dg.morph.height + plasticBody.grow("top") + plasticBody.grow("bottom")
+      radius: dg.dripRadius
+      color: root.background
+      border { width: root.bw; color: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink }
+    }
+  }
+  Repeater {
+    model: root.drip && root.plastic && plasticBody.edges.length > 0
+      ? [["top", -1], ["top", 1], ["bottom", -1], ["bottom", 1], ["left", -1], ["left", 1], ["right", -1], ["right", 1]].filter(function(m) {
+          var adj = m[0] === "top" || m[0] === "bottom" ? (m[1] < 0 ? "left" : "right") : (m[1] < 0 ? "top" : "bottom")
+          return plasticBody.merged(m[0]) && !plasticBody.merged(adj)
+        }) : []
+    MergeFillet {
+      required property var modelData
+      x: dg.morph.x; y: dg.morph.y
+      edge: modelData[0]; side: modelData[1]
+      w: dg.morph.width; h: dg.morph.height
+      f: 22; bw: root.bw; ext: plasticBody.ext
+      fill: root.background
+      line: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink
+    }
   }
   Rectangle {
     id: card
-    anchors.horizontalCenter: parent.horizontalCenter
-    y: parent.height * 0.14 + 30 * k * (1 - root.t)
-    opacity: root.t
-    scale: 0.96 + 0.04 * root.t
+    x: root.drip ? dg.endRect.x : (parent.width - width) / 2
+    y: root.drip ? dg.endRect.y + 12 * (1 - drop.reveal) : parent.height * 0.14 + 30 * k * (1 - root.t)
+    opacity: root.drip ? drop.reveal : root.t
+    scale: root.drip ? 1 : 0.96 + 0.04 * root.t
     width: Math.round(680 * k)
     height: Math.min(parent.height * 0.76, head.height + search.height + (root.plastic ? hintsGrid.height : hints.height) + list.contentHeight + foot.height + 110 * k)
     radius: root.cardR
-    color: root.plastic ? root.background : root.glassFill
-    border { width: root.bw; color: root.plastic ? (root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink) : root.rim }
+    color: root.drip ? "transparent" : root.plastic ? root.background : root.glassFill
+    border { width: root.drip ? 0 : root.bw; color: root.plastic ? (root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink) : root.rim }
     MouseArea { anchors.fill: parent; onWheel: function(w) { root.wheelStep(w) } }
 
-    // блик по верхней кромке — «жидкое стекло»
+    // блик по верхней кромке — «жидкое стекло» (у капли блик рисует LiquidGlass)
     Rectangle {
-      visible: !root.plastic
+      visible: !root.plastic && !root.drip
       anchors { left: parent.left; right: parent.right; top: parent.top; margins: 1 }
       height: 60 * k
       radius: card.radius
