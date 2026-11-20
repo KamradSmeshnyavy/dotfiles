@@ -22,7 +22,12 @@ shape pulls back into the bar and the bar's edge ripples.
   (`ScreenBorder.qml`) plays it in `shaders/liquidglass.frag` (`ripple`).
 - **For any rice**: Customizer → Widgets → *How panels appear*: `auto` (as the style says — `appear` in
   `style.json`; `liquid` → drip), `drip`, `classic` (`~/.config/omarchy/panel-shadow.json` `panelAppear`).
-- Retro and Cyber (square bases) have almost no neck, as in Vitreus.
+- Retro and Cyber (square bases) have almost no neck, as in Vitreus; Retro pixelates while it moves
+  (`px = 16 · min(1, √(2.4 · |d − pq|))`, `Pixelate.qml`).
+- **The launcher**, as in his code (`vitreus.plm`: `edg`, `lp.ty`) and his video: with a frame layout it lowers out of
+  the middle of the top frame edge, hangs there as a drop, lets go and settles above the middle of the screen
+  (`max(middle − 210, top + 24 + half its height)`, spring 180/16); with the bar on top (his Island) it hangs from the
+  bar. The old look — flowing out of the menu button — is the separate skin `liquid-bar`.
 
 ## Joins
 
@@ -40,10 +45,15 @@ the neck); two glass cards closer than 26 px merge into one piece of glass (`Wid
 | Module panels | glass base: the stock card turns into liquid glass joined to the bar; a thin grip instead of the moulded tab (Retro keeps the tab) | `kamradsmeshnyavy.bar/PopDress.qml` |
 | Clock, monitor | the big "2 / 42" clock and the CPU / memory / GPU rings | `clockStyle` / `sysinfoStyle: vitreus` |
 | Colours | the settings panel (Super+Alt+I → COLORS) shows his theme cards: name, tagline, swatches; Glass (wallpaper colours) first | `sheet/Sheet.qml` |
-| UwU | cat ears, whiskers, stars, hearts and paw prints on panels and desktop cards | `BaseDecor.qml` |
+| UwU | his "candy plastic", not glass: a pastel gradient across the screen (#ffb3dc → #cfc4ff → #aab4ff → #ffd0ea), a 3 px grape outline, a lit lip and a hard pink shadow — on the frame (skin `vitreus-frame-uwu`, key `candy`), panels, cards, launcher and OSD; cat ears, whiskers, stars, hearts and paw prints everywhere, the launcher too | `StyleCard.qml`, `BaseDecor.qml` |
+| Settings | his Settings: rises out of the bottom frame's middle to the centre, sections in a column on the left, "SETTINGS › section", the body of the base | `sheet/Sheet.qml` (`Theme.vit`) |
 
 `dashStyle: vitreus` is the glass-tile dashboard (`DashGlass.qml`), `pencils` the pencil one (`DashVitreus.qml`);
 the Vitreus profiles keep the default dashboard, which plays the part of his calendar drawer with the player.
+
+Only Glass and Cyber are glass in Vitreus; Retro, UwU, Milkbox, Doodle, Paper and Proxy have solid bodies of their own.
+The Glass profile builds `dynamic-vitreus` in its own look (preset key `dynamic`: engine `rice`, scheme `vitreus`,
+`dark`) on its own wallpaper and saves that in Customizer → Dynamic, so it no longer inherits the previous profile's look.
 
 ## Wallpapers
 
