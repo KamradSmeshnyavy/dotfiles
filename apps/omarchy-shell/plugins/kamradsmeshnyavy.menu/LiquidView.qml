@@ -56,14 +56,54 @@ SkinBase {
   DripMotion {
     id: drop
     active: root.drip
-    open: root.live
+    open: root.barMode ? root.live : (root.live || tp.value > 0.3)
     motion: root.motion
-    revealDelay: 180
+    revealDelay: root.barMode ? 180 : 260
     screenName: Hyprland.focusedMonitor ? String(Hyprland.focusedMonitor.name) : ""
-    rippleOrigin: Qt.point(dg.startRect.x + dg.startRect.width / 2, dg.startRect.y + dg.startRect.height / 2)
+    rippleOrigin: root.barMode ? Qt.point(dg.startRect.x + dg.startRect.width / 2, dg.startRect.y + dg.startRect.height / 2)
+                               : Qt.point(root.midX, root.topIn / 2)
+    onDChanged: if (root.live && !root.barMode && d > 0.5) tp.target = 1
   }
   // окно меню держится открытым, пока капля втягивается (Menu.qml смотрит holding)
-  readonly property bool holding: drop.active && !root.live && drop.d > 0.002
+  readonly property bool holding: drop.active && !root.live && (drop.d > 0.002 || tp.value > 0.002)
+
+  // ── как у Vitreus (vitreus.plm, edg / lp.ty): в раскладке с рамкой поиск выпадает из середины верхней кромки, висит
+  // на ней каплей, отрывается и опускается выше середины экрана — max(середина − 210, верх + 24 + половина высоты);
+  // закрывается обратным путём. Бар сверху (его Island) или скин liquid-bar — растёт из кнопки меню на баре (DrawerGeom).
+  readonly property bool barMode: root.variant === "bar" || String(geo.exported.position || "") === "top"
+  readonly property string barPos: String(geo.exported.position || "")
+  readonly property real barSz: Number(geo.exported.barSize) || 0
+  readonly property real fw: geo.framed ? geo.frameWidth : 0
+  readonly property real topIn: barPos === "top" ? barSz : fw
+  readonly property real loX: barPos === "left" ? barSz : fw
+  readonly property real hiX: root.width - (barPos === "right" ? barSz : fw)
+  readonly property real botIn: root.height - (barPos === "bottom" ? barSz : fw)
+  readonly property real midX: (loX + hiX) / 2
+  readonly property real restY: Math.max((topIn + botIn) / 2 - 210 * k - card.height / 2, topIn + 24 * k)
+  // путь вниз (dripl 180/16): 0 — висит на кромке, 1 — на своём месте
+  Spring { id: tp; stiffness: 180; damping: 16; motion: root.motion }
+  readonly property real dd: Math.max(0, drop.d)
+  readonly property real bell: Math.max(0, 4 * dd * (1 - dd))
+  readonly property real lf: Math.min(1, 1.6 * dd) + Math.max(0, dd - 1) * 0.6
+  readonly property real topW: Math.max(0, card.width * lf * (1 - 0.07 * bell + 0.003 * drop.wobble))
+  readonly property real topH: Math.max(0, (card.height * dd + Math.max(0, drop.sag)) * (1 - 0.002 * drop.wobble))
+  readonly property rect topRect: Qt.rect(midX - topW / 2, topIn + (restY - topIn) * tp.value, topW, topH)
+  readonly property real topNeck: (26 + 20 * bell) * Math.min(1, 4 * dd) * (1 - 0.85 * root.sq)
+  // итог для тела капли
+  readonly property rect bodyRect: barMode ? dg.morph : topRect
+  readonly property real bodyR: {
+    if (barMode) return dg.dripRadius
+    var pill = Math.min(topRect.width, topRect.height) / 2
+    return pill + (Math.min(root.cardR, pill) - pill) * Math.max(0, Math.min(1, 1.6 * dd - 0.1))
+  }
+  readonly property real neckKNow: barMode ? dg.neckK : topNeck
+  readonly property rect neckNow: barMode ? dg.neckFor(bodyRect)
+    : Qt.rect(topRect.x - topNeck - 6, topIn - 8, topRect.width + 2 * topNeck + 12, 5)
+  readonly property rect cutNow: barMode ? dg.cut : Qt.rect(-4000, -4000, 8000 + root.width, 4000 + topIn - 3)
+  readonly property var mergeNow: drop.d < 0.6 ? [] : barMode ? dg.mergeEdges : (tp.value < 0.05 ? ["top"] : [])
+  // содержимое едет вместе с каплей и проявляется на подходе к месту
+  readonly property point endPos: barMode ? Qt.point(dg.endRect.x, dg.endRect.y) : Qt.point(midX - card.width / 2, topRect.y)
+  readonly property real reveal: barMode ? drop.reveal : drop.reveal * Math.max(0, Math.min(1, (tp.value - 0.45) / 0.4))
   DrawerGeom {
     id: dg
     geo: geo
@@ -79,16 +119,19 @@ SkinBase {
     squareness: root.sq
     panelRadius: root.cardR
   }
-  onLiveChanged: if (live) geo.refresh()
-  readonly property bool plastic: ["retro", "doodle", "proxy", "milk", "paper"].indexOf(base) !== -1
+  onLiveChanged: { if (live) geo.refresh(); else tp.target = 0 }
+  readonly property bool plastic: ["retro", "doodle", "proxy", "milk", "paper", "uwu"].indexOf(base) !== -1
+  // uwu — «конфетный пластик» Vitreus: пастельный градиент, контур цвета винограда, розовая жёсткая тень
+  readonly property bool candy: base === "uwu"
   readonly property bool retro: base === "retro"
   readonly property bool cyber: base === "cyber"
   readonly property real sq: ({ retro: 1, doodle: 1, proxy: 1, cyber: 1, paper: 0.6 })[base] || 0
   readonly property real cardR: 30 * k * (1 - 0.73 * sq)
-  readonly property real bw: ({ retro: 2.3, doodle: 2.8, proxy: 1.9, paper: 1.6, milk: 0 })[base] || 1
-  readonly property point hard: ({ retro: Qt.point(6, 7), doodle: Qt.point(3.5, 3.5), proxy: Qt.point(3.4, 4) })[base] || Qt.point(0, 0)
+  readonly property real bw: ({ retro: 2.3, doodle: 2.8, proxy: 1.9, paper: 1.6, milk: 0, uwu: 3 })[base] || 1
+  readonly property point hard: ({ retro: Qt.point(6, 7), doodle: Qt.point(3.5, 3.5), proxy: Qt.point(3.4, 4), uwu: Qt.point(4, 5) })[base] || Qt.point(0, 0)
   readonly property color ink: root.fg
-  readonly property color hardColor: base === "proxy" ? "#2a8cff" : base === "doodle" ? ink : Qt.rgba(ink.r, ink.g, ink.b, 0.55)
+  readonly property color deep: Qt.darker(ink, 1.45)
+  readonly property color hardColor: base === "uwu" ? Qt.rgba(deep.r * 0.25 + 0.75, deep.g * 0.25 + 0.43, deep.b * 0.25 + 0.78, 0.9) : base === "proxy" ? "#2a8cff" : base === "doodle" ? ink : Qt.rgba(ink.r, ink.g, ink.b, 0.55)
   property int tick: 0
   Timer { interval: 140; repeat: true; running: root.live && root.cyber; onTriggered: root.tick++ }
 
@@ -110,49 +153,58 @@ SkinBase {
   // жёсткая тень пластика — копия карточки со сдвигом, без размытия
   Rectangle {
     visible: root.plastic && root.hard.x > 0 && (!root.drip || drop.d > 0.6)
-    x: (root.drip ? dg.morph.x : card.x) + root.hard.x; y: (root.drip ? dg.morph.y : card.y) + root.hard.y
-    width: root.drip ? dg.morph.width : card.width; height: root.drip ? dg.morph.height : card.height
-    radius: root.drip ? dg.dripRadius : card.radius
+    x: (root.drip ? root.bodyRect.x : card.x) + root.hard.x; y: (root.drip ? root.bodyRect.y : card.y) + root.hard.y
+    width: root.drip ? root.bodyRect.width : card.width; height: root.drip ? root.bodyRect.height : card.height
+    radius: root.drip ? root.bodyR : card.radius
     color: root.hardColor
     opacity: root.drip ? Math.min(1, (drop.d - 0.6) * 2.5) : root.t
+  }
+  Gradient {
+    id: candyGrad
+    orientation: Gradient.Horizontal
+    GradientStop { position: 0; color: "#ffb3dc" }
+    GradientStop { position: 0.38; color: "#cfc4ff" }
+    GradientStop { position: 0.68; color: "#aab4ff" }
+    GradientStop { position: 1; color: "#ffd0ea" }
   }
   // тело капли: стекло одним куском с баром (перешеек, крылья у рамки) или пластик со слитыми краями
   LiquidGlass {
     id: body
     visible: root.drip && !root.plastic && drop.d > 0.001
-    x: dg.morph.x; y: dg.morph.y
-    width: dg.morph.width; height: dg.morph.height
-    radius: dg.dripRadius
+    x: root.bodyRect.x; y: root.bodyRect.y
+    width: root.bodyRect.width; height: root.bodyRect.height
+    radius: root.bodyR
     screenOrigin: Qt.point(x, y)
     tintColor: root.background
     bleed: 2 * dg.fillet + 70
-    readonly property rect neck: dg.neckFor(Qt.rect(x, y, width, height))
-    joinRect: dg.merge || dg.neckK > 0 ? Qt.rect(neck.x - x, neck.y - y, neck.width, neck.height) : Qt.rect(0, 0, 0, 0)
+    readonly property rect neck: root.neckNow
+    joinRect: root.neckKNow > 0 ? Qt.rect(neck.x - x, neck.y - y, neck.width, neck.height) : Qt.rect(0, 0, 0, 0)
     joinRadius: 2.5
-    joinK: dg.neckK
-    join2Rect: dg.wing.width > 0 && dg.wingK > 0.5 ? Qt.rect(dg.wing.x - x, dg.wing.y - y, dg.wing.width, dg.wing.height) : Qt.rect(0, 0, 0, 0)
+    joinK: root.neckKNow
+    join2Rect: root.barMode && dg.wing.width > 0 && dg.wingK > 0.5 ? Qt.rect(dg.wing.x - x, dg.wing.y - y, dg.wing.width, dg.wing.height) : Qt.rect(0, 0, 0, 0)
     join2K: dg.wingK
-    cutRect: Qt.rect(dg.cut.x - x, dg.cut.y - y, dg.cut.width, dg.cut.height)
-    cut2Rect: dg.cut2.width > 0 ? Qt.rect(dg.cut2.x - x, dg.cut2.y - y, dg.cut2.width, dg.cut2.height) : Qt.rect(0, 0, 0, 0)
+    cutRect: Qt.rect(root.cutNow.x - x, root.cutNow.y - y, root.cutNow.width, root.cutNow.height)
+    cut2Rect: root.barMode && dg.cut2.width > 0 ? Qt.rect(dg.cut2.x - x, dg.cut2.y - y, dg.cut2.width, dg.cut2.height) : Qt.rect(0, 0, 0, 0)
   }
   Item {
     id: plasticBody
     visible: root.drip && root.plastic && drop.d > 0.001
-    readonly property var edges: drop.d > 0.6 ? dg.mergeEdges : []
+    readonly property var edges: root.mergeNow
     function merged(e) { return edges.indexOf(e) !== -1 }
     readonly property real ext: 3
     function grow(e) { return merged(e) ? root.bw + 12 : 0 }
     function cutOut(e) { return merged(e) ? ext : 0 }
-    x: dg.morph.x - cutOut("left"); y: dg.morph.y - cutOut("top")
-    width: dg.morph.width + cutOut("left") + cutOut("right"); height: dg.morph.height + cutOut("top") + cutOut("bottom")
+    x: root.bodyRect.x - cutOut("left"); y: root.bodyRect.y - cutOut("top")
+    width: root.bodyRect.width + cutOut("left") + cutOut("right"); height: root.bodyRect.height + cutOut("top") + cutOut("bottom")
     clip: edges.length > 0
     Rectangle {
       x: plasticBody.cutOut("left") - plasticBody.grow("left"); y: plasticBody.cutOut("top") - plasticBody.grow("top")
-      width: dg.morph.width + plasticBody.grow("left") + plasticBody.grow("right")
-      height: dg.morph.height + plasticBody.grow("top") + plasticBody.grow("bottom")
-      radius: dg.dripRadius
+      width: root.bodyRect.width + plasticBody.grow("left") + plasticBody.grow("right")
+      height: root.bodyRect.height + plasticBody.grow("top") + plasticBody.grow("bottom")
+      radius: root.bodyR
       color: root.background
-      border { width: root.bw; color: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink }
+      gradient: root.candy ? candyGrad : null
+      border { width: root.bw; color: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.candy ? root.deep : root.ink }
     }
   }
   Repeater {
@@ -163,25 +215,26 @@ SkinBase {
         }) : []
     MergeFillet {
       required property var modelData
-      x: dg.morph.x; y: dg.morph.y
+      x: root.bodyRect.x; y: root.bodyRect.y
       edge: modelData[0]; side: modelData[1]
-      w: dg.morph.width; h: dg.morph.height
+      w: root.bodyRect.width; h: root.bodyRect.height
       f: 22; bw: root.bw; ext: plasticBody.ext
-      fill: root.background
-      line: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink
+      fill: root.candy ? "#cfc4ff" : root.background
+      line: root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.candy ? root.deep : root.ink
     }
   }
   Rectangle {
     id: card
-    x: root.drip ? dg.endRect.x : (parent.width - width) / 2
-    y: root.drip ? dg.endRect.y + 12 * (1 - drop.reveal) : parent.height * 0.14 + 30 * k * (1 - root.t)
-    opacity: root.drip ? drop.reveal : root.t
+    x: root.drip ? root.endPos.x : (parent.width - width) / 2
+    y: root.drip ? root.endPos.y + 12 * (1 - root.reveal) : parent.height * 0.14 + 30 * k * (1 - root.t)
+    opacity: root.drip ? root.reveal : root.t
     scale: root.drip ? 1 : 0.96 + 0.04 * root.t
     width: Math.round(680 * k)
     height: Math.min(parent.height * 0.76, head.height + search.height + (root.plastic ? hintsGrid.height : hints.height) + list.contentHeight + foot.height + 110 * k)
     radius: root.cardR
     color: root.drip ? "transparent" : root.plastic ? root.background : root.glassFill
-    border { width: root.drip ? 0 : root.bw; color: root.plastic ? (root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.ink) : root.rim }
+    gradient: !root.drip && root.candy ? candyGrad : null
+    border { width: root.drip ? 0 : root.bw; color: root.plastic ? (root.base === "paper" ? Util.alpha(root.ink, 0.45) : root.base === "proxy" ? Qt.rgba(0.9, 0.95, 0.96, 0.6) : root.candy ? root.deep : root.ink) : root.rim }
     MouseArea { anchors.fill: parent; onWheel: function(w) { root.wheelStep(w) } }
 
     // блик по верхней кромке — «жидкое стекло» (у капли блик рисует LiquidGlass)

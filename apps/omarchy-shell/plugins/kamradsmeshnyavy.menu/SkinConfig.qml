@@ -38,6 +38,8 @@ Item {
     "glyph": "GlyphView.qml",
     // По мотивам Vitreus (MIT, код свой): стеклянная карточка, строки с описанием.
     "liquid": "LiquidView.qml",
+    // Тот же Vitreus, но карточка вытекает из кнопки меню на баре (DrawerGeom), а не из верхней кромки.
+    "liquid-bar": "LiquidView.qml",
     // По мотивам yami (MIT, код свой): графитовое окно с рамкой в пиксель, вкладки APPS / CLIPBOARD, пиксельный шрифт.
     "yami": "YamiView.qml",
     // По мотивам Rumda (облик, код свой): маленькое окно по центру, «Search...», одни названия, выбор акцентом.
@@ -93,6 +95,7 @@ Item {
     if (/-term$/.test(n)) return "term"
     // drawer-<стиль>: шторка DOT-MATRIX в отделке стиля Customizer (DrawerView.qml).
     if (/^drawer-/.test(n)) return n.slice(7)
+    if (n === "liquid-bar") return "bar"
     return ""
   }
   readonly property var known: Object.keys(root.files).concat(["list"])
