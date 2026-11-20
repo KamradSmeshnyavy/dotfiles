@@ -34,6 +34,9 @@ shape pulls back into the bar and the bar's edge ripples.
 Anything at the bar or the frame is one piece with it (smooth union of the shapes, concave curve ≈ 22 px). A desktop
 card closer than 64 px to the frame reaches for it (the gap closes by `1 − (gap − 14) / 50`, the rest is bridged by
 the neck); two glass cards closer than 26 px merge into one piece of glass (`WidgetCard.qml`, `StyleCard.glassJoin3`).
+An open panel (dashboard, settings, power menu) merges with a glass desktop card next to it as well, although they live in
+different windows: the desk layer writes its cards to `$XDG_RUNTIME_DIR/omarchy-desk-cards[-float]-<screen>.json`,
+`DeskNeighbour.qml` finds the nearest one and the panel's glass reaches for it without drawing over it (`cut3`).
 
 ## Parts
 
@@ -45,7 +48,8 @@ the neck); two glass cards closer than 26 px merge into one piece of glass (`Wid
 | Module panels | glass base: the stock card turns into liquid glass joined to the bar; a thin grip instead of the moulded tab (Retro keeps the tab) | `kamradsmeshnyavy.bar/PopDress.qml` |
 | Clock, monitor | the big "2 / 42" clock and the CPU / memory / GPU rings | `clockStyle` / `sysinfoStyle: vitreus` |
 | Colours | the settings panel (Super+Alt+I → COLORS) shows his theme cards: name, tagline, swatches; Glass (wallpaper colours) first | `sheet/Sheet.qml` |
-| UwU | his "candy plastic", not glass: a pastel gradient across the screen (#ffb3dc → #cfc4ff → #aab4ff → #ffd0ea), a 3 px grape outline, a lit lip and a hard pink shadow — on the frame (skin `vitreus-frame-uwu`, key `candy`), panels, cards, launcher and OSD; cat ears, whiskers, stars, hearts and paw prints everywhere, the launcher too | `StyleCard.qml`, `BaseDecor.qml` |
+| UwU | his "candy plastic", not glass: a pastel gradient across the screen (#ffb3dc → #cfc4ff → #aab4ff → #ffd0ea), a 3 px grape outline, a lit lip and a hard pink shadow — on the frame (skin `vitreus-frame-uwu`, key `candy`), panels, cards, launcher, OSD and the bar's module panels; cat ears, whiskers, stars, hearts and paw prints everywhere, the launcher too | `StyleCard.qml`, `BaseDecor.qml` |
+| Cyber | dark glass frame (theme background at 86 %), near-square inner corners to match the windows, an accent hairline along the inner edge and glowing HUD brackets at its corners | skin `vitreus-frame-cyber` (`glassTint`, `hairline`, `hud`) |
 | Settings | his Settings: rises out of the bottom frame's middle to the centre, sections in a column on the left, "SETTINGS › section", the body of the base | `sheet/Sheet.qml` (`Theme.vit`) |
 
 `dashStyle: vitreus` is the glass-tile dashboard (`DashGlass.qml`), `pencils` the pencil one (`DashVitreus.qml`);
