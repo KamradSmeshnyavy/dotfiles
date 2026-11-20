@@ -22,6 +22,9 @@ SkinBase {
   id: root
 
   readonly property real k: root.u
+  // Retro у Vitreus на ходу пикселится (DripMotion.pixel, Pixelate.qml)
+  layer.enabled: root.retro && root.drip && drop.pixel > 1
+  layer.effect: Pixelate { px: drop.pixel }
   readonly property color fg: root.foreground
   readonly property color glassFill: Qt.rgba(root.background.r, root.background.g, root.background.b, 0.42)
   readonly property color rim: Qt.rgba(1, 1, 1, 0.28)
@@ -530,5 +533,27 @@ SkinBase {
       }
       Rectangle { width: 5; height: 10; color: Qt.lighter(root.accent, 1.35); opacity: Math.floor(root.tick / 2) % 2 === 0 ? 0.9 : 0 }
     }
+  }
+
+  // украшения основ Vitreus (UwU — уши, усы, звёзды, сердечки, лапки; Cyber — скобки и код; Paper — скотч; Proxy — плиты;
+  // Doodle — второй контур): тот же BaseDecor, что у панелей, на теле лаунчера; слитый край украшений не получает
+  QtObject {
+    id: decoCard
+    readonly property var style: ({ base: root.base })
+    readonly property string material: "liquid"
+    readonly property bool decor: true
+    readonly property var mergeEdges: root.drip ? root.mergeNow : []
+    readonly property int seed: 41
+    function merged(e) { return mergeEdges.indexOf(e) !== -1 }
+  }
+  BaseDecor {
+    card: decoCard
+    anchors.fill: undefined
+    x: root.drip ? root.bodyRect.x : card.x
+    y: root.drip ? root.bodyRect.y : card.y
+    width: root.drip ? root.bodyRect.width : card.width
+    height: root.drip ? root.bodyRect.height : card.height
+    opacity: root.drip ? root.reveal : root.t
+    z: 5
   }
 }

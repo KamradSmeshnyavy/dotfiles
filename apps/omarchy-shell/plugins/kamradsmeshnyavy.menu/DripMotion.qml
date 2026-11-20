@@ -28,6 +28,11 @@ QtObject {
   readonly property real wobble: wobSpring.value
   readonly property bool moving: dSpring.moving || sagSpring.moving || wobSpring.moving
   property real reveal: 0
+  // Retro у Vitreus в движении пикселится: медленный двойник раскрытия (pq, 510 мс) и размер пикселя
+  // px = 16 · min(1, √(2.4 · |d − pq|)) — в покое 0, на ходу до 16 (Pixelate.qml)
+  property real lag: 0
+  Behavior on lag { NumberAnimation { duration: Math.round(510 * m.motion); easing.type: Easing.OutCubic } }
+  readonly property real pixel: 16 * Math.min(1, Math.sqrt(2.4 * Math.abs(Math.min(1, d) - lag)))
   function revealAt(i) { return Math.max(0, Math.min(1, reveal * (1 + 0.27 * i) - 0.27 * i)) }
 
   signal landed()
@@ -47,11 +52,13 @@ QtObject {
       revealOut.stop()
       revealIn.restart()
       dSpring.target = 1
+      lag = 1
     } else {
       revealIn.stop()
       revealOut.restart()
       wobSpring.impulse(90)
       dSpring.target = 0
+      lag = 0
     }
   }
   onDChanged: {
