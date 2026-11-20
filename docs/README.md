@@ -19,6 +19,7 @@ One page per config: where it lives, where it is linked and what differs from th
 - [Obsidian](apps/obsidian-conf.md)
 - [omarchy-shell bar: skins and layouts](apps/omarchy-shell-bar.md)
 - [DOT-MATRIX style (dot-matrix)](apps/omarchy-shell-dotmatrix.md)
+- [Vitreus rice (liquid style): drip panels, joins, OSD, player, wallpapers](apps/omarchy-shell-vitreus.md)
 - [omarchy-shell launcher commands (`>…`)](apps/omarchy-shell-launcher-commands.md)
 - [omarchy-shell lock screen: designs](apps/omarchy-shell-lock.md)
 - [omarchy-shell OSD and notifications: at the screen edge](apps/omarchy-shell-osd.md)

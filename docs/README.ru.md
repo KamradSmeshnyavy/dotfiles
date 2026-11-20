@@ -19,6 +19,7 @@
 - [Obsidian](apps/obsidian-conf.ru.md)
 - [Бар omarchy-shell: скины и раскладки](apps/omarchy-shell-bar.ru.md)
 - [Стиль DOT-MATRIX (dot-matrix)](apps/omarchy-shell-dotmatrix.ru.md)
+- [Райс Vitreus (стиль liquid): панели-капли, стыки, OSD, плеер, обои](apps/omarchy-shell-vitreus.ru.md)
 - [Команды лаунчера omarchy-shell (`>…`)](apps/omarchy-shell-launcher-commands.ru.md)
 - [Экран блокировки omarchy-shell: дизайны](apps/omarchy-shell-lock.ru.md)
 - [OSD и уведомления omarchy-shell: у края экрана](apps/omarchy-shell-osd.ru.md)
