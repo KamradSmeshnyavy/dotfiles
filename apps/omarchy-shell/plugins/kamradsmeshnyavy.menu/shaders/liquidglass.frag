@@ -39,7 +39,8 @@ layout(std140, binding = 0) uniform buf {
     vec4 frame;     // x — 1 рамка есть, y — скругление дырки, z — слияние рамки с фигурами
     vec4 cut;       // здесь стекло не рисуется (внутри бара или рамки: там своё стекло, фигура только тянется к нему)
     vec4 cut2;
-    vec4 ripple;    // рябь по краю (панель втянулась в бар, как у Vitreus): xy — откуда (px эффекта), z — 0…1 время, w — сила px
+    vec4 ripple;
+    vec4 cut3;      // ещё вырез: соседняя карточка в другом окне (панель тянет к ней перешеек, но поверх неё не рисует)    // рябь по краю (панель втянулась в бар, как у Vitreus): xy — откуда (px эффекта), z — 0…1 время, w — сила px
 };
 layout(binding = 1) uniform sampler2D sharpTex;
 layout(binding = 2) uniform sampler2D softTex;
@@ -97,7 +98,8 @@ float rippleAt(vec2 p) {
 void main() {
     vec2 p = qt_TexCoord0 * size;
     if ((cut.z > 0.5 && p.x > cut.x && p.y > cut.y && p.x < cut.x + cut.z && p.y < cut.y + cut.w) ||
-        (cut2.z > 0.5 && p.x > cut2.x && p.y > cut2.y && p.x < cut2.x + cut2.z && p.y < cut2.y + cut2.w)) { fragColor = vec4(0.0); return; }
+        (cut2.z > 0.5 && p.x > cut2.x && p.y > cut2.y && p.x < cut2.x + cut2.z && p.y < cut2.y + cut2.w) ||
+        (cut3.z > 0.5 && p.x > cut3.x + 1.0 && p.y > cut3.y + 1.0 && p.x < cut3.x + cut3.z - 1.0 && p.y < cut3.y + cut3.w - 1.0)) { fragColor = vec4(0.0); return; }
     float d = shape(p) + rippleAt(p);
     float mask = clamp(0.5 - d, 0.0, 1.0);
     if (mask <= 0.0) { fragColor = vec4(0.0); return; }
