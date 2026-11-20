@@ -26,7 +26,9 @@ Item {
     : !isNaN(layerPos.x) ? Qt.point(layerPos.x + mapped.x, layerPos.y + mapped.y) : Qt.point(NaN, NaN)
   property real radius: 22
   property color tintColor: "#202020"
-  property real tintAlpha: cfg.tint
+  // tintOverride ≥ 0 — своя доля цвета вместо glass.json (рамка Cyber — тёмное стекло)
+  property real tintOverride: -1
+  property real tintAlpha: tintOverride >= 0 ? tintOverride : cfg.tint
   // На время анимаций (морф из бара) панель может попросить плёнку, чтобы не пересчитывать перекрытие.
   property bool forceFilm: false
   // слой ниже окон (виджеты рабочего стола): окна над стеклом, а не под ним — обои под ним видны всегда
