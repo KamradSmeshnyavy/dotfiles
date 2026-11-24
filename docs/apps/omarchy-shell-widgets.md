@@ -77,6 +77,36 @@ confirmation.
 
 **Settings sheet skins** (`settingsSkin`: auto — by the rice): `space` — his Space settings (the bottom strip that unfolds), `crt` — his Retro SETUP (`sheet/SheetCrt.qml`): numbered pages on the left, 1–9 jump; CORE (rice, bar boxes / default / zen, text size and font for the whole Retro shell), COLORS (his tubes and schemes with accent swatches — colours change apart from the wallpaper, `omarchy-crt-colors`), SCREEN, PROFILES (the rice's profiles; the Customizer's Rices tab has one entry per rice). In the Retro style the wallpaper picker is his SCREENS (folders of his library, favorites, filtered preview). `modern` — his Modern settings (`sheet/SheetModern.qml`): a glass side panel with icon tabs; Profile (style, saved profiles of this rice only — his and yours, Save, right-click twice to delete — and his five bars as mini previews), Themes (Pywal and his schemes with 16 swatches — a swatch becomes the accent — and the wallpapers of his library by folder with their pywal colours; a click sets the wallpaper and recolours when the colours are Pywal, `omarchy-modern-colors`), then the Hyprland pages. In the Modern style the wallpaper picker is his carousel from the bottom with a full-screen preview (`ModernWalls.qml` of the image picker). In every skin the profiles page lists only the profiles of the current rice.
 
+**Every rice has its own settings sheet** (`settingsSkin`: auto takes `partDefaults[rice].settingsSkin` in `Widgets.qml`; the file is `sheet/Sheet<Skin>.qml`). Besides Space, Vitreus (`vitreus`, his Settings: centred card, sections on the left), Retro CRT and Modern:
+- `rumda` (`SheetRumda.qml`) — a sandy notebook: ruled paper with binder rings on the left and a caramel pill of round section tabs on the right.
+- `yami` (`SheetYami.qml`) — `settings.conf` in a terminal: buffers `[1:core] 2:colors …`, `[x]` toggles, `██████▒▒▒` bars, a vim status line; lists open as a completion popup.
+- `bruteon` (`SheetBrute.qml`) — a form on a board: pastel sticker tabs, sticker section titles, ON / OFF tiles that drop onto their hard shadow.
+- `cozytile` (`SheetCozy.qml`) — a folder with S-sided tabs like his bar; the card flips sideways when the section changes.
+- `surface` (`SheetSurface.qml`) — the hub column at the right edge: section tiles on the home view, a section slides in with a `‹ back` crumb (Esc / Backspace go back).
+- `unit3` (`SheetUnit3.qml`) — the YoRHa system menu: sections as stripes on the left, a Description frame on the right for the row under the cursor.
+- `dotmatrix` (`SheetDots.qml`) — an instrument service menu: a dot display with the section name, LED section buttons, dot bars; colours only from `dotmatrix/Palette.qml`.
+- `glyph` (`SheetGlyph.qml`) — Nothing OS settings: a dot heading that types itself, capsule tabs, round toggles with a red dot.
+
+The shared core of these skins: `SkinWindow.qml` (window, keys, open / close), `SkPage.qml` (pages), `SkToggle` / `SkSlider` / `SkPick` / `SkTitle` (controls drawn from the skin's tokens in the `Sk` singleton), `SheetCore.qml` (data).
+
+**Keyboard in every skin:**
+- Tab / Shift+Tab and `[` / `]` switch sections; 1–9 jump to one.
+- Arrows or `hjkl` move between rows; ← / → on a slider change it by one step.
+- Enter or Space press the row.
+- `/` searches fonts; `?` shows the keys.
+- Esc closes a list, then goes back, then closes the sheet.
+- Letters also work in the Russian layout (they are read by scan code).
+
+**Choosing from many** (Rice, Variant, Bar, Super+M, Dashboard, …): Enter or a click opens a dropdown with every option and a ✓ on the current one. ↑ / ↓, PgUp / PgDn and a first letter move the selection. Only Enter or a click applies; Esc applies nothing. Rows with a few short options stay a row of buttons.
+
+**Accent for every rice** (COLORS → Accent; Space, Retro CRT and Modern keep their own colour pickers):
+- Two rows of candidates: the 16 colours of the current theme, and the colours of the current wallpaper (Iris clusters, cached in `~/.cache/omarchy/rice-accent`).
+- A swatch runs `omarchy-rice-accent set '#rrggbb'` (`omarchy-rices/scripts`). It builds `~/.config/omarchy/themes/<theme>-accent`: a copy of the variant's theme, with its pictures and wallpapers linked, where only `accent` changes. `cursor` and `hyprland_active_border` change too if they equalled the accent.
+- The old accent is also swapped in the theme's app files, but only when no other colour in `colors.toml` shares it. Monochrome themes often reuse the text colour as their accent, so for them only `colors.toml` changes.
+- The wallpaper stays.
+- `reset` goes back to the variant's theme and removes the copy.
+- *Save as* stores `accentState`, and the profile rebuilds the accent when applied.
+
 Rice menus (`settingsPanel` bruteon / yami / cozytile / rumda / glassring / instrument / space / crt, `menus/` on the shared
 `menus/SectionBody.qml` and `MenuData.qml`) share the same section contents. **Wi-Fi**: a saved network connects with
 its NetworkManager profile, no password asked; a new one asks for the password in a field right under its row, and a
