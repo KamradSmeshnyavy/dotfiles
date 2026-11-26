@@ -9,6 +9,10 @@ source ./media.nu
 
 # My custom aliases 
 
+def bsh [cmd: string] {
+    bash -c $cmd
+}
+
 # Переход в папку и просмотр содержимого
 def --env cx [path: path = "."] {
     cd $path
