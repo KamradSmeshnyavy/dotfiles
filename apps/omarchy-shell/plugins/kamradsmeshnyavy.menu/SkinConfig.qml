@@ -58,6 +58,8 @@ Item {
     "crt": "CrtView.qml",
     // По мотивам стиля Modern (elifouts/Dotfiles, GPL-3.0): карточка-стекло с циферблатом и вкладками Home / Apps / Commands / Keybinds.
     "modern": "ModernView.qml",
+    // Райс Quest (свой): меню «ПРЕДМЕТЫ» ролевой игры — окна-диалоги, рука-курсор, значки пикселями.
+    "quest": "QuestView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

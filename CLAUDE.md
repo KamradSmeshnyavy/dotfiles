@@ -92,6 +92,9 @@ omarchy-desktop-widgets (виджеты, дашборд, меню выключе
 (палитра стиля DOT-MATRIX, `docs/apps/omarchy-shell-dotmatrix.md`) одинаковый в widgets/osd/notifications/bar/menu/lock/customizer
 и шести DOT-MATRIX-панелях:
 цвета DOT-MATRIX — только через него, не hex.
+Райс Quest (пиксельный, свой; `omarchy-themes/rices/quest`, общий набор `rices/pixel/kit.py`): `QuestPal.qml` и `QuestWin.qml`
+одинаковые в bar/modules, widgets, osd, notifications/components, lock/designs, image-picker (только Pal) и menu —
+правку переносить во все; цвета окон — из `quest.json` темы.
 Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio,monitor,agents}` —
 тоже сабмодули, репо `omarchy-dotmatrix-<имя>` (правки помечены `// dotmatrix:`, у каждого своя копия `dotmatrix/Palette.qml`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.

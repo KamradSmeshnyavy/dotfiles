@@ -299,6 +299,22 @@
     ~/.config/omarchy/themes/black-arch-pastel:
       path: omarchy-themes/black-arch-pastel
       if: "[ `uname` = Linux ]"
+    # темы пиксельного райса Quest (сабмодуль omarchy-rices)
+    ~/.config/omarchy/themes/quest-classic:
+      path: omarchy-themes/rices/quest/classic
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/quest-dusk:
+      path: omarchy-themes/rices/quest/dusk
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/quest-dungeon:
+      path: omarchy-themes/rices/quest/dungeon
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/quest-forest:
+      path: omarchy-themes/rices/quest/forest
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/quest-parchment:
+      path: omarchy-themes/rices/quest/parchment
+      if: "[ `uname` = Linux ]"
     # темы райсов elifouts: Space, Retro CRT, Modern (сабмодуль omarchy-rices)
     ~/.config/omarchy/themes/crt-amber:
       path: omarchy-themes/rices/crt/amber
