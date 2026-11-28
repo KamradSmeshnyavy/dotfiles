@@ -95,6 +95,8 @@ omarchy-desktop-widgets (виджеты, дашборд, меню выключе
 Райс Quest (пиксельный, свой; `omarchy-themes/rices/quest`, общий набор `rices/pixel/kit.py`): `QuestPal.qml` и `QuestWin.qml`
 одинаковые в bar/modules, widgets, osd, notifications/components, lock/designs, image-picker (только Pal) и menu —
 правку переносить во все; цвета окон — из `quest.json` темы.
+Так же райс Cozy Room (`rices/room`, id `room`): `RoomPal.qml`, `RoomWood.qml`, `RoomNote.qml` одинаковые в тех же
+плагинах (image-picker — только Pal); цвета — из `room.json` темы.
 Клоны стоковых виджетов бара в стиле DOT-MATRIX — `kamradsmeshnyavy.{tray,network,bluetooth,audio,monitor,agents}` —
 тоже сабмодули, репо `omarchy-dotmatrix-<имя>` (правки помечены `// dotmatrix:`, у каждого своя копия `dotmatrix/Palette.qml`). Лаунчер `kamradsmeshnyavy.menu` остаётся в dotfiles (в нём порты без
 лицензии); публичная копия без портов — `just publish-launcher` в клон `~/src/omarchy-launcher-skins`.

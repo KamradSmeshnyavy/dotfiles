@@ -315,6 +315,16 @@
     ~/.config/omarchy/themes/quest-parchment:
       path: omarchy-themes/rices/quest/parchment
       if: "[ `uname` = Linux ]"
+    # темы пиксельного райса Cozy Room (сабмодуль omarchy-rices)
+    ~/.config/omarchy/themes/room-evening:
+      path: omarchy-themes/rices/room/evening
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/room-rain:
+      path: omarchy-themes/rices/room/rain
+      if: "[ `uname` = Linux ]"
+    ~/.config/omarchy/themes/room-sakura:
+      path: omarchy-themes/rices/room/sakura
+      if: "[ `uname` = Linux ]"
     # темы райсов elifouts: Space, Retro CRT, Modern (сабмодуль omarchy-rices)
     ~/.config/omarchy/themes/crt-amber:
       path: omarchy-themes/rices/crt/amber

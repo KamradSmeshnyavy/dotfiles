@@ -60,6 +60,8 @@ Item {
     "modern": "ModernView.qml",
     // Райс Quest (свой): меню «ПРЕДМЕТЫ» ролевой игры — окна-диалоги, рука-курсор, значки пикселями.
     "quest": "QuestView.qml",
+    // Райс Cozy Room (свой): записка в линейку на деревянной доске, выбранное — маркером цвета лампы.
+    "room": "RoomView.qml",
     "drum": "DrumView.qml",
     "tarot": "TarotView.qml",
     "metro": "MetroView.qml",

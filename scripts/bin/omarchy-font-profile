@@ -60,6 +60,7 @@
 #                 Departure Mono (Press Start 2P — CodeMan38, Departure Mono — Helena Zhang, оба SIL OFL 1.1;
 #                 kamradsmeshnyavy.customizer/fonts/quest). quest-dungeon — заголовки готическим Jacquard 12 Hell
 #                 (Jacquard — The Soft Type Project Authors, OFL; кириллица — сборка AngelOS, MixaDoDs).
+#   room        — система как stock; Pixelify Sans в оболочке, Departure Mono в терминале и коде (райс Cozy Room).
 #   crt         — система как stock; Terminess Nerd Font Mono в оболочке, терминале и коде, как у Retro (elifouts).
 #   modern      — система как stock; Code New Roman Nerd Font в оболочке, терминале и коде, как у Modern (elifouts).
 #   yami-ui     — пиксельно везде, как в программах самого yami (fontUi): Tiny5 ещё и в приложениях GTK / Qt.
@@ -135,6 +136,7 @@ PROFILES=(
   "modern|modern|$STOCK_FONT|CodeNewRoman Nerd Font Mono|CodeNewRoman Nerd Font Propo|System as stock; Code New Roman Nerd Font in the shell, the terminal and code — the Modern rice (elifouts)"
   "quest|quest|$STOCK_FONT|Departure Mono|Pixelify Sans|System as stock; the pixel Pixelify Sans in the shell (Press Start 2P in its titles) and Departure Mono in the terminal and code — the Quest rice"
   "quest-dungeon|quest|$STOCK_FONT|Departure Mono|Jacquard 12 Hell|As quest, but the shell titles in the gothic pixel Jacquard 12 Hell — Quest Dungeon"
+  "room|room|$STOCK_FONT|Departure Mono|Pixelify Sans|System as stock; the soft pixel Pixelify Sans in the shell and Departure Mono in the terminal and code — the Cozy Room rice"
 )
 
 # Запасной шрифт sans-serif для знаков, которых нет в шрифте профиля (кириллица у Ndot / NType).

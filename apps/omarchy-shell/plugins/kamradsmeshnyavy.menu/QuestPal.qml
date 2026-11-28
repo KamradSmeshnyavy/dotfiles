@@ -50,5 +50,6 @@ QtObject {
   function font(n) { return gothic && n < 16 ? body : title }
   function size(n) { return gothic ? (n < 16 ? Math.round(n * 1.75) : Math.round(n * 1.5)) : n }
 
-  function sprite(name) { return "file://" + themeDir + "/quest/" + name + ".png" }
+  // спрайты есть только у тем quest-*; у другой темы — пусто (скрытые части Quest не ищут файлы)
+  function sprite(name) { return ok ? "file://" + themeDir + "/quest/" + name + ".png" : "" }
 }
